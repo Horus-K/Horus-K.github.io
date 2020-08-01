@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Apollo介绍Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。 服务端基于Spring Boot和Spring Cloud开发，打包后可以直接运行，不需要额外安装Tomcat等应用容器。 Java客户端不依赖任何框架，能够运行于所有Java运行时环境">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s安装apollo">
+<meta property="og:url" content="https://horus-k.github.io/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="Apollo介绍Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。 服务端基于Spring Boot和Spring Cloud开发，打包后可以直接运行，不需要额外安装Tomcat等应用容器。 Java客户端不依赖任何框架，能够运行于所有Java运行时环境">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/417876-20171011235744105-1220369435.png">
+<meta property="article:published_time" content="2020-06-06T10:28:44.000Z">
+<meta property="article:modified_time" content="2020-06-24T06:56:27.362Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="apollo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/417876-20171011235744105-1220369435.png">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>k8s安装apollo | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s安装apollo
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-06 18:28:44" itemprop="dateCreated datePublished" datetime="2020-06-06T18:28:44+08:00">2020-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-24 14:56:27" itemprop="dateModified" datetime="2020-06-24T14:56:27+08:00">2020-06-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Apollo介绍"><a href="#Apollo介绍" class="headerlink" title="Apollo介绍"></a><strong>Apollo介绍</strong></h1><p>Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。</p>
+<p>服务端基于Spring Boot和Spring Cloud开发，打包后可以直接运行，不需要额外安装Tomcat等应用容器。</p>
+<p>Java客户端不依赖任何框架，能够运行于所有Java运行时环境，同时对Spring/Spring Boot环境也有较好的支持。</p>
+<p>.Net客户端不依赖任何框架，能够运行于所有.Net运行时环境。</p>
+<a id="more"></a>
+
+<h2 id="Apollo特性"><a href="#Apollo特性" class="headerlink" title="Apollo特性"></a><strong>Apollo特性</strong></h2><ul>
+<li>统一管理不同环境、不同集群的配置<ul>
+<li>Apollo提供了一个统一界面集中式管理不同环境（environment）、不同集群（cluster）、不同命名空间（namespace）的配置。</li>
+<li>同一份代码部署在不同的集群，可以有不同的配置，比如zk的地址等</li>
+<li>通过命名空间（namespace）可以很方便的支持多个不同应用共享同一份配置，同时还允许应用对共享的配置进行覆盖</li>
+</ul>
+</li>
+<li>配置修改实时生效（热发布）<ul>
+<li>用户在Apollo修改完配置并发布后，客户端能实时（1秒）接收到最新的配置，并通知到应用程序。</li>
+</ul>
+</li>
+<li>版本发布管理<ul>
+<li>所有的配置发布都有版本概念，从而可以方便的支持配置的回滚。</li>
+</ul>
+</li>
+<li>灰度发布<ul>
+<li>支持配置的灰度发布，比如点了发布后，只对部分应用实例生效，等观察一段时间没问题后再推给所有应用实例。</li>
+</ul>
+</li>
+<li>权限管理、发布审核、操作审计<ul>
+<li>应用和配置的管理都有完善的权限管理机制，对配置的管理还分为了编辑和发布两个环节，从而减少人为的错误。</li>
+<li>所有的操作都有审计日志，可以方便的追踪问题。</li>
+</ul>
+</li>
+<li>客户端配置信息监控<ul>
+<li>可以方便的看到配置在被哪些实例使用</li>
+</ul>
+</li>
+<li>提供Java和.Net原生客户端<ul>
+<li>提供了Java和.Net的原生客户端，方便应用集成</li>
+<li>支持Spring Placeholder, Annotation和Spring Boot的ConfigurationProperties，方便应用使用（需要Spring 3.1.1+）</li>
+<li>同时提供了Http接口，非Java和.Net应用也可以方便的使用</li>
+</ul>
+</li>
+<li>提供开放平台API<ul>
+<li>Apollo自身提供了比较完善的统一配置管理界面，支持多环境、多数据中心配置管理、权限、流程治理等特性。</li>
+<li>不过Apollo出于通用性考虑，对配置的修改不会做过多限制，只要符合基本的格式就能够保存。</li>
+<li>在我们的调研中发现，对于有些使用方，它们的配置可能会有比较复杂的格式，如xml, json，需要对格式做校验。</li>
+<li>还有一些使用方如DAL，不仅有特定的格式，而且对输入的值也需要进行校验后方可保存，如检查数据库、用户名和密码是否匹配。</li>
+<li>对于这类应用，Apollo支持应用方通过开放接口在Apollo进行配置的修改和发布，并且具备完善的授权和权限控制</li>
+</ul>
+</li>
+<li>部署简单<ul>
+<li>配置中心作为基础服务，可用性要求非常高，这就要求Apollo对外部依赖尽可能地少</li>
+<li>目前唯一的外部依赖是MySQL，所以部署非常简单，只要安装好Java和MySQL就可以让Apollo跑起来</li>
+<li>Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数</li>
+</ul>
+</li>
+</ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="拉取apollogit仓库"><a href="#拉取apollogit仓库" class="headerlink" title="拉取apollogit仓库"></a><strong>拉取apollogit仓库</strong></h2><p><a href="https://github.com/ctripcorp/apollo" target="_blank" rel="noopener">https://github.com/ctripcorp/apollo</a></p>
+<p>官方部署文档：<a href="https://github.com/ctripcorp/apollo/tree/master/scripts/apollo-on-kubernetes" target="_blank" rel="noopener">https://github.com/ctripcorp/apollo/tree/master/scripts/apollo-on-kubernetes</a></p>
+<h2 id="初始化apollo数据库"><a href="#初始化apollo数据库" class="headerlink" title="初始化apollo数据库"></a><strong>初始化apollo数据库</strong></h2><ul>
+<li>这次只安装prod环境</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> apollo-master/scripts/apollo-on-kubernetes/db</span><br><span class="line">mysql -uroot -p123456 -h192.168.220.100 &lt; config-db-prod/apolloconfigdb.sql</span><br><span class="line">mysql -uroot -p123456 -h192.168.220.100 &lt; portal-db/apolloportaldb.sql</span><br></pre></td></tr></table></figure>
+
+<h2 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a><strong>制作镜像</strong></h2><p><a href="https://github.com/ctripcorp/apollo/releases" target="_blank" rel="noopener">https://github.com/ctripcorp/apollo/releases</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/ctripcorp/apollo/releases/download/v1.6.1/apollo-adminservice-1.6.1-github.zip</span><br><span class="line">wget https://github.com/ctripcorp/apollo/releases/download/v1.6.1/apollo-configservice-1.6.1-github.zip</span><br><span class="line">wget https://github.com/ctripcorp/apollo/releases/download/v1.6.1/apollo-portal-1.6.1-github.zip</span><br></pre></td></tr></table></figure>
+
+<h2 id="解压压缩包-获取程序-jar-包"><a href="#解压压缩包-获取程序-jar-包" class="headerlink" title="解压压缩包, 获取程序 jar 包"></a>解压压缩包, 获取程序 jar 包</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar xf apollo-adminservice-1.6.1-github.zip</span><br><span class="line">tar xf apollo-configservice-1.6.1-github.zip</span><br><span class="line">tar xf apollo-portal-1.6.1-github.zip</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>获取 apollo-portal-1.6.1.jar, 重命名为 apollo-portal.jar, 放到 scripts/apollo-on-kubernetes/apollo-portal-server</p>
+</li>
+<li><p>获取 apollo-adminservice-1.6.1.jar, 重命名为 apollo-adminservice.jar, 放到 scripts/apollo-on-kubernetes/apollo-admin-server</p>
+</li>
+<li><p>获取 apollo-configservice-1.6.1.jar, 重命名为 apollo-configservice.jar, 放到 scripts/apollo-on-kubernetes/apollo-config-server</p>
+</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker  build -t  registry.cn-hangzhou.aliyuncs.com/xxx/apollo-portal-server:1.6.1 .</span><br><span class="line">docker  build -t  registry.cn-hangzhou.aliyuncs.com/xxx/apollo-adminservice:1.6.1 .</span><br><span class="line">docker  build -t  registry.cn-hangzhou.aliyuncs.com/xxx/apollo-configservice:1.6.1 .</span><br><span class="line">docker build -t registry.cn-hangzhou.aliyuncs.com/xxx/alpine-bash-3.8:1.0 .</span><br><span class="line">docker push xxx</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改yaml文件"><a href="#修改yaml文件" class="headerlink" title="修改yaml文件"></a>修改yaml文件</h2><ul>
+<li>按顺序修改部署</li>
+</ul>
+<h3 id="apollo-config-server"><a href="#apollo-config-server" class="headerlink" title="apollo-config-server"></a>apollo-config-server</h3><ul>
+<li><p>更改数据库连接</p>
+</li>
+<li><p>添加jpa:直接部署会报错</p>
+</li>
+<li><p>更改镜像</p>
+</li>
+</ul>
+<blockquote>
+<p>pod一直是running状态，对pod进行descirbe查看：<br>kubectl describe pod/statefulset-apollo-config-server-dev-0  -n apollo-min<br>Readiness probe failed: dial tcp 10.244.0.74:8080: connect: connection refused<br>登入pod容器查看日志：<br>kubectl exec -it statefulset-apollo-config-server-dev-0 -n apollo-min bash<br>日志默认路径在：/opt/logs/apollo-config-server<br>报错：<br>‘hibernate.dialect’ not set<br>解决方式：<br>service-apollo-config-server-dev.yaml 中增加配置：<br>spring.jpa.database-platform = org.hibernate.dialect.MySQL5Dialect</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">application-github.properties:</span> <span class="string">|</span></span><br><span class="line">    <span class="string">spring.datasource.url</span> <span class="string">=</span> <span class="string">jdbc:mysql://192.168.220.100:3306/ProdApolloConfigDB?characterEncoding=utf8</span></span><br><span class="line">    <span class="string">spring.datasource.username</span> <span class="string">=</span> <span class="string">root</span></span><br><span class="line">    <span class="string">spring.datasource.password</span> <span class="string">=</span> <span class="number">123456</span></span><br><span class="line">    <span class="string">spring.jpa.database-platform</span> <span class="string">=</span> <span class="string">org.hibernate.dialect.MySQL5Dialect</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>部署</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> apollo-master/scripts/apollo-on-kubernetes/kubernetes/apollo-env-prod</span><br><span class="line">kubectl apply -f service-apollo-config-server-prod.yaml</span><br><span class="line"></span><br><span class="line">kubectl get pod -n sre -o wide</span><br><span class="line">statefulset-apollo-config-server-prod-0                1/1     Running   0          179m   100.105.196.159   k8s-02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">statefulset-apollo-config-server-prod-1                1/1     Running   0          178m   100.72.165.214    k8s-03   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">statefulset-apollo-config-server-prod-2                1/1     Running   0          178m   100.105.196.160   k8s-02   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="apollo-admin-server"><a href="#apollo-admin-server" class="headerlink" title="apollo-admin-server"></a>apollo-admin-server</h3><ul>
+<li><p>更改数据库连接</p>
+</li>
+<li><p>添加jpa:直接部署会报错</p>
+</li>
+<li><p>更改镜像</p>
+</li>
+<li><p>注释<strong>initContainers</strong>部分，部署时会init探测<em>apollo-config-server</em>是否可用，(我部署时已经起来了，但探测不成功)</p>
+</li>
+<li><p>部署</p>
+</li>
+</ul>
+<h3 id="apollo-portal-server"><a href="#apollo-portal-server" class="headerlink" title="apollo-portal-server"></a>apollo-portal-server</h3><ul>
+<li><p>更改数据库连接</p>
+</li>
+<li><p>添加jpa:直接部署会报错</p>
+</li>
+<li><p>更改镜像</p>
+</li>
+<li><p>Endpoints可以不用部署，直接注释掉,</p>
+</li>
+<li><p>部署</p>
+</li>
+</ul>
+<h3 id="等待所有pod-READY"><a href="#等待所有pod-READY" class="headerlink" title="等待所有pod READY"></a>等待所有pod READY</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> get pod -n sre</span><br><span class="line">NAME                                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">deployment-apollo-admin-server-prod-85495c665b-8jndt   1/1     Running   0          170m</span><br><span class="line">deployment-apollo-admin-server-prod-85495c665b-jlgw9   1/1     Running   0          170m</span><br><span class="line">deployment-apollo-admin-server-prod-85495c665b-nf9m6   1/1     Running   0          170m</span><br><span class="line">deployment-apollo-portal-server-57648d478c-9wzr7       1/1     Running   0          150m</span><br><span class="line">deployment-apollo-portal-server-57648d478c-hdsqq       1/1     Running   0          150m</span><br><span class="line">deployment-apollo-portal-server-57648d478c-qvpt6       1/1     Running   0          150m</span><br><span class="line">statefulset-apollo-config-server-prod-0                1/1     Running   0          3h11m</span><br><span class="line">statefulset-apollo-config-server-prod-1                1/1     Running   0          3h10m</span><br><span class="line">statefulset-apollo-config-server-prod-2                1/1     Running   0          3h10m</span><br><span class="line"><span class="variable">$kubectl</span> get svc -n sre</span><br><span class="line">NAME                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service-apollo-admin-server-prod    NodePort    10.110.104.121   &lt;none&gt;        8090:31894/TCP   169m</span><br><span class="line">service-apollo-config-server-prod   NodePort    10.104.36.228    &lt;none&gt;        8080:30005/TCP   3h10m</span><br><span class="line">service-apollo-meta-server-prod     ClusterIP   None             &lt;none&gt;        8080/TCP         3h10m</span><br><span class="line">service-apollo-portal-server        NodePort    10.99.224.188    &lt;none&gt;        8070:30001/TCP   149m</span><br><span class="line">service-mysql-for-portal-server     ClusterIP   10.103.241.109   &lt;none&gt;        3306/TCP         149m</span><br></pre></td></tr></table></figure>
+
+<h2 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h2><p><a href="http://192.168.220.100:30001/" target="_blank" rel="noopener">http://192.168.220.100:30001/</a></p>
+<ul>
+<li><p>访问时会自动跳转到登录页面，默认账号密码为apollo/admin</p>
+</li>
+<li><p>超级管理员只有apollo一个，如果想要增加多个超级管理员，则需要通过修改数据库实现，打开ApolloPortalDB.ServerConfig</p>
+</li>
+</ul>
+<p><img src="/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/417876-20171011235744105-1220369435.png" alt="img"></p>
+<ul>
+<li><p>在superAdmin对应的Value上以逗号隔开，增加用户名。</p>
+</li>
+<li><p>修改部门和增加部门，通过organizations的Value，不过这些部门和人员属于弱类型对应，所以可以随意修改。</p>
+</li>
+<li><p>其它配置项参考官方提供的文档说明：<a href="https://github.com/ctripcorp/apollo/wiki/分布式部署指南#213-调整服务端配置" target="_blank" rel="noopener">https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#213-%E8%B0%83%E6%95%B4%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/apollo/" <i class="fa fa-tag"></i>apollo</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" rel="prev" title="Fluentd-简单使用">
+      <i class="fa fa-chevron-left"></i> Fluentd-简单使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/08/EFK/Fluentd%E4%B8%80%E4%BA%9B%E4%BE%8B%E5%AD%90/" rel="next" title="Fluentd一些例子">
+      Fluentd一些例子 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Apollo介绍"><span class="nav-number">1.</span> <span class="nav-text">Apollo介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Apollo特性"><span class="nav-number">1.1.</span> <span class="nav-text">Apollo特性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拉取apollogit仓库"><span class="nav-number">2.1.</span> <span class="nav-text">拉取apollogit仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化apollo数据库"><span class="nav-number">2.2.</span> <span class="nav-text">初始化apollo数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#制作镜像"><span class="nav-number">2.3.</span> <span class="nav-text">制作镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解压压缩包-获取程序-jar-包"><span class="nav-number">2.4.</span> <span class="nav-text">解压压缩包, 获取程序 jar 包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改yaml文件"><span class="nav-number">2.5.</span> <span class="nav-text">修改yaml文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#apollo-config-server"><span class="nav-number">2.5.1.</span> <span class="nav-text">apollo-config-server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apollo-admin-server"><span class="nav-number">2.5.2.</span> <span class="nav-text">apollo-admin-server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apollo-portal-server"><span class="nav-number">2.5.3.</span> <span class="nav-text">apollo-portal-server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等待所有pod-READY"><span class="nav-number">2.5.4.</span> <span class="nav-text">等待所有pod READY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问"><span class="nav-number">2.6.</span> <span class="nav-text">访问</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

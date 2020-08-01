@@ -278,13 +278,13 @@ After=syslog.target
 After=network.target
 
 [Service]
-Environment="CONFFILE=/app/zabbix_server/etc/zabbix_agentd.conf"
-EnvironmentFile=-/etc/default/zabbix-agent
+Environment="CONFFILE=/app/zabbix_agent/etc/zabbix_agentd.conf"
+EnvironmentFile=-/app/zabbix_agent/etc/zabbix_agentd.conf
 Type=forking
 Restart=on-failure
 PIDFile=/app/zabbix_agent/run/zabbix_agentd.pid
 KillMode=control-group
-ExecStart=/app/zabbix_server/sbin/zabbix_agentd -c $CONFFILE
+ExecStart=/app/zabbix_agent/sbin/zabbix_agentd -c $CONFFILE
 ExecStop=/bin/kill -SIGTERM $MAINPID
 RestartSec=10s
 
@@ -298,7 +298,7 @@ root@zabbix-node1:~# ps -ef | grep zabbix
 
 配置文件
 
-root@zabbix-server:~# mkdir /app/zabbix_server/logs
+root@zabbix-server:~# mkdir /app/zabbix_server/logs -pv
 root@zabbix-server:~# chown zabbix.zabbix /app/zabbix_server/logs/
 
 root@zabbix-server:~# vim /app/zabbix_server/etc/zabbix_server.conf

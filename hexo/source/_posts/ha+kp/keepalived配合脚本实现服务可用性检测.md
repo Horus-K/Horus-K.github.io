@@ -2,7 +2,7 @@
 title: keepalived配合脚本实现服务可用性检测
 date: 2020-03-09 21:18:29
 tags:
-- keeplived
+- keepalived
 - 脚本
 categories: 高可用
 ---

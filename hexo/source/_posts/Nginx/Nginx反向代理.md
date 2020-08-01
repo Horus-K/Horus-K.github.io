@@ -108,6 +108,14 @@ location /proxy/ {
 
 会被代理到http://127.0.0.1:81/proxy/test.html 这个url
 
+```sh
+location /proxy {
+	proxy_pass http://127.0.0.1:81;
+}
+```
+
+会被代理到http://127.0.0.1:81/proxy/test.html 这个url
+
 第三种：
 
 ```

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在关于kubernetes资源限制的这个由两部分组成的系列文章的第一篇文章中，我讨论了如何使用ResourceRequirements对象来设置容器中容器的内存限制，以及容器运行时和linux控制组如何实现这些限制。我还谈到了请求之间的区别，用于在调度时通知调度程序pod的需求，以及限制，用于在主机系统处于内存压力时帮助内核强制执行使用限制。在这篇文章中，我想继续详细查看cpu时间请求和限制。阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解k8s资源限制(2):cpu time">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="在关于kubernetes资源限制的这个由两部分组成的系列文章的第一篇文章中，我讨论了如何使用ResourceRequirements对象来设置容器中容器的内存限制，以及容器运行时和linux控制组如何实现这些限制。我还谈到了请求之间的区别，用于在调度时通知调度程序pod的需求，以及限制，用于在主机系统处于内存压力时帮助内核强制执行使用限制。在这篇文章中，我想继续详细查看cpu时间请求和限制。阅读">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1105652083,2447920630&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=372949236,3642632788&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=2831349931,1043699520&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1313032042,386237605&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=3125684838,259928992&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1967063984,808932103&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1302678492,1238472337&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=3585829404,1068895297&fm=173&app=49&f=JPEG.jfif">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=521774228,1221987196&fm=173&app=49&f=JPEG.jfif">
+<meta property="article:published_time" content="2020-03-27T02:33:11.000Z">
+<meta property="article:modified_time" content="2020-04-01T06:10:30.929Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="理论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1105652083,2447920630&fm=173&app=49&f=JPEG.jfif">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>理解k8s资源限制(2):cpu time | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理解k8s资源限制(2):cpu time
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-27 10:33:11" itemprop="dateCreated datePublished" datetime="2020-03-27T10:33:11+08:00">2020-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-01 14:10:30" itemprop="dateModified" datetime="2020-04-01T14:10:30+08:00">2020-04-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在关于kubernetes资源限制的这个由两部分组成的系列文章的第一篇文章中，我讨论了如何使用ResourceRequirements对象来设置容器中容器的内存限制，以及容器运行时和linux控制组如何实现这些限制。我还谈到了请求之间的区别，用于在调度时通知调度程序pod的需求，以及限制，用于在主机系统处于内存压力时帮助内核强制执行使用限制。在这篇文章中，我想继续详细查看cpu时间请求和限制。阅读完第一篇文章并不是从这篇文章中获取价值的先决条件，但我建议你在某些时候阅读它们，以便全面了解工程师和集群管理员可以使用的控件。</p>
+<a id="more"></a>
+
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1105652083,2447920630&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p><strong>CPU限制</strong></p>
+<p>正如我在第一篇文章中提到的，cpu限制比内存限制更复杂，原因将在下面说明。好消息是cpu限制是由我们刚才看到的相同cgroups机制控制的，所以所有相同的内省思想和工具都适用，我们可以只关注差异。让我们首先将cpu限制添加回上次查看的示例资源对象：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=372949236,3642632788&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>单位后缀m代表“千分之一核心”，因此该资源对象指定容器进程需要50/1000的核心（5％）并且允许最多使用100/1000核心（10％）。同样，2000m将是两个完整核心，也可以指定为2或2.0。让我们创建一个只有cpu请求的pod，看看它是如何在docker和cgroup级别配置的：</p>
+<p>我们可以看到kubernetes配置了50m cpu请求：</p>
+<p>我们还可以看到docker配置了具有相同限制的容器：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=2831349931,1043699520&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>为什么51，而不是50？cpu控制组和docker都将核划分为1024个共享，而kubernetes将其划分为1000. docker如何将此请求应用于容器进程？与设置内存限制导致docker配置进程的内存cgroup的方式相同，设置cpu限制会导致它配置cpu，cpuacct cgroup：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1313032042,386237605&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>Docker的HostConfig.CpuShares容器属性映射到cgroup的cpu.shares属性，所以让我们看一下：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=3125684838,259928992&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>你可能会惊讶地发现设置cpu请求会将值传播到cgroup，因为在上一篇文章中我们看到设置内存请求没有。底线是关于内存软限制的内核行为对kubernetes不是很有用，因为设置cpu.shares很有用。我将在下面详细讨论为什么。那么当我们设置cpu限制时会发生什么？我们来看看：</p>
+<p>现在我们还可以在kubernetes pod资源对象中看到限制：</p>
+<p>并在docker容器配置中：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1967063984,808932103&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>如上所述，cpu请求存储在HostConfig.CpuShares属性中。但是，cpu限制不太明显。它由两个值表示：HostConfig.CpuPeriod和HostConfig.CpuQuota。这些docker容器配置属性映射到进程的cpu、cpuacct cgroup的两个附加属性：cpu.cfs_period_us和cpu.cfs_quota_us。我们来看看那些：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=1302678492,1238472337&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>正如预期的那样，这些值设置为与docker容器配置中指定的值相同。但是这两个属性的值是如何从我们的pod中的100m cpu限制设置得出的，它们如何实现该限制？答案在于cpu请求和cpu限制是使用两个独立的控制系统实现的。请求使用cpu共享系统，两者中较早的一个。Cpu共享将每个核划分为1024个切片，并保证每个进程将获得这些切片的比例份额。如果有1024个切片，并且两个进程中的每一个都将cpu.shares设置为512，那么它们将分别获得大约一半的可用时间。但是，cpu共享系统无法强制执行上限。如果一个进程不使用其共享，则另一个进程可以自由使用。</p>
+<p>大约在2010年，谷歌和其他人注意到这可能会导致问题。作为回应，增加了第二个功能更强大的系统：cpu带宽控制。带宽控制系统定义一个周期，通常为1/10秒，或100000微秒，以及一个配额，表示允许进程在cpu上运行的那个周期内的最大切片数。在这个例子中，我们要求我们的pod上的cpu限制为100m。这是100/1000的核，或100000微秒的CPU时间中的10000。因此，我们的限制请求转换为在进程的cpu，cpuacct cgroup上设置cpu.cfs_period_us = 100000和cpu.cfs_quota_us = 10000。顺便说一下，这些名称中的cfs代表Completely Fair Scheduler，它是默认的linux cpu调度程序。还有一个实时调度程序，它有自己相应的配额值。</p>
+<p>所以我们已经看到在kubernetes中设置cpu请求最终会设置cpu.shares cgroup属性，并且通过设置cpu.cfs_period_us和cpu.cfs_quota_us来设置cpu限制可以使用不同的系统。与内存限制一样，请求主要对调度程序有用，调度程序使用它来查找至少具有多个可用cpu共享的节点。与内存请求不同，设置cpu请求还会在cgroup上设置一个属性，以帮助内核实际将该数量的共享分配给进程。限制也与内存区别对待。超出内存限制使你的容器进程成为oom-killing的候选者，而你的进程基本上不能超过设置的cpu配额，并且永远不会因为尝试使用比分配的更多的CPU时间而被驱逐。系统会在调度程序中强制执行配额，以便进程在限制时受到限制。</p>
+<p>如果你未在容器上设置这些属性，或将它们设置为不准确的值，会发生什么？与内存一样，如果设置限制但不设置请求，kubernetes会将请求默认为限制。如果你非常了解工作负载所需的CPU时间，那么这可能会很好。设置一个没有限制的请求怎么样？在这种情况下，kubernetes能够准确地安排你的pod，并且内核将确保它至少获得所请求的共享数量，但是你的进程将不会被阻止使用超过所请求的cpu数量，这将被盗来自其他进程的cpu共享（如果可用）。既不设置请求也不设置限制是最糟糕的情况：调度程序不知道容器需要什么，并且进程对cpu共享的使用是无限的，这可能会对节点产生负面影响。这是我想要谈论的最后一件事的好消息：确保命名空间中的默认限制。</p>
+<p><strong>默认限制</strong></p>
+<p>鉴于我们刚刚讨论过关于忽略资源限制对pod容器的负面影响的所有内容，你可能认为能够设置默认值会很好，因此允许进入群集的每个pod都至少设置了一些限制。Kubernetes允许我们使用LimitRange v1 api对象在每个命名空间的基础上执行此操作。要建立默认限制，请在要将其应用于的命名空间中创建LimitRange对象。这是一个例子：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=3585829404,1068895297&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>这里的命名可能有点令人困惑，所以让我们简单地把它拆掉。default key低于限制表示每个资源的默认限制。在这种情况下，任何允许没有内存限制的命名空间的pod都将被分配100Mi的限制。任何没有cpu限制的pod都将被分配100m的限制。defaultRequest键用于资源请求。如果在没有内存请求的情况下创建pod，则会为其分配默认请求50Mi，如果没有cpu请求，则默认值为50m。max和min键有点不同：基本上如果设置了pod，如果设置了违反这些边界的请求或限制，则不会允许pod进入命名空间。我没有找到这些的用途，但也许你有，如果是这样发表评论，让我们知道你对他们做了什么。</p>
+<p>LimitRange中规定的默认值由LimitRanger插件应用于pod，这是一个kubernetes许可控制器。入场控制器是插件，在api接受对象之后但在创建pod之前有机会修改podSpecs。对于LimitRanger，它会查看每个pod，如果它没有指定命名空间中存在默认设置的给定请求或限制，则它将应用该默认值。通过检查pod元数据中的注释，你可以看到LimitRanger已在你的pod上设置了默认值。这是LimitRanger应用100m的默认cpu请求的示例：</p>
+<p><img src="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/u=521774228,1221987196&fm=173&app=49&f=JPEG.jfif" alt="img"></p>
+<p>这包含了对kubernetes资源限制的看法。我希望这个信息对你有所帮助。如果你有兴趣阅读有关使用资源限制和默认值，linux cgroups或内存管理的更多信息，我已经提供了一些指向下面这些主题的更详细信息的链接。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" <i class="fa fa-tag"></i>k8s</a>
+              <a href="/tags/%E7%90%86%E8%AE%BA/" <i class="fa fa-tag"></i>理论</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="prev" title="Kubernetes面试题">
+      <i class="fa fa-chevron-left"></i> Kubernetes面试题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/01/k8s/%E6%90%AD%E5%BB%BAPrometheus%E7%9B%91%E6%8E%A7%E6%8A%A5%E8%AD%A6%E7%B3%BB%E7%BB%9F/" rel="next" title="搭建Prometheus监控报警系统">
+      搭建Prometheus监控报警系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

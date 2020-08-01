@@ -2,7 +2,7 @@
 title: keepalived架构实验
 date: 2020-03-09 21:02:42
 tags:
-- keeplived
+- keepalived
 - haproxy
 - wordpress
 categories: 高可用

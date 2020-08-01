@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="SchedulingQueue三级调度队列实现SchedulingQueue是kubenrets scheduler中负责进行等待调度pod存储的对，Scheduler通过SchedulingQueue来获取当前系统中等待调度的Pod，本文主要讨论SchedulingQueue的设计与实现的各种实现, 了解探究其内部实现与底层源码,本系列代码基于kubernets1.1.6分析而来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SchedulingQueue三级调度队列实现">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="SchedulingQueue三级调度队列实现SchedulingQueue是kubenrets scheduler中负责进行等待调度pod存储的对，Scheduler通过SchedulingQueue来获取当前系统中等待调度的Pod，本文主要讨论SchedulingQueue的设计与实现的各种实现, 了解探究其内部实现与底层源码,本系列代码基于kubernets1.1.6分析而来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578642885031-4a8cfaaa-247c-4cac-886b-da35e215150e.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578643674881-88f26bf8-714d-45eb-8258-95f7340183f8.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578647574537-1cc24e7e-e8fb-4e9c-b989-d7ff76f94d9e.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578647066466-d231d744-1300-46b3-bbff-ac1a3d414bc2.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578648699665-51207d28-5956-4e33-818c-43dc6b2adb99.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578650002621-02edb3ec-d29a-4937-a4c9-418e97effece.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578650503237-df1ddba9-f106-4dd6-9e79-c5ae49ff7275.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578882056126-49b2a324-86dd-455e-b97b-bb9ba54fff5c.png">
+<meta property="article:published_time" content="2020-04-03T06:54:42.000Z">
+<meta property="article:modified_time" content="2020-04-09T06:55:11.776Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578642885031-4a8cfaaa-247c-4cac-886b-da35e215150e.png">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>SchedulingQueue三级调度队列实现 | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SchedulingQueue三级调度队列实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-03 14:54:42" itemprop="dateCreated datePublished" datetime="2020-04-03T14:54:42+08:00">2020-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-09 14:55:11" itemprop="dateModified" datetime="2020-04-09T14:55:11+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">调度器核心数据结构与算法分析</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="SchedulingQueue三级调度队列实现"><a href="#SchedulingQueue三级调度队列实现" class="headerlink" title="SchedulingQueue三级调度队列实现"></a>SchedulingQueue三级调度队列实现</h1><p>SchedulingQueue是kubenrets scheduler中负责进行等待调度pod存储的对，Scheduler通过SchedulingQueue来获取当前系统中等待调度的Pod，本文主要讨论SchedulingQueue的设计与实现的各种实现, 了解探究其内部实现与底层源码,本系列代码基于kubernets1.1.6分析而来</p>
+<a id="more"></a>
+
+<h1 id="1-SchedulingQueue设计"><a href="#1-SchedulingQueue设计" class="headerlink" title="1. SchedulingQueue设计"></a>1. SchedulingQueue设计</h1><h2 id="1-1-队列与优先级"><a href="#1-1-队列与优先级" class="headerlink" title="1.1 队列与优先级"></a>1.1 队列与优先级</h2><h3 id="1-1-1-队列与场景"><a href="#1-1-1-队列与场景" class="headerlink" title="1.1.1 队列与场景"></a>1.1.1 队列与场景</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>通常实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>队列</td>
+<td>普通队列是一个FIFO的数据结构，根据元素入队的次序依次出队</td>
+<td>数组或者链表</td>
+</tr>
+<tr>
+<td>优先级队列</td>
+<td>优先级队列通常是指根据某些优先级策略，高优先级会优先被获取</td>
+<td>数组或者树</td>
+</tr>
+</tbody></table>
+<p>其实在大多数的调度场景中，大多都是采用优先级队列来实现，优先满足优先级比较高的任务或者需求，从而减少后续高优先级对低优先级的抢占，scheduler中也是如此 </p>
+<h3 id="1-1-2-优先级的选择"><a href="#1-1-2-优先级的选择" class="headerlink" title="1.1.2 优先级的选择"></a>1.1.2 优先级的选择</h3><p>k8s中调度的单元是Pod，scheduler中根据pod的优先级的高低来进行优先级队列的构建, 这个其实是在kubernets的adminission准入插件中，会为用户创建的pod根据用户的设置，进行优先级字段的计算</p>
+<h2 id="1-2-三级队列"><a href="#1-2-三级队列" class="headerlink" title="1.2 三级队列"></a>1.2 三级队列</h2><h3 id="1-2-1-活动队列"><a href="#1-2-1-活动队列" class="headerlink" title="1.2.1 活动队列"></a>1.2.1 活动队列</h3><p>活动队列存储当前系统中所有正在等待调度的队列</p>
+<h3 id="1-2-2-不可调度队列"><a href="#1-2-2-不可调度队列" class="headerlink" title="1.2.2 不可调度队列"></a>1.2.2 不可调度队列</h3><p>当pod的资源在当前集群中不能被满足时，则会被加入到一个不可调度队列中，然后等待稍后再进行尝试</p>
+<h3 id="1-2-3-backoff队列"><a href="#1-2-3-backoff队列" class="headerlink" title="1.2.3 backoff队列"></a>1.2.3 backoff队列</h3><p>backoff机制是并发编程中常见的一种机制，即如果任务反复执行依旧失败，则会按次增长等待调度时间，降低重试效率，从而避免反复失败浪费调度资源</p>
+<p>针对调度失败的pod会优先存储在backoff队列中，等待后续重试</p>
+<h2 id="1-3-阻塞与抢占"><a href="#1-3-阻塞与抢占" class="headerlink" title="1.3 阻塞与抢占"></a>1.3 阻塞与抢占</h2><h3 id="1-3-1-阻塞设计"><a href="#1-3-1-阻塞设计" class="headerlink" title="1.3.1 阻塞设计"></a>1.3.1 阻塞设计</h3><p>当队列中不存在等待调度的pod的时候，会阻塞scheduler等待有需要调度的pod的时候再唤醒调度器，获取pod进行调度</p>
+<h3 id="1-3-2-抢占相关"><a href="#1-3-2-抢占相关" class="headerlink" title="1.3.2 抢占相关"></a>1.3.2 抢占相关</h3><p>nominatedPods存储pod被提议运行的node,主要用于抢占调度流程中使用，本节先不分析</p>
+<h1 id="2-源码分析"><a href="#2-源码分析" class="headerlink" title="2. 源码分析"></a>2. 源码分析</h1><h2 id="2-1-数据结构"><a href="#2-1-数据结构" class="headerlink" title="2.1 数据结构"></a>2.1 数据结构</h2><p>kubernetes中默认的schedulingQueue实现是PriorityQueue，本章就以该数据结构来分析</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> PriorityQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="keyword">stop</span>  &lt;-chan <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">    clock util.Clock</span><br><span class="line">    <span class="comment">// 存储backoff的pod计时器</span></span><br><span class="line">    podBackoff *PodBackoffMap</span><br><span class="line"></span><br><span class="line">    lock sync.RWMutex</span><br><span class="line">    <span class="comment">// 用于协调通知因为获取不到调度pod而阻塞的cond</span></span><br><span class="line">    <span class="built_in">cond</span> sync.Cond</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 活动队列</span></span><br><span class="line">    activeQ *util.Heap</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// backoff队列</span></span><br><span class="line">    podBackoffQ *util.Heap</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 不可调度队列</span></span><br><span class="line">    unschedulableQ *UnschedulablePodsMap</span><br><span class="line">    <span class="comment">// 存储pod和被提名的node, 实际上就是存储pod和建议的node节点</span></span><br><span class="line">    nominatedPods *nominatedPodMap</span><br><span class="line">    <span class="comment">// schedulingCycle是一个调度周期的递增序号，当pod pop的时候会递增</span></span><br><span class="line">    schedulingCycle int64</span><br><span class="line">    <span class="comment">// moveRequestCycle缓存schedulingCycle, 当未调度的pod重新被添加到activeQueue中</span></span><br><span class="line">    <span class="comment">// 会保存schedulingCycle到moveRequestCycle中</span></span><br><span class="line">    moveRequestCycle int64</span><br><span class="line">    closed <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PriorityQueue作为实现SchedulingQueue的实现，其核心数据结构主要包含三个队列:activeQ、podBackoffQ、unscheduleQ内部通过cond来实现Pop操作的阻塞与通知，接下来先分析核心的调度流程，最后再分析util.Heap里面的具体实现</p>
+<h3 id="2-1-1-activeQ"><a href="#2-1-1-activeQ" class="headerlink" title="2.1.1 activeQ"></a>2.1.1 activeQ</h3><p>存储所有等待调度的Pod的队列，默认是基于堆来实现，其中元素的优先级则通过对比pod的创建时间和pod的优先级来进行排序</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// activeQ is heap structure that scheduler actively looks <span class="keyword">at</span> <span class="built_in">to</span> find pods <span class="built_in">to</span></span><br><span class="line">// schedule. Head <span class="keyword">of</span> heap is <span class="keyword">the</span> highest priority pod.</span><br><span class="line">activeQ *util.Heap</span><br></pre></td></tr></table></figure>
+
+<p>优先级比较函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// activeQComp is the function used by the activeQ heap algorithm to sort pods.</span></span><br><span class="line"><span class="comment">// It sorts pods based on their priority. When priorities are equal, it uses</span></span><br><span class="line"><span class="comment">// PodInfo.timestamp.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">activeQComp</span><span class="params">(podInfo1, podInfo2 <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    pInfo1 := podInfo1.(*framework.PodInfo)</span><br><span class="line">    pInfo2 := podInfo2.(*framework.PodInfo)</span><br><span class="line">    prio1 := util.GetPodPriority(pInfo1.Pod)</span><br><span class="line">    prio2 := util.GetPodPriority(pInfo2.Pod)</span><br><span class="line">    <span class="comment">// 首先根据优先级的高低进行比较，然后根据pod的创建时间，越高优先级的Pod越被优先调度</span></span><br><span class="line">    <span class="comment">// 越早创建的pod越优先</span></span><br><span class="line">    <span class="keyword">return</span> (prio1 &gt; prio2) || (prio1 == prio2 &amp;&amp; pInfo1.Timestamp.Before(pInfo2.Timestamp))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-2-podbackOffQ"><a href="#2-1-2-podbackOffQ" class="headerlink" title="2.1.2 podbackOffQ"></a>2.1.2 podbackOffQ</h3><p>podBackOffQ主要存储那些在多个schedulingCycle中依旧调度失败的情况下，则会通过之前说的backOff机制，延迟等待调度的时间</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// podBackoffQ is a heap ordered by backoff expiry. Pods which have completed backoff</span></span><br><span class="line"><span class="comment">// are popped from this heap before the scheduler looks at activeQ</span></span><br><span class="line">podBackoffQ *util.Heap</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-3-podBackOff"><a href="#2-1-3-podBackOff" class="headerlink" title="2.1.3 podBackOff"></a>2.1.3 podBackOff</h3><p>上面提到podBackOffQ队列中并没有存储pod的backOff的具体信息，比如backoff的计数器，最后一次更新的时间等，podBackOff则类似一个记分板，记录这些信息，供podBackOffQ使用</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// podBackoff tracks backoff for pods attempting to be rescheduled</span></span><br><span class="line">    podBackoff *PodBackoffMap</span><br><span class="line"></span><br><span class="line"><span class="comment">// PodBackoffMap is a structure that stores backoff related information for pods</span></span><br><span class="line">type PodBackoffMap struct &#123;</span><br><span class="line">    <span class="comment">// lock for performing actions on this PodBackoffMap</span></span><br><span class="line">    lock sync.RWMutex</span><br><span class="line">    <span class="comment">// initial backoff duration</span></span><br><span class="line">    initialDuration <span class="selector-tag">time</span><span class="selector-class">.Duration</span> <span class="comment">// 当前值是1秒</span></span><br><span class="line">    <span class="comment">// maximal backoff duration</span></span><br><span class="line">    maxDuration <span class="selector-tag">time</span><span class="selector-class">.Duration</span> <span class="comment">// 当前值是1分钟</span></span><br><span class="line">    <span class="comment">// map for pod -&gt; number of attempts for this pod</span></span><br><span class="line">    podAttempts map[ktypes.NamespacedName]int</span><br><span class="line">    <span class="comment">// map for pod -&gt; lastUpdateTime pod of this pod</span></span><br><span class="line">    podLastUpdateTime map[ktypes.NamespacedName]<span class="selector-tag">time</span>.Time</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-4-unschedulableQ"><a href="#2-1-4-unschedulableQ" class="headerlink" title="2.1.4 unschedulableQ"></a>2.1.4 unschedulableQ</h3><p>存储已经尝试调度但是当前集群资源不满足的pod的队列</p>
+<h3 id="2-1-5-moveRequestCycle"><a href="#2-1-5-moveRequestCycle" class="headerlink" title="2.1.5 moveRequestCycle"></a>2.1.5 moveRequestCycle</h3><p>当因为集群资源发生变化会尝试进行unschedulableQ中的pod转移到activeQ,moveRequestCycle就是存储资源变更时的schedulingCycle</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func (<span class="selector-tag">p</span> *PriorityQueue) MoveAllToActiveQueue() &#123;</span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">    <span class="selector-tag">p</span><span class="selector-class">.moveRequestCycle</span> = <span class="selector-tag">p</span>.schedulingCycle</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-6-schedulingCycle"><a href="#2-1-6-schedulingCycle" class="headerlink" title="2.1.6 schedulingCycle"></a>2.1.6 schedulingCycle</h3><p>schedulingCycle是一个递增的序列每次从activeQ中pop出一个pod都会递增</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="params">(*v1.Pod, error)</span></span> &#123;</span><br><span class="line">    <span class="comment">//省略其他</span></span><br><span class="line">        p.schedulingCycle++</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-并发活动队列"><a href="#2-2-并发活动队列" class="headerlink" title="2.2 并发活动队列"></a>2.2 并发活动队列</h2><h3 id="2-2-1-并发从活动队列中获取pod"><a href="#2-2-1-并发从活动队列中获取pod" class="headerlink" title="2.2.1 并发从活动队列中获取pod"></a>2.2.1 并发从活动队列中获取pod</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578642885031-4a8cfaaa-247c-4cac-886b-da35e215150e.png" alt="image.png"></p>
+<p>SchedulingQueue提供了一个Pop接口用于从获取当前集群中等待调度的pod,其内部实现主要通过上面cond与activeQ来实现</p>
+<p>当前队列中没有可调度的pod的时候，则通过cond.Wait来进行阻塞，然后在忘activeQ中添加pod的时候通过cond.Broadcast来实现通知</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">func (<span class="selector-tag">p</span> *PriorityQueue) Pop() (*v1<span class="selector-class">.Pod</span>, error) &#123;</span><br><span class="line">    <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Lock()</span><br><span class="line">    defer <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Unlock()</span><br><span class="line">    <span class="keyword">for</span> <span class="selector-tag">p</span><span class="selector-class">.activeQ</span>.Len() == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="selector-tag">p</span><span class="selector-class">.closed</span> &#123;</span><br><span class="line">            return nil, fmt.Errorf(queueClosed)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// </span></span><br><span class="line">        <span class="selector-tag">p</span><span class="selector-class">.cond</span>.Wait()</span><br><span class="line">    &#125;</span><br><span class="line">    obj, err := <span class="selector-tag">p</span><span class="selector-class">.activeQ</span>.Pop()</span><br><span class="line">    <span class="keyword">if</span> err != nil &#123;</span><br><span class="line">        return nil, err</span><br><span class="line">    &#125;</span><br><span class="line">    pInfo := obj.(*framework.PodInfo)</span><br><span class="line">    <span class="selector-tag">p</span>.schedulingCycle++</span><br><span class="line">    return pInfo<span class="selector-class">.Pod</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-2-2-加入调度pod到活动队列"><a href="#2-2-2-加入调度pod到活动队列" class="headerlink" title="2.2.2 加入调度pod到活动队列"></a>2.2.2 加入调度pod到活动队列</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578643674881-88f26bf8-714d-45eb-8258-95f7340183f8.png" alt="image.png"></p>
+<p>当pod加入活动队列中，除了加入activeQ的优先级队列中，还需要从podBackoffQ和unschedulableQ中移除当前的pod,最后进行广播通知阻塞在Pop操作的scheudler进行最新pod的获取</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">Add</span><span class="params">(pod *v1.Pod)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    p.lock.Lock()</span><br><span class="line">    <span class="keyword">defer</span> p.lock.Unlock()</span><br><span class="line">    pInfo := p.newPodInfo(pod)</span><br><span class="line">    <span class="comment">// 加入activeQ</span></span><br><span class="line">    <span class="keyword">if</span> err := p.activeQ.Add(pInfo); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error adding pod %v/%v to the scheduling queue: %v"</span>, pod.Namespace, pod.Name, err)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 从unschedulableQ删除</span></span><br><span class="line">    <span class="keyword">if</span> p.unschedulableQ.get(pod) != <span class="literal">nil</span> &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error: pod %v/%v is already in the unschedulable queue."</span>, pod.Namespace, pod.Name)</span><br><span class="line">        p.unschedulableQ.<span class="built_in">delete</span>(pod)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Delete pod from backoffQ if it is backing off</span></span><br><span class="line">    <span class="comment">// 从podBackoffQ删除</span></span><br><span class="line">    <span class="keyword">if</span> err := p.podBackoffQ.Delete(pInfo); err == <span class="literal">nil</span> &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error: pod %v/%v is already in the podBackoff queue."</span>, pod.Namespace, pod.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 存储pod和被提名的node</span></span><br><span class="line">    p.nominatedPods.add(pod, <span class="string">""</span>)</span><br><span class="line">    p.cond.Broadcast()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-schedulingCycle与moveRequestCycle"><a href="#2-3-schedulingCycle与moveRequestCycle" class="headerlink" title="2.3 schedulingCycle与moveRequestCycle"></a>2.3 schedulingCycle与moveRequestCycle</h2><h3 id="2-3-1-未调度的队列的及时重试"><a href="#2-3-1-未调度的队列的及时重试" class="headerlink" title="2.3.1 未调度的队列的及时重试"></a>2.3.1 未调度的队列的及时重试</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578647574537-1cc24e7e-e8fb-4e9c-b989-d7ff76f94d9e.png" alt="image.png"></p>
+<p>导致调度周期schedulingCyclye变更主要因素如下:</p>
+<p>1.当集群资源发生变化的时候:比如新添加pv、node等资源，那之前在unschedulableQ中因为资源不满足需求的pod就可以进行放入activeQ中或者podBackoffQ中，及时进行调度</p>
+<p>2.pod被成功调度: 之前由于亲和性不满足被放入到unschedulableQ中的pod，此时也可以进行尝试，而不必等到超时之后，再加入</p>
+<p>这两种情况下会分别触发MoveAllToActiveQueue和movePodsToActiveQueue变更moveRequestCycle使其等于schedulingCycle</p>
+<h3 id="2-3-2-对重试机制的影响"><a href="#2-3-2-对重试机制的影响" class="headerlink" title="2.3.2 对重试机制的影响"></a>2.3.2 对重试机制的影响</h3><p>当前一个pod失败的时候，有两种选择一是加入podBackoffQ中，二是加入unschedulableQ中，那么针对一个失败的pod如何选择该进入那个队列中呢</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578647066466-d231d744-1300-46b3-bbff-ac1a3d414bc2.png" alt="image.png"></p>
+<p>结合上面的moveRequestCycle变更时机，什么时候moveRequestCycle会大于等于podSchedulingCycle呢？答案就是当前集群中进行过集群资源的变更或者pod被成功分配，那这个时候我们如果重试一个失败的调度则可能会成功，因为集群资源变更了可能有新的资源加入, 如果发生调度器重启的情况下，则会出现moveRequestCycle大于当前的podSchedulingCycle则当前应该对之前已经失败的pod进行重试，而不是加入到unschedulable中</p>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if p.moveRequestCycle &gt;= podSchedulingCycle &#123;</span><br><span class="line">    <span class="attribute">if err</span> := p<span class="variable">.podBackoffQ</span><span class="variable">.Add</span>(pInfo); <span class="attribute">err != nil &#123;</span></span><br><span class="line"><span class="attribute">        return fmt.Errorf("error adding pod %v to the backoff queue</span>: %v", pod<span class="variable">.Name</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    p<span class="variable">.unschedulableQ</span><span class="variable">.addOrUpdate</span>(pInfo)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-4-失败处理逻辑的注入"><a href="#2-4-失败处理逻辑的注入" class="headerlink" title="2.4 失败处理逻辑的注入"></a>2.4 失败处理逻辑的注入</h2><h3 id="2-3-1-注入调度失败逻辑处理"><a href="#2-3-1-注入调度失败逻辑处理" class="headerlink" title="2.3.1 注入调度失败逻辑处理"></a>2.3.1 注入调度失败逻辑处理</h3><p>在创建scheduler Config的时候会通过MakeDefaultErrorFunc注入一个失败处理函数, 在scheduler调度的时候会进行调用</p>
+<p>kubernetes/pkg/scheduler/factory/factory.go: MakeDefaultErrorFunc会将没有调度到任何一个node的pod重新放回到优先级队列中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">podSchedulingCycle := podQueue.SchedulingCycle()</span><br><span class="line"><span class="comment">// 省略非核心代码</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(pod.Spec.NodeName) == <span class="number">0</span> &#123;</span><br><span class="line">    <span class="comment">//重新放回队列</span></span><br><span class="line">    <span class="keyword">if</span> err := podQueue.AddUnschedulableIfNotPresent(pod, podSchedulingCycle); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        klog.Error(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-2-失败处理的回调"><a href="#2-3-2-失败处理的回调" class="headerlink" title="2.3.2 失败处理的回调"></a>2.3.2 失败处理的回调</h3><p>当调度pod的失败的时候, scheduler会同时调用sched.Error就是上面注入的失败处理逻辑，来将调度失败未分配node的pod节点重新加入到队里钟</p>
+<p>kubernetes/pkg/scheduler/scheduler.go</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func (sched *Scheduler) recordSchedulingFailure(pod *v1.Pod, <span class="keyword">err</span> <span class="keyword">error</span>, reason string, message string) &#123;</span><br><span class="line">    <span class="comment">// 错误回调</span></span><br><span class="line">    sched.<span class="keyword">Error</span>(pod, <span class="keyword">err</span>)</span><br><span class="line">    sched.Recorder.Eventf(pod, nil, v1.EventTypeWarning, <span class="string">"FailedScheduling"</span>, <span class="string">"Scheduling"</span>, message)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">err</span> := sched.PodConditionUpdater.<span class="keyword">Update</span>(pod, &amp;v1.PodCondition&#123;</span><br><span class="line">        <span class="keyword">Type</span>:    v1.PodScheduled,</span><br><span class="line">        Status:  v1.ConditionFalse,</span><br><span class="line">        Reason:  reason,</span><br><span class="line">        Message: <span class="keyword">err</span>.<span class="keyword">Error</span>(),</span><br><span class="line">    &#125;); <span class="keyword">err</span> != nil &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error updating the condition of the pod %s/%s: %v"</span>, pod.Namespace, pod.Name, <span class="keyword">err</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-5-PodBackoffMap"><a href="#2-5-PodBackoffMap" class="headerlink" title="2.5 PodBackoffMap"></a>2.5 PodBackoffMap</h2><p>PodBackoffMap主要用于存储pod的最后一次失败的更新时间与实现次数，从而根据这些数据来进行pod的backoffTime的计算</p>
+<h3 id="2-5-1-数据结构设计"><a href="#2-5-1-数据结构设计" class="headerlink" title="2.5.1 数据结构设计"></a>2.5.1 数据结构设计</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">type PodBackoffMap struct &#123;</span><br><span class="line">    <span class="comment">// lock for performing actions on this PodBackoffMap</span></span><br><span class="line">    lock sync.RWMutex</span><br><span class="line">    <span class="comment">// 初始化 backoff duration</span></span><br><span class="line">    initialDuration <span class="selector-tag">time</span><span class="selector-class">.Duration</span> <span class="comment">// 当前值是1秒</span></span><br><span class="line">    <span class="comment">// 最大 backoff duration</span></span><br><span class="line">    maxDuration <span class="selector-tag">time</span><span class="selector-class">.Duration</span> <span class="comment">// 当前值是1分钟</span></span><br><span class="line">    <span class="comment">// 记录pod重试的次数</span></span><br><span class="line">    podAttempts map[ktypes.NamespacedName]int</span><br><span class="line">    <span class="comment">// 记录pod的最后一次的更新时间</span></span><br><span class="line">    podLastUpdateTime map[ktypes.NamespacedName]<span class="selector-tag">time</span>.Time</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-2-backoffTime计算算法"><a href="#2-5-2-backoffTime计算算法" class="headerlink" title="2.5.2 backoffTime计算算法"></a>2.5.2 backoffTime计算算法</h3><p>初始化的时候回设定initialDuration和maxDuration，在当前版本中分别是1s和10s,也就是backoffQ中的pod最长10s就会重新加入activeQ中(需要等待定时任务进行辅助)</p>
+<p>在每次失败回调的时候，都会进行BackoffPod方法来进行计数更新，在后续获取pod的backoffTime的时候，只需要获取次数然后结合initialDuration进行算法计算，结合pod最后一次的更新时间,就会获取pod的backoffTime的终止时间</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578648699665-51207d28-5956-4e33-818c-43dc6b2adb99.png" alt="image.png"></p>
+<h3 id="2-5-3-backoffDuration计算"><a href="#2-5-3-backoffDuration计算" class="headerlink" title="2.5.3 backoffDuration计算"></a>2.5.3 backoffDuration计算</h3><p>其实最终的计算很简单就是2的N次幂</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pbm *PodBackoffMap)</span> <span class="title">calculateBackoffDuration</span><span class="params">(nsPod ktypes.NamespacedName)</span> <span class="title">time</span>.<span class="title">Duration</span></span> &#123;</span><br><span class="line">    <span class="comment">// initialDuration是1s</span></span><br><span class="line">    backoffDuration := pbm.initialDuration</span><br><span class="line">    <span class="keyword">if</span> _, found := pbm.podAttempts[nsPod]; found &#123;</span><br><span class="line">        <span class="comment">// podAttempts里面包含pod的尝试失败的次数</span></span><br><span class="line">        <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; pbm.podAttempts[nsPod]; i++ &#123;</span><br><span class="line">            backoffDuration = backoffDuration * <span class="number">2</span></span><br><span class="line">            <span class="comment">// 最大10s</span></span><br><span class="line">            <span class="keyword">if</span> backoffDuration &gt; pbm.maxDuration &#123;</span><br><span class="line">                <span class="keyword">return</span> pbm.maxDuration</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> backoffDuration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-6-podBackoffQ"><a href="#2-6-podBackoffQ" class="headerlink" title="2.6 podBackoffQ"></a>2.6 podBackoffQ</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578650002621-02edb3ec-d29a-4937-a4c9-418e97effece.png" alt="image.png"></p>
+<h3 id="2-6-1-优先级函数"><a href="#2-6-1-优先级函数" class="headerlink" title="2.6.1 优先级函数"></a>2.6.1 优先级函数</h3><p>podBackoffQ实际上会根据pod的backoffTime来进行优先级排序，所以podBackoffQ的队列头部，<strong>就是最近一个要过期的pod</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">podsCompareBackoffCompleted</span><span class="params">(podInfo1, podInfo2 <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    pInfo1 := podInfo1.(*framework.PodInfo)</span><br><span class="line">    pInfo2 := podInfo2.(*framework.PodInfo)</span><br><span class="line">    bo1, _ := p.podBackoff.GetBackoffTime(nsNameForPod(pInfo1.Pod))</span><br><span class="line">    bo2, _ := p.podBackoff.GetBackoffTime(nsNameForPod(pInfo2.Pod))</span><br><span class="line">    <span class="keyword">return</span> bo1.Before(bo2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-6-2-调度失败加入到podBackoffQ"><a href="#2-6-2-调度失败加入到podBackoffQ" class="headerlink" title="2.6.2 调度失败加入到podBackoffQ"></a>2.6.2 调度失败加入到podBackoffQ</h3><p>如果调度失败，并且moveRequestCycle=podSchedulingCycle的时候就加入podBackfoffQ中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">AddUnschedulableIfNotPresent</span><span class="params">(pod *v1.Pod, podSchedulingCycle <span class="keyword">int64</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="comment">// 省略检查性代码</span></span><br><span class="line">    <span class="comment">// 更新pod的backoff 信息</span></span><br><span class="line">    p.backoffPod(pod)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// moveRequestCycle将pod从unscheduledQ大于pod的调度周期添加到 如果pod的调度周期小于当前的调度周期</span></span><br><span class="line">    <span class="keyword">if</span> p.moveRequestCycle &gt;= podSchedulingCycle &#123;</span><br><span class="line">        <span class="keyword">if</span> err := p.podBackoffQ.Add(pInfo); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> fmt.Errorf(<span class="string">"error adding pod %v to the backoff queue: %v"</span>, pod.Name, err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        p.unschedulableQ.addOrUpdate(pInfo)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    p.nominatedPods.add(pod, <span class="string">""</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-3-从unschedulableQ迁移"><a href="#2-6-3-从unschedulableQ迁移" class="headerlink" title="2.6.3 从unschedulableQ迁移"></a>2.6.3 从unschedulableQ迁移</h3><p>在前面介绍的当集群资源发生变更的时候，会触发尝试unschedulabelQ中的pod进行转移，如果发现当前pod还未到达backoffTime,就加入到podBackoffQ中</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> p.isPodBackingOff(pod) &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">err</span> := p.podBackoffQ.Add(pInfo); <span class="keyword">err</span> != nil &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error adding pod %v to the backoff queue: %v"</span>, pod.Name, <span class="keyword">err</span>)</span><br><span class="line">        addErrorPods = <span class="keyword">append</span>(addErrorPods, pInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">err</span> := p.activeQ.Add(pInfo); <span class="keyword">err</span> != nil &#123;</span><br><span class="line">        klog.Errorf(<span class="string">"Error adding pod %v to the scheduling queue: %v"</span>, pod.Name, <span class="keyword">err</span>)</span><br><span class="line">        addErrorPods = <span class="keyword">append</span>(addErrorPods, pInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-4-podBackoffQ定时转移"><a href="#2-6-4-podBackoffQ定时转移" class="headerlink" title="2.6.4 podBackoffQ定时转移"></a>2.6.4 podBackoffQ定时转移</h3><p>在创建PriorityQueue的时候，会创建两个定时任务其中一个就是讲backoffQ中的pod到期后的转移，每秒钟尝试一次</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func (p *PriorityQueue) run<span class="literal">()</span> &#123;</span><br><span class="line">    go wait.<span class="constructor">Until(<span class="params">p</span>.<span class="params">flushBackoffQCompleted</span>, 1.0<span class="operator">*</span><span class="params">time</span>.Second, <span class="params">p</span>.<span class="params">stop</span>)</span></span><br><span class="line">    go wait.<span class="constructor">Until(<span class="params">p</span>.<span class="params">flushUnschedulableQLeftover</span>, 30<span class="operator">*</span><span class="params">time</span>.Second, <span class="params">p</span>.<span class="params">stop</span>)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为是一个堆结果，所以只需要获取堆顶的元素，然后确定是否到期，如果到期后则进行pop处来，加入到activeQ中</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">func (<span class="selector-tag">p</span> *PriorityQueue) flushBackoffQCompleted() &#123;</span><br><span class="line">    <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Lock()</span><br><span class="line">    defer <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Unlock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="comment">// 获取堆顶元素</span></span><br><span class="line">        rawPodInfo := <span class="selector-tag">p</span><span class="selector-class">.podBackoffQ</span>.Peek()</span><br><span class="line">        <span class="keyword">if</span> rawPodInfo == nil &#123;</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">        pod := rawPodInfo.(*framework.PodInfo).Pod</span><br><span class="line">        <span class="comment">// 获取到期时间</span></span><br><span class="line">        boTime, found := <span class="selector-tag">p</span><span class="selector-class">.podBackoff</span>.GetBackoffTime(nsNameForPod(pod))</span><br><span class="line">        <span class="keyword">if</span> !found &#123;</span><br><span class="line">            <span class="comment">// 如果当前已经不在podBackoff中，则就pop出来然后放入到activeQ</span></span><br><span class="line">            klog.Errorf(<span class="string">"Unable to find backoff value for pod %v in backoffQ"</span>, nsNameForPod(pod))</span><br><span class="line">            <span class="selector-tag">p</span><span class="selector-class">.podBackoffQ</span>.Pop()</span><br><span class="line">            <span class="selector-tag">p</span><span class="selector-class">.activeQ</span>.Add(rawPodInfo)</span><br><span class="line">            defer <span class="selector-tag">p</span><span class="selector-class">.cond</span>.Broadcast()</span><br><span class="line">            continue</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 未超时</span></span><br><span class="line">        <span class="keyword">if</span> boTime.After(<span class="selector-tag">p</span><span class="selector-class">.clock</span>.Now()) &#123;</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 超时就pop出来</span></span><br><span class="line">        _, err := <span class="selector-tag">p</span><span class="selector-class">.podBackoffQ</span>.Pop()</span><br><span class="line">        <span class="keyword">if</span> err != nil &#123;</span><br><span class="line">            klog.Errorf(<span class="string">"Unable to pop pod %v from backoffQ despite backoff completion."</span>, nsNameForPod(pod))</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 加入到activeQ中</span></span><br><span class="line">        <span class="selector-tag">p</span><span class="selector-class">.activeQ</span>.Add(rawPodInfo)</span><br><span class="line">        defer <span class="selector-tag">p</span><span class="selector-class">.cond</span>.Broadcast()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-7-unschedulableQ"><a href="#2-7-unschedulableQ" class="headerlink" title="2.7 unschedulableQ"></a>2.7 unschedulableQ</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578650503237-df1ddba9-f106-4dd6-9e79-c5ae49ff7275.png" alt="image.png"></p>
+<h3 id="2-7-1-调度失败"><a href="#2-7-1-调度失败" class="headerlink" title="2.7.1 调度失败"></a>2.7.1 调度失败</h3><p>调度失败后，如果当前集群资源没有发生变更，就加入到unschedulable，原因上面说过</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">AddUnschedulableIfNotPresent</span><span class="params">(pod *v1.Pod, podSchedulingCycle <span class="keyword">int64</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="comment">// 省略检查性代码</span></span><br><span class="line">    <span class="comment">// 更新pod的backoff 信息</span></span><br><span class="line">    p.backoffPod(pod)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// moveRequestCycle将pod从unscheduledQ大于pod的调度周期添加到 如果pod的调度周期小于当前的调度周期</span></span><br><span class="line">    <span class="keyword">if</span> p.moveRequestCycle &gt;= podSchedulingCycle &#123;</span><br><span class="line">        <span class="keyword">if</span> err := p.podBackoffQ.Add(pInfo); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> fmt.Errorf(<span class="string">"error adding pod %v to the backoff queue: %v"</span>, pod.Name, err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        p.unschedulableQ.addOrUpdate(pInfo)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    p.nominatedPods.add(pod, <span class="string">""</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-7-2-定时转移任务"><a href="#2-7-2-定时转移任务" class="headerlink" title="2.7.2 定时转移任务"></a>2.7.2 定时转移任务</h3><p>定时任务每30秒执行一次</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (p *PriorityQueue) run<span class="literal">()</span> &#123;</span><br><span class="line">    go wait.<span class="constructor">Until(<span class="params">p</span>.<span class="params">flushUnschedulableQLeftover</span>, 30<span class="operator">*</span><span class="params">time</span>.Second, <span class="params">p</span>.<span class="params">stop</span>)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逻辑其实就非常简单如果当前时间-pod的最后调度时间大于60s,就重新调度，转移到podBackoffQ或者activeQ中</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">func (<span class="selector-tag">p</span> *PriorityQueue) flushUnschedulableQLeftover() &#123;</span><br><span class="line">    <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Lock()</span><br><span class="line">    defer <span class="selector-tag">p</span><span class="selector-class">.lock</span>.Unlock()</span><br><span class="line"></span><br><span class="line">    <span class="selector-tag">var</span> podsToMove []*framework.PodInfo</span><br><span class="line">    currentTime := <span class="selector-tag">p</span><span class="selector-class">.clock</span>.Now()</span><br><span class="line">    <span class="keyword">for</span> _, pInfo := range <span class="selector-tag">p</span><span class="selector-class">.unschedulableQ</span><span class="selector-class">.podInfoMap</span> &#123;</span><br><span class="line">        lastScheduleTime := pInfo.Timestamp</span><br><span class="line">        <span class="comment">// 如果该pod1分钟内没有被调度就加入到podsToMove</span></span><br><span class="line">        <span class="keyword">if</span> currentTime.Sub(lastScheduleTime) &gt; unschedulableQTimeInterval &#123;</span><br><span class="line">            podsToMove = append(podsToMove, pInfo)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> len(podsToMove) &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// podsToMove将这些pod移动到activeQ</span></span><br><span class="line">        <span class="selector-tag">p</span>.movePodsToActiveQueue(podsToMove)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-调度队列总结"><a href="#3-调度队列总结" class="headerlink" title="3. 调度队列总结"></a>3. 调度队列总结</h1><h2 id="3-1-数据流设计总结"><a href="#3-1-数据流设计总结" class="headerlink" title="3.1 数据流设计总结"></a>3.1 数据流设计总结</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/1578882056126-49b2a324-86dd-455e-b97b-bb9ba54fff5c.png" alt="image.png"></p>
+<h3 id="3-1-1-三队列与后台定时任务"><a href="#3-1-1-三队列与后台定时任务" class="headerlink" title="3.1.1 三队列与后台定时任务"></a>3.1.1 三队列与后台定时任务</h3><p>从设计上三队列分别存储：活动队列、bakcoff队列、不可调度队列，其中backoff中会根据任务的失败来逐步递增重试时间(最长10s)、unschedulableQ队列则延迟60s</p>
+<p>通过后台定时任务分别将backoffQ队列、unschedulableQ队列来进行重试，加入到activeQ中，从而加快完成pod的失败重试调度</p>
+<h3 id="3-1-2-cycle与优先调度"><a href="#3-1-2-cycle与优先调度" class="headerlink" title="3.1.2 cycle与优先调度"></a>3.1.2 cycle与优先调度</h3><p>schedulingCycle、moveRequestCycle两个cycle其实本质上也是为了加快失败任务的重试调度，当集群资源发生变化的时候，进行立即重试，那些失败的优先级比较高、亲和性问题的pod都可能会被优先调度</p>
+<h3 id="3-1-3-锁与cond实现线程安全pop"><a href="#3-1-3-锁与cond实现线程安全pop" class="headerlink" title="3.1.3 锁与cond实现线程安全pop"></a>3.1.3 锁与cond实现线程安全pop</h3><p>内部通过lock保证线程安全，并通过cond来实现阻塞等待，从而实现阻塞scheduler worker的通知</p>
+<p>今天就分析到这里，其实参考这个实现，我们也可以从中抽象出一些设计思想，实现自己的一个具有优先级、快速重试、高可用的任务队列，先分析到这，下一个分析的组件是SchedulerCache, 感兴趣可以加我微信一起交流学习,毕竟三个臭皮匠算计不过诸葛亮</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/" rel="prev" title="调度器学习基础概览">
+      <i class="fa fa-chevron-left"></i> 调度器学习基础概览
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/" rel="next" title="ScheduleAlgorithm调度算法框架实现">
+      ScheduleAlgorithm调度算法框架实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SchedulingQueue三级调度队列实现"><span class="nav-number">1.</span> <span class="nav-text">SchedulingQueue三级调度队列实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-SchedulingQueue设计"><span class="nav-number">2.</span> <span class="nav-text">1. SchedulingQueue设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-队列与优先级"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 队列与优先级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-队列与场景"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.1.1 队列与场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-2-优先级的选择"><span class="nav-number">2.1.2.</span> <span class="nav-text">1.1.2 优先级的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-三级队列"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 三级队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-活动队列"><span class="nav-number">2.2.1.</span> <span class="nav-text">1.2.1 活动队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-不可调度队列"><span class="nav-number">2.2.2.</span> <span class="nav-text">1.2.2 不可调度队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-backoff队列"><span class="nav-number">2.2.3.</span> <span class="nav-text">1.2.3 backoff队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-阻塞与抢占"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 阻塞与抢占</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-阻塞设计"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.3.1 阻塞设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-抢占相关"><span class="nav-number">2.3.2.</span> <span class="nav-text">1.3.2 抢占相关</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-源码分析"><span class="nav-number">3.</span> <span class="nav-text">2. 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-数据结构"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-activeQ"><span class="nav-number">3.1.1.</span> <span class="nav-text">2.1.1 activeQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-podbackOffQ"><span class="nav-number">3.1.2.</span> <span class="nav-text">2.1.2 podbackOffQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-podBackOff"><span class="nav-number">3.1.3.</span> <span class="nav-text">2.1.3 podBackOff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-unschedulableQ"><span class="nav-number">3.1.4.</span> <span class="nav-text">2.1.4 unschedulableQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-5-moveRequestCycle"><span class="nav-number">3.1.5.</span> <span class="nav-text">2.1.5 moveRequestCycle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-6-schedulingCycle"><span class="nav-number">3.1.6.</span> <span class="nav-text">2.1.6 schedulingCycle</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-并发活动队列"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 并发活动队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-并发从活动队列中获取pod"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.2.1 并发从活动队列中获取pod</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-加入调度pod到活动队列"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2.2 加入调度pod到活动队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-schedulingCycle与moveRequestCycle"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 schedulingCycle与moveRequestCycle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-未调度的队列的及时重试"><span class="nav-number">3.3.1.</span> <span class="nav-text">2.3.1 未调度的队列的及时重试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-对重试机制的影响"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.3.2 对重试机制的影响</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-失败处理逻辑的注入"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 失败处理逻辑的注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-注入调度失败逻辑处理"><span class="nav-number">3.4.1.</span> <span class="nav-text">2.3.1 注入调度失败逻辑处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-失败处理的回调"><span class="nav-number">3.4.2.</span> <span class="nav-text">2.3.2 失败处理的回调</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-PodBackoffMap"><span class="nav-number">3.5.</span> <span class="nav-text">2.5 PodBackoffMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-1-数据结构设计"><span class="nav-number">3.5.1.</span> <span class="nav-text">2.5.1 数据结构设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-2-backoffTime计算算法"><span class="nav-number">3.5.2.</span> <span class="nav-text">2.5.2 backoffTime计算算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-3-backoffDuration计算"><span class="nav-number">3.5.3.</span> <span class="nav-text">2.5.3 backoffDuration计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-podBackoffQ"><span class="nav-number">3.6.</span> <span class="nav-text">2.6 podBackoffQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-1-优先级函数"><span class="nav-number">3.6.1.</span> <span class="nav-text">2.6.1 优先级函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-2-调度失败加入到podBackoffQ"><span class="nav-number">3.6.2.</span> <span class="nav-text">2.6.2 调度失败加入到podBackoffQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-3-从unschedulableQ迁移"><span class="nav-number">3.6.3.</span> <span class="nav-text">2.6.3 从unschedulableQ迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-4-podBackoffQ定时转移"><span class="nav-number">3.6.4.</span> <span class="nav-text">2.6.4 podBackoffQ定时转移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-unschedulableQ"><span class="nav-number">3.7.</span> <span class="nav-text">2.7 unschedulableQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-1-调度失败"><span class="nav-number">3.7.1.</span> <span class="nav-text">2.7.1 调度失败</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-2-定时转移任务"><span class="nav-number">3.7.2.</span> <span class="nav-text">2.7.2 定时转移任务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-调度队列总结"><span class="nav-number">4.</span> <span class="nav-text">3. 调度队列总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-数据流设计总结"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 数据流设计总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-三队列与后台定时任务"><span class="nav-number">4.1.1.</span> <span class="nav-text">3.1.1 三队列与后台定时任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-cycle与优先调度"><span class="nav-number">4.1.2.</span> <span class="nav-text">3.1.2 cycle与优先调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-3-锁与cond实现线程安全pop"><span class="nav-number">4.1.3.</span> <span class="nav-text">3.1.3 锁与cond实现线程安全pop</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -20,30 +20,30 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="介绍">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ansible–playbook用法与自己的yml范例总结">
-<meta property="og:url" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
 <meta property="og:description" content="介绍">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4c29ec0b0b101df9314dd9029da4239f.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/27323280d21ff3571b8f3011a044e12b.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/fae3694d8539a312c50157124b7556d7.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/3b07c63e0f1afbabc1c306b7bf66edcf.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4ce06b7d76c2b70cc96aeef4e1b4cdae.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/72c303ba2ddd3a2c5367ad9187225623.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4c29ec0b0b101df9314dd9029da4239f.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/27323280d21ff3571b8f3011a044e12b.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/fae3694d8539a312c50157124b7556d7.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/3b07c63e0f1afbabc1c306b7bf66edcf.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4ce06b7d76c2b70cc96aeef4e1b4cdae.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/72c303ba2ddd3a2c5367ad9187225623.png">
 <meta property="article:published_time" content="2020-03-10T06:31:28.000Z">
 <meta property="article:modified_time" content="2020-03-10T09:46:28.868Z">
 <meta property="article:author" content="屈辉">
 <meta property="article:tag" content="ansible">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4c29ec0b0b101df9314dd9029da4239f.png">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4c29ec0b0b101df9314dd9029da4239f.png">
 
-<link rel="canonical" href="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/">
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/">
 
 
 <script id="page-configurations">
@@ -133,17 +133,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">59</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">20</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">115</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -199,7 +199,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -396,20 +396,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">177</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

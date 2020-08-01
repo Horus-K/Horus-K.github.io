@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="YAML中多行字符串的配置方法有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：  文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。 文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。  简单的说，就是：  配置与显示，都严格按段落展示 配置按段落，显示不需要按段落  假设，我们需要配置这样一段文字： 1I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yaml文本换行语法">
+<meta property="og:url" content="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="YAML中多行字符串的配置方法有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：  文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。 文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。  简单的说，就是：  配置与显示，都严格按段落展示 配置按段落，显示不需要按段落  假设，我们需要配置这样一段文字： 1I">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-30T05:57:07.000Z">
+<meta property="article:modified_time" content="2020-08-01T13:20:14.416Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="yaml">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>yaml文本换行语法 | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          yaml文本换行语法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-30 13:57:07" itemprop="dateCreated datePublished" datetime="2020-07-30T13:57:07+08:00">2020-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-01 21:20:14" itemprop="dateModified" datetime="2020-08-01T21:20:14+08:00">2020-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="YAML中多行字符串的配置方法"><a href="#YAML中多行字符串的配置方法" class="headerlink" title="YAML中多行字符串的配置方法"></a>YAML中多行字符串的配置方法</h1><p>有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：</p>
+<ol>
+<li>文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。</li>
+<li>文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。</li>
+</ol>
+<p>简单的说，就是：</p>
+<ol>
+<li>配置与显示，都严格按段落展示</li>
+<li>配置按段落，显示不需要按段落</li>
+</ol>
+<p>假设，我们需要配置这样一段文字：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>下面，就针对上面的两种情况来看看可以怎么来实现：</p>
+<a id="more"></a>
+
+<h2 id="配置与显示，都严格按段落展示"><a href="#配置与显示，都严格按段落展示" class="headerlink" title="配置与显示，都严格按段落展示"></a>配置与显示，都严格按段落展示</h2><p>这个需求下，我们希望配置和显示都按句子换行，就是这样：</p>
+<figure class="highlight mercury"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I am a coder.</span><br><span class="line">My blog <span class="keyword">is</span> didispace.com.</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法一：直接使用-n来换行"><a href="#方法一：直接使用-n来换行" class="headerlink" title="方法一：直接使用\n来换行"></a>方法一：直接使用<code>\n</code>来换行</h3><p>这样写：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">string:</span> <span class="string">"I am a coder.\n\</span></span><br><span class="line"><span class="string">         My blog is didispace.com."</span></span><br></pre></td></tr></table></figure>
+
+<p>最终输出：</p>
+<figure class="highlight mercury"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I am a coder.</span><br><span class="line">My blog <span class="keyword">is</span> didispace.com.</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>\n</code>在显示的时候换行，通过配置行末的<code>\</code>让这个字符串换行继续写（这个必须有，如果没有第二行行首会多一个空格）。</p>
+<p><strong>注意</strong>：这里必须使用双引号来定义字符串，不能用单引号。因为单引号是不支持<code>\n</code>换行的。</p>
+<h3 id="方法二：使用｜、｜-、｜"><a href="#方法二：使用｜、｜-、｜" class="headerlink" title="方法二：使用｜、｜+、｜-"></a>方法二：使用<code>｜</code>、<code>｜+</code>、<code>｜-</code></h3><p>在方法一种，其实我们在文字中加入了几个转义符号，其实对于阅读并不方便。在方法二中，将介绍更适合阅读的几种形式：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">strin<span class="variable">g:</span> |</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br><span class="line"></span><br><span class="line">strin<span class="variable">g:</span> |+</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br><span class="line"></span><br><span class="line">strin<span class="variable">g:</span> |-</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>如上面一共有三种配置都会自动按配置中所写的换行来换行，但是在文末会有一些区别，有的会增加一个空行，有的不会，有的会新增两个空行，具体说明如下：</p>
+<ul>
+<li><code>|</code>：文中自动换行 + 文末新增一空行</li>
+<li><code>|+</code>：文中自动换行 + 文末新增两空行</li>
+<li><code>|-</code>：文中自动换行 + 文末不新增行</li>
+</ul>
+<h2 id="配置按段落，显示不需要按段落"><a href="#配置按段落，显示不需要按段落" class="headerlink" title="配置按段落，显示不需要按段落"></a>配置按段落，显示不需要按段落</h2><p>这个需求下，我们希望配置里是按行写的，但是显示是如下面这样在一行的：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法一：直接在字符串中换行写"><a href="#方法一：直接在字符串中换行写" class="headerlink" title="方法一：直接在字符串中换行写"></a>方法一：直接在字符串中换行写</h3><p>最粗暴的写法，反正不用换行，那就直接写了：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span>: <span class="comment">'I am a coder.</span></span><br><span class="line">         My blog <span class="keyword">is</span> didispace.com.<span class="comment">'</span></span><br></pre></td></tr></table></figure>
+
+<p>这里不论用双引号还是单引号都是可以的。因为不存在需要转移的内容，所以总体还算清晰。</p>
+<h3 id="方法二：使用-gt-、-gt-、-gt"><a href="#方法二：使用-gt-、-gt-、-gt" class="headerlink" title="方法二：使用&gt;、&gt;+、&gt;-"></a>方法二：使用<code>&gt;</code>、<code>&gt;+</code>、<code>&gt;-</code></h3><p>比较好的表述方式就是使用<code>&gt;</code>、<code>&gt;+</code>、<code>&gt;-</code>来定义，比如下面这几种：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">string:</span> <span class="string">&gt;</span></span><br><span class="line">  <span class="string">I</span> <span class="string">am</span> <span class="string">a</span> <span class="string">coder.</span></span><br><span class="line">  <span class="string">My</span> <span class="string">blog</span> <span class="string">is</span> <span class="string">didispace.com.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">string:</span> <span class="string">&gt;+</span></span><br><span class="line">  <span class="string">I</span> <span class="string">am</span> <span class="string">a</span> <span class="string">coder.</span></span><br><span class="line">  <span class="string">My</span> <span class="string">blog</span> <span class="string">is</span> <span class="string">didispace.com.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">string:</span> <span class="string">&gt;-</span></span><br><span class="line">  <span class="string">I</span> <span class="string">am</span> <span class="string">a</span> <span class="string">coder.</span></span><br><span class="line">  <span class="string">My</span> <span class="string">blog</span> <span class="string">is</span> <span class="string">didispace.com.</span></span><br></pre></td></tr></table></figure>
+
+<p>这三种都不会对配置中的换行进行实际换行，但是依然在文末的处理会有一些小区别，具体如下：</p>
+<ul>
+<li><code>&gt;</code>：文中不自动换行 + 文末新增一空行</li>
+<li><code>&gt;+</code>：文中不自动换行 + 文末新增两空行</li>
+<li><code>&gt;-</code>：文中不自动换行 + 文末不新增行</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" <i class="fa fa-tag"></i>k8s</a>
+              <a href="/tags/yaml/" <i class="fa fa-tag"></i>yaml</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/24/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/" rel="prev" title="linux配置代理">
+      <i class="fa fa-chevron-left"></i> linux配置代理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/01/ingress%E5%BC%BA%E5%88%B6/" rel="next" title="ingress强制">
+      ingress强制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YAML中多行字符串的配置方法"><span class="nav-number">1.</span> <span class="nav-text">YAML中多行字符串的配置方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置与显示，都严格按段落展示"><span class="nav-number">1.1.</span> <span class="nav-text">配置与显示，都严格按段落展示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一：直接使用-n来换行"><span class="nav-number">1.1.1.</span> <span class="nav-text">方法一：直接使用\n来换行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二：使用｜、｜-、｜"><span class="nav-number">1.1.2.</span> <span class="nav-text">方法二：使用｜、｜+、｜-</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置按段落，显示不需要按段落"><span class="nav-number">1.2.</span> <span class="nav-text">配置按段落，显示不需要按段落</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一：直接在字符串中换行写"><span class="nav-number">1.2.1.</span> <span class="nav-text">方法一：直接在字符串中换行写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二：使用-gt-、-gt-、-gt"><span class="nav-number">1.2.2.</span> <span class="nav-text">方法二：使用&gt;、&gt;+、&gt;-</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -14,6 +14,8 @@ yum install  -y net-tools vim iotop bc zip \
 unzip lrzsz tree ntpdate telnet lsof iostat \
 tcpdump wget traceroute bc net-tools \
 bash-completion
+
+apt install build-essential
 ```
 
 ```
@@ -84,6 +86,12 @@ EOF
 sudo apt update
 ```
 
+如果出现NO_PUBKEY 
+
+```
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F42ED6FBAB17C654
+```
+
 
 
 ##### *关闭SELINUX及iptables和firewalld*
@@ -135,8 +143,9 @@ cat > /etc/profile.d/env.sh << EOF
 export HISTTIMEFORMAT="[%Y.%m.%d %H:%M:%S]  "
 export HISTSIZE=50000
 export HISTIGNORE="ls:ls -lrt:ls -al:clear:pwd"
-export PS1='\[\e[1;32m\][\t \[\e[1;33m\]\u\[\e[36m\]@\h\[\e[1;31m\] \w\[\e[1;32m\]]\[\e[0m\]\$'
+export PS1='\[\e[1;32m\][\t \[\e[1;33m\]\u\[\e[36m\]@\h\[\e[1;31m\] \w\[\e[1;32m\]]\[\e[0m\] \\$'
 EOF
+
 source /etc/profile.d/env.sh
 ```
 
@@ -144,7 +153,7 @@ source /etc/profile.d/env.sh
 
 ```
 cat >> /etc/vimrc << EOF
-set tabstop=4
+set tabstop=2
 set expandtab
 set number
 set ruler
@@ -154,6 +163,9 @@ set hlsearch
 set ignorecase
 set backspace=indent,eol,start
 set paste
+set listchars=trail:.
+set list
+set tabstop=2
 EOF
 ```
 

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？k8s集群规模：个人推荐 K8S 集群规模不要超过千台节点 k8s使用版本：比最新版本低一个版本（例：目前最新是1.17版本，生产推荐使用 1.16版本） k8s部署方式：个人推荐使用 kubeadm 和 二进制 部署 K8S Master节点一般跑了:ETCD,ApiServer,Controller Mana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes面试题">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？k8s集群规模：个人推荐 K8S 集群规模不要超过千台节点 k8s使用版本：比最新版本低一个版本（例：目前最新是1.17版本，生产推荐使用 1.16版本） k8s部署方式：个人推荐使用 kubeadm 和 二进制 部署 K8S Master节点一般跑了:ETCD,ApiServer,Controller Mana">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/640.jfif">
+<meta property="article:published_time" content="2020-03-26T07:28:19.000Z">
+<meta property="article:modified_time" content="2020-03-27T01:50:08.715Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="理论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/640.jfif">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Kubernetes面试题 | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes面试题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-26 15:28:19" itemprop="dateCreated datePublished" datetime="2020-03-26T15:28:19+08:00">2020-03-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-27 09:50:08" itemprop="dateModified" datetime="2020-03-27T09:50:08+08:00">2020-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？"><a href="#一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？" class="headerlink" title="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？"></a>一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？</h3><p>k8s集群规模<code>：个人推荐 K8S 集群规模不要超过</code>千台节点</p>
+<p><code>k8s使用版本</code>：比最新版本低一个版本（例：目前最新是1.17版本，生产推荐使用 1.16版本）</p>
+<p><code>k8s部署方式</code>：个人推荐使用 <code>kubeadm</code> 和 <code>二进制</code> 部署</p>
+<p>K8S Master节点一般跑了:<code>ETCD</code>,<code>ApiServer</code>,<code>Controller Manager</code> ,<code>Scheduler</code></p>
+<a id="more"></a>
+
+<h4 id="ETCD-分布式的K-V存储系统"><a href="#ETCD-分布式的K-V存储系统" class="headerlink" title="ETCD 分布式的K-V存储系统"></a>ETCD 分布式的K-V存储系统</h4><ul>
+<li><code>http sever</code>：（在etcd3里面变成了grpc server），主要处理client的操作请求以及节点间的数据同步和心跳保持</li>
+<li><code>raft状态机</code>：通过对raft一致性协议的实现来保证etcd集群的高可用性</li>
+<li><code>store</code>：负责etcd中事务操作的逻辑，是api server的命令的具体实现</li>
+<li><code>wal存储</code>：负责具体的数据持久存储操作。它分为两部分，<code>entry</code> 负责实际的日志数据存储（在etcd里数据的存储都是带版本号的，对于同一个键值可能会有多个版本的记录存在，所以数据实际的存储方式即通过事务日志进行存储，而在内存里则存有键和版本号的映射关系以方便查询）。<code>snapshot</code> 则是对日志数据的的状态存储以防止过多的数据存在。</li>
+</ul>
+<h4 id="API-Server"><a href="#API-Server" class="headerlink" title="API Server"></a>API Server</h4><p><code>ApiServer</code>：对外提供增删查改etcd中资源配置数据，<code>worker</code>节点<code>kubelet</code>同<code>master</code>节点的<code>API Server</code>进行交互， <code>Master</code>节点的<code>scheduler</code>和<code>controller manager</code>组件也需要同<code>API Server</code>进行交互以获取和修改对应资源的状态。</p>
+<p><code>ApiServer 三层认证</code>：</p>
+<h5 id="kubernetes-认证"><a href="#kubernetes-认证" class="headerlink" title="kubernetes 认证"></a>kubernetes 认证</h5><p><code>kubernetes认证</code>：kubernetes 提供了多种认证方式，比如<code>客户端证书</code>、<code>静态token</code>、<code>静态密码文件</code>、<code>ServiceAccountTokens</code>等等。你可以同时使用一种或多种认证方式。只要通过任何一个都被认作是认证通过。下面我们就认识几个常见的认证方式。</p>
+<ul>
+<li><code>客户端证书认证</code>：客户端证书认证叫作TLS双向认证，也就是服务器客户端互相验证证书的正确性，在都正确的情况下协调通信加密方案。为了使用这个方案，<code>api-server</code> 需要用 <code>–client-ca-file</code> 选项来开启。</li>
+<li><code>静态Token</code>：当我们有非常多的node节点时，手动为每个node节点配置TLS认证比较麻烦，这时就可以用到引导token的认证方式，前提是需要在api-server开启 <code>experimental-bootstrap-token-auth</code> 特性，客户端的token信息与预先定义的token匹配认证通过后，自动为node颁发证书。当然引导token是一种机制，可以用到各种场景中。</li>
+<li><code>Service Account Tokens 认证</code>：有些情况下，我们希望在pod内部访问api-server，获取集群的信息，甚至对集群进行改动。针对这种情况，kubernetes提供了一种特殊的认证方式：Service Account。Service Account 和 pod、service、deployment 一样是 kubernetes 集群中的一种资源，用户也可以创建自己的 Service Account。ServiceAccount 主要包含了三个内容：namespace、Token 和 CA。namespace 指定了 pod 所在的 namespace，CA 用于验证 apiserver 的证书，token 用作身份验证。它们都通过 mount 的方式保存在 pod 的文件系统中。</li>
+</ul>
+<h5 id="kubernetes-授权"><a href="#kubernetes-授权" class="headerlink" title="kubernetes 授权"></a>kubernetes 授权</h5><p>在 <code>Kubernetes1.6</code> 版本中新增角色访问控制机制（Role-Based Access，RBAC）让集群管理员可以针对特定使用者或服务账号的角色，进行更精确的资源访问控制。在RBAC中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。在一个组织中，角色是为了完成各种工作而创造，用户则依据它的责任和资格来被指派相应的角色，用户可以很容易地从一个角色被指派到另一个角色。</p>
+<p>目前 Kubernetes 中有一系列的鉴权机制，因为Kubernetes社区的投入和偏好，相对于其它鉴权机制而言，RBAC是更好的选择。</p>
+<h5 id="kubernetes-准入控制"><a href="#kubernetes-准入控制" class="headerlink" title="kubernetes 准入控制"></a>kubernetes 准入控制</h5><p>准入控制（AdmissionControl）准入控制本质上为一段准入代码，在对kubernetes api的请求过程中，顺序为：先经过认证 &amp; 授权，然后执行准入操作，最后对目标对象进行操作。这个准入代码在api-server中，而且必须被编译到二进制文件中才能被执行。</p>
+<p>在对集群进行请求时，每个准入控制代码都按照一定顺序执行。如果有一个准入控制拒绝了此次请求，那么整个请求的结果将会立即返回，并提示用户相应的error信息。常用组件（控制代码）如下：</p>
+<ul>
+<li><code>AlwaysAdmit</code>：允许所有请求</li>
+<li><code>AlwaysDeny</code>：禁止所有请求，多用于测试环境</li>
+<li><code>ServiceAccount</code>：它将serviceAccounts实现了自动化，它会辅助serviceAccount做一些事情，比如如果pod没有serviceAccount属性，它会自动添加一个default，并确保pod的serviceAccount始终存在</li>
+<li><code>LimitRanger</code>：他会观察所有的请求，确保没有违反已经定义好的约束条件，这些条件定义在namespace中LimitRange对象中。如果在kubernetes中使用LimitRange对象，则必须使用这个插件。</li>
+<li><code>NamespaceExists</code>：它会观察所有的请求，如果请求尝试创建一个不存在的namespace，则这个请求被拒绝。</li>
+</ul>
+<h4 id="Controller-Manager"><a href="#Controller-Manager" class="headerlink" title="Controller Manager"></a>Controller Manager</h4><p><code>Controller Manager</code>：以守护进程的形式运行着kubernetes几个核心的控制循环（也就是控制器），包括deployment，replicaset，namespace，serviceaccount，node等等，通过调用Api Server 的 list watch接口来监控自己负责的资源的配置变化.</p>
+<h4 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h4><p><code>Scheduler</code>：是一个策略丰富、拓扑感知、工作负载特定的功能，调度器显著影响可用性、性能和容量。调度器需要考虑个人和集体的资源要求、服务质量要求、硬件/软件/政策约束、亲和力和反亲和力规范、数据局部性、负载间干扰、完成期限等。</p>
+<p>kube-scheduler 给一个 pod 做调度选择包含两个步骤：</p>
+<ul>
+<li><code>过滤</code>：过滤阶段会将所有满足 Pod 调度需求的 Node 选出来。例如，PodFitsResources 过滤函数会检查候选 Node 的可用资源能否满足 Pod 的资源请求。在过滤之后，得出一个 Node 列表，里面包含了所有可调度节点；通常情况下，这个 Node 列表包含不止一个 Node。如果这个列表是空的，代表这个 Pod 不可调度。</li>
+<li><code>打分</code>：打分阶段，调度器会为 Pod 从所有可调度节点中选取一个最合适的 Node。根据当前启用的打分规则，调度器会给每一个可调度节点进行打分。最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。</li>
+</ul>
+<h3 id="二、kube-scheduler工作原理，多少节点对外提供服务"><a href="#二、kube-scheduler工作原理，多少节点对外提供服务" class="headerlink" title="二、kube-scheduler工作原理，多少节点对外提供服务"></a>二、kube-scheduler工作原理，多少节点对外提供服务</h3><p>根据各种调度算法将 Pod 绑定到最合适的工作节点</p>
+<ul>
+<li><code>预选（Predicates）</code>：输入是所有节点，输出是满足预选条件的节点。kube-scheduler根据预选策略过滤掉不满足策略的Nodes。例如，如果某节点的资源不足或者不满足预选策略的条件如“Node的label必须与Pod的Selector一致”时则无法通过预选。</li>
+<li><code>优选（Priorities）</code>：输入是预选阶段筛选出的节点，优选会根据优先策略为通过预选的Nodes进行打分排名，选择得分最高的Node。例如，资源越富裕、负载越小的Node可能具有越高的排名。</li>
+</ul>
+<h3 id="三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现"><a href="#三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现" class="headerlink" title="三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现"></a>三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现</h3><p>apiserver 工作原理图</p>
+<p><img src="/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/640.jfif" alt="img"></p>
+<p>一般规模小的集群，3 台 apiserver 已经够用，如果集群规则大，apiserver 和 ECT 节点都需要扩容。</p>
+<p>apiserver 负载均衡：apiserver 服务是一个无状态服务，可以使用 <code>Nginx + Keepalived</code>、<code>HAProxy + Keepalived</code>和 云厂商LB（比如：阿里云SLB）。</p>
+<h3 id="四、controller-manager-和etcd-通信吗？"><a href="#四、controller-manager-和etcd-通信吗？" class="headerlink" title="四、controller-manager 和etcd 通信吗？"></a>四、controller-manager 和etcd 通信吗？</h3><p>不通信</p>
+<p>原因：<code>controller-manager</code> 和 <code>scheduler</code> 它们都是和 <code>kube-apiserver</code>通信，然后 <code>kube-apiserver</code> 再和<code>etcd</code>通信。</p>
+<h3 id="五、headless-service使用场景"><a href="#五、headless-service使用场景" class="headerlink" title="五、headless-service使用场景"></a>五、headless-service使用场景</h3><ul>
+<li>自主选择权 client可以自主选择哪个server</li>
+<li>Headless Service 的对应的每一个 Endpoints，即每一个Pod，都会有对应的DNS域名，这样Pod之间就可以互相访问。</li>
+</ul>
+<h3 id="六、集群使用的网络方案，pod如何和node网络通信的"><a href="#六、集群使用的网络方案，pod如何和node网络通信的" class="headerlink" title="六、集群使用的网络方案，pod如何和node网络通信的"></a>六、集群使用的网络方案，pod如何和node网络通信的</h3><p><code>Flannel</code>：使用vxlan技术为各节点创建一个可以互通的Pod网络，使用的端口为UDP 8472（需要开放该端口，如公有云AWS等）。flanneld第一次启动时，从etcd获取配置的Pod网段信息，为本节点分配一个未使用的地址段，然后创建flannedl.1网络接口（也可能是其它名称，如flannel1等）。flannel将分配给自己的Pod网段信息写入 <code>/run/flannel/subnet.env</code> 文件，docker后续使用这个文件中的环境变量设置docker0网桥，从而从这个地址段为本节点的所有Pod容器分配IP。</p>
+<p><code>Calico</code>：在宿主机部署calico作为虚拟路由器，容器流量通过veth pair到达宿主机的网络命名空间上。</p>
+<h3 id="七、etcd高可用及备份恢复方案"><a href="#七、etcd高可用及备份恢复方案" class="headerlink" title="七、etcd高可用及备份恢复方案"></a>七、etcd高可用及备份恢复方案</h3><p><code>Etcd高可用</code>：部署ETCD时，在配置文件中配置 ETCD_INITIAL_CLUSTER=”etcd节点ip:端口,etcd节点ip:端口,etcd节点ip:端口”，集群数量最好是奇数。</p>
+<p><code>备份命令</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="attribute">ETCDCTL_API</span>=3 etcdctl \</span><br><span class="line"><span class="attribute">--cacert</span>=<span class="string">"<span class="variable">$&#123;CACERT&#125;</span>"</span> <span class="attribute">--cert</span>=<span class="string">"<span class="variable">$&#123;CERT&#125;</span>"</span> <span class="attribute">--key</span>=<span class="string">"<span class="variable">$&#123;EKY&#125;</span>"</span> \</span><br><span class="line"><span class="attribute">--endpoints</span>=<span class="variable">$&#123;ENDPOINTS&#125;</span> \</span><br><span class="line">snapshot save /data/etcd_backup_dir/etcd-snapshot-`date +%Y%m%d`.db</span><br></pre></td></tr></table></figure>
+
+<p>具体备份与恢复：参考 <a href="http://mp.weixin.qq.com/s?__biz=MzA4MzIwNTc4NQ==&mid=2247484339&idx=2&sn=1e04ab6740912575cbd993b666448616&chksm=9ffb4845a88cc153a5b017dd8748cbfc2429c8378d8474636ed41c1c03b7932e972494832c11&scene=21#wechat_redirect" target="_blank" rel="noopener">Etcd v3备份与恢复</a></p>
+<h3 id="八、k8s集群节点需要关机维护，需要怎么操作"><a href="#八、k8s集群节点需要关机维护，需要怎么操作" class="headerlink" title="八、k8s集群节点需要关机维护，需要怎么操作"></a>八、k8s集群节点需要关机维护，需要怎么操作</h3><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 驱逐 node 节点上 pod</span></span><br><span class="line">$ kubectl drain k8s-<span class="keyword">node</span><span class="title">-01</span> --force --ignore-daemonsets</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关机</span></span><br><span class="line">$ init <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="九、使用什么pod控制器，crd都需要定义什么-存活性监测和就绪性监测的实现方式"><a href="#九、使用什么pod控制器，crd都需要定义什么-存活性监测和就绪性监测的实现方式" class="headerlink" title="九、使用什么pod控制器，crd都需要定义什么,存活性监测和就绪性监测的实现方式"></a>九、使用什么pod控制器，crd都需要定义什么,存活性监测和就绪性监测的实现方式</h3><p><code>Pod控制器</code>：Deployment，ReplicationController，StatefulSet，DaemonSet，Cronjob，Job</p>
+<p><code>CRD定义</code>：在 Kubernetes 中一切都可视为资源，Kubernetes 1.7 之后增加了对 CRD 自定义资源二次开发能力来扩展 Kubernetes API，通过 CRD 我们可以向 Kubernetes API 中增加新资源类型，而不需要修改 Kubernetes 源码来创建自定义的 API server，该功能大大提高了 Kubernetes 的扩展能力。当你创建一个新的CustomResourceDefinition (CRD)时，Kubernetes API服务器将为你指定的每个版本创建一个新的RESTful资源路径，我们可以根据该api路径来创建一些我们自己定义的类型资源。CRD可以是命名空间的，也可以是集群范围的，由CRD的作用域(scpoe)字段中所指定的，与现有的内置对象一样，删除名称空间将删除该名称空间中的所有自定义对象。customresourcedefinition本身没有名称空间，所有名称空间都可以使用。</p>
+<p><code>存活性监测和就绪性监测的实现方式</code>：readiness probe，liveness probe: HTTP请求，TCP连接，命令行</p>
+<h3 id="十、pod如何平滑升级"><a href="#十、pod如何平滑升级" class="headerlink" title="十、pod如何平滑升级"></a>十、pod如何平滑升级</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">minReadySeconds:</span><span class="number">5</span></span><br><span class="line"><span class="symbol">strategy:</span></span><br><span class="line">  <span class="meta"># indicate which strategy we want for rolling update</span></span><br><span class="line"><span class="symbol">  type:</span>RollingUpdate</span><br><span class="line"><span class="symbol">  rollingUpdate:</span></span><br><span class="line"><span class="symbol">    maxSurge:</span><span class="number">30</span>%</span><br><span class="line"><span class="symbol">    maxUnavailable:</span><span class="number">30</span>%</span><br></pre></td></tr></table></figure>
+
+<h3 id="十一、k8s内核及文件系统需要哪些设置"><a href="#十一、k8s内核及文件系统需要哪些设置" class="headerlink" title="十一、k8s内核及文件系统需要哪些设置"></a>十一、k8s内核及文件系统需要哪些设置</h3><p>开启网桥模式、禁止使用swap空间 只有当系统OOM时才允许使用它、开启OOM、不检查物理内存是否够用、关闭ipv6(防止触发docker BUG)、设置系统时区、设置Hostname、tcp_tw_recycle关闭、与k8s的NAT冲突、升级系统内核 4.4+</p>
+<h3 id="十二、存储卷使用方式"><a href="#十二、存储卷使用方式" class="headerlink" title="十二、存储卷使用方式"></a>十二、存储卷使用方式</h3><ul>
+<li>动态存储使用 <code>storageclass</code></li>
+<li>静态存储使用 <code>persistentvolume</code></li>
+</ul>
+<h3 id="十三、对外提供服务的pod暴露方式有哪些"><a href="#十三、对外提供服务的pod暴露方式有哪些" class="headerlink" title="十三、对外提供服务的pod暴露方式有哪些"></a>十三、对外提供服务的pod暴露方式有哪些</h3><ul>
+<li><code>hostNetwork</code>：在pod中使用该配置，在这种Pod中运行的应用程序可以直接看到pod启动的主机的网络接口</li>
+<li><code>hostPort</code>：直接将容器的端口与所调度的节点上的端口路由，这样用户就可以通过主机的IP来访问Pod</li>
+<li><code>NodePort</code>：是K8s里一个广泛应用的服务暴露方式。K8s中的service默认情况都是使用Cluster IP这种类型，会产生一个只能在内部访问的Cluster IP，如果想能够直接访问service，需要将service type修改为nodePort。同时给改service指定一个nodeport值(30000-32767)，用 <code>--service-node-port-range</code> 定义。</li>
+<li><code>LoadBalancer</code>：只能在service上定义，是公有云提供的负载均衡器</li>
+<li><code>Ingress</code>：ingress controller是由K8s管理的负载均衡容器，它的镜像包含一个nginx或HAProxy负载均衡器和一个控制器守护进程。</li>
+</ul>
+<h3 id="十四、traefik的实现原理"><a href="#十四、traefik的实现原理" class="headerlink" title="十四、traefik的实现原理"></a>十四、traefik的实现原理</h3><p><code>Traefik</code> 作为一种边缘路由器，动态感知后端服务实例变化，进行动态调整转发配置，会与ApiServer进行交互，发现k8s集群内部容器状态变化。</p>
+<h3 id="十五、生产中碰到过什么问题，故障排查思路，如何解决的"><a href="#十五、生产中碰到过什么问题，故障排查思路，如何解决的" class="headerlink" title="十五、生产中碰到过什么问题，故障排查思路，如何解决的"></a>十五、生产中碰到过什么问题，故障排查思路，如何解决的</h3><p>故障排查，参考下面几篇文章：</p>
+<ul>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzA4MzIwNTc4NQ==&mid=2247484315&idx=3&sn=e28c707e8f901817636387e491095c8e&chksm=9ffb486da88cc17bedbf4a10492320486bda63eb0f7a4d6add6f5cb01cf2f922662323f692bf&scene=21#wechat_redirect" target="_blank" rel="noopener">k8s域名解析超时问题记录</a></li>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzA4MzIwNTc4NQ==&mid=2247484292&idx=2&sn=d0d3b28d44292b10b4006e4920352694&chksm=9ffb4872a88cc1645478a97aa6a54fdb8691216d1efa209f29c60ecca0f70b9ca5d4fc3ecb06&scene=21#wechat_redirect" target="_blank" rel="noopener">Kubernetes Pod 故障归类与排查方法</a></li>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzA4MzIwNTc4NQ==&mid=2247484233&idx=2&sn=efaad4252406bf414a23fac2f36bc559&chksm=9ffb48bfa88cc1a9c686ec8371689c0f09176afd7368c425bc766f608eb713f74688b1d0affa&scene=21#wechat_redirect" target="_blank" rel="noopener">Calico 问题排障</a></li>
+</ul>
+<h3 id="十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图"><a href="#十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图" class="headerlink" title="十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图"></a>十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图</h3><p>一般使用EFK方式收集日志；logstash是jvm跑的，资源消耗比较大，filebeat更轻量级，但logstash有filter功能 一般结构都是filebeat采集日志，然后发送到消息队列，redis，kafaka。然后logstash去获取，利用filter功能过滤分析，然后存储到elasticsearch中。</p>
+<p>grafana绘图：省略。。。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://kubernetes.io/zh/docs/reference/access-authn-authz/controlling-access/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/reference/access-authn-authz/controlling-access/</a></li>
+<li><a href="https://www.kubernetes.org.cn/3789.html" target="_blank" rel="noopener">https://www.kubernetes.org.cn/3789.html</a></li>
+<li><a href="https://blog.csdn.net/huwh_/article/details/75675706" target="_blank" rel="noopener">https://blog.csdn.net/huwh_/article/details/75675706</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" <i class="fa fa-tag"></i>k8s</a>
+              <a href="/tags/%E7%90%86%E8%AE%BA/" <i class="fa fa-tag"></i>理论</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/24/Linux/%E6%8E%92%E6%9F%A5inodes/" rel="prev" title="排查inodes">
+      <i class="fa fa-chevron-left"></i> 排查inodes
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/27/k8s/%E7%90%86%E8%A7%A3k8s%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6-2-cpu-time/" rel="next" title="理解k8s资源限制(2):cpu time">
+      理解k8s资源限制(2):cpu time <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？"><span class="nav-number">1.</span> <span class="nav-text">一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ETCD-分布式的K-V存储系统"><span class="nav-number">1.1.</span> <span class="nav-text">ETCD 分布式的K-V存储系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#API-Server"><span class="nav-number">1.2.</span> <span class="nav-text">API Server</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#kubernetes-认证"><span class="nav-number">1.2.1.</span> <span class="nav-text">kubernetes 认证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#kubernetes-授权"><span class="nav-number">1.2.2.</span> <span class="nav-text">kubernetes 授权</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#kubernetes-准入控制"><span class="nav-number">1.2.3.</span> <span class="nav-text">kubernetes 准入控制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Controller-Manager"><span class="nav-number">1.3.</span> <span class="nav-text">Controller Manager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Scheduler"><span class="nav-number">1.4.</span> <span class="nav-text">Scheduler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、kube-scheduler工作原理，多少节点对外提供服务"><span class="nav-number">2.</span> <span class="nav-text">二、kube-scheduler工作原理，多少节点对外提供服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现"><span class="nav-number">3.</span> <span class="nav-text">三、apiserver工作原理，多少节点对外提供服务，负载均衡高可用如何实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、controller-manager-和etcd-通信吗？"><span class="nav-number">4.</span> <span class="nav-text">四、controller-manager 和etcd 通信吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、headless-service使用场景"><span class="nav-number">5.</span> <span class="nav-text">五、headless-service使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、集群使用的网络方案，pod如何和node网络通信的"><span class="nav-number">6.</span> <span class="nav-text">六、集群使用的网络方案，pod如何和node网络通信的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、etcd高可用及备份恢复方案"><span class="nav-number">7.</span> <span class="nav-text">七、etcd高可用及备份恢复方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#八、k8s集群节点需要关机维护，需要怎么操作"><span class="nav-number">8.</span> <span class="nav-text">八、k8s集群节点需要关机维护，需要怎么操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#九、使用什么pod控制器，crd都需要定义什么-存活性监测和就绪性监测的实现方式"><span class="nav-number">9.</span> <span class="nav-text">九、使用什么pod控制器，crd都需要定义什么,存活性监测和就绪性监测的实现方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十、pod如何平滑升级"><span class="nav-number">10.</span> <span class="nav-text">十、pod如何平滑升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十一、k8s内核及文件系统需要哪些设置"><span class="nav-number">11.</span> <span class="nav-text">十一、k8s内核及文件系统需要哪些设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十二、存储卷使用方式"><span class="nav-number">12.</span> <span class="nav-text">十二、存储卷使用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十三、对外提供服务的pod暴露方式有哪些"><span class="nav-number">13.</span> <span class="nav-text">十三、对外提供服务的pod暴露方式有哪些</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十四、traefik的实现原理"><span class="nav-number">14.</span> <span class="nav-text">十四、traefik的实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十五、生产中碰到过什么问题，故障排查思路，如何解决的"><span class="nav-number">15.</span> <span class="nav-text">十五、生产中碰到过什么问题，故障排查思路，如何解决的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图"><span class="nav-number">16.</span> <span class="nav-text">十六、容器日志收集方案，都收集了什么类型日志，实现方式，filebeat和logstash区别，grafana绘图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number"></span> <span class="nav-text">参考链接</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

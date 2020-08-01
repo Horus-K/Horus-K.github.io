@@ -20,36 +20,36 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="SYN洪水ATT的过程： 在服务端返回一个确认的SYN-ACK包的时候有个潜在的弊端，如果发起的客户是一个不存在的客户端，那么服务端就不会接到客户端回应的ACK包。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux使用awl0.2进行局域网SYN进行洪水ATT">
-<meta property="og:url" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/index.html">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
 <meta property="og:description" content="SYN洪水ATT的过程： 在服务端返回一个确认的SYN-ACK包的时候有个潜在的弊端，如果发起的客户是一个不存在的客户端，那么服务端就不会接到客户端回应的ACK包。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/fb1281adf08e1beb5ba26788d0d96260.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/063fe79de033473af0a120ef3807b665.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/414a8107c74f2e4c5a5f5efb4449fcb2.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/cfd9c2f5118f06bd9e7052a82e45d9a9.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/6173fe15530cf46706926bbc78a3c332.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/c5e1fa8949aa0a0869e2d7914bb6e1bd.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/c32f43940d48c84bbde898c72d2d24d8.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/6bbcbd16f4ff7ca6d29a79ae5e7a6ae9.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/621837c15a5286149cf0b545a298d96e.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/081ccb7be9e7461856e484b5808c4c0c.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/36f139a24283701de9eda155efbd982f.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/fb1281adf08e1beb5ba26788d0d96260.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/063fe79de033473af0a120ef3807b665.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/414a8107c74f2e4c5a5f5efb4449fcb2.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/cfd9c2f5118f06bd9e7052a82e45d9a9.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/6173fe15530cf46706926bbc78a3c332.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/c5e1fa8949aa0a0869e2d7914bb6e1bd.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/c32f43940d48c84bbde898c72d2d24d8.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/6bbcbd16f4ff7ca6d29a79ae5e7a6ae9.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/621837c15a5286149cf0b545a298d96e.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/081ccb7be9e7461856e484b5808c4c0c.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/36f139a24283701de9eda155efbd982f.png">
 <meta property="article:published_time" content="2020-03-10T09:27:02.000Z">
 <meta property="article:modified_time" content="2020-03-10T09:35:40.378Z">
 <meta property="article:author" content="屈辉">
 <meta property="article:tag" content="SYN">
 <meta property="article:tag" content="ATT">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/fb1281adf08e1beb5ba26788d0d96260.png">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/fb1281adf08e1beb5ba26788d0d96260.png">
 
-<link rel="canonical" href="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/">
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/">
 
 
 <script id="page-configurations">
@@ -139,17 +139,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">59</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">20</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">115</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -205,7 +205,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Linux/Linux%E4%BD%BF%E7%94%A8awl0-2%E8%BF%9B%E8%A1%8C%E5%B1%80%E5%9F%9F%E7%BD%91SYN%E8%BF%9B%E8%A1%8C%E6%B4%AA%E6%B0%B4ATT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -381,20 +381,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">177</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

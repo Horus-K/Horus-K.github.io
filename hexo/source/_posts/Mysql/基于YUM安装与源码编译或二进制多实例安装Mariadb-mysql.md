@@ -123,63 +123,72 @@ vi /mysql/{3306,3307,3308}/bin/mysqld  加上对应centos口令
 
 ## 二进制的安装
 
-* 1 准备用户和组
-groupadd -r -g 336 mysql
-useradd -r -g mysql -u 336 -s /sbin/nologin -d /data/mysql mysql
- ````
-* 2 准备二进制程序文件和相关文件属性
+1.先创建mysql用户及mysql组，并制定家目录为/data/mysql
 
-tar xvf mariadb-10.2.23-linux-x86_64.tar.gz -C /usr/local/
-
-cd  /usr/local/
-
-ln -s mariadb-10.2.23-linux-x86_64/ mysql
-
-chown -R root.root /usr/local/mysql/
-* 3 PATH变量
-
-
-cat /etc/profile.d/mysql.sh
-
-PATH=/usr/local/mysql/bin:$PATH
-* 4 准备数据库数据目录和数据--改成逻辑卷
-
-
-mkdir /data/mysql -pv
-
-chown mysql.mysql /data/mysql/
-
-cd /usr/local/mysql
-
-./scripts/mysql_install_db --datadir=/data/mysql --user=mysql
-* 5 准备Mysql的服务器端的配置文件
-
-
-mkdir /etc/mysql
-
-cp /usr/local/mysql/support-files/my-huge.cnf /etc/mysql/my.cnf
-vim /etc/mysql/my.cnf
-
-[mysqld]
-
-datadir=/data/mysql 加一行
-* 6 准备服务启动脚本
-
-
-cp /usr/local/mysql/support-files/mysql.server  /etc/init.d/mysqld
-
-chkconfig --add mysqld
-
-service mysqld start
-* 7 安全加固
-
-
-mysql_secure_installation
-* 8 测试连接
-mysql -uroot -ppassword 
+```
+groupadd -r -g 306 mysql #指定属组gid为306
+  useradd -r -g 306 -u 306 -d /data/mysql mysql #指定属主uid为306，家目录为/data/mysql
 ```
 
-## 源码编译安装MySQL
+2.准备数据目录(mysq用户家目录),并修正权限
+
+```
+mkdir /data/mysql -p ;chown mysql:mysql /data/mysql
+```
+
+3.去官网下载mariadb 二进制tar包（链接是CentOS7X86_64的10.4.13稳定版）
+4.解压tar包指/usr/local目录下,递归改属主为root、属组为mysql，并在/usr/local目录下创建一个名为mysql的软链接指向解压好的mariadb目录
+
+```
+tar xzf mariadb-10.4.13-linux-x86_64.tar.gz -c /usr/local
+cd /usr/local
+ln -sv mariadb-10.4.13-linux-x86_64 mysql
+chown -R root:mysql /usr/local/mysql/
+```
+
+5.创建配置文件,并修改
+
+```
+mkdir /etc/mysql/
+cp /etc/my.cnf /etc/mysql/my.cnf
+sed -ri '/datadir=/s@(.*=).*@\1/data/mysql@' /etc/mysql/my.cnf #修改配置文件，指定数据库储存路径
+sed -ri '/datadir/a\innodb_file_per-table=on\nskip_name_resolve=on' /etc/mysql/my.cnf #设置每个表独立文件 和 禁用主机名解析
+```
+
+6.创建数据库文件
+
+```
+/usr/local/mysql/scripts/mysql_install_db --datadir=/data/mysql --user=mysql
+```
+
+7.创建服务脚本并启动服务
+
+```
+cp /usr/local/mysql/support-files/mysql.server /etc/rc.d/init.d/mysqld
+chkconfig --add mysqld
+```
+
+8.增加PATH环境变量路径,并生效。
+
+```
+echo 'PATH=/usr/local/mysql/bin:$PATH' >/etc/profile.d/mysql.sh
+. /etc/profile.d/mysql.sh
+```
+
+9 启动数据库
+
+```
+systemctl start mysqld
+```
+
+10.运行安全初始化脚本，设置root口令、禁用匿名登陆、禁用远程主机登陆、删除test数据库，并立即生效(根据提示操作)。
+
+```
+ln -s /var/lib/mysql/mysql.sock /tmp
+/usr/local/mysql/bin/mysql_secure_installation
+```
+
+至此，二进制安装mariadb数据库就完成了~源码编译安装MySQL
 
 - 准备编译环境
 

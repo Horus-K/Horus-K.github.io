@@ -2,9 +2,8 @@
 title: KeepAlived与IPVS
 date: 2020-03-09 21:10:48
 tags:
-- keeplived
 - IPVS
-- keeplived
+- keepalived
 categories: 高可用
 ---
 

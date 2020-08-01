@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基于map&#x2F;reduce无锁设计的优选设计实现优选阶段通过分离计算对象来实现多个node和多种算法的并行计算，并且通过基于二级索引来设计最终的存储结果，从而达到整个计算过程中的无锁设计，同时为了保证分配的随机性，针对同等优先级的采用了随机的方式来进行最终节点的分配，如果大家后续有类似的需求，不妨可以借鉴借鉴">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于map&#x2F;reduce无锁设计的优选设计实现">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="基于map&#x2F;reduce无锁设计的优选设计实现优选阶段通过分离计算对象来实现多个node和多种算法的并行计算，并且通过基于二级索引来设计最终的存储结果，从而达到整个计算过程中的无锁设计，同时为了保证分配的随机性，针对同等优先级的采用了随机的方式来进行最终节点的分配，如果大家后续有类似的需求，不妨可以借鉴借鉴">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579246857471-0d97105c-2a26-4237-bd7d-996e755f0fa1.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579248243373-b9ef3d33-5aad-417f-9341-7773f7cbb661.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579248329835-7366e450-86a0-4599-8168-6f8ab834c3c9.png">
+<meta property="article:published_time" content="2020-04-03T07:04:29.000Z">
+<meta property="article:modified_time" content="2020-04-09T06:52:01.713Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579246857471-0d97105c-2a26-4237-bd7d-996e755f0fa1.png">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>基于map/reduce无锁设计的优选设计实现 | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于map/reduce无锁设计的优选设计实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-03 15:04:29" itemprop="dateCreated datePublished" datetime="2020-04-03T15:04:29+08:00">2020-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-09 14:52:01" itemprop="dateModified" datetime="2020-04-09T14:52:01+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">调度器核心数据结构与算法分析</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="基于map-reduce无锁设计的优选设计实现"><a href="#基于map-reduce无锁设计的优选设计实现" class="headerlink" title="基于map/reduce无锁设计的优选设计实现"></a>基于map/reduce无锁设计的优选设计实现</h1><p>优选阶段通过分离计算对象来实现多个node和多种算法的并行计算，并且通过基于二级索引来设计最终的存储结果，从而达到整个计算过程中的无锁设计，同时为了保证分配的随机性，针对同等优先级的采用了随机的方式来进行最终节点的分配，如果大家后续有类似的需求，不妨可以借鉴借鉴</p>
+<a id="more"></a>
+
+<h1 id="1-设计基础"><a href="#1-设计基础" class="headerlink" title="1. 设计基础"></a>1. 设计基础</h1><h2 id="1-1-两阶段-单点与聚合"><a href="#1-1-两阶段-单点与聚合" class="headerlink" title="1.1 两阶段: 单点与聚合"></a>1.1 两阶段: 单点与聚合</h2><p>在进行优选的时候，除了最后一次计算，在进行针对单个算法的计算的时候，会分为两个阶段：单点和聚合</p>
+<p>在单点阶段，会根据当前算法针对单个node计算</p>
+<p>在聚合阶段，则会根据当前单点阶段计算完成后，来进行聚合</p>
+<h2 id="1-2-并行-节点与算法"><a href="#1-2-并行-节点与算法" class="headerlink" title="1.2 并行: 节点与算法"></a>1.2 并行: 节点与算法</h2><p>单点和聚合两阶段在计算的时候，都是并行的，但是对象则不同，其中单点阶段并行是针对单个node的计算，而聚合阶段则是针对算法级别的计算，通过这种设计分离计算，从而避免多goroutine之间数据竞争，无锁加速优选的计算</p>
+<h2 id="1-3-map与reduce"><a href="#1-3-map与reduce" class="headerlink" title="1.3 map与reduce"></a>1.3 map与reduce</h2><p>而map与reduce则是针对一个上面并行的两种具体实现，其中map中负责单node打分，而reduce则是针对map阶段的打分进行聚合后，根据汇总的结果进行二次打分计算</p>
+<h2 id="1-4-weight"><a href="#1-4-weight" class="headerlink" title="1.4 weight"></a>1.4 weight</h2><p>map/reduce阶段都是通过算法计算，如果我们要进行自定义的调整，针对单个算法，我们可以调整其在预选流程中的权重，从而进行定制自己的预选流程 </p>
+<h2 id="1-5-随机分布"><a href="#1-5-随机分布" class="headerlink" title="1.5 随机分布"></a>1.5 随机分布</h2><p>当进行优先级判断的时候，肯定会出现多个node优先级相同的情况，在优选节点的时候，会进行随机计算，从而决定是否用当前优先级相同的node替换之前的最合适的node</p>
+<h1 id="2-源码分析"><a href="#2-源码分析" class="headerlink" title="2. 源码分析"></a>2. 源码分析</h1><p>优选的核心流程主要是在PrioritizeNodes中，这里只介绍其关键的核心数据结构设计</p>
+<h2 id="2-1-无锁计算结果保存"><a href="#2-1-无锁计算结果保存" class="headerlink" title="2.1 无锁计算结果保存"></a>2.1 无锁计算结果保存</h2><p>无锁计算结果的保存主要是通过下面的二维数组实现， 如果要存储一个算法针对某个node的结果，其实只需要通过两个索引即可：算法索引和节点索引，同理如果我吧针对单个node的索引分配给一个goroutine，则其去其他的goroutine则就可以并行计算</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579246857471-0d97105c-2a26-4237-bd7d-996e755f0fa1.png" alt="image.png"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在计算的时候，会传入nodes []*v1.Node的数组，存储所有的节点，节点索引主要是指的该部分</span></span><br><span class="line">results := <span class="built_in">make</span>([]schedulerapi.HostPriorityList, <span class="built_in">len</span>(priorityConfigs), <span class="built_in">len</span>(priorityConfigs))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-2-基于节点索引的Map计算"><a href="#2-2-基于节点索引的Map计算" class="headerlink" title="2.2 基于节点索引的Map计算"></a>2.2 基于节点索引的Map计算</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579248243373-b9ef3d33-5aad-417f-9341-7773f7cbb661.png" alt="image.png"></p>
+<p>之前在预选阶段介绍过ParallelizeUntil函数的实现，其根据传入的数量来生成计算索引，放入chan中，后续多个goroutine从chan中取出数据直接进行计算即可</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">workqueue.ParallelizeUntil(context.TODO(), <span class="number">16</span>, <span class="built_in">len</span>(nodes), <span class="function"><span class="keyword">func</span><span class="params">(index <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 根据节点和配置的算法进行计算</span></span><br><span class="line">    nodeInfo := nodeNameToInfo[nodes[index].Name]</span><br><span class="line">        <span class="comment">// 获取算法的索引</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> priorityConfigs &#123;</span><br><span class="line">        <span class="keyword">if</span> priorityConfigs[i].Function != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> err error</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 通过节点索引，来进行针对单个node的计算结果的保存</span></span><br><span class="line">        results[i][index], err = priorityConfigs[i].Map(pod, meta, nodeInfo)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            appendError(err)</span><br><span class="line">            results[i][index].Host = nodes[index].Name</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-3-基于算法索引的Reduce计算"><a href="#2-3-基于算法索引的Reduce计算" class="headerlink" title="2.3 基于算法索引的Reduce计算"></a>2.3 基于算法索引的Reduce计算</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/1579248329835-7366e450-86a0-4599-8168-6f8ab834c3c9.png" alt="image.png"></p>
+<p>基于算法的并行，则是为每个算法的计算都启动一个goroutine,每个goroutine通过算法索引来进行该算法的所有map阶段的结果的读取，并进行计算，后续结果仍然存储在对应的位置</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算策略的分值</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> priorityConfigs &#123;</span><br><span class="line">    <span class="keyword">if</span> priorityConfigs[i].Reduce == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    &#125;</span><br><span class="line">    wg.Add(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(index <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> wg.Done()</span><br><span class="line">        <span class="keyword">if</span> err := priorityConfigs[index].Reduce(pod, meta, nodeNameToInfo, results[index]); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            appendError(err)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> klog.V(<span class="number">10</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> _, hostPriority := <span class="keyword">range</span> results[index] &#123;</span><br><span class="line">                klog.Infof(<span class="string">"%v -&gt; %v: %v, Score: (%d)"</span>, util.GetPodFullName(pod), hostPriority.Host, priorityConfigs[index].Name, hostPriority.Score)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;(i)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Wait for all computations to be finished.</span></span><br><span class="line">wg.Wait()</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-4-优先级打分结果统计"><a href="#2-4-优先级打分结果统计" class="headerlink" title="2.4 优先级打分结果统计"></a>2.4 优先级打分结果统计</h2><p>根据之前的map/reduce阶段，接下来就是将针对所有node的所有算法计算结果进行累加即可</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Summarize all scores.</span></span><br><span class="line">result := <span class="built_in">make</span>(schedulerapi.HostPriorityList, <span class="number">0</span>, <span class="built_in">len</span>(nodes))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> nodes &#123;</span><br><span class="line">    result = <span class="built_in">append</span>(result, schedulerapi.HostPriority&#123;Host: nodes[i].Name, Score: <span class="number">0</span>&#125;)</span><br><span class="line">    <span class="comment">// 便利所有的算法配置</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> priorityConfigs &#123;</span><br><span class="line">        result[i].Score += results[j][i].Score * priorityConfigs[j].Weight</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> scoresMap &#123;</span><br><span class="line">        result[i].Score += scoresMap[j][i].Score</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-根据优先级随机筛选host"><a href="#2-5-根据优先级随机筛选host" class="headerlink" title="2.5 根据优先级随机筛选host"></a>2.5 根据优先级随机筛选host</h2><p>这里的随机筛选是指的当多个host优先级相同的时候，会有一定的概率用当前的node替换之前的优先级相等的node(到目前为止的优先级最高的node), 其主要通过cntOfMaxScore和rand.Intn(cntOfMaxScore)来进行实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *genericScheduler)</span> <span class="title">selectHost</span><span class="params">(priorityList schedulerapi.HostPriorityList)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(priorityList) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>, fmt.Errorf(<span class="string">"empty priorityList"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    maxScore := priorityList[<span class="number">0</span>].Score</span><br><span class="line">    selected := priorityList[<span class="number">0</span>].Host</span><br><span class="line">    cntOfMaxScore := <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> _, hp := <span class="keyword">range</span> priorityList[<span class="number">1</span>:] &#123;</span><br><span class="line">        <span class="keyword">if</span> hp.Score &gt; maxScore &#123;</span><br><span class="line">            maxScore = hp.Score</span><br><span class="line">            selected = hp.Host</span><br><span class="line">            cntOfMaxScore = <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> hp.Score == maxScore &#123;</span><br><span class="line">            cntOfMaxScore++</span><br><span class="line">            <span class="keyword">if</span> rand.Intn(cntOfMaxScore) == <span class="number">0</span> &#123;</span><br><span class="line">                <span class="comment">// Replace the candidate with probability of 1/cntOfMaxScore</span></span><br><span class="line">                selected = hp.Host</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> selected, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-设计总结"><a href="#3-设计总结" class="headerlink" title="3. 设计总结"></a>3. 设计总结</h1><p>优选阶段通过分离计算对象来实现多个node和多种算法的并行计算，并且通过基于二级索引来设计最终的存储结果，从而达到整个计算过程中的无锁设计，同时为了保证分配的随机性，针对同等优先级的采用了随机的方式来进行最终节点的分配，如果大家后续有类似的需求，不妨可以借鉴借鉴</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8E%E5%B9%B6%E8%A1%8C%E7%AD%9B%E9%80%89%E7%9A%84%E9%A2%84%E9%80%89%E8%AE%BE%E8%AE%A1%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/" rel="prev" title="基于并行筛选的预选设计设计实现">
+      <i class="fa fa-chevron-left"></i> 基于并行筛选的预选设计设计实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/09/%E9%98%BF%E9%87%8C%E4%BA%91/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%8F%E5%85%B8%E7%BD%91%E7%BB%9C%E9%95%9C%E5%83%8F%E5%85%8B%E9%9A%86%E4%B8%BA%E4%B8%93%E6%9C%89%E7%BD%91%E7%BB%9C%E5%AE%9E%E4%BE%8B%E7%BD%91%E7%BB%9C%E6%97%A0%E6%B3%95%E8%BF%9E%E9%80%9A/" rel="next" title="阿里云经典网络镜像克隆为专有网络实例网络无法连通">
+      阿里云经典网络镜像克隆为专有网络实例网络无法连通 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基于map-reduce无锁设计的优选设计实现"><span class="nav-number">1.</span> <span class="nav-text">基于map&#x2F;reduce无锁设计的优选设计实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-设计基础"><span class="nav-number">2.</span> <span class="nav-text">1. 设计基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-两阶段-单点与聚合"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 两阶段: 单点与聚合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-并行-节点与算法"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 并行: 节点与算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-map与reduce"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 map与reduce</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-weight"><span class="nav-number">2.4.</span> <span class="nav-text">1.4 weight</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-随机分布"><span class="nav-number">2.5.</span> <span class="nav-text">1.5 随机分布</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-源码分析"><span class="nav-number">3.</span> <span class="nav-text">2. 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-无锁计算结果保存"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 无锁计算结果保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-基于节点索引的Map计算"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 基于节点索引的Map计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-基于算法索引的Reduce计算"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 基于算法索引的Reduce计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-优先级打分结果统计"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 优先级打分结果统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-根据优先级随机筛选host"><span class="nav-number">3.5.</span> <span class="nav-text">2.5 根据优先级随机筛选host</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-设计总结"><span class="nav-number">4.</span> <span class="nav-text">3. 设计总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

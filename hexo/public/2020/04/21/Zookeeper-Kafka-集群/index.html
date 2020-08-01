@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="http:&#x2F;&#x2F;zookeeper.apache.org&#x2F;  ZooKeeper是一个分布式且开源的分布式应用程序协调服务。  zookeeper集群特性：整个集群种只要有超过集群数量一半的zookeeper工作只正常的，那么整个集群对外就是可用的，假如有2台服务器做了一个zookeeper集群，只要有任何一台故障或宕机，那么这个zookeeper集群就不可用了，因为剩下的一台没有超过集群一半的数量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zookeeper+Kafka(集群)">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="http:&#x2F;&#x2F;zookeeper.apache.org&#x2F;  ZooKeeper是一个分布式且开源的分布式应用程序协调服务。  zookeeper集群特性：整个集群种只要有超过集群数量一半的zookeeper工作只正常的，那么整个集群对外就是可用的，假如有2台服务器做了一个zookeeper集群，只要有任何一台故障或宕机，那么这个zookeeper集群就不可用了，因为剩下的一台没有超过集群一半的数量">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/kafka.jpg">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817020534.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021632.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021739.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021842.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817025029.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817030619.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817030917.png">
+<meta property="article:published_time" content="2020-04-21T02:16:09.000Z">
+<meta property="article:modified_time" content="2020-04-21T07:55:33.569Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/kafka.jpg">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Zookeeper+Kafka(集群) | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">177</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Zookeeper+Kafka(集群)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-21 10:16:09 / 修改时间：15:55:33" itemprop="dateCreated datePublished" datetime="2020-04-21T10:16:09+08:00">2020-04-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="http://zookeeper.apache.org/" target="_blank" rel="noopener">http://zookeeper.apache.org/</a><br>  ZooKeeper是一个分布式且开源的分布式应用程序协调服务。<br>  zookeeper集群特性：整个集群种只要有超过集群数量一半的zookeeper工作只正常的，那么整个集群对外就是可用的，<br>假如有2台服务器做了一个zookeeper集群，只要有任何一台故障或宕机，那么这个zookeeper集群就不可用了，因为剩下<br>的一台没有超过集群一半的数量，但是假如有三台zookeeper组成一个集群，那么损坏一台就还剩两台，大于3台的一半，<br>所以损坏一台还是可以正常运行的，但是再损坏一台就只剩一台集群就不可用了。那么要是4台组成一个zookeeper集群，<br>损坏一台集群肯定是正常的，那么损坏两台就还剩两台，那么2台不大于集群数量的一半，所以3台的zookeeper集群和4台<br>的zookeeper集群损坏两台的结果都是集群不可用，一次类推5台和6台以及7台和8台都是同理，所以这也就是为什么集群<br>一般都是奇数的原因。</p>
+<p><a href="http://kafka.apache.org/" target="_blank" rel="noopener">http://kafka.apache.org/</a><br>  kafka被称为下一代分布式消息系统，是apache基金会一个开源项目，<br>  最主要的优势是其具备分布式功能、并且结合zookeeper可以实现动态扩容</p>
+<a id="more"></a>
+
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/kafka.jpg" alt="img"></p>
+<p>Broker<br>Kafka集群包含一个或多个服务器，这种服务器被称为broker<br>Topic<br>每条发布到Kafka集群的消息都有一个类别，这个类别被称为topic。（物理上不同topic的消息分开存储，逻辑上一个topic的消息虽然保存于<br>一个或多个broker上但用户只需指定消息的topic即可生产或消费数据而不必关心数据存于何处）<br>Partition<br>parition是物理上的概念，每个topic包含一个或多个partition，创建topic时可指定parition数量。每个partition对应于一个文件夹，该文<br>件夹下存储该partition的数据和索引文件<br>Producer<br>负责发布消息到Kafka broker<br>Consumer<br>消费消息。每个consumer属于一个特定的consuer group（可为每个consumer指定group name，若不指定group name则属于默认的group）。使<br>用consumer high level API时，同一topic的一条消息只能被同一个consumer group内的一个consumer消费，但多个consumer group可同时消<br>费这一消息。</p>
+<p>=================================================================================================================</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">安装环境：</span><br><span class="line">三台服务器</span><br><span class="line">192.168.7.10</span><br><span class="line">192.168.7.20</span><br><span class="line">192.168.7.30</span><br><span class="line"></span><br><span class="line">三台服务器上先配置好java环境</span><br><span class="line"><span class="comment"># cd /usr/local/src/</span></span><br><span class="line"><span class="comment"># tar xvf jdk-8u212-linux-x64.tar.gz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ln -sv /usr/local/src/jdk1.8.0_212/ /usr/local/jdk</span></span><br><span class="line"><span class="string">'/usr/local/jdk'</span> -&gt; <span class="string">'/usr/local/src/jdk1.8.0_212/'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ln -sv /usr/local/jdk/bin/java /usr/bin/</span></span><br><span class="line"><span class="string">'/usr/bin/java'</span> -&gt; <span class="string">'/usr/local/jdk/bin/java'</span></span><br><span class="line"></span><br><span class="line">配置环境变量</span><br><span class="line"><span class="comment"># vim /etc/profile.d/jdk.sh</span></span><br><span class="line"><span class="built_in">export</span> HISTTIMEFORMAT=<span class="string">"%F %t `whoami` "</span></span><br><span class="line"><span class="built_in">export</span> <span class="built_in">export</span> LANG=<span class="string">"en_US.utf-8"</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># . /etc/profile.d/jdk.sh</span></span><br><span class="line"></span><br><span class="line">验证版本</span><br><span class="line"><span class="comment"># java -version</span></span><br><span class="line">java version <span class="string">"1.8.0_212"</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_212-b10)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.212-b10, mixed mode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1、三台服务器下载并安装zookeeper</span><br><span class="line"><span class="comment"># tar xvf zookeeper-3.4.14.tar.gz</span></span><br><span class="line"><span class="comment"># ln -sv /usr/local/src/zookeeper-3.4.14 /usr/local/zookeeper</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cd /usr/local/zookeeper</span></span><br><span class="line"><span class="comment"># cp conf/zoo_sample.cfg conf/zoo.cfg</span></span><br><span class="line"><span class="comment">#mkdir /usr/local/zookeeper/data          创建数据目录</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># vim conf/zoo.cfg   三台服务器配置相同</span></span><br><span class="line"><span class="comment"># The number of milliseconds of each tick</span></span><br><span class="line">tickTime=2000       <span class="comment">#服务器与服务器之间和客户端与服务器之间的单次心跳检测时间间隔，单位为毫秒</span></span><br><span class="line"><span class="comment"># The number of ticks that the initial </span></span><br><span class="line"><span class="comment"># synchronization phase can take</span></span><br><span class="line">initLimit=10       <span class="comment">#集群中leader服务器与follower服务器初始连接心跳次数，即多少个2000毫秒</span></span><br><span class="line"><span class="comment"># The number of ticks that can pass between </span></span><br><span class="line"><span class="comment"># sending a request and getting an acknowledgement</span></span><br><span class="line">syncLimit=5        <span class="comment"># leader与follower之间连接完成之后，后期检测发送和应答的心跳次数，如果该follower </span></span><br><span class="line">                    在设置的时间内(5*2000)不能与leader 进行通信，那么此 follower 将被视为不可用</span><br><span class="line"><span class="comment"># the directory where the snapshot is stored.</span></span><br><span class="line"><span class="comment"># do not use /tmp for storage, /tmp here is just </span></span><br><span class="line"><span class="comment"># example sakes.</span></span><br><span class="line">dataDir=/usr/<span class="built_in">local</span>/zookeeper/data        <span class="comment">#自定义的zookeeper保存数据的目录</span></span><br><span class="line"><span class="comment"># the port at which the clients will connect</span></span><br><span class="line">clientPort=2181       <span class="comment">#客户端连接 Zookeeper 服务器的端口，Zookeeper 会监听这个端口，接受客户端的访问请求</span></span><br><span class="line"><span class="comment"># the maximum number of client connections.</span></span><br><span class="line"><span class="comment"># increase this if you need to handle more clients</span></span><br><span class="line">maxClientCnxns=4096</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Be sure to read the maintenance section of the </span></span><br><span class="line"><span class="comment"># administrator guide before turning on autopurge.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The number of snapshots to retain in dataDir</span></span><br><span class="line">autopurge.snapRetainCount=512     <span class="comment">#设置zookeeper保存保留多少次客户端连接的数据</span></span><br><span class="line"><span class="comment"># Purge task interval in hours</span></span><br><span class="line"><span class="comment"># Set to "0" to disable auto purge feature</span></span><br><span class="line">autopurge.purgeInterval=1         <span class="comment">#设置zookeeper间隔多少小时清理一次保存的客户端数据</span></span><br><span class="line"></span><br><span class="line">server.1=192.168.7.10:2888:3888   <span class="comment">#服务器编号=服务器IP:LF数据同步端口:LF选举端口</span></span><br><span class="line">server.2=192.168.7.20:2888:3888</span><br><span class="line">server.3=192.168.7.30:2888:3888</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2、在三台服务器的数据目录中生成serverid</span><br><span class="line">192.168.7.10：  <span class="comment"># echo 1 &gt; /usr/local/zookeeper/data/myid</span></span><br><span class="line">192.168.7.20：  <span class="comment"># echo 2 &gt; /usr/local/zookeeper/data/myid</span></span><br><span class="line">192.168.7.30：  <span class="comment"># echo 3 &gt; /usr/local/zookeeper/data/myid</span></span><br><span class="line"></span><br><span class="line">3、启动zookeeper服务（三台服务器要同时启动，期间不要超过上面设置的20s）</span><br><span class="line"><span class="comment"># /usr/local/zookeeper/bin/zkServer.sh --help</span></span><br><span class="line"><span class="comment"># /usr/local/zookeeper/bin/zkServer.sh start</span></span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /usr/<span class="built_in">local</span>/zookeeper/bin/../conf/zoo.cfg</span><br><span class="line">Starting zookeeper ... STARTED</span><br><span class="line"></span><br><span class="line">4、验证集群状态（2个follower、1个leader）</span><br><span class="line"><span class="comment"># /usr/local/zookeeper/bin/zkServer.sh status</span></span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /usr/<span class="built_in">local</span>/zookeeper/bin/../conf/zoo.cfg</span><br><span class="line">Mode: follower</span><br><span class="line"></span><br><span class="line"><span class="comment"># /usr/local/zookeeper/bin/zkServer.sh status</span></span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /usr/<span class="built_in">local</span>/zookeeper/bin/../conf/zoo.cfg</span><br><span class="line">Mode: follower</span><br><span class="line"></span><br><span class="line"><span class="comment"># /usr/local/zookeeper/bin/zkServer.sh status</span></span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /usr/<span class="built_in">local</span>/zookeeper/bin/../conf/zoo.cfg</span><br><span class="line">Mode: leader</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">5、测试数据（windows打开此工具，前提是windows安装配置好java环境 ）</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817020534.png" alt="img"></p>
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021632.png" alt="img"></p>
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021739.png" alt="img"></p>
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817021842.png" alt="img"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">6、下载并安装kafka</span><br><span class="line"><span class="comment"># cd /usr/local/src/</span></span><br><span class="line"><span class="comment"># tar xvf kafka_2.12-2.1.0.tgz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ln -sv /usr/local/src/kafka_2.12-2.1.0 /usr/local/kafka</span></span><br><span class="line"><span class="comment"># cd /usr/local/kafka</span></span><br><span class="line"></span><br><span class="line">server1</span><br><span class="line"><span class="comment"># vim config/server.properties</span></span><br><span class="line">broker.id=1</span><br><span class="line">listeners=PLAINTEXT://192.168.7.10:9092</span><br><span class="line">log.dirs=/usr/<span class="built_in">local</span>/kafka/kafka-logs</span><br><span class="line">zookeeper.connect=192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181</span><br><span class="line"></span><br><span class="line">server2</span><br><span class="line"><span class="comment"># vim config/server.properties</span></span><br><span class="line">broker.id=2</span><br><span class="line">listeners=PLAINTEXT://192.168.7.20:9092</span><br><span class="line">log.dirs=/usr/<span class="built_in">local</span>/kafka/kafka-logs</span><br><span class="line">zookeeper.connect=192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181</span><br><span class="line"></span><br><span class="line">server3</span><br><span class="line"><span class="comment"># vim config/server.properties</span></span><br><span class="line">broker.id=3</span><br><span class="line">listeners=PLAINTEXT://192.168.7.30:9092</span><br><span class="line">log.dirs=/usr/<span class="built_in">local</span>/kafka/kafka-logs</span><br><span class="line">zookeeper.connect=192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181</span><br><span class="line"></span><br><span class="line">三台服务器分别以守护进程的方式启动kafka</span><br><span class="line">/usr/<span class="built_in">local</span>/kafka/bin/kafka-server-start.sh -daemon /usr/<span class="built_in">local</span>/kafka/config/server.properties</span><br><span class="line"></span><br><span class="line">查看server日志</span><br><span class="line"><span class="comment"># tail -f /usr/local/kafka/logs/server.log</span></span><br><span class="line"></span><br><span class="line">7、刷新zookeeper，查看数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817025029.png" alt="img"></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">8</span>、测试kafka是否正常使用</span><br><span class="line">windows客户端安装kafkatool_64bit.exe</span><br><span class="line">连接</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817030619.png" alt="img"></p>
+<p><img src="/2020/04/21/Zookeeper-Kafka-%E9%9B%86%E7%BE%A4/QQ%E6%88%AA%E5%9B%BE20190817030917.png" alt="img"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">9、测试创建topic</span><br><span class="line"><span class="comment"># /usr/local/kafka/bin/kafka-topics.sh --create  --zookeeper 192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181 --partitions 3 --replication-factor 3 --topic logstashtest</span></span><br><span class="line">Created topic <span class="string">"logstashtest"</span>.</span><br><span class="line"></span><br><span class="line">测试获取topic</span><br><span class="line"><span class="comment"># /usr/local/kafka/bin/kafka-topics.sh  --describe --zookeeper 192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181  --topic logstashtest</span></span><br><span class="line">Topic:logstashtest	PartitionCount:3	ReplicationFactor:3	Configs:</span><br><span class="line">	Topic: logstashtest	Partition: 0	Leader: 2	Replicas: 2,1,3	Isr: 2,1,3</span><br><span class="line">	Topic: logstashtest	Partition: 1	Leader: 3	Replicas: 3,2,1	Isr: 3,2,1</span><br><span class="line">	Topic: logstashtest	Partition: 2	Leader: 1	Replicas: 1,3,2	Isr: 1,3,2</span><br><span class="line"></span><br><span class="line">删除topic</span><br><span class="line"><span class="comment"># /usr/local/kafka/bin/kafka-topics.sh --delete  --zookeeper 192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181 --topic logstashtest</span></span><br><span class="line">Topic logstashtest is marked <span class="keyword">for</span> deletion.</span><br><span class="line">Note: This will have no impact <span class="keyword">if</span> delete.topic.enable is not <span class="built_in">set</span> to <span class="literal">true</span>.</span><br><span class="line"></span><br><span class="line">验证是否被删除</span><br><span class="line"><span class="comment"># /usr/local/kafka/bin/kafka-topics.sh --describe  --zookeeper 192.168.7.10:2181,192.168.7.20:2181,192.168.7.30:2181 --topic logstashtest</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/21/Linux/Linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" rel="prev" title="Linux系统管理">
+      <i class="fa fa-chevron-left"></i> Linux系统管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/21/docker/docker%E5%9B%BD%E5%86%85%E5%AE%89%E8%A3%85/" rel="next" title="docker国内安装">
+      docker国内安装 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">177</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

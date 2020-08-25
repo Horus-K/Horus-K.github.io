@@ -123,17 +123,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">92</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">180</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">188</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -185,6 +185,634 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E5%88%A9%E7%94%A8cobbler%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E5%8F%8Aweb%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E5%88%A9%E7%94%A8cobbler%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E5%8F%8Aweb%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">利用cobbler实现系统自动化安装及web管理</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 16:40:10 / 修改时间：17:37:42" itemprop="dateCreated datePublished" datetime="2020-03-10T16:40:10+08:00">2020-03-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%87%AA%E5%8A%A8%E5%8C%96/" itemprop="url" rel="index">
+                    <span itemprop="name">自动化</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-安装包和配置服务"><a href="#1-安装包和配置服务" class="headerlink" title="1 安装包和配置服务"></a>1 安装包和配置服务</h2><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~<span class="meta"># yum install cobbler  dhcp -y</span></span><br><span class="line"><span class="symbol">root:</span>~<span class="meta"># systemctl enable tftp dhcpd httpd cobblerd</span></span><br><span class="line"><span class="symbol">root:</span>~<span class="meta"># systemctl start tftp  httpd cobblerd</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E5%88%A9%E7%94%A8cobbler%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E5%8F%8Aweb%E7%AE%A1%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E6%90%AD%E5%BB%BAPXE%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%EF%BC%8C%E6%94%AF%E6%8C%81%E5%A4%9A%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E6%90%AD%E5%BB%BAPXE%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%EF%BC%8C%E6%94%AF%E6%8C%81%E5%A4%9A%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">搭建PXE无人值守自动化安装系统，支持多系统</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 16:38:01 / 修改时间：17:37:56" itemprop="dateCreated datePublished" datetime="2020-03-10T16:38:01+08:00">2020-03-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%87%AA%E5%8A%A8%E5%8C%96/" itemprop="url" rel="index">
+                    <span itemprop="name">自动化</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="需要的服务"><a href="#需要的服务" class="headerlink" title="需要的服务"></a>需要的服务</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E6%90%AD%E5%BB%BAPXE%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%EF%BC%8C%E6%94%AF%E6%8C%81%E5%A4%9A%E7%B3%BB%E7%BB%9F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/" class="post-title-link" itemprop="url">搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 15:36:21 / 修改时间：17:41:35" itemprop="dateCreated datePublished" datetime="2020-03-10T15:36:21+08:00">2020-03-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DNS/" itemprop="url" rel="index">
+                    <span itemprop="name">DNS</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1基本知识点"><a href="#1基本知识点" class="headerlink" title="1基本知识点"></a>1基本知识点</h2><h3 id="DNS服务"><a href="#DNS服务" class="headerlink" title="DNS服务"></a>DNS服务</h3><blockquote>
+<p>DNS：Domain Name System 应用层协议<br>C/S,53/udp, 53/tcp<br>BIND：Bekerley Internat Name Domain<br>ISC （<a href="http://www.isc.org）" target="_blank" rel="noopener">www.isc.org）</a><br>本地名称解析配置文件：hosts</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/DNS%E6%A8%A1%E6%8B%9F%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/%E7%BD%91%E7%BB%9C/DNS%E6%A8%A1%E6%8B%9F%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E5%AE%9E%E9%AA%8C/" class="post-title-link" itemprop="url">DNS模拟互联网架构实验</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 15:35:28 / 修改时间：17:39:37" itemprop="dateCreated datePublished" datetime="2020-03-10T15:35:28+08:00">2020-03-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="互联网DNS架构实验"><a href="#互联网DNS架构实验" class="headerlink" title="互联网DNS架构实验"></a>互联网DNS架构实验</h2><h2 id="针对系统学习DNS后的一个实验"><a href="#针对系统学习DNS后的一个实验" class="headerlink" title="针对系统学习DNS后的一个实验"></a>针对系统学习DNS后的一个实验</h2><ul>
+<li><p>架构图<br><img src="/2020/03/10/%E7%BD%91%E7%BB%9C/DNS%E6%A8%A1%E6%8B%9F%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E5%AE%9E%E9%AA%8C/37bcfb09b8b8cebde697769102cef9aa.png" alt="img"></p></li></ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/%E7%BD%91%E7%BB%9C/DNS%E6%A8%A1%E6%8B%9F%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E5%AE%9E%E9%AA%8C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97/" class="post-title-link" itemprop="url">ansible常用模块</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-10 15:18:14" itemprop="dateCreated datePublished" datetime="2020-03-10T15:18:14+08:00">2020-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-12 11:21:12" itemprop="dateModified" datetime="2020-03-12T11:21:12+08:00">2020-03-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ansible/" itemprop="url" rel="index">
+                    <span itemprop="name">ansible</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<h5 id="playbook的模块与在ansible命令行下使用的模块有一些不同。这主要是因为在playbook中会使用到一些facts变量和一些通过setup模块从远程主机上获取到的变量。有些模块没法在命令行下运行，就是因为它们需要这些变量。而且即使那些可以在命令行下工作的模块也可以通过playbook的模块获取一些更高级的功能。"><a href="#playbook的模块与在ansible命令行下使用的模块有一些不同。这主要是因为在playbook中会使用到一些facts变量和一些通过setup模块从远程主机上获取到的变量。有些模块没法在命令行下运行，就是因为它们需要这些变量。而且即使那些可以在命令行下工作的模块也可以通过playbook的模块获取一些更高级的功能。" class="headerlink" title="playbook的模块与在ansible命令行下使用的模块有一些不同。这主要是因为在playbook中会使用到一些facts变量和一些通过setup模块从远程主机上获取到的变量。有些模块没法在命令行下运行，就是因为它们需要这些变量。而且即使那些可以在命令行下工作的模块也可以通过playbook的模块获取一些更高级的功能。"></a>playbook的模块与在ansible命令行下使用的模块有一些不同。这主要是因为在playbook中会使用到一些facts变量和一些通过setup模块从远程主机上获取到的变量。有些模块没法在命令行下运行，就是因为它们需要这些变量。而且即使那些可以在命令行下工作的模块也可以通过playbook的模块获取一些更高级的功能。</h5></blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Mysql/%E5%9F%BA%E4%BA%8EYUM%E5%AE%89%E8%A3%85%E4%B8%8E%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%88%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E5%AE%89%E8%A3%85Mariadb-mysql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/Mysql/%E5%9F%BA%E4%BA%8EYUM%E5%AE%89%E8%A3%85%E4%B8%8E%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%88%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E5%AE%89%E8%A3%85Mariadb-mysql/" class="post-title-link" itemprop="url">基于YUM安装与源码编译或二进制多实例安装Mariadb.mysql</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-10 15:12:34" itemprop="dateCreated datePublished" datetime="2020-03-10T15:12:34+08:00">2020-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 10:32:20" itemprop="dateModified" datetime="2020-06-09T10:32:20+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基于YUM"><a href="#基于YUM" class="headerlink" title="基于YUM"></a>基于YUM</h2><ul>
+<li>1 安装</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> mariadb</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/Mysql/%E5%9F%BA%E4%BA%8EYUM%E5%AE%89%E8%A3%85%E4%B8%8E%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%88%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E5%AE%89%E8%A3%85Mariadb-mysql/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/" class="post-title-link" itemprop="url">percona-xtrabackup实现数据库完全，增量的备份和还原</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 15:02:33 / 修改时间：17:43:14" itemprop="dateCreated datePublished" datetime="2020-03-10T15:02:33+08:00">2020-03-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="注意：版本变化"><a href="#注意：版本变化" class="headerlink" title="注意：版本变化"></a>注意：版本变化</h3><blockquote>
+<p>xtrabackup版本升级到2.4后，相比之前的2.1有了比较大的变化：<br>innobackupex 功能全部集成到 xtrabackup 里面，只有一个 binary程序，另外为了兼容考虑，innobackupex作为 xtrabackup 的软链接，即xtrabacku现在支持非Innodb表备份，并且 Innobackupex 在下一版本中移除，建议通过xtrabackup替换innobackupex</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Mysql/Mysql%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%BA%94%E7%94%A8%E4%B9%8B%E4%BD%BF%E7%94%A8ProxySQL%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/10/Mysql/Mysql%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%BA%94%E7%94%A8%E4%B9%8B%E4%BD%BF%E7%94%A8ProxySQL%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/" class="post-title-link" itemprop="url">Mysql中间件应用之使用ProxySQL进行数据库读写分离</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-10 14:53:54 / 修改时间：17:44:12" itemprop="dateCreated datePublished" datetime="2020-03-10T14:53:54+08:00">2020-03-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>在拓扑结构中，ProxySQL部署在应用程序和MySQL集群的中间位置。应用程序向ProxySQL发起SQL语句，ProxySQL分析收到的SQL语句，进行匹配、重写等操作，然后路由给后端MySQL集群中的某实例。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/10/Mysql/Mysql%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%BA%94%E7%94%A8%E4%B9%8B%E4%BD%BF%E7%94%A8ProxySQL%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -331,628 +959,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Linux/%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8EMYSQL%E9%AA%8C%E8%AF%81%E7%9A%84vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/Linux/%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8EMYSQL%E9%AA%8C%E8%AF%81%E7%9A%84vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7/" class="post-title-link" itemprop="url">实现基于MYSQL验证的vsftpd虚拟用户</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:32:53 / 修改时间：17:45:59" itemprop="dateCreated datePublished" datetime="2020-03-10T14:32:53+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%98%E5%82%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">存储</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="环境："><a href="#环境：" class="headerlink" title="环境："></a>环境：</h3><p>两台主机，一台ftp 服务器， 一台mysql server</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/Linux/%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8EMYSQL%E9%AA%8C%E8%AF%81%E7%9A%84vsftpd%E8%99%9A%E6%8B%9F%E7%94%A8%E6%88%B7/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">ansible–playbook用法与自己的yml范例总结</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:31:28 / 修改时间：17:46:28" itemprop="dateCreated datePublished" datetime="2020-03-10T14:31:28+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">ansible</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/4c29ec0b0b101df9314dd9029da4239f.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/" class="post-title-link" itemprop="url">ansible-role二进制批量部署mariadb</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:26:01 / 修改时间：18:20:49" itemprop="dateCreated datePublished" datetime="2020-03-10T14:26:01+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">ansible</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="总结构"><a href="#总结构" class="headerlink" title="总结构"></a>总结构</h2><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c1f0bf54f5e0cf4587331e22812f6d20.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/ha+kp/Keepalived-haproxy%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/ha+kp/Keepalived-haproxy%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">Keepalived+haproxy简单实现</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:22:14 / 修改时间：18:22:06" itemprop="dateCreated datePublished" datetime="2020-03-10T14:22:14+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">高可用</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/2020/03/10/ha+kp/Keepalived-haproxy%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/screenshot_20190607_151656.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/ha+kp/Keepalived-haproxy%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/ha+kp/Keeplived%E5%8D%95%E6%92%AD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/ha+kp/Keeplived%E5%8D%95%E6%92%AD/" class="post-title-link" itemprop="url">Keeplived单播</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:21:35 / 修改时间：18:23:41" itemprop="dateCreated datePublished" datetime="2020-03-10T14:21:35+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">高可用</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>[root@localhost ~]#tcpdump -i eth0 host -nn 224.0.0.18</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/ha+kp/Keeplived%E5%8D%95%E6%92%AD/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/ha+kp/keepalived%E9%9D%9E%E6%8A%A2%E5%8D%A0%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/ha+kp/keepalived%E9%9D%9E%E6%8A%A2%E5%8D%A0%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">keepalived非抢占模式</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:20:34 / 修改时间：18:22:25" itemprop="dateCreated datePublished" datetime="2020-03-10T14:20:34+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">高可用</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/ha+kp/keepalived%E9%9D%9E%E6%8A%A2%E5%8D%A0%E6%A8%A1%E5%BC%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/ha+kp/keepalived%E5%8F%8C%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/ha+kp/keepalived%E5%8F%8C%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">keepalived双主服务器</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:20:02 / 修改时间：18:22:50" itemprop="dateCreated datePublished" datetime="2020-03-10T14:20:02+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">高可用</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>node1：虚拟200，201<br>node2：虚拟202，203</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/ha+kp/keepalived%E5%8F%8C%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/ha+kp/keepalived%E9%82%AE%E4%BB%B6%E9%80%9A%E7%9F%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/10/ha+kp/keepalived%E9%82%AE%E4%BB%B6%E9%80%9A%E7%9F%A5/" class="post-title-link" itemprop="url">keepalived邮件通知</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-10 14:19:15 / 修改时间：18:22:58" itemprop="dateCreated datePublished" datetime="2020-03-10T14:19:15+08:00">2020-03-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">高可用</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>yum install mailx</p>
-<p>脚本与mail.rc所有keeplive机器都要有</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/10/ha+kp/keepalived%E9%82%AE%E4%BB%B6%E9%80%9A%E7%9F%A5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1018,20 +1029,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">188</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">92</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

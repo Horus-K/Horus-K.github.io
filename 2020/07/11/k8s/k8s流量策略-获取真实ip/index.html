@@ -26,7 +26,7 @@
   <meta name="description" content="externalTrafficPolicy 简介如果服务需要将外部流量路由到 本地节点或者集群级别的端点，即service type 为LoadBalancer或NodePort，那么需要指明该参数。存在两种选项：”Cluster”（默认）和 “Local”。 “Cluster” 隐藏源 IP 地址，可能会导致第二跳（second hop）到其他节点，但是全局负载效果较好。”Local” 保留客户">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s流量策略-获取真实ip">
-<meta property="og:url" content="https://horus-k.github.io/2020/07/11/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/index.html">
+<meta property="og:url" content="https://horus-k.github.io/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
 <meta property="og:description" content="externalTrafficPolicy 简介如果服务需要将外部流量路由到 本地节点或者集群级别的端点，即service type 为LoadBalancer或NodePort，那么需要指明该参数。存在两种选项：”Cluster”（默认）和 “Local”。 “Cluster” 隐藏源 IP 地址，可能会导致第二跳（second hop）到其他节点，但是全局负载效果较好。”Local” 保留客户">
 <meta property="og:locale" content="zh_CN">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://horus-k.github.io/2020/07/11/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+<link rel="canonical" href="https://horus-k.github.io/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
 
 
 <script id="page-configurations">
@@ -126,17 +126,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">92</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">27</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">180</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">188</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -192,7 +192,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/11/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -320,11 +320,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/08/k8s%E5%92%8Cdocker%E4%B8%AD%E6%90%AD%E5%BB%BAldap-manager/" rel="prev" title="k8s和docker中搭建ldap+manager">
+    <a href="/2020/07/08/LDAP/k8s%E5%92%8Cdocker%E4%B8%AD%E6%90%AD%E5%BB%BAldap-manager/" rel="prev" title="k8s和docker中搭建ldap+manager">
       <i class="fa fa-chevron-left"></i> k8s和docker中搭建ldap+manager
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/07/18/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/" rel="next" title="jenkins安卓打包">
+    <a href="/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/" rel="next" title="jenkins安卓打包">
       jenkins安卓打包 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -400,20 +400,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">188</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">92</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

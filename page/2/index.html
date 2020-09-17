@@ -123,7 +123,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">93</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">197</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">199</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -185,6 +185,138 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">k8s-HostAliases-Pod域名解析</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 17:07:20 / 修改时间：17:10:12" itemprop="dateCreated datePublished" datetime="2020-08-25T17:07:20+08:00">2020-08-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns来完成有时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但操作dns模块也不太方便，那么k8s上有没有想linux主机那样可以直接在host文件设置域名解析呢，容易想到的是，将域名记录到容器镜像的/etc/hosts文件，这样容器运行时就可以正确解析了。然而这样是不行的。k8s会管理这个文件，打到镜像里的文件实际并不会起作用。举个例子。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/Prometheus/Prometheus%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE%E6%8C%87%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/Prometheus/Prometheus%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE%E6%8C%87%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Prometheus管理数据指标的方法</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 16:37:57 / 修改时间：16:38:16" itemprop="dateCreated datePublished" datetime="2020-08-25T16:37:57+08:00">2020-08-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>有的时候我们可能希望从 Prometheus 中删除一些不需要的数据指标，或者只是单纯的想要释放一些磁盘空间。Prometheus 中的时间序列只能通过 HTTP API 来进行管理。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/25/Prometheus/Prometheus%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE%E6%8C%87%E6%A0%87%E7%9A%84%E6%96%B9%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -772,10 +904,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-08-18 11:30:23 / 修改时间：14:20:37" itemprop="dateCreated datePublished" datetime="2020-08-18T11:30:23+08:00">2020-08-18</time>
+              <time title="创建时间：2020-08-18 11:30:23" itemprop="dateCreated datePublished" datetime="2020-08-18T11:30:23+08:00">2020-08-18</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-16 19:08:08" itemprop="dateModified" datetime="2020-09-16T19:08:08+08:00">2020-09-16</time>
+              </span>
 
           
 
@@ -794,9 +932,11 @@
 <figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">前提：</span><br><span class="line">    守护进程pid为<span class="number">1</span></span><br><span class="line">    无lifecycle.preStop</span><br><span class="line">测试结果:</span><br><span class="line">容器可以正常关闭，eureka可以正常摘除</span><br></pre></td></tr></table></figure>
 
 <p>二</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">前提：</span><br><span class="line">    守护进程pid为<span class="number">1</span></span><br><span class="line">    有lifecycle.preStop</span><br><span class="line"><span class="symbol">    lifecycle:</span></span><br><span class="line"><span class="symbol">            preStop:</span></span><br><span class="line"><span class="symbol">              exec:</span></span><br><span class="line"><span class="symbol">                command:</span></span><br><span class="line">                  - <span class="string">"sh"</span></span><br><span class="line">                  - <span class="string">"-c"</span></span><br><span class="line">                  - |</span><br><span class="line">                    sleep <span class="number">30</span></span><br><span class="line">测试结果:</span><br><span class="line">容器无法正常关闭，eureka无法正常摘除</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">前提：</span></span><br><span class="line">    <span class="string">守护进程pid为1</span></span><br><span class="line">    <span class="string">有lifecycle.preStop</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">            <span class="attr">preStop:</span></span><br><span class="line">              <span class="attr">exec:</span></span><br><span class="line">                <span class="attr">command:</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">"sh"</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">"-c"</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line">                    <span class="string">sleep</span> <span class="number">30</span></span><br><span class="line"><span class="string">测试结果:</span></span><br><span class="line"><span class="string">容器无法正常关闭，eureka无法正常摘除</span></span><br></pre></td></tr></table></figure>
 
-<p>结论：preStop会覆盖pod第一次发送 SIGTERM -15 的信号</p>
+<p>结论：preStop会覆盖pod第一次发送 SIGTERM -15 的信号，需在sleep后kill 1 #存疑:测试过程中会有sleep后SIGTERM 无法关闭应用的情况</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">'curl -X POST --data DOWN http://127.0.0.1:8080/service-registry/instance-status  -H</span></span><br><span class="line"><span class="string">              "Content-Type: application/vnd.spring-boot.actuator.v2+json;charset=UTF-8";sleep 30'</span>	</span><br><span class="line"> </span><br><span class="line"><span class="comment">####### 参数解释</span></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8080</span> <span class="comment">#代表eureka地址</span></span><br><span class="line"><span class="string">service-registry</span>    <span class="comment">#代表注册中心</span></span><br><span class="line"><span class="string">DOWN</span>        <span class="comment">#执行down请求</span></span><br><span class="line"><span class="string">sleep</span>       <span class="comment">#等待30秒</span></span><br><span class="line"></span><br><span class="line"><span class="string">curl</span> <span class="string">-v</span> <span class="string">-X</span> <span class="string">DELETE</span> <span class="string">http://192.168.3.34:20001/eureka/apps/MEMBER-SERVER/192.168.3.34:member-server:20021</span></span><br></pre></td></tr></table></figure>
+
 <p>参考<a href="https://kubernetes.io/zh/docs/tasks/inject-data-application/define-command-argument-container/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/tasks/inject-data-application/define-command-argument-container/</a></p>
           <!--noindex-->
             <div class="post-button">
@@ -806,147 +946,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" class="post-title-link" itemprop="url">nginx日志切割</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-26 15:26:31" itemprop="dateModified" datetime="2020-08-26T15:26:31+08:00">2020-08-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">nginx</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/Data/apps/nginx/logs/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    nocompress</span><br><span class="line">    daily</span><br><span class="line">    copytruncate</span><br><span class="line">    create</span><br><span class="line">    notifempty</span><br><span class="line">    rotate 7</span><br><span class="line">    olddir /Data/apps/nginx/logs</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/<span class="built_in">kill</span> -HUP `cat /Data/apps/nginx/sbin/nginx.pid 2&gt; /dev/null` 2&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>/data/weblogs/*.log使用通配符时，/data/weblogs/目录下的所有匹配到的日志文件都将切割。如果要切割特定日志文件，就指定到该文件。</li>
-</ul>
-<h3 id="设置计划任务"><a href="#设置计划任务" class="headerlink" title="设置计划任务"></a>设置计划任务</h3><p>vim /etc/crontab</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">59 23 * * * root ( /usr/sbin/logrotate -f /PATH/TO/nginx-log-rotate)</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" class="post-title-link" itemprop="url">阿里云ASM服务网格</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-01 22:57:50" itemprop="dateCreated datePublished" datetime="2020-08-01T22:57:50+08:00">2020-08-01</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
       
     </div>
 
@@ -1031,7 +1030,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">199</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1044,7 +1043,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-count">94</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -123,7 +123,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">93</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">197</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">199</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -185,6 +185,147 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" class="post-title-link" itemprop="url">nginx日志切割</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-26 15:26:31" itemprop="dateModified" datetime="2020-08-26T15:26:31+08:00">2020-08-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">nginx</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/Data/apps/nginx/logs/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    nocompress</span><br><span class="line">    daily</span><br><span class="line">    copytruncate</span><br><span class="line">    create</span><br><span class="line">    notifempty</span><br><span class="line">    rotate 7</span><br><span class="line">    olddir /Data/apps/nginx/logs</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/<span class="built_in">kill</span> -HUP `cat /Data/apps/nginx/sbin/nginx.pid 2&gt; /dev/null` 2&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>/data/weblogs/*.log使用通配符时，/data/weblogs/目录下的所有匹配到的日志文件都将切割。如果要切割特定日志文件，就指定到该文件。</li>
+</ul>
+<h3 id="设置计划任务"><a href="#设置计划任务" class="headerlink" title="设置计划任务"></a>设置计划任务</h3><p>vim /etc/crontab</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">59 23 * * * root ( /usr/sbin/logrotate -f /PATH/TO/nginx-log-rotate)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" class="post-title-link" itemprop="url">阿里云ASM服务网格</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-01 22:57:50" itemprop="dateCreated datePublished" datetime="2020-08-01T22:57:50+08:00">2020-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -845,159 +986,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/02/zk+dubbo/%E6%8E%A7%E5%88%B6dubbo%E6%B3%A8%E5%86%8C%E4%BD%BF%E7%94%A8%E5%86%85%E5%A4%96%E7%BD%91ip%E5%9C%B0%E5%9D%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/02/zk+dubbo/%E6%8E%A7%E5%88%B6dubbo%E6%B3%A8%E5%86%8C%E4%BD%BF%E7%94%A8%E5%86%85%E5%A4%96%E7%BD%91ip%E5%9C%B0%E5%9D%80/" class="post-title-link" itemprop="url">控制dubbo注册使用内外网ip地址</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-07-02 17:16:00 / 修改时间：17:27:04" itemprop="dateCreated datePublished" datetime="2020-07-02T17:16:00+08:00">2020-07-02</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>场景：</p>
-<p>阿里云服务器，VPC网络，只开放常用端口</p>
-<p>应用1：提供者</p>
-<p>应用2：消费者</p>
-<p>启动消费者没问题，dubbo-admin显示已经注册</p>
-<p>提供者启动在注册zookeeper报错</p>
-<p><img src="/2020/07/02/zk+dubbo/%E6%8E%A7%E5%88%B6dubbo%E6%B3%A8%E5%86%8C%E4%BD%BF%E7%94%A8%E5%86%85%E5%A4%96%E7%BD%91ip%E5%9C%B0%E5%9D%80/image-20200702172355379.png" alt="image-20200702172355379"></p>
-<p>dubbo-admin查看提供者注册的ip为外网，而外网端口并没有开放，所以消费者连接不到提供者</p>
-<p>解决方法：</p>
-<p>修改<code>/etc/hosts</code>将主机名解析到内网ip</p>
-<p><code>ip地址 主机名</code></p>
-<p>重启提供者，dubbo-admin显示已经注册内网ip，再启动消费者，无异常</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/" class="post-title-link" itemprop="url">跳板机sudo环境与命令过滤</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-02 17:05:12" itemprop="dateCreated datePublished" datetime="2020-07-02T17:05:12+08:00">2020-07-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-03 09:21:14" itemprop="dateModified" datetime="2020-07-03T09:21:14+08:00">2020-07-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="sudo找不到环境变量的问题"><a href="#sudo找不到环境变量的问题" class="headerlink" title="sudo找不到环境变量的问题"></a>sudo找不到环境变量的问题</h1><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>sudo命令会重置环境变量,查看文件/etc/sudoers,可以看到这样的配置<br>Defaults      env_reset</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1068,7 +1056,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">199</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1081,7 +1069,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-count">94</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

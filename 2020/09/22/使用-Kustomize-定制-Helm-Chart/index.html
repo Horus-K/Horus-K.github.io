@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="如果你经常使用 Kubernetes，那么应该对 Helm 和 Kustomize 不陌生，这两个工具都是用来管理 Kubernetes 资源清单的，但是二者有着不同的工作方式。 Helm 使用的是模板，一个 Helm Chart 包中包含了很多模板和值文件，当被渲染时模板中的变量会使用值文件中对应的值替换。而 Kustomize 使用的是一种无模板的方式，它对 YAML 文件进行修补和合并操作，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Kustomize 定制 Helm Chart">
+<meta property="og:url" content="https://horus-k.github.io/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="如果你经常使用 Kubernetes，那么应该对 Helm 和 Kustomize 不陌生，这两个工具都是用来管理 Kubernetes 资源清单的，但是二者有着不同的工作方式。 Helm 使用的是模板，一个 Helm Chart 包中包含了很多模板和值文件，当被渲染时模板中的变量会使用值文件中对应的值替换。而 Kustomize 使用的是一种无模板的方式，它对 YAML 文件进行修补和合并操作，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-22T02:40:01.000Z">
+<meta property="article:modified_time" content="2020-09-22T02:41:04.864Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="helm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>使用 Kustomize 定制 Helm Chart | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">99</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">28</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">209</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 Kustomize 定制 Helm Chart
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-22 10:40:01 / 修改时间：10:41:04" itemprop="dateCreated datePublished" datetime="2020-09-22T10:40:01+08:00">2020-09-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>如果你经常使用 Kubernetes，那么应该对 Helm 和 Kustomize 不陌生，这两个工具都是用来管理 Kubernetes 资源清单的，但是二者有着不同的工作方式。</p>
+<p>Helm 使用的是模板，一个 Helm Chart 包中包含了很多模板和值文件，当被渲染时模板中的变量会使用值文件中对应的值替换。而 Kustomize 使用的是一种无模板的方式，它对 YAML 文件进行修补和合并操作，此外 Kustomize 也已经被原生内置到 kubectl 中了。这两个工具在 Kubernetes 的生态系统中都被广泛使用，而且这两个工具也可以一起结合使用。</p>
+<a id="more"></a>
+
+<p>我们知道很多项目其实都会为应用程序提供 Helm Chart 包，而模板变量的值通过值文件来控制。一个长期存在的问题就是我们应该如何定制上游的 Helm Chart 包，例如从 Helm Chart 包中添加或者一个 Kubernetes 资源清单，如果是通用的变更，最好的选择当然是直接贡献给上游仓库，但是如果是自定义的变更呢？</p>
+<p>通常我们可以自己 fork 上游的 Helm Chart 仓库，然后在自己的 repo 中对 Chart 包进行额外的变动。但是这样做，显然会带来额外的负担，特别是当 Chart 包只需要一点小改动的时候。</p>
+<p>这个时候我们可以使用 Kustomize 来定制现有的 Helm Chart，而不需要执行 fork 操作。</p>
+<blockquote>
+<p>本文使用的 Helm 版本为 3.3.1、Kustomize 3.8.2，主要参考文档：<strong>3 ways to customize off-the-shelf Helm charts with Kustomize</strong>[1]。</p>
+</blockquote>
+<h2 id="使用-Chart-插件自定义"><a href="#使用-Chart-插件自定义" class="headerlink" title="使用 Chart 插件自定义"></a>使用 Chart 插件自定义</h2><p>Kustomize 提供了一个很好的插件生态系统，允许扩展 Kustomize 的功能。其中就有一个名为<strong>ChartInflator</strong>[2] 的非内置插件，它允许 Kustomize 来渲染 Helm Charts，并执行任何需要的变更。</p>
+<p>首先先安装 <code>ChartInflator</code> 插件：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ chartinflator_dir=<span class="string">"./kustomize/plugin/kustomize.config.k8s.io/v1/chartinflator"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建插件目录</span></span><br><span class="line">$ mkdir -p <span class="variable">$&#123;chartinflator_dir&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载插件</span></span><br><span class="line">$ curl -L https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/kubernetes-sigs/</span>kustomize<span class="regexp">/kustomize/</span>v3.<span class="number">8.2</span><span class="regexp">/plugin/</span>someteam.example.com<span class="regexp">/v1/</span>chartinflator<span class="regexp">/ChartInflator &gt; $&#123;chartinflator_dir&#125;/</span>ChartInflator</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置插件执行权限</span></span><br><span class="line">$ chmod u+x <span class="variable">$&#123;chartinflator_dir&#125;</span><span class="regexp">/ChartInflator</span></span><br></pre></td></tr></table></figure>
+
+<p>比如我们要定制 <strong>Vault Helm Chart</strong>[3] 包，接下来创建 ChartInflator 资源清单和 Helm 的 values.yaml 值文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ChartInflator 资源清单</span></span><br><span class="line"><span class="string">$</span> <span class="string">cat</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span> <span class="string">&gt;&gt;</span> <span class="string">chartinflator-vault.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kustomize.config.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ChartInflator</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">vault-official-helm-chart</span></span><br><span class="line"><span class="attr">chartRepo:</span> <span class="string">https://helm.releases.hashicorp.com</span>  </span><br><span class="line"><span class="attr">chartName:</span> <span class="string">vault</span></span><br><span class="line"><span class="attr">chartRelease:</span> <span class="string">hashicorp</span></span><br><span class="line"><span class="attr">chartVersion:</span> <span class="number">0.7</span><span class="number">.0</span></span><br><span class="line"><span class="attr">releaseName:</span> <span class="string">vault</span></span><br><span class="line"><span class="attr">values:</span> <span class="string">values.yaml</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 values 值文件</span></span><br><span class="line"><span class="string">$</span> <span class="string">helm</span> <span class="string">repo</span> <span class="string">add</span> <span class="string">hashicorp</span> <span class="string">https://helm.releases.hashicorp.com</span> </span><br><span class="line"><span class="string">$</span> <span class="string">helm</span> <span class="string">show</span> <span class="string">values</span> <span class="string">--version</span> <span class="number">0.7</span><span class="number">.0</span> <span class="string">hashicorp/vault</span> <span class="string">&gt;</span> <span class="string">values.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Kustomize 文件</span></span><br><span class="line"><span class="string">$</span> <span class="string">kustomize</span> <span class="string">init</span></span><br><span class="line"><span class="string">$</span> <span class="string">cat</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span> <span class="string">&gt;&gt;</span> <span class="string">kustomization.yaml</span></span><br><span class="line"><span class="attr">generators:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">chartinflator-vault.yaml</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 为所有资源添加一个 label 标签</span></span><br><span class="line"><span class="string">$</span> <span class="string">kustomize</span> <span class="string">edit</span> <span class="string">add</span> <span class="string">label</span> <span class="string">env:dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后生成的 kustomize 文件如下所示：</span></span><br><span class="line"><span class="string">$</span> <span class="string">cat</span> <span class="string">kustomization.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kustomize.config.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Kustomization</span></span><br><span class="line"><span class="attr">generators:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">chartinflator-vault.yaml</span></span><br><span class="line"><span class="attr">commonLabels:</span></span><br><span class="line">  <span class="attr">env:</span> <span class="string">dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 整个资源清单目录结构</span></span><br><span class="line"><span class="string">$</span> <span class="string">tree</span> <span class="string">.</span></span><br><span class="line"><span class="string">.</span></span><br><span class="line"><span class="string">├──</span> <span class="string">chartinflator-vault.yaml</span></span><br><span class="line"><span class="string">├──</span> <span class="string">kustomization.yaml</span></span><br><span class="line"><span class="string">├──</span> <span class="string">kustomize</span></span><br><span class="line"><span class="string">│</span>   <span class="string">└──</span> <span class="string">plugin</span></span><br><span class="line"><span class="string">│</span>       <span class="string">└──</span> <span class="string">kustomize.config.k8s.io</span></span><br><span class="line"><span class="string">│</span>           <span class="string">└──</span> <span class="string">v1</span></span><br><span class="line"><span class="string">│</span>               <span class="string">└──</span> <span class="string">chartinflator</span></span><br><span class="line"><span class="string">│</span>                   <span class="string">└──</span> <span class="string">ChartInflator</span></span><br><span class="line"><span class="string">└──</span> <span class="string">values.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="number">5</span> <span class="string">directories,</span> <span class="number">4</span> <span class="string">files</span></span><br></pre></td></tr></table></figure>
+
+<p>现在就可以来渲染 Chart 模板了，执行如下所示的命令即可：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kustomize build <span class="comment">--enable_alpha_plugins .</span></span><br></pre></td></tr></table></figure>
+
+<p>正常渲染完成后我们可以看到所有的资源上都被添加了一个 <code>env: dev</code> 的标签，这是实时完成的，不需要维护任何额外的文件的。</p>
+<h2 id="用单个清单文件定制"><a href="#用单个清单文件定制" class="headerlink" title="用单个清单文件定制"></a>用单个清单文件定制</h2><p>另一种使用 Kustomize 定制 Chart 的方法是使用 <code>helm template</code> 命令来生成一个单一的资源清单，这种方式可以对 Chart 进行更多的控制，但它需要更多的工作来出来处理更新该生成文件的版本控制。</p>
+<p>通常我们可以使用 Make 来进行辅助处理，如下示例所示：</p>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Makefile</span></span><br><span class="line"><span class="string">CHART_REPO_NAME </span>  := <span class="string">hashicorp</span></span><br><span class="line"><span class="string">CHART_REPO_URL </span>   := <span class="string">https:</span>//<span class="string">helm.</span><span class="string">releases.</span><span class="string">hashicorp.</span><span class="string">com</span></span><br><span class="line"><span class="string">CHART_NAME </span>       := <span class="string">vault</span></span><br><span class="line"><span class="string">CHART_VERSION </span>    := 0.7.0</span><br><span class="line"><span class="string">CHART_VALUES_FILE </span>:= <span class="string">values.</span><span class="string">yaml</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">add-</span><span class="string">chart-repo:</span></span><br><span class="line">    <span class="string">helm </span><span class="string">repo </span><span class="string">add </span>$&#123;<span class="string">CHART_REPO_NAME&#125;</span> $&#123;<span class="string">CHART_REPO_URL&#125;</span></span><br><span class="line">    <span class="string">helm </span><span class="string">repo </span><span class="string">update</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">generate-</span><span class="string">chart-manifest:</span></span><br><span class="line">    <span class="string">helm </span><span class="string">template </span>$&#123;<span class="string">CHART_NAME&#125;</span> $&#123;<span class="string">CHART_REPO_NAME&#125;</span>/$&#123;<span class="string">CHART_NAME&#125;</span> \</span><br><span class="line">        <span class="built_in">--version</span> $&#123;<span class="string">CHART_VERSION&#125;</span> \</span><br><span class="line">        <span class="built_in">--values</span> $&#123;<span class="string">CHART_VALUES_FILE&#125;</span> &gt; $&#123;<span class="string">CHART_NAME&#125;</span>.<span class="string">yaml</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">get-</span><span class="string">chart-values:</span></span><br><span class="line">    @<span class="string">helm </span><span class="string">show </span><span class="string">values </span><span class="built_in">--version</span> $&#123;<span class="string">CHART_VERSION&#125;</span> \</span><br><span class="line">    $&#123;<span class="string">CHART_REPO_NAME&#125;</span>/$&#123;<span class="string">CHART_NAME&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="string">generate-chart-</span><span class="string">values:</span></span><br><span class="line">    @<span class="string">echo </span><span class="string">"Create values file: $&#123;CHART_VALUES_FILE&#125;"</span></span><br><span class="line">    @$(<span class="string">MAKE)</span> -s <span class="built_in">get-chart-values</span> &gt; $&#123;<span class="string">CHART_VALUES_FILE&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="string">diff-chart-</span><span class="string">values:</span></span><br><span class="line">    @<span class="string">echo </span><span class="string">"Diff: Local &lt;==&gt; Remote"</span></span><br><span class="line">    @$(<span class="string">MAKE)</span> -s <span class="built_in">get-chart-values</span> | \</span><br><span class="line">    <span class="string">diff </span><span class="built_in">--suppress-common-lines</span> <span class="built_in">--side-by-side</span> $&#123;<span class="string">CHART_VALUES_FILE&#125;</span> - || \</span><br><span class="line">    <span class="string">exit </span>0</span><br></pre></td></tr></table></figure>
+
+<p>要定制上游的 Vault Helm Chart，我们可以做如下操作：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化 chart 文件</span></span><br><span class="line">$ make generate-chart-values generate-chart-manifest </span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Kustomize 文件并添加一个 label 标签</span></span><br><span class="line">$ kustomize init</span><br><span class="line">$ kustomize <span class="builtin-name">edit</span> <span class="builtin-name">add</span><span class="built_in"> resource </span>vault.yaml</span><br><span class="line">$ kustomize <span class="builtin-name">edit</span> <span class="builtin-name">add</span> label env:dev</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后生成的文件结构如下所示</span></span><br><span class="line">$ tree .</span><br><span class="line">.</span><br><span class="line">├── kustomization.yaml</span><br><span class="line">├── makefile</span><br><span class="line">├── values.yaml</span><br><span class="line">└── vault.yaml</span><br><span class="line"></span><br><span class="line">0 directories, 4 files</span><br><span class="line"></span><br><span class="line"><span class="comment"># kustomize 文件内容如下所示</span></span><br><span class="line">$ cat kustomization.yaml</span><br><span class="line">apiVersion: kustomize.config.k8s.io/v1beta1</span><br><span class="line">kind: Kustomization</span><br><span class="line">resources:</span><br><span class="line">- vault.yaml</span><br><span class="line">commonLabels:</span><br><span class="line">  env: dev</span><br></pre></td></tr></table></figure>
+
+<p>最后同样用 <code>kustomize build</code> 命令来渲染：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kustomize <span class="keyword">build </span>.</span><br></pre></td></tr></table></figure>
+
+<p>在渲染的结果中同样可以看到所有的资源里面都被添加进了一个 <code>env: dev</code> 的标签。</p>
+<p>这种方法，需要以某种方式运行 make 命令来生成更新的一体化资源清单文件，另外，要将更新过程与你的 GitOps 工作流整合起来可能有点麻烦。</p>
+<h2 id="使用-Post-Rendering-定制"><a href="#使用-Post-Rendering-定制" class="headerlink" title="使用 Post Rendering 定制"></a>使用 Post Rendering 定制</h2><p><strong>Post Rendering</strong>[4] 是 Helm 3 带来的一个新功能，在前面的2种方法中，Kustomize 是用来处理生成图表清单的主要工具，但在这里，Kustomize 是作为 Helm 的辅助工具而存在的。</p>
+<p>下面我们来看下如何使用这种方法来进行定制：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 创建 Kustomize 文件并添加一个 label 标签</span><br><span class="line">$ kustomize init</span><br><span class="line">$ kustomize edit <span class="keyword">add</span> label env:dev</span><br><span class="line"></span><br><span class="line"># 创建一个包装 Kustomize 的脚本文件，后面在 Helm 中会使用到</span><br><span class="line">$ cat &lt;&lt; EOF &gt; kustomize-<span class="keyword">wrapper</span>.sh</span><br><span class="line">#!/bin/bash</span><br><span class="line">cat &lt;&amp;<span class="number">0</span> &gt; chart.yaml</span><br><span class="line">kustomize edit <span class="keyword">add</span> resource chart.yaml</span><br><span class="line">kustomize build . &amp;&amp; rm chart.yaml</span><br><span class="line">EOF</span><br><span class="line">$ chmod +x kustomize-<span class="keyword">wrapper</span>.sh</span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以直接使用 Helm 渲染或者安装 Chart：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ helm repo <span class="built_in">add</span> hashicorp http<span class="variable">s:</span>//helm.releases.hashicorp.<span class="keyword">com</span> </span><br><span class="line">$ helm template vault hashicorp/vault --post-renderer ./kustomize-wrapper.<span class="keyword">sh</span></span><br></pre></td></tr></table></figure>
+
+<p>正常情况下我们也可以看到最后渲染出来的每一个资源文件中都被添加进了一个 <code>env:dev</code> 的标签。</p>
+<p>这种方法就是需要管理一个额外的脚本，其余的和第一种方式基本上差不多，只是不使用 Kustomize 的插件，而是直接使用 Helm 本身的功能来渲染上游的 Chart 包。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们可以看到上面几种方法都各有优缺点，使用哪种方式主要还是取决于我们自己的工作环境和工作流程，不过至少我们已经看到了 Kustomize 与 Helm 结合使用的高效了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/helm/" <i class="fa fa-tag"></i>helm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/22/Kubernetes%E6%95%B0%E6%8D%AE%E5%BA%93Etcd%E6%97%A5%E5%B8%B8%E8%BF%90%E7%BB%B4%E5%8F%8A%E6%8A%80%E5%B7%A7/" rel="prev" title="Kubernetes数据库Etcd日常运维及技巧">
+      <i class="fa fa-chevron-left"></i> Kubernetes数据库Etcd日常运维及技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/22/k8s%E6%95%85%E9%9A%9C/" rel="next" title="k8s故障">
+      k8s故障 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-Chart-插件自定义"><span class="nav-number">1.</span> <span class="nav-text">使用 Chart 插件自定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用单个清单文件定制"><span class="nav-number">2.</span> <span class="nav-text">用单个清单文件定制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-Post-Rendering-定制"><span class="nav-number">3.</span> <span class="nav-text">使用 Post Rendering 定制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">209</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

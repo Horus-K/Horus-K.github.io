@@ -420,10 +420,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-08-25 15:29:48 / 修改时间：15:44:53" itemprop="dateCreated datePublished" datetime="2020-08-25T15:29:48+08:00">2020-08-25</time>
+              <time title="创建时间：2020-08-25 15:29:48" itemprop="dateCreated datePublished" datetime="2020-08-25T15:29:48+08:00">2020-08-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-12 09:55:22" itemprop="dateModified" datetime="2020-10-12T09:55:22+08:00">2020-10-12</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -454,7 +460,7 @@
 <p>另外还有两个参数-XX:InitialRAMPercentage -XX:MaxRAMPercentage来制定Jvm使用容器内存的百分比。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseContainerSupport  <span class="comment">#开启容器支持</span></span><br><span class="line">-XX:InitialRAMPercentage=50 <span class="comment">#初始使用百分比</span></span><br><span class="line">-XX:MaxRAMPercentage=80 <span class="comment">#最大使用百分比</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flags pid  <span class="comment">#查看启动参数</span></span><br><span class="line">jcmd pid VM.flags </span><br><span class="line">jmap -heap pid</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flags pid  <span class="comment">#查看启动参数</span></span><br><span class="line">jcmd pid VM.flags </span><br><span class="line">jmap -heap pid  <span class="comment">#jhsdb jmap --heap --pid 1</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/08/25/k8s/%E5%AE%B9%E5%99%A8JVM%E9%99%90%E5%88%B6/#more" rel="contents">

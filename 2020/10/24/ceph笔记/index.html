@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="存储基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ceph笔记">
+<meta property="og:url" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="存储基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224735002.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224655443.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224854558.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024225000923.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025204658001.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210520508.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210603427.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210841602.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025211114850.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025211412781.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025214601818.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025214854737.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025215415736.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025215506969.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025222956312.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225832909.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225849996.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225832909.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225849996.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025230755329.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025235628922.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201026220448819.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201026223002059.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201029221514361.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201029221457258.png">
+<meta property="article:published_time" content="2020-10-24T14:43:45.000Z">
+<meta property="article:modified_time" content="2020-10-30T13:55:44.333Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224735002.png">
+
+<link rel="canonical" href="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>ceph笔记 | Q's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">101</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">211</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/10/24/ceph%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ceph笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-24 22:43:45" itemprop="dateCreated datePublished" datetime="2020-10-24T22:43:45+08:00">2020-10-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-30 21:55:44" itemprop="dateModified" datetime="2020-10-30T21:55:44+08:00">2020-10-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ceph/" itemprop="url" rel="index">
+                    <span itemprop="name">ceph</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="存储基础"><a href="#存储基础" class="headerlink" title="存储基础"></a>存储基础</h1><p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224735002.png" alt="image-20201024224735002"></p>
+<a id="more"></a>
+
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224655443.png" alt="image-20201024224655443"></p>
+<h1 id="存储架构"><a href="#存储架构" class="headerlink" title="存储架构"></a>存储架构</h1><p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024224854558.png" alt="image-20201024224854558"></p>
+<h3 id="OSD"><a href="#OSD" class="headerlink" title="OSD"></a>OSD</h3><p>OSD是负责物理存储的进程，一般配置成和磁盘一一对应，一块磁盘启动一个OSD进程。主要功能是存储数据、复制数据、平衡数据、恢复数据，以及与其它OSD间进行心跳检查，负责响应客户端请求返回具体数据的进程等；</p>
+<p>Pool、PG和OSD的关系：</p>
+<p>一个Pool里有很多PG； 一个PG里包含一堆对象，一个对象只能属于一个PG； PG有主从之分，一个PG分布在不同的OSD上（针对三副本类型）;</p>
+<h3 id="Monitor监控"><a href="#Monitor监控" class="headerlink" title="Monitor监控"></a>Monitor监控</h3><p>一个Ceph集群需要多个Monitor组成的小集群，它们通过Paxos同步数据，用来保存OSD的元数据。负责监控整个Ceph集群运行的Map视图（如OSD Map、Monitor Map、PG Map和CRUSH Map），维护集群的健康状态，维护展示集群状态的各种图表，管理集群客户端认证与授权；</p>
+<h3 id="MDS"><a href="#MDS" class="headerlink" title="MDS"></a>MDS</h3><p>MDS全称Ceph Metadata Server，是CephFS服务依赖的元数据服务。负责保存文件系统的元数据，管理目录结构。对象存储和块设备存储不需要元数据服务；</p>
+<h3 id="Mgr"><a href="#Mgr" class="headerlink" title="Mgr"></a>Mgr</h3><p>ceph 官方开发了 ceph-mgr，主要目标实现 ceph 集群的管理，为外界提供统一的入口。例如cephmetrics、zabbix、calamari、prometheus</p>
+<h3 id="RGW"><a href="#RGW" class="headerlink" title="RGW"></a>RGW</h3><p>RGW全称RADOS gateway，是Ceph对外提供的对象存储服务，接口与S3和Swift兼容。</p>
+<h3 id="Admin"><a href="#Admin" class="headerlink" title="Admin"></a>Admin</h3><p>Ceph常用管理接口通常都是命令行工具，如rados、ceph、rbd等命令，另外Ceph还有可以有一个专用的管理节点，在此节点上面部署专用的管理工具来实现近乎集群的一些管理工作，如集群部署，集群组件管理等。</p>
+<h1 id="集群部署"><a href="#集群部署" class="headerlink" title="集群部署"></a>集群部署</h1><p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201024225000923.png" alt="image-20201024225000923"></p>
+<h2 id="主机名和hosts"><a href="#主机名和hosts" class="headerlink" title="主机名和hosts"></a>主机名和hosts</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">10.211.56.201 node-1</span><br><span class="line">10.211.56.202 node-2</span><br><span class="line">10.211.56.203 node-3</span><br></pre></td></tr></table></figure>
+
+<h2 id="ssh免密"><a href="#ssh免密" class="headerlink" title="ssh免密"></a>ssh免密</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br><span class="line">ssh-copy-id</span><br></pre></td></tr></table></figure>
+
+<h2 id="安全设置"><a href="#安全设置" class="headerlink" title="安全设置"></a>安全设置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line">iptables -F &amp;&amp; iptables -X &amp;&amp; iptables -F -t nat &amp;&amp; iptables -X -t nat</span><br><span class="line">iptables -P FORWARD ACCEPT</span><br><span class="line">setenforce 0</span><br><span class="line">sed -i <span class="string">'s/^SELINUX=.*/SELINUX=disabled/'</span> /etc/selinux/config</span><br><span class="line">systemctl stop NetworkManager</span><br><span class="line">systemctl <span class="built_in">disable</span> NetworkManager</span><br></pre></td></tr></table></figure>
+
+<h2 id="ntp时间同步"><a href="#ntp时间同步" class="headerlink" title="ntp时间同步"></a>ntp时间同步</h2><h2 id="yum源"><a href="#yum源" class="headerlink" title="yum源"></a>yum源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line">curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-6.repo</span><br><span class="line">sed -i -e <span class="string">'/mirrors.cloud.aliyuncs.com/d'</span> -e <span class="string">'/mirrors.aliyuncs.com/d'</span> /etc/yum.repos.d/CentOS-Base.repo</span><br><span class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br><span class="line">yum makecache</span><br><span class="line"></span><br><span class="line">cat &gt; /etc/yum.repos.d/ceph.repo &lt;&lt; EOF</span><br><span class="line">[norch]</span><br><span class="line">name=norch</span><br><span class="line">baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/noarch/</span><br><span class="line"><span class="built_in">enable</span>=1</span><br><span class="line">gpgcheck=0</span><br><span class="line"></span><br><span class="line">[x86_64]</span><br><span class="line">name=x86_64</span><br><span class="line">baseurl=https://mirrors.aliyun.com/ceph/rpm-nautilus/el7/x86_64/</span><br><span class="line"><span class="built_in">enable</span>=1</span><br><span class="line">gpgcheck=0</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装ceph-deploy"><a href="#安装ceph-deploy" class="headerlink" title="安装ceph-deploy"></a>安装ceph-deploy</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y python-setuptools</span><br><span class="line">yum install -y ceph-deploy  <span class="comment">#ceph-deploy v2.0.1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装monitor节点"><a href="#安装monitor节点" class="headerlink" title="安装monitor节点"></a>安装monitor节点</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir my-cluster</span><br><span class="line"><span class="built_in">cd</span> my-cluster</span><br><span class="line">ceph-deploy new --public-network 10.211.55.0/24 --cluster-network 10.211.56.0/24 node-1</span><br><span class="line"><span class="comment">#创建集群</span></span><br><span class="line"><span class="comment">#cluster-network用于内部数据同步</span></span><br><span class="line"><span class="comment">#public-network：ceph对外入口</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025204658001.png" alt="image-20201025204658001"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y ceph ceph-mon ceph-mgr ceph-radosgw ceph-mds <span class="comment">#所有节点</span></span><br><span class="line">ceph-deploy mon create-initial <span class="comment">#初始化</span></span><br><span class="line">ceph-deploy admin node-1 node-2 node-3 <span class="comment">#推送秘钥</span></span><br><span class="line">ceph-deploy mgr create node-1 <span class="comment">#创建监控节点</span></span><br><span class="line">ceph  quorum_status --format json-pretty <span class="comment"># 查看节点信息</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装osd"><a href="#安装osd" class="headerlink" title="安装osd"></a>安装osd</h2><p>先在宿主机挂盘</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"- - -"</span> &gt; /sys/class/scsi_host/host0/scan</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"- - -"</span> &gt; /sys/class/scsi_host/host1/scan</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"- - -"</span> &gt; /sys/class/scsi_host/host2/scan</span><br><span class="line"></span><br><span class="line">$ ceph-deploy osd create --data /dev/sdb node-1</span><br><span class="line">$ ceph-deploy osd create --data /dev/sdb node-2</span><br><span class="line">$ ceph-deploy osd create --data /dev/sdb node-3</span><br><span class="line">$ ceph osd pool create ceph-demo 32 32</span><br></pre></td></tr></table></figure>
+
+<h2 id="扩展mon与mgr"><a href="#扩展mon与mgr" class="headerlink" title="扩展mon与mgr"></a>扩展mon与mgr</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ceph-deploy mon add node-2 --address 10.211.55.202 <span class="comment">#添加监控节点</span></span><br><span class="line">ceph-deploy mon add node-3 --address 10.211.55.203 <span class="comment">#添加监控节点</span></span><br><span class="line">ceph mon dump <span class="comment">#mon状态</span></span><br><span class="line">ceph mon <span class="built_in">stat</span></span><br><span class="line">ceph-deploy mgr  create node-2 node-3 <span class="comment">#添加mgr节点</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210520508.png" alt="image-20201025210520508"></p>
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210603427.png" alt="image-20201025210603427"></p>
+<h1 id="RBD块存储"><a href="#RBD块存储" class="headerlink" title="RBD块存储"></a>RBD块存储</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025210841602.png" alt="image-20201025210841602"></p>
+<h2 id="创建资源池Pool"><a href="#创建资源池Pool" class="headerlink" title="创建资源池Pool"></a>创建资源池Pool</h2><h3 id="关于存储池"><a href="#关于存储池" class="headerlink" title="关于存储池"></a>关于存储池</h3><p>Ceph 存储系统支持“池”概念，它是存储对象的逻辑分区。</p>
+<p>Ceph 客户端从监视器获取一张<a href="http://docs.ceph.org.cn/architecture/#id4" target="_blank" rel="noopener">集群运行图</a>，并把对象写入存储池。存储池的 <code>size</code> 或副本数、 CRUSH 规则集和归置组数量决定着 Ceph 如何放置数据。</p>
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025211114850.png" alt="image-20201025211114850" style="zoom:50%;">
+
+<p>存储池至少可设置以下参数：</p>
+<ul>
+<li>对象的所有权/访问权限；</li>
+<li>归置组数量；以及，</li>
+<li>使用的 CRUSH 规则集。</li>
+</ul>
+<h3 id="PG-映射到-OSD"><a href="#PG-映射到-OSD" class="headerlink" title="PG 映射到 OSD"></a>PG 映射到 OSD</h3><p>每个存储池都有很多归置组， CRUSH 动态的把它们映射到 OSD 。 Ceph 客户端要存对象时， CRUSH 将把各对象映射到某个归置组。</p>
+<p>把对象映射到归置组在 OSD 和客户端间创建了一个间接层。由于 Ceph 集群必须能增大或缩小、并动态地重均衡。如果让客户端“知道”哪个 OSD 有哪个对象，就会导致客户端和 OSD 紧耦合；相反， CRUSH 算法把对象映射到归置组、然后再把各归置组映射到一或多个 OSD ，这一间接层可以让 Ceph 在 OSD 守护进程和底层设备上线时动态地重均衡。下列图表描述了 CRUSH 如何将对象映射到归置组、再把归置组映射到 OSD 。</p>
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025211412781.png" alt="image-20201025211412781" style="zoom:50%;">
+
+<p>有了集群运行图副本和 CRUSH 算法，客户端就能精确地计算出到哪个 OSD 读、写某特定对象。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ceph osd pool create ceph-demo  32      32 </span><br><span class="line"> <span class="comment">#                   名称		  pg数量  pgp数量</span></span><br><span class="line">ceph osd ls</span><br><span class="line">ceph osd lspools</span><br><span class="line">ceph osd pool get ceph-demo pg_num</span><br><span class="line">ceph osd pool get ceph-demo pgp_num</span><br><span class="line">ceph osd pool get ceph-demo size</span><br><span class="line">ceph osd pool get ceph-demo crush_rule</span><br><span class="line">ceph osd pool <span class="built_in">set</span> ceph-demo size 2 <span class="comment">#设置pool副本数，默认3</span></span><br><span class="line">ceph osd pool <span class="built_in">set</span> ceph-demo pg_num 128 <span class="comment">#调整pg</span></span><br><span class="line">ceph osd pool <span class="built_in">set</span> ceph-demo pgp_num 128 <span class="comment">#调整pg，对应的pgp也要调整</span></span><br><span class="line">rbd poll init &lt;pool-name&gt; <span class="comment">##先不做</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="RBD创建和映射"><a href="#RBD创建和映射" class="headerlink" title="RBD创建和映射"></a>RBD创建和映射</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rbd create -p ceph-demo --image rbd-demo.img --size 10G</span><br><span class="line">rbd create -p ceph-demo/rbd-demo.img --size 10G </span><br><span class="line">rbd  -p ceph-demo ls</span><br><span class="line">rbd info ceph-demo/rbd-demo.img </span><br><span class="line">rbd rm -p ceph-demo/rbd-demo.img <span class="comment">#删除</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025214601818.png" alt="image-20201025214601818" style="zoom:50%;">
+
+<p>有些参数内核不支持：</p>
+<ul>
+<li><p>升级内核</p>
+<p>5+版都支持</p>
+</li>
+<li><p>去掉参数</p>
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025214854737.png" alt="image-20201025214854737" style="zoom:50%;">
+
+<p>​        </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rbd feature <span class="built_in">disable</span> ceph-demo/rbd-demo.img deep-flatten <span class="comment">#从后往前依次关闭特性</span></span><br><span class="line">rbd feature <span class="built_in">disable</span> ceph-demo/rbd-demo.img fast-diff</span><br><span class="line">rbd feature <span class="built_in">disable</span> ceph-demo/rbd-demo.img object-map</span><br><span class="line">rbd feature <span class="built_in">disable</span> ceph-demo/rbd-demo.img exclusive-lock</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h3 id="映射块设备"><a href="#映射块设备" class="headerlink" title="映射块设备"></a>映射块设备</h3><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rbd <span class="built_in">map</span> ceph-<span class="built_in">demo</span>/rbd-<span class="built_in">demo</span>.img</span><br></pre></td></tr></table></figure>
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025215415736.png" alt="image-20201025215415736" style="zoom:50%;">
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025215506969.png" alt="image-20201025215506969" style="zoom:50%;">
+
+<h3 id="挂载"><a href="#挂载" class="headerlink" title="挂载"></a>挂载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkfs.ext4 /dev/rbd0</span><br><span class="line">mkdir /mnt/rbd-demo</span><br><span class="line">mount /dev/rbd0 /mnt/rbd-demo</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h3><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rbd resize ceph-demo/rbd-demo.img <span class="params">--size</span> 15G <span class="comment">#扩容</span></span><br><span class="line">rbd info ceph-demo/rbd-demo.img <span class="comment">#查询</span></span><br><span class="line">resize2fs <span class="string">/dev/rbd0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="数据流写入过程"><a href="#数据流写入过程" class="headerlink" title="数据流写入过程"></a>数据流写入过程</h2><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025222956312.png" alt="image-20201025222956312" style="zoom: 33%;">
+
+<h3 id="查看对象信息"><a href="#查看对象信息" class="headerlink" title="查看对象信息"></a>查看对象信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rbd info  ceph-demo/rbd-demo.img <span class="comment">#查看pool信息</span></span><br><span class="line">rados -p ceph-demo ls | grep rbd_data.1e505c9f4eed1 <span class="comment">#查询object id = oid</span></span><br><span class="line">rados -p ceph-demo <span class="built_in">stat</span> rbd_data.1e505c9f4eed1.0000000000000020 <span class="comment">#obj情况</span></span><br><span class="line">ceph osd map ceph-demo rbd_data.1e505c9f4eed1.0000000000000620 <span class="comment">#落盘情况</span></span><br><span class="line">ceph osd tree <span class="comment">#osd信息</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `rados -p ceph-demo ls | grep rbd_data.1e505c9f4eed1`;<span class="keyword">do</span> rados -p ceph-demo <span class="built_in">stat</span> <span class="variable">$&#123;i&#125;</span>;<span class="keyword">done</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `rados -p ceph-demo ls | grep rbd_data.1e505c9f4eed1`;<span class="keyword">do</span> ceph osd map ceph-demo <span class="variable">$&#123;i&#125;</span>;<span class="keyword">done</span></span><br><span class="line">watch -n 1 <span class="string">'rados -p ceph-demo ls | grep rbd_data.1e505c9f4eed1 | wc -l'</span> <span class="comment">#查看有多少个object</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225832909.png" alt="image-20201025225832909" style="zoom:50%;"><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225849996.png" alt="image-20201025225849996"></p>
+<p><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225832909.png" alt="image-20201025225832909" style="zoom:50%;"><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025225849996.png" alt="image-20201025225849996"></p>
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025230755329.png" alt="image-20201025230755329" style="zoom:50%;">
+
+<h2 id="报警排查"><a href="#报警排查" class="headerlink" title="报警排查"></a>报警排查</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ceph -s</span><br><span class="line">ceph health detail</span><br><span class="line">ceph osd pool application <span class="built_in">enable</span> ceph-demo rbd</span><br><span class="line">$ ceph osd pool application get ceph-demo</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"rbd"</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">ceph crash ls </span><br><span class="line">ceph crash info  &lt;crash-name&gt;</span><br><span class="line">ceph crash archive &lt;crash-name&gt;<span class="comment">#打包</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201025235628922.png" alt="image-20201025235628922" style="zoom:50%;">
+
+<h1 id="RGW对象存储"><a href="#RGW对象存储" class="headerlink" title="RGW对象存储"></a>RGW对象存储</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201026220448819.png" alt="image-20201026220448819" style="zoom: 50%;">
+
+<p><a href="http://docs.ceph.org.cn/glossary/#term-34" target="_blank" rel="noopener"><em>Ceph 对象网关</em></a>是一个构建在 <code>librados</code> 之上的对象存储接口，它为应用程序访问Ceph 存储集群提供了一个 RESTful 风格的网关 。 <a href="http://docs.ceph.org.cn/glossary/#term-30" target="_blank" rel="noopener"><em>Ceph 对象存储</em></a>支持 2 种接口：</p>
+<ol>
+<li><strong>兼容S3:</strong> 提供了对象存储接口，兼容 亚马逊S3 RESTful 接口的一个大子集。</li>
+<li><strong>兼容Swift:</strong> 提供了对象存储接口，兼容 Openstack Swift 接口的一个大子集。</li>
+</ol>
+<p>Ceph 对象存储使用 Ceph 对象网关守护进程（ <code>radosgw</code> ），它是个与 Ceph 存储集群交互的 FastCGI 模块。因为它提供了与 OpenStack Swift 和 Amazon S3 兼容的接口， RADOS 要有它自己的用户管理。 Ceph 对象网关可与 Ceph FS 客户端或 Ceph 块设备客户端共用一个存储集群。 S3 和 Swift 接口共用一个通用命名空间，所以你可以用一个接口写如数据、然后用另一个接口取出数据。</p>
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201026223002059.png" alt="image-20201026223002059" style="zoom:50%;">
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[21:49:43 root@node-1 ~] $ rados df</span><br><span class="line">POOL_NAME    USED OBJECTS CLONES COPIES MISSING_ON_PRIMARY UNFOUND DEGRADED RD_OPS  RD WR_OPS  WR USED COMPR UNDER COMPR </span><br><span class="line">ceph-demo 2.4 GiB     226      0    678                  0       0        0      1 0 B      0 0 B        0 B         0 B </span><br><span class="line">testpool      0 B       0      0      0                  0       0        0      0 0 B      0 0 B        0 B         0 B </span><br><span class="line"></span><br><span class="line">total_objects    226</span><br><span class="line">total_used       5.4 GiB <span class="comment">#使用情况</span></span><br><span class="line">total_avail      145 GiB</span><br><span class="line">total_space      150 GiB</span><br></pre></td></tr></table></figure>
+
+<h2 id="部署RGW存储网关"><a href="#部署RGW存储网关" class="headerlink" title="部署RGW存储网关"></a>部署RGW存储网关</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#yum list | grep ceph-radosgw</span></span><br><span class="line">ceph-radosgw.x86_64                       2:14.2.12-0.el7              @x86_64 </span><br><span class="line">$ <span class="built_in">cd</span> ceph-deploy/</span><br><span class="line">$ ceph-deploy rgw create node-1  <span class="comment">#部署RGW存储网关</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">$ ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     a96a9084-601e-46ca-a8b1-cf6b1ab5edf1</span><br><span class="line">    health: HEALTH_OK</span><br><span class="line"> </span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum node-1,node-2,node-3 (age 25m)</span><br><span class="line">    mgr: node-1(active, since 2h), standbys: node-2, node-3</span><br><span class="line">    osd: 3 osds: 3 up (since 72m), 3 <span class="keyword">in</span> (since 25h)</span><br><span class="line">    rgw: 1 daemon active (node-1)  <span class="comment">#新节点</span></span><br><span class="line"> </span><br><span class="line">  task status:</span><br><span class="line"> </span><br><span class="line">  data:</span><br><span class="line">    pools:   6 pools, 224 pgs</span><br><span class="line">    objects: 413 objects, 825 MiB</span><br><span class="line">    usage:   5.4 GiB used, 145 GiB / 150 GiB avail</span><br><span class="line">    pgs:     224 active+clean</span><br><span class="line">$ ss -antupl | grep 7480</span><br><span class="line">tcp    LISTEN     0      128       *:7480                  *:*                   users:((<span class="string">"radosgw"</span>,pid=8526,fd=48))</span><br><span class="line">tcp    LISTEN     0      128    [::]:7480               [::]:*                   users:((<span class="string">"radosgw"</span>,pid=8526,fd=49))</span><br><span class="line">$ yum whatprovides netstat查询命令包</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * elrepo: mirror-hk.koddos.net</span><br><span class="line">net-tools-2.0-0.25.20131004git.el7.x86_64 : Basic networking tools</span><br><span class="line">源    ：@base</span><br><span class="line">匹配来源：</span><br><span class="line">文件名    ：/usr/bin/netstat</span><br><span class="line"></span><br><span class="line">$ curl http://node-1:7480</span><br><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;&lt;ListAllMyBucketsResult xmlns=<span class="string">"http://s3.amazonaws.com/doc/2006-03-01/"</span>&gt;&lt;Owner&gt;&lt;ID&gt;anonymous&lt;/ID&gt;&lt;DisplayName&gt;&lt;/DisplayName&gt;&lt;/Owner&gt;&lt;Buckets&gt;&lt;/Buckets&gt;&lt;/ListAllMyBucketsResult&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改RGW默认端口"><a href="#修改RGW默认端口" class="headerlink" title="修改RGW默认端口"></a>修改RGW默认端口</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#修改ceph配置文件</span></span><br><span class="line">[19:14:03 root@node-1 ~/ceph-deploy] <span class="comment"># cat ceph.conf </span></span><br><span class="line">......</span><br><span class="line">[client.rgw.node-1]</span><br><span class="line">rgw_frontends = <span class="string">"civetweb port=80"</span></span><br><span class="line"></span><br><span class="line">$ ceph-deploy --overwrite-conf config push node-1 node-2 node-3 <span class="comment">#强制推送配置文件</span></span><br><span class="line">$ systemctl restart ceph-radosgw.target <span class="comment">#重启服务</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="S3接口使用"><a href="#S3接口使用" class="headerlink" title="S3接口使用"></a>S3接口使用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">$ radosgw-admin user create --uid=<span class="string">"ceph-s3-user"</span> --display-name=<span class="string">"Ceph S3 User Demo"</span>  <span class="comment">#创建用户</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"user_id"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">    <span class="string">"display_name"</span>: <span class="string">"Ceph S3 User Demo"</span>,</span><br><span class="line">    <span class="string">"email"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"suspended"</span>: 0,</span><br><span class="line">    <span class="string">"max_buckets"</span>: 1000,</span><br><span class="line">    <span class="string">"subusers"</span>: [],</span><br><span class="line">    <span class="string">"keys"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"user"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">            <span class="string">"access_key"</span>: <span class="string">"LGHYIQC44CM0T7BHKW2U"</span>,</span><br><span class="line">            <span class="string">"secret_key"</span>: <span class="string">"olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"swift_keys"</span>: [],</span><br><span class="line">    <span class="string">"caps"</span>: [],</span><br><span class="line">    <span class="string">"op_mask"</span>: <span class="string">"read, write, delete"</span>,</span><br><span class="line">    <span class="string">"default_placement"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"default_storage_class"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"placement_tags"</span>: [],</span><br><span class="line">    <span class="string">"bucket_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"user_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"temp_url_keys"</span>: [],</span><br><span class="line">    <span class="string">"type"</span>: <span class="string">"rgw"</span>,</span><br><span class="line">    <span class="string">"mfa_ids"</span>: []</span><br><span class="line">&#125;</span><br><span class="line">$ radosgw-admin user info --uid  ceph-s3-user <span class="comment">#查询</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试-S3-访问"><a href="#测试-S3-访问" class="headerlink" title="测试 S3 访问"></a>测试 S3 访问</h3><p>为了验证 S3 访问，你需要编写并运行一个 Python 测试脚本。S3 访问测试脚本将连接 <code>radosgw</code>, 新建一个新的 bucket 并列出所有的 buckets。 <code>aws_access_key_id</code> 和 <code>aws_secret_access_key</code> 的值来自于命令<code>radosgw_admin</code> 的返回值 <code>access_key</code> 和 <code>secret_key</code> 。</p>
+<p>执行下面的步骤:</p>
+<ol>
+<li><p>你需要安装 <code>python-boto</code> 包:</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> python-boto</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建 Python 脚本文件:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">vi</span> s3test.<span class="keyword">py</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将下面的内容添加到文件中:</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import boto</span><br><span class="line">import boto.s3.connection</span><br><span class="line"></span><br><span class="line">access_key = <span class="string">'LGHYIQC44CM0T7BHKW2U'</span></span><br><span class="line">secret_key = <span class="string">'olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu'</span></span><br><span class="line">conn = boto.connect_s3(</span><br><span class="line">    <span class="attribute">aws_access_key_id</span>=access_key,</span><br><span class="line">    <span class="attribute">aws_secret_access_key</span>=secret_key,</span><br><span class="line">    <span class="attribute">host</span>=<span class="string">'10.211.55.201'</span>, <span class="attribute">port</span>=7480,</span><br><span class="line">    <span class="attribute">is_secure</span>=<span class="literal">False</span>,  # uncomment <span class="keyword">if</span> you are <span class="keyword">not</span> using ssl</span><br><span class="line">    <span class="attribute">calling_format</span>=boto.s3.connection.OrdinaryCallingFormat(),</span><br><span class="line">)</span><br><span class="line">bucket = conn.create_bucket(<span class="string">'my-new-bucket'</span>)</span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> conn.get_all_buckets():</span><br><span class="line">    print</span><br><span class="line">    <span class="string">"&#123;name&#125; &#123;created&#125;"</span>.format(</span><br><span class="line">        <span class="attribute">name</span>=bucket.name,</span><br><span class="line">        <span class="attribute">created</span>=bucket.creation_date,</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>{hostname}</code> 替换为你配置了网关服务的节点的主机名。比如 <code>gateway host</code>. 将 {port} 替换为 Civetweb 所使用的端口。</p>
+</li>
+<li><p>运行脚本:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> s3test.<span class="keyword">py</span></span><br></pre></td></tr></table></figure>
+
+<p>输出类似下面的内容:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">my-new-bucket 2015-02-16T17:09:10.000Z <span class="comment">#个人做实验不会输出，但bucket已创建</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="S3cmd使用"><a href="#S3cmd使用" class="headerlink" title="S3cmd使用"></a>S3cmd使用</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum install s3cmd</span></span><br><span class="line">$ s3cmd --configure</span><br><span class="line"></span><br><span class="line">Enter new values or accept defaults <span class="keyword">in</span> brackets with Enter.</span><br><span class="line">Refer to user manual <span class="keyword">for</span> detailed description of all options.</span><br><span class="line"></span><br><span class="line">Access key and Secret key are your identifiers <span class="keyword">for</span> Amazon S3. Leave them empty <span class="keyword">for</span> using the env variables.</span><br><span class="line">Access Key: LGHYIQC44CM0T7BHKW2U <span class="comment">#Access Key</span></span><br><span class="line">Secret Key: olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu <span class="comment">#Secret Key</span></span><br><span class="line">Default Region [US]: <span class="comment">#默认</span></span><br><span class="line"></span><br><span class="line">Use <span class="string">"s3.amazonaws.com"</span> <span class="keyword">for</span> S3 Endpoint and not modify it to the target Amazon S3.</span><br><span class="line">S3 Endpoint [s3.amazonaws.com]: 10.211.55.201:80 <span class="comment">#地址</span></span><br><span class="line"></span><br><span class="line">Use <span class="string">"%(bucket)s.s3.amazonaws.com"</span> to the target Amazon S3. <span class="string">"%(bucket)s"</span> and <span class="string">"%(location)s"</span> vars can be used</span><br><span class="line"><span class="keyword">if</span> the target S3 system supports dns based buckets.</span><br><span class="line">DNS-style bucket+hostname:port template <span class="keyword">for</span> accessing a bucket [%(bucket)s.s3.amazonaws.com]: 10.211.55.201:80/%(bucket)s <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">Encryption password is used to protect your files from reading</span><br><span class="line">by unauthorized persons <span class="keyword">while</span> <span class="keyword">in</span> transfer to S3</span><br><span class="line">Encryption password: </span><br><span class="line">Path to GPG program [/usr/bin/gpg]: </span><br><span class="line"></span><br><span class="line">When using secure HTTPS protocol all communication with Amazon S3</span><br><span class="line">servers is protected from 3rd party eavesdropping. This method is</span><br><span class="line">slower than plain HTTP, and can only be proxied with Python 2.7 or newer</span><br><span class="line">Use HTTPS protocol [Yes]: no</span><br><span class="line"></span><br><span class="line">On some networks all internet access must go through a HTTP proxy.</span><br><span class="line">Try setting it here <span class="keyword">if</span> you can<span class="string">'t connect to S3 directly</span></span><br><span class="line"><span class="string">HTTP Proxy server name: </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">New settings:</span></span><br><span class="line"><span class="string">  Access Key: LGHYIQC44CM0T7BHKW2U</span></span><br><span class="line"><span class="string">  Secret Key: olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu</span></span><br><span class="line"><span class="string">  Default Region: US</span></span><br><span class="line"><span class="string">  S3 Endpoint: 10.211.55.201:80</span></span><br><span class="line"><span class="string">  DNS-style bucket+hostname:port template for accessing a bucket: 10.211.55.201:80/%(bucket)s</span></span><br><span class="line"><span class="string">  Encryption password: </span></span><br><span class="line"><span class="string">  Path to GPG program: /usr/bin/gpg</span></span><br><span class="line"><span class="string">  Use HTTPS protocol: False</span></span><br><span class="line"><span class="string">  HTTP Proxy server name: </span></span><br><span class="line"><span class="string">  HTTP Proxy server port: 0</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Test access with supplied credentials? [Y/n] y</span></span><br><span class="line"><span class="string">Please wait, attempting to list all buckets...</span></span><br><span class="line"><span class="string">Success. Your access key and secret key worked fine :-)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Now verifying that encryption works...</span></span><br><span class="line"><span class="string">Not configured. Never mind.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Save settings? [y/N] y</span></span><br><span class="line"><span class="string">Configuration saved to '</span>/root/.s3cfg<span class="string">'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建Bucket"><a href="#创建Bucket" class="headerlink" title="创建Bucket"></a>创建Bucket</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ s3cmd mb s3://<span class="built_in">test</span>-demo</span><br><span class="line">ERROR: S3 error: 403 (SignatureDoesNotMatch)</span><br><span class="line">$ vim /root.s3</span><br><span class="line">...</span><br><span class="line">signature_v2 = False <span class="comment">#替换为True</span></span><br><span class="line">...</span><br><span class="line">$ s3cmd mb s3://<span class="built_in">test</span>-demo</span><br><span class="line">Bucket <span class="string">'s3://test-demo/'</span> created</span><br><span class="line">$ s3cmd ls</span><br><span class="line">2020-10-29 13:47  s3://<span class="built_in">test</span>-demo</span><br></pre></td></tr></table></figure>
+
+<h3 id="坑："><a href="#坑：" class="headerlink" title="坑："></a>坑：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[22:06:38 root@node-1 ~/my-cluster] <span class="comment">#s3cmd put /etc/fstab s3://my-new-bucket/fstab-demo</span></span><br><span class="line">upload: <span class="string">'/etc/fstab'</span> -&gt; <span class="string">'s3://my-new-bucket/fstab-demo'</span>  [1 of 1]</span><br><span class="line"> 389 of 389   100% <span class="keyword">in</span>    0s   515.09 B/s  <span class="keyword">done</span></span><br><span class="line">ERROR: S3 error: 416 (InvalidRange) <span class="comment">####</span></span><br><span class="line">将默认pg_num和pgp_num设置为较低的值（例如8）(未测试)，或在ceph.conf中将mon_max_pg_per_osd=300设置为较高的值(已测试)</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ s3cmd put /etc/fstab s3://<span class="built_in">test</span>-demo/fstab-demo</span><br><span class="line">$ s3cmd ls s3://<span class="built_in">test</span>-demo/</span><br><span class="line">$ s3cmd put /etc s3://<span class="built_in">test</span>-demo/fstab-demo/etc --recursive <span class="comment">#递归上传文件夹</span></span><br><span class="line">$ s3cmd get s3://ceph-s3-test/<span class="built_in">test</span> test2 <span class="comment">#下载</span></span><br><span class="line">$ s3cmd rm s3://ceph-s3-test/<span class="built_in">test</span> <span class="comment">#删除</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201029221514361.png" alt="image-20201029221514361" style="zoom:50%;">
+
+<img src="/2020/10/24/ceph%E7%AC%94%E8%AE%B0/image-20201029221457258.png" alt="image-20201029221457258" style="zoom:50%;">
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ ceph osd lspools</span><br><span class="line">2 testpool</span><br><span class="line">3 ceph-demo</span><br><span class="line">4 .rgw.root</span><br><span class="line">5 default.rgw.control</span><br><span class="line">6 default.rgw.meta</span><br><span class="line">7 default.rgw.log</span><br><span class="line">8 default.rgw.buckets.index <span class="comment">#索引</span></span><br><span class="line">9 default.rgw.buckets.data <span class="comment">#bucket存储池</span></span><br><span class="line"></span><br><span class="line">$ s3cmd put /etc/fstab s3://<span class="built_in">test</span>-demo/<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">$ rados -p default.rgw.buckets.data  ls  <span class="comment">#查看池文件</span></span><br><span class="line">b7384d89-0aff-4a0b-acc9-c461bf7e5471.204143.2_test</span><br></pre></td></tr></table></figure>
+
+<h2 id="swift风格api接口"><a href="#swift风格api接口" class="headerlink" title="swift风格api接口"></a>swift风格api接口</h2><ul>
+<li>需要新建一个 Swift 子用户</li>
+<li>创建 Swift 用户包括两个步骤。第一步是创建用户。第二步是创建 secret key。</li>
+</ul>
+<p>新建 Swift 用户:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">radosgw-admin subuser create --uid=ceph-s3-user &lt;--主用户id&gt; --subuser=ceph-s3-user:swift --access=full</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"user_id"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">    <span class="string">"display_name"</span>: <span class="string">"Ceph S3 User Demo"</span>,</span><br><span class="line">    <span class="string">"email"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"suspended"</span>: 0,</span><br><span class="line">    <span class="string">"max_buckets"</span>: 1000,</span><br><span class="line">    <span class="string">"subusers"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"id"</span>: <span class="string">"ceph-s3-user:swift"</span>,</span><br><span class="line">            <span class="string">"permissions"</span>: <span class="string">"full-control"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"keys"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"user"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">            <span class="string">"access_key"</span>: <span class="string">"LGHYIQC44CM0T7BHKW2U"</span>,</span><br><span class="line">            <span class="string">"secret_key"</span>: <span class="string">"olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"swift_keys"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"user"</span>: <span class="string">"ceph-s3-user:swift"</span>,</span><br><span class="line">            <span class="string">"secret_key"</span>: <span class="string">"bVLptVg3gFoyXzEFY2Trg4uMAXHP5954hkdl0vTr"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"caps"</span>: [],</span><br><span class="line">    <span class="string">"op_mask"</span>: <span class="string">"read, write, delete"</span>,</span><br><span class="line">    <span class="string">"default_placement"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"default_storage_class"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"placement_tags"</span>: [],</span><br><span class="line">    <span class="string">"bucket_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"user_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"temp_url_keys"</span>: [],</span><br><span class="line">    <span class="string">"type"</span>: <span class="string">"rgw"</span>,</span><br><span class="line">    <span class="string">"mfa_ids"</span>: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建 secret key:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">radosgw-admin key create --subuser=ceph-s3-user:swift --key-type=swift --gen-secret</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"user_id"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">    <span class="string">"display_name"</span>: <span class="string">"Ceph S3 User Demo"</span>,</span><br><span class="line">    <span class="string">"email"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"suspended"</span>: 0,</span><br><span class="line">    <span class="string">"max_buckets"</span>: 1000,</span><br><span class="line">    <span class="string">"subusers"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"id"</span>: <span class="string">"ceph-s3-user:swift"</span>,</span><br><span class="line">            <span class="string">"permissions"</span>: <span class="string">"full-control"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"keys"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"user"</span>: <span class="string">"ceph-s3-user"</span>,</span><br><span class="line">            <span class="string">"access_key"</span>: <span class="string">"LGHYIQC44CM0T7BHKW2U"</span>,</span><br><span class="line">            <span class="string">"secret_key"</span>: <span class="string">"olbc2icqlZwT3JA9d3dx86JAOIGtLZbopdneH8gu"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"swift_keys"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"user"</span>: <span class="string">"ceph-s3-user:swift"</span>,</span><br><span class="line">            <span class="string">"secret_key"</span>: <span class="string">"lB93qfuWfaIyIZpPM5cbubajOWvS2ADtyN1pp8aS"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"caps"</span>: [],</span><br><span class="line">    <span class="string">"op_mask"</span>: <span class="string">"read, write, delete"</span>,</span><br><span class="line">    <span class="string">"default_placement"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"default_storage_class"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="string">"placement_tags"</span>: [],</span><br><span class="line">    <span class="string">"bucket_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"user_quota"</span>: &#123;</span><br><span class="line">        <span class="string">"enabled"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"check_on_raw"</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="string">"max_size"</span>: -1,</span><br><span class="line">        <span class="string">"max_size_kb"</span>: 0,</span><br><span class="line">        <span class="string">"max_objects"</span>: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"temp_url_keys"</span>: [],</span><br><span class="line">    <span class="string">"type"</span>: <span class="string">"rgw"</span>,</span><br><span class="line">    <span class="string">"mfa_ids"</span>: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"secret_key"</span>: <span class="string">"bVLptVg3gFoyXzEFY2Trg4uMAXHP5954hkdl0vTr"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装环境</span></span><br><span class="line">easy_install pip</span><br><span class="line">pip install --upgrade setuptools</span><br><span class="line">pip install --upgrade python-swiftclient</span><br><span class="line"><span class="comment">#测试</span></span><br><span class="line">$ swift -A http://10.211.55.201:7480/auth/1.0 -U ceph-s3-user:swift -K <span class="string">'lB93qfuWfaIyIZpPM5cbubajOWvS2ADtyN1pp8aS'</span> list</span><br><span class="line">ceph-s3-test</span><br><span class="line">my-new-bucket</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> ST_AUTH=http://10.211.55.201:7480/auth</span><br><span class="line"><span class="built_in">export</span> ST_USER=ceph-s3-user:swift</span><br><span class="line"><span class="built_in">export</span> ST_KEY=lB93qfuWfaIyIZpPM5cbubajOWvS2ADtyN1pp8aS</span><br><span class="line">$ swift list</span><br><span class="line">ceph-s3-test</span><br><span class="line">my-new-bucket</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件操作-1"><a href="#文件操作-1" class="headerlink" title="文件操作"></a>文件操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ swift post swift-demo</span><br><span class="line">$ swift list</span><br><span class="line">ceph-s3-test</span><br><span class="line">my-new-bucket</span><br><span class="line">swift-demo</span><br><span class="line">$ swift upload swift-demo /etc/fstab <span class="comment">#上传</span></span><br><span class="line">etc/fstab</span><br><span class="line">$ swift list swift-demo</span><br><span class="line">etc/fstab</span><br><span class="line">$ swift download swift-demo etc/fstab <span class="comment">#下载</span></span><br><span class="line">etc/fstab [auth 0.003s, headers 0.006s, total 0.006s, 0.105 MB/s]</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ceph/" <i class="fa fa-tag"></i>ceph</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/" rel="prev" title="JVM命令总结">
+      <i class="fa fa-chevron-left"></i> JVM命令总结
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#存储基础"><span class="nav-number">1.</span> <span class="nav-text">存储基础</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储架构"><span class="nav-number">2.</span> <span class="nav-text">存储架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OSD"><span class="nav-number">2.0.1.</span> <span class="nav-text">OSD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Monitor监控"><span class="nav-number">2.0.2.</span> <span class="nav-text">Monitor监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MDS"><span class="nav-number">2.0.3.</span> <span class="nav-text">MDS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mgr"><span class="nav-number">2.0.4.</span> <span class="nav-text">Mgr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RGW"><span class="nav-number">2.0.5.</span> <span class="nav-text">RGW</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Admin"><span class="nav-number">2.0.6.</span> <span class="nav-text">Admin</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集群部署"><span class="nav-number">3.</span> <span class="nav-text">集群部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主机名和hosts"><span class="nav-number">3.1.</span> <span class="nav-text">主机名和hosts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh免密"><span class="nav-number">3.2.</span> <span class="nav-text">ssh免密</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全设置"><span class="nav-number">3.3.</span> <span class="nav-text">安全设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ntp时间同步"><span class="nav-number">3.4.</span> <span class="nav-text">ntp时间同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yum源"><span class="nav-number">3.5.</span> <span class="nav-text">yum源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装ceph-deploy"><span class="nav-number">3.6.</span> <span class="nav-text">安装ceph-deploy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装monitor节点"><span class="nav-number">3.7.</span> <span class="nav-text">安装monitor节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装osd"><span class="nav-number">3.8.</span> <span class="nav-text">安装osd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展mon与mgr"><span class="nav-number">3.9.</span> <span class="nav-text">扩展mon与mgr</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RBD块存储"><span class="nav-number">4.</span> <span class="nav-text">RBD块存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建资源池Pool"><span class="nav-number">4.2.</span> <span class="nav-text">创建资源池Pool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于存储池"><span class="nav-number">4.2.1.</span> <span class="nav-text">关于存储池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PG-映射到-OSD"><span class="nav-number">4.2.2.</span> <span class="nav-text">PG 映射到 OSD</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RBD创建和映射"><span class="nav-number">4.3.</span> <span class="nav-text">RBD创建和映射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#映射块设备"><span class="nav-number">4.3.1.</span> <span class="nav-text">映射块设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载"><span class="nav-number">4.3.2.</span> <span class="nav-text">挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩容"><span class="nav-number">4.3.3.</span> <span class="nav-text">扩容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据流写入过程"><span class="nav-number">4.4.</span> <span class="nav-text">数据流写入过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看对象信息"><span class="nav-number">4.4.1.</span> <span class="nav-text">查看对象信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#报警排查"><span class="nav-number">4.5.</span> <span class="nav-text">报警排查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RGW对象存储"><span class="nav-number">5.</span> <span class="nav-text">RGW对象存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">5.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署RGW存储网关"><span class="nav-number">5.2.</span> <span class="nav-text">部署RGW存储网关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改RGW默认端口"><span class="nav-number">5.3.</span> <span class="nav-text">修改RGW默认端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#S3接口使用"><span class="nav-number">5.4.</span> <span class="nav-text">S3接口使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-S3-访问"><span class="nav-number">5.4.1.</span> <span class="nav-text">测试 S3 访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#S3cmd使用"><span class="nav-number">5.5.</span> <span class="nav-text">S3cmd使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置文件"><span class="nav-number">5.5.1.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Bucket"><span class="nav-number">5.5.2.</span> <span class="nav-text">创建Bucket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#坑："><span class="nav-number">5.5.3.</span> <span class="nav-text">坑：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件操作"><span class="nav-number">5.5.4.</span> <span class="nav-text">文件操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swift风格api接口"><span class="nav-number">5.6.</span> <span class="nav-text">swift风格api接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">5.6.1.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件操作-1"><span class="nav-number">5.6.2.</span> <span class="nav-text">文件操作</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">211</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

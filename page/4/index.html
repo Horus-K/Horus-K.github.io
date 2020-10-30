@@ -123,17 +123,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">100</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">101</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">29</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">210</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">211</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -185,6 +185,85 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/" class="post-title-link" itemprop="url">grafana仪表盘</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-18 16:47:57" itemprop="dateCreated datePublished" datetime="2020-08-18T16:47:57+08:00">2020-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-20 23:39:25" itemprop="dateModified" datetime="2020-08-20T23:39:25+08:00">2020-08-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/prometheus/" itemprop="url" rel="index">
+                    <span itemprop="name">prometheus</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>11074</p>
+<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200818164927016.png" alt="image-20200818164927016"></p>
+<p>8919</p>
+<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200820233915655.png" alt="image-20200820233915655"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -303,7 +382,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-26 15:26:31" itemprop="dateModified" datetime="2020-08-26T15:26:31+08:00">2020-08-26</time>
+                <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -328,16 +407,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/Data/apps/nginx/logs/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    nocompress</span><br><span class="line">    daily</span><br><span class="line">    copytruncate</span><br><span class="line">    create</span><br><span class="line">    notifempty</span><br><span class="line">    rotate 7</span><br><span class="line">    olddir /Data/apps/nginx/logs</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/<span class="built_in">kill</span> -HUP `cat /Data/apps/nginx/sbin/nginx.pid 2&gt; /dev/null` 2&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>/data/weblogs/*.log使用通配符时，/data/weblogs/目录下的所有匹配到的日志文件都将切割。如果要切割特定日志文件，就指定到该文件。</li>
-</ul>
-<h3 id="设置计划任务"><a href="#设置计划任务" class="headerlink" title="设置计划任务"></a>设置计划任务</h3><p>vim /etc/crontab</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">59 23 * * * root ( /usr/sbin/logrotate -f /PATH/TO/nginx-log-rotate)</span><br></pre></td></tr></table></figure>
-
-
+          <h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
+<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
+<li>nginx -c nginx配置文件地址 启动</li>
+<li>nginx -s reload 重启</li>
+<li>nginx -s reopen 重新打开日志</li>
+<li>nginx -t 检查配置文件是否正确</li>
+<li>kill -INT pid 表示快速关闭</li>
+<li>kill -HUP pid表示重启</li>
+<li>通过信号控制的方式实现和命令相同的功能</li>
+</ol>
+<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -913,90 +1001,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/" class="post-title-link" itemprop="url">k8s流量策略-获取真实ip</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-07-11 14:24:57 / 修改时间：15:01:02" itemprop="dateCreated datePublished" datetime="2020-07-11T14:24:57+08:00">2020-07-11</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="externalTrafficPolicy-简介"><a href="#externalTrafficPolicy-简介" class="headerlink" title="externalTrafficPolicy 简介"></a>externalTrafficPolicy 简介</h2><p>如果服务需要将外部流量路由到 本地节点或者集群级别的端点，即service type 为LoadBalancer或NodePort，那么需要指明该参数。存在两种选项：”Cluster”（默认）和 “Local”。 “Cluster” 隐藏源 IP 地址，可能会导致第二跳（second hop）到其他节点，但是全局负载效果较好。”Local” 保留客户端源 IP 地址，避免 LoadBalancer 和 NodePort 类型服务的第二跳，但是可能会导致负载不平衡。</p>
-<p>在实际的业务中，诸多业务是需要保留客户端源 IP，所以需要通过将服务的配置文件中的 externalTrafficPolicy 参数设置为 “Local” 来激活这个特性。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"kind"</span>: <span class="string">"Service"</span>,</span><br><span class="line">  <span class="attr">"apiVersion"</span>: <span class="string">"v1"</span>,</span><br><span class="line">  <span class="attr">"metadata"</span>: &#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"example-service"</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"spec"</span>: &#123;</span><br><span class="line">    <span class="attr">"ports"</span>: [&#123;</span><br><span class="line">      <span class="attr">"port"</span>: <span class="number">8765</span>,</span><br><span class="line">      <span class="attr">"targetPort"</span>: <span class="number">9376</span></span><br><span class="line">    &#125;],</span><br><span class="line">    <span class="attr">"selector"</span>: &#123;</span><br><span class="line">      <span class="attr">"app"</span>: <span class="string">"example"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"LoadBalancer"</span>,</span><br><span class="line">    <span class="attr">"externalTrafficPolicy"</span>: <span class="string">"Local"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1062,20 +1071,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">211</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

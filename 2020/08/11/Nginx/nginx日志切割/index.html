@@ -23,15 +23,15 @@
     var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="定义日志轮滚策略vim nginx-log-rotate 1234567891011121314&#x2F;Data&#x2F;apps&#x2F;nginx&#x2F;logs&#x2F;*.log &amp;#123;    nocompress    daily    copytruncate    create    notifempty    rotate 7    olddir &#x2F;Data&#x2F;apps&#x2F;nginx&#x2F;logs    missing">
+  <meta name="description" content="使用log-rotatenginx命令和信号控制 nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求 nginx -c nginx配置文件地址 启动 nginx -s reload 重启 nginx -s reopen 重新打开日志 nginx -t 检查配置文件是否正确 kill -INT pid 表示快速关闭">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nginx日志切割">
 <meta property="og:url" content="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
-<meta property="og:description" content="定义日志轮滚策略vim nginx-log-rotate 1234567891011121314&#x2F;Data&#x2F;apps&#x2F;nginx&#x2F;logs&#x2F;*.log &amp;#123;    nocompress    daily    copytruncate    create    notifempty    rotate 7    olddir &#x2F;Data&#x2F;apps&#x2F;nginx&#x2F;logs    missing">
+<meta property="og:description" content="使用log-rotatenginx命令和信号控制 nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求 nginx -c nginx配置文件地址 启动 nginx -s reload 重启 nginx -s reopen 重新打开日志 nginx -t 检查配置文件是否正确 kill -INT pid 表示快速关闭">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-11T08:04:11.000Z">
-<meta property="article:modified_time" content="2020-08-26T07:26:31.784Z">
+<meta property="article:modified_time" content="2020-10-29T12:44:42.443Z">
 <meta property="article:author" content="屈辉">
 <meta name="twitter:card" content="summary">
 
@@ -125,17 +125,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">100</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">101</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">29</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">210</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">211</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -221,7 +221,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-26 15:26:31" itemprop="dateModified" datetime="2020-08-26T15:26:31+08:00">2020-08-26</time>
+                <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,7 +246,191 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
+        <h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
+<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
+<li>nginx -c nginx配置文件地址 启动</li>
+<li>nginx -s reload 重启</li>
+<li>nginx -s reopen 重新打开日志</li>
+<li>nginx -t 检查配置文件是否正确</li>
+<li>kill -INT pid 表示快速关闭</li>
+<li>kill -HUP pid表示重启</li>
+<li>通过信号控制的方式实现和命令相同的功能</li>
+</ol>
+<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3><a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th>变量名称</th>
+<th>变量描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$arg_PARAMETER</td>
+<td>客户端GET请求中PARAMETER 字段的值</td>
+</tr>
+<tr>
+<td>$args</td>
+<td>客户端请求中的参数</td>
+</tr>
+<tr>
+<td>$binary_remote_addr</td>
+<td>远程地址的二进制表示</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>已发送的消息体字节数</td>
+</tr>
+<tr>
+<td>$content_length</td>
+<td>HTTP请求信息中content-length的字段</td>
+</tr>
+<tr>
+<td>$content_type</td>
+<td>请求信息中content-type字段</td>
+</tr>
+<tr>
+<td>$cookie_COOKIE</td>
+<td>客户端请求中COOKIE头域的值</td>
+</tr>
+<tr>
+<td>$document_root</td>
+<td>针对当前请求的根路径设置值</td>
+</tr>
+<tr>
+<td>$document_uri</td>
+<td>与$uri相同</td>
+</tr>
+<tr>
+<td>$host</td>
+<td>请求信息中的host头域，如果请求中没有Host行，则等于设置的服务器名</td>
+</tr>
+<tr>
+<td>$http_HEADER</td>
+<td>HTTP请求信息里的HEADER地段</td>
+</tr>
+<tr>
+<td>$http_host</td>
+<td>与$host相同，但是如果请求信息中没有host行，则可能不同客户端cookie信息</td>
+</tr>
+<tr>
+<td>$http_cookie</td>
+<td>客户端cookie信息</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>客户端是从哪一个地址跳转过来的</td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>客户端代理信息，也就是你客户端浏览器</td>
+</tr>
+<tr>
+<td>$http_via</td>
+<td>最后一个访问服务器的IP</td>
+</tr>
+<tr>
+<td>$http_x_forwarded_for</td>
+<td>相当于访问网路访问的路径</td>
+</tr>
+<tr>
+<td>$is_args</td>
+<td>如果有args的值，则等于”?”，否则为空</td>
+</tr>
+<tr>
+<td>$limit_rate</td>
+<td>对连接速率的限制</td>
+</tr>
+<tr>
+<td>$nginx_version</td>
+<td>当前Nginx的版本</td>
+</tr>
+<tr>
+<td>$pid</td>
+<td>当前Nginx服务器的进程的进程ID</td>
+</tr>
+<tr>
+<td>$query_string</td>
+<td>与$args相同</td>
+</tr>
+<tr>
+<td>$remote_addr</td>
+<td>客户端IP地址</td>
+</tr>
+<tr>
+<td>$remote_port</td>
+<td>客户端的端口</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>客户端的用户名，用于 auth basic module验证</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>客户端请求</td>
+</tr>
+<tr>
+<td>$request_body</td>
+<td>客户端发送的报文体</td>
+</tr>
+<tr>
+<td>$request_body_file</td>
+<td>发送后端服务器的本地临时缓存文件的名称</td>
+</tr>
+<tr>
+<td>$request_filename</td>
+<td>当前请求的文件路径名，由root或alias指令与URI请求生成</td>
+</tr>
+<tr>
+<td>$request_method</td>
+<td>请求后端数据的方法，例如”GET”,”POST”</td>
+</tr>
+<tr>
+<td>$request_uri</td>
+<td>请求的URI，带参数，不包含主机名</td>
+</tr>
+<tr>
+<td>$scheme</td>
+<td>所用的协议，如http或者HTTPS，比如rewrite^(.+)$$scheme://mysite.name$redirect</td>
+</tr>
+<tr>
+<td>$sent_http_cache_control</td>
+<td>对应http请求头中的Cache-Control，需要打开chrome浏览器，右键检查，选中network，点中其中一个请求的资源</td>
+</tr>
+<tr>
+<td>$sent_http_connection</td>
+<td>对应http请求中的Connection</td>
+</tr>
+<tr>
+<td>$sent_http_content_type</td>
+<td>对应http请求中的Content-Type</td>
+</tr>
+<tr>
+<td>$sent_last_modified</td>
+<td>对应请求中的Last-Modified</td>
+</tr>
+<tr>
+<td>$server_addr</td>
+<td>服务端的地址</td>
+</tr>
+<tr>
+<td>$server_name</td>
+<td>请求到达的服务器名</td>
+</tr>
+<tr>
+<td>$server_port</td>
+<td>请求到达服务器端口号</td>
+</tr>
+<tr>
+<td>$server_protocol</td>
+<td>请求协议的版本号，HTTP1.0/HTTP1.1</td>
+</tr>
+<tr>
+<td>$uri</td>
+<td>请求的不带请求参数的URI，可能和最初的值有不同，比如经过重定向之类的</td>
+</tr>
+</tbody></table>
+<h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/Data/apps/nginx/logs/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    nocompress</span><br><span class="line">    daily</span><br><span class="line">    copytruncate</span><br><span class="line">    create</span><br><span class="line">    notifempty</span><br><span class="line">    rotate 7</span><br><span class="line">    olddir /Data/apps/nginx/logs</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/<span class="built_in">kill</span> -HUP `cat /Data/apps/nginx/sbin/nginx.pid 2&gt; /dev/null` 2&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -255,7 +439,17 @@
 <h3 id="设置计划任务"><a href="#设置计划任务" class="headerlink" title="设置计划任务"></a>设置计划任务</h3><p>vim /etc/crontab</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">59 23 * * * root ( /usr/sbin/logrotate -f /PATH/TO/nginx-log-rotate)</span><br></pre></td></tr></table></figure>
 
+<h1 id="使用脚本"><a href="#使用脚本" class="headerlink" title="使用脚本"></a>使用脚本</h1><h4 id="参数和执行流程说明"><a href="#参数和执行流程说明" class="headerlink" title="参数和执行流程说明"></a>参数和执行流程说明</h4><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">复制log_format main '<span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>:<span class="variable">$minutes</span>:<span class="variable">$seconds</span>|<span class="variable">$request_method</span>|<span class="variable">$request_uri</span>|<span class="variable">$http_host</span>|<span class="variable">$server_name</span>|<span class="variable">$status</span>|<span class="variable">$request_time</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_x_forwarded_for</span>|<span class="variable">$http_referer</span>|<span class="variable">$http_user_agent</span>';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">main	表示给当前格式的命名</span><br><span class="line"><span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>:<span class="variable">$minutes</span>:<span class="variable">$seconds</span>	使用自己定义的变量</span><br><span class="line"><span class="variable">$request_method</span>		请求方法,比如GET或者<span class="keyword">POST</span></span><br><span class="line"><span class="variable">$request_uri</span>		请求URI</span><br><span class="line"><span class="variable">$http_host</span>		请求信息中的host</span><br><span class="line"><span class="variable">$server_name</span>		实际nginx匹配到的host(因为一个server可以有多个name,这个时候貌似输出的是第一个name,所以多个的时候可能会和<span class="variable">$http_host</span>不一致)</span><br><span class="line"><span class="variable">$status</span>			返回的http状态码</span><br><span class="line"><span class="variable">$request_time</span>		请求所花费的时间</span><br><span class="line"><span class="variable">$remote_addr</span>		正常请求中的客户端ip地址,但是如果经过反向代理,这个时候是127.0.0.1</span><br><span class="line"><span class="variable">$http_x_forwarded_for</span>	如果经过反向代理,这个字段可以拿到原本的ip地址</span><br><span class="line"><span class="variable">$http_referer</span>		来源地址,如果是通过其他网页来源访问到的,这里可以看到</span><br><span class="line"><span class="variable">$http_user_agent</span>	浏览器请求头</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在说明一下时间格式</span><br><span class="line">nginx日志有默认两种时间格式可以选择(目前只查询到这两个)</span><br><span class="line"><span class="variable">$time_local</span></span><br><span class="line">输出格式: 01/Jul/2020:10:56:37</span><br><span class="line"></span><br><span class="line"><span class="variable">$time_iso8601</span></span><br><span class="line">2020-07-01T11:16:35+08:00</span><br><span class="line"></span><br><span class="line">但是上面两种都不是我们想要的,我们想要的是这种格式</span><br><span class="line">yyyy-MM-dd HH:mm:ss</span><br><span class="line">2020-07-01 11:21:00</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">所以需要我们对日志进行设置</span><br><span class="line">nginx中的变量都是全局变量,但是只会对当前共享</span><br><span class="line">所以需要在每一个server中定义出对应的变量,这样在每次日志记录的时候就可以使用这些变量了</span><br><span class="line">如果觉得这种方法太麻烦,也可以使用自编译的nginx或者openresty,这样可以直接通过lua解决</span><br><span class="line">这个问题,也可以在源代码中修改格式,因为我们这边是通过yum安装的,同时为了通用性,就选择这</span><br><span class="line">种添加变量的方式解决</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">如果觉得这段代码稍微有点长,不愿意接受</span><br><span class="line">那么可以单独写一个配置文件,然后使用<span class="keyword">include</span>的方式倒入</span><br></pre></td></tr></table></figure>
 
+<h3 id="按照日期存放"><a href="#按照日期存放" class="headerlink" title="按照日期存放"></a>按照日期存放</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自定义格式</span></span><br><span class="line">log_format main <span class="string">'$year-$month-$day $hour:$minutes:$seconds|$request_method|$request_uri|$http_host|$server_name|$status|$request_time|$remote_addr|$http_x_forwarded_for|$http_referer|$http_user_agent'</span>;</span><br><span class="line"><span class="comment">#必须在server里添加自定义变量</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="按天分割日志"><a href="#按天分割日志" class="headerlink" title="按天分割日志"></a>按天分割日志</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">复制</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$time_iso8601</span> ~ <span class="string">"^(\d&#123;4&#125;)-(\d&#123;2&#125;)-(\d&#123;2&#125;)"</span>) &#123;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$year</span> <span class="variable">$1</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$month</span> <span class="variable">$2</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$day</span> <span class="variable">$3</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$hour</span> <span class="variable">$4</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$minutes</span> <span class="variable">$5</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$seconds</span> <span class="variable">$6</span>;</span><br><span class="line">&#125;</span><br><span class="line"> access_log  /var/logs/nginx/access/<span class="variable">$server_name_</span><span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-access.log  main;</span><br></pre></td></tr></table></figure>
+
+<h4 id="按小时、分、秒分割"><a href="#按小时、分、秒分割" class="headerlink" title="按小时、分、秒分割"></a>按小时、分、秒分割</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">复制<span class="keyword">if</span> (<span class="variable">$time_iso8601</span> ~ <span class="string">"^(\d&#123;4&#125;)-(\d&#123;2&#125;)-(\d&#123;2&#125;)T(\d&#123;2&#125;):(\d&#123;2&#125;):(\d&#123;2&#125;)"</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$year</span> <span class="variable">$1</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$month</span> <span class="variable">$2</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$day</span> <span class="variable">$3</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$hour</span> <span class="variable">$4</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$minutes</span> <span class="variable">$5</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$seconds</span> <span class="variable">$6</span>;</span><br><span class="line">&#125;</span><br><span class="line">access_log  /var/logs/xxxx/access/xxxxx_xx_access_<span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>-<span class="variable">$minutes</span>-<span class="variable">$seconds</span>.<span class="built_in">log</span>  main;</span><br></pre></td></tr></table></figure>
+
+<h3 id="不记录日志"><a href="#不记录日志" class="headerlink" title="不记录日志"></a>不记录日志</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">复制<span class="comment"># 对不需要记录访问日志的server添加这两个代码可以关闭日志记录</span></span><br><span class="line">server &#123;</span><br><span class="line">	....</span><br><span class="line">	<span class="comment">#不记录访问日志</span></span><br><span class="line">	access_log  off;</span><br><span class="line">	<span class="comment">#不记录错误日志</span></span><br><span class="line">	error_log /dev/null;</span><br><span class="line">	....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他注意事项"><a href="#其他注意事项" class="headerlink" title="其他注意事项"></a>其他注意事项</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">复制1. access日志修改目录后,记得要把访问权限给nginx的对应用户</span><br><span class="line">        chown nginx:nginx /usr/<span class="built_in">local</span>/nginx/logs/acces</span><br><span class="line">	或者</span><br><span class="line">	chmod -R 777 /usr/<span class="built_in">local</span>/nginx/logs/acceserror</span><br><span class="line">2. 错误日志不能使用日期格式,这个没有办法</span><br><span class="line">3. 错误日志虽然不能修改日期格式,但是可以修改文件路径</span><br><span class="line">4. 需要在http下面添加root的对应路径,或者server下面添加,否则比如反向代理这种接口会无法写出日志</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -336,7 +530,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义日志轮滚策略"><span class="nav-number">1.</span> <span class="nav-text">定义日志轮滚策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置计划任务"><span class="nav-number">2.</span> <span class="nav-text">设置计划任务</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用log-rotate"><span class="nav-number">1.</span> <span class="nav-text">使用log-rotate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx命令和信号控制"><span class="nav-number">1.1.</span> <span class="nav-text">nginx命令和信号控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx内置变量"><span class="nav-number">1.1.1.</span> <span class="nav-text">nginx内置变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义日志轮滚策略"><span class="nav-number">1.1.2.</span> <span class="nav-text">定义日志轮滚策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置计划任务"><span class="nav-number">1.1.3.</span> <span class="nav-text">设置计划任务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用脚本"><span class="nav-number">2.</span> <span class="nav-text">使用脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数和执行流程说明"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">参数和执行流程说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按照日期存放"><span class="nav-number">2.0.1.</span> <span class="nav-text">按照日期存放</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按天分割日志"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">按天分割日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按小时、分、秒分割"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">按小时、分、秒分割</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不记录日志"><span class="nav-number">2.0.2.</span> <span class="nav-text">不记录日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他注意事项"><span class="nav-number">2.0.3.</span> <span class="nav-text">其他注意事项</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -350,20 +544,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">211</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

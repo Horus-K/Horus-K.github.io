@@ -31,7 +31,7 @@
 <meta property="og:description" content="一、openvpn原理 openvpn通过使用公开密钥（非对称密钥，加密解密使用不同的key，一个称为Publice key，另外一个是Private key）对数据进行加密的。这种方式称为TLS加密。 openvpn使用TLS加密的工作过程是，首先VPN Sevrver端和VPN Client端要有相同的CA证书，双方通过交换证书验证双方的合法性，用于决定是否建立VPN连接。然后使用对方的CA证">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-21T02:55:30.000Z">
-<meta property="article:modified_time" content="2020-09-27T14:17:30.274Z">
+<meta property="article:modified_time" content="2020-10-26T10:02:20.871Z">
 <meta property="article:author" content="屈辉">
 <meta name="twitter:card" content="summary">
 
@@ -125,17 +125,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">100</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">101</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">29</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">210</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">211</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -221,7 +221,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-27 22:17:30" itemprop="dateModified" datetime="2020-09-27T22:17:30+08:00">2020-09-27</time>
+                <time title="修改时间：2020-10-26 18:02:20" itemprop="dateModified" datetime="2020-10-26T18:02:20+08:00">2020-10-26</time>
               </span>
 
           
@@ -304,7 +304,6 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">yum -y install rpm-build openssl easy-rsa libssl-dev gcc openssl-devel pam-devel camke</span><br><span class="line"><span class="comment"># configure: error: lzo enabled but missing</span></span><br><span class="line"><span class="comment"># 注意：yum安装的无效，需要手动下载源码安装。</span></span><br><span class="line">wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.06.tar.gz </span><br><span class="line">tar zxvf lzo-2.06.tar.gz </span><br><span class="line"><span class="built_in">cd</span> lzo-2.06 </span><br><span class="line">./configure --prefix=/usr/<span class="built_in">local</span>/ </span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> openvpn</span><br><span class="line">./configure --prefix=/usr/<span class="built_in">local</span>/vpn</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line">mkdir /etc/openvpn</span><br><span class="line">cp -r /root/openvpn/openvpn-2.4.9/sample/ /etc/openvpn/\</span><br><span class="line">cp /etc/openvpn/sample/sample-config-files/server.conf /etc/openvpn/</span><br><span class="line"><span class="built_in">cd</span> /etc/openvpn/ &amp;&amp; git <span class="built_in">clone</span> git://github.com/OpenVPN/easy-rsa</span><br><span class="line">cp vars.example vars</span><br><span class="line"></span><br><span class="line">vim vars  根据实际情况，修改以下字段：</span><br><span class="line"></span><br><span class="line">set_var EASYRSA_REQ_COUNTRY     <span class="string">"cn"</span></span><br><span class="line">set_var EASYRSA_REQ_PROVINCE    <span class="string">"beijing"</span></span><br><span class="line">set_var EASYRSA_REQ_CITY        <span class="string">"quhui"</span></span><br><span class="line">set_var EASYRSA_REQ_ORG         <span class="string">"none"</span></span><br><span class="line">set_var EASYRSA_REQ_EMAIL       <span class="string">"xxxxxx"</span></span><br><span class="line">set_var EASYRSA_REQ_OU          <span class="string">"openvpn"</span></span><br></pre></td></tr></table></figure>
 
 <h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">client</span><br><span class="line">dev tun</span><br><span class="line">proto udp</span><br><span class="line"><span class="comment">#真实的ip地址自己填写</span></span><br><span class="line">remote 47.242.136.192 1194</span><br><span class="line"></span><br><span class="line">ca /root/ca.crt</span><br><span class="line"><span class="comment">#cert quhui.crt</span></span><br><span class="line"><span class="comment">#key quhui.key</span></span><br><span class="line"></span><br><span class="line">auth-user-pass</span><br><span class="line"></span><br><span class="line">cipher AES-256-GCM</span><br><span class="line"></span><br><span class="line">resolv-retry infinite</span><br><span class="line"><span class="comment">#compress lzo</span></span><br><span class="line">nobind</span><br><span class="line">persist-key</span><br><span class="line">persist-tun</span><br><span class="line">mute-replay-warnings</span><br><span class="line">verb 3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">ca /etc/openvpn/certs/ca.crt</span><br><span class="line">cert /etc/openvpn/certs/server.crt</span><br><span class="line">key /etc/openvpn/certs/server.key</span><br><span class="line">dh /etc/openvpn/certs/dh.pem</span><br><span class="line"></span><br><span class="line">server 10.8.0.0 255.255.255.0</span><br><span class="line">push <span class="string">"redirect-gateway def1 bypass-dhcp"</span></span><br><span class="line"></span><br><span class="line">route 10.128.0.0 255.255.254.0 net_gateway</span><br><span class="line">route 10.192.0.0 255.255.252.0 net_gateway</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Using the DNS from https://dns.watch</span></span><br><span class="line">push <span class="string">"dhcp-option DNS 8.8.8.8"</span></span><br><span class="line"></span><br><span class="line">cipher AES-256-GCM</span><br><span class="line"></span><br><span class="line">duplicate-cn</span><br><span class="line"></span><br><span class="line">daemon</span><br><span class="line">user nobody</span><br><span class="line">group nobody</span><br><span class="line"><span class="comment">#log-append /var/log/openvpn.log</span></span><br><span class="line"><span class="comment">#verb 3</span></span><br><span class="line"></span><br><span class="line">script-security 3</span><br><span class="line">auth-user-pass-verify /etc/openvpn/checkpsw.sh via-env</span><br><span class="line">username-as-common-name</span><br><span class="line">client-cert-not-required</span><br></pre></td></tr></table></figure>
-
 
     </div>
 
@@ -400,20 +399,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">211</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

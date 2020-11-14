@@ -81,12 +81,11 @@
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114141237208.png">
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114141537505.png">
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114142245017.png">
-<meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114213731794.png">
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114214342564.png">
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114215425196.png">
 <meta property="og:image" content="https://horus-k.github.io/ceph/index/image-20201114221925729.png">
 <meta property="article:published_time" content="2020-10-31T11:42:38.000Z">
-<meta property="article:modified_time" content="2020-11-14T14:33:34.391Z">
+<meta property="article:modified_time" content="2020-11-14T14:36:18.191Z">
 <meta property="article:author" content="屈辉">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://horus-k.github.io/ceph/index/image-20201024224735002.png">
@@ -853,10 +852,7 @@
 <h2 id="mds-1"><a href="#mds-1" class="headerlink" title="mds"></a>mds</h2><p>模式为<code>一主多备</code>,确保集群中至少有1个</p>
 <h2 id="RGW"><a href="#RGW" class="headerlink" title="RGW"></a>RGW</h2><p>ha+kp高可用</p>
 <h2 id="OSD坏盘"><a href="#OSD坏盘" class="headerlink" title="OSD坏盘"></a>OSD坏盘</h2><p>对象为3副本，最多挂2个节点</p>
-<h2 id="fio性能压测评估"><a href="#fio性能压测评估" class="headerlink" title="fio性能压测评估"></a>fio性能压测评估</h2><p>rbd bench</p>
-<p>rados bench</p>
-<p><img src="/ceph/index/image-20201114213731794.png" alt="image-20201114213731794"></p>
-<h3 id="4K随机写-IOPS"><a href="#4K随机写-IOPS" class="headerlink" title="4K随机写-IOPS"></a>4K随机写-IOPS</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ fio -filename=/media/fio.img&lt;文件名&gt; -direct=1 \</span><br><span class="line">-iodepth 32&lt;深度对应numjobs并发,每个并发队列深度为32&gt; \</span><br><span class="line">-thread -rw=randwrite&lt;类型为随机写&gt; -ioengine=libaio&lt;引擎&gt; \</span><br><span class="line">-bs=4k&lt;块大小&gt; -size=200m -numjobs=8&lt;并发,对应cpu核数&gt; \</span><br><span class="line">-runtime=60 -group_reporting -name=mytest</span><br><span class="line">$ yum install sysstat -y</span><br><span class="line">$ watch -n 0.5 iostat -x <span class="comment">#磁盘io信息</span></span><br><span class="line">$ ceph osd perf <span class="comment">#osd延迟</span></span><br></pre></td></tr></table></figure>
+<h2 id="fio性能压测评估"><a href="#fio性能压测评估" class="headerlink" title="fio性能压测评估"></a>fio性能压测评估</h2><h3 id="4K随机写-IOPS"><a href="#4K随机写-IOPS" class="headerlink" title="4K随机写-IOPS"></a>4K随机写-IOPS</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ fio -filename=/media/fio.img&lt;文件名&gt; -direct=1 \</span><br><span class="line">-iodepth 32&lt;深度对应numjobs并发,每个并发队列深度为32&gt; \</span><br><span class="line">-thread -rw=randwrite&lt;类型为随机写&gt; -ioengine=libaio&lt;引擎&gt; \</span><br><span class="line">-bs=4k&lt;块大小&gt; -size=200m -numjobs=8&lt;并发,对应cpu核数&gt; \</span><br><span class="line">-runtime=60 -group_reporting -name=mytest</span><br><span class="line">$ yum install sysstat -y</span><br><span class="line">$ watch -n 0.5 iostat -x <span class="comment">#磁盘io信息</span></span><br><span class="line">$ ceph osd perf <span class="comment">#osd延迟</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/ceph/index/image-20201114214342564.png" alt="虚拟机稀烂的数据"></p>
 <p><img src="/ceph/index/image-20201114215425196.png" alt="image-20201114215425196"></p>

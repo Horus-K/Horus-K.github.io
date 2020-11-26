@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学习必备资源软件Local PC：8G+CentOS 7 ：http:&#x2F;&#x2F;www.centos.org&#x2F; version&gt;&#x3D;7.4 Kernel&gt;&#x3D;4.4Wireshark：https:&#x2F;&#x2F;www.wireshark.org&#x2F;Xshell：https:&#x2F;&#x2F;www.netsarang.com&#x2F;en&#x2F;xshell&#x2F;Notepad++：https:&#x2F;&#x2F;notepad-plus-plus.or">
+<meta property="og:type" content="website">
+<meta property="og:title" content="k8s network">
+<meta property="og:url" content="https://horus-k.github.io/network/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="学习必备资源软件Local PC：8G+CentOS 7 ：http:&#x2F;&#x2F;www.centos.org&#x2F; version&gt;&#x3D;7.4 Kernel&gt;&#x3D;4.4Wireshark：https:&#x2F;&#x2F;www.wireshark.org&#x2F;Xshell：https:&#x2F;&#x2F;www.netsarang.com&#x2F;en&#x2F;xshell&#x2F;Notepad++：https:&#x2F;&#x2F;notepad-plus-plus.or">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119112801791.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119112855506.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119113042601.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119114407628.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119114820275.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201119114850538.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201123190923769.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201123191225930.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201123191347831.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201124222533450.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201125160513357.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201125160546944.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201126094227071.png">
+<meta property="og:image" content="https://horus-k.github.io/network/index/image-20201126094310012.png">
+<meta property="article:published_time" content="2020-11-19T02:50:13.000Z">
+<meta property="article:modified_time" content="2020-11-26T01:43:32.929Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/network/index/image-20201119112801791.png">
+
+<link rel="canonical" href="https://horus-k.github.io/network/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: false
+  };
+</script>
+
+  <title>k8s network | Q's blog
+  </title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">100</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">210</span></a>
+
+  </li>
+        <li class="menu-item menu-item-ceph">
+
+    <a href="/ceph/" rel="section"><i class="fa fa-fw fa-folder"></i>ceph</a>
+
+  </li>
+        <li class="menu-item menu-item-k8s">
+
+    <a href="/tags/k8s/" rel="section"><i class="fa fa-fw fa-connectdevelop"></i>k8s</a>
+
+  </li>
+        <li class="menu-item menu-item-network">
+
+    <a href="/network/" rel="section"><i class="fa fa-fw fa-twitter"></i>network</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Horus-K" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">k8s network
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="学习必备资源"><a href="#学习必备资源" class="headerlink" title="学习必备资源"></a>学习必备资源</h1><h2 id="软件"><a href="#软件" class="headerlink" title="软件"></a>软件</h2><p>Local PC：8G+<br>CentOS 7 ：<a href="http://www.centos.org/" target="_blank" rel="noopener">http://www.centos.org/</a> version&gt;=7.4 Kernel&gt;=4.4<br>Wireshark：<a href="https://www.wireshark.org/" target="_blank" rel="noopener">https://www.wireshark.org/</a><br>Xshell：<a href="https://www.netsarang.com/en/xshell/" target="_blank" rel="noopener">https://www.netsarang.com/en/xshell/</a><br>Notepad++：<a href="https://notepad-plus-plus.org/" target="_blank" rel="noopener">https://notepad-plus-plus.org/</a><br>VMWare：<a href="https://my.vmware.com/en/web/vmware/downloads" target="_blank" rel="noopener">https://my.vmware.com/en/web/vmware/downloads</a><br>VirtualBox：<a href="https://www.virtualbox.org/" target="_blank" rel="noopener">https://www.virtualbox.org/</a><br>Docker-CE：<a href="https://docs.docker.com/install/linux/docker-ce/centos/" target="_blank" rel="noopener">https://docs.docker.com/install/linux/docker-ce/centos/</a><br>Docker-CE：<a href="https://yq.aliyun.com/articles/110806" target="_blank" rel="noopener">https://yq.aliyun.com/articles/110806</a><br>Kubernetes：V1.16.0<br>Mirrors：<a href="https://opsx.alibaba.com/mirror" target="_blank" rel="noopener">https://opsx.alibaba.com/mirror</a><br>Note：<a href="https://www.yinxiang.com/download/" target="_blank" rel="noopener">https://www.yinxiang.com/download/</a><br>eNSP：<a href="https://pan.baidu.com/s/1n2nZbeMDP49CE6ZDRxZHcA" target="_blank" rel="noopener">https://pan.baidu.com/s/1n2nZbeMDP49CE6ZDRxZHcA</a> Extraction code：k8sn</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>RFC Docs：<a href="https://ietf.org/standards/rfcs/" target="_blank" rel="noopener">https://ietf.org/standards/rfcs/</a><br>HTTP2：<a href="https://http2.github.io/" target="_blank" rel="noopener">https://http2.github.io/</a><br>Kubernetes Docs：</p>
+<p><a href="https://github.com/kubernetes/Kubernetes" target="_blank" rel="noopener">https://github.com/kubernetes/Kubernetes</a><br><a href="https://kubernetes.io/docs/concepts/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/</a><br><a href="https://kubernetes.io/docs/tasks/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/</a><br><a href="https://kubernetes.io/docs/reference/" target="_blank" rel="noopener">https://kubernetes.io/docs/reference/</a><br><a href="https://kubernetes.io/docs/tutorials/" target="_blank" rel="noopener">https://kubernetes.io/docs/tutorials/</a></p>
+<p>Flannel Docs：</p>
+<p><a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">https://github.com/coreos/flannel</a><br><a href="https://coreos.com/flannel/docs/latest/" target="_blank" rel="noopener">https://coreos.com/flannel/docs/latest/</a></p>
+<p>Calico Docs：</p>
+<p><a href="https://www.projectcalico.org/" target="_blank" rel="noopener">https://www.projectcalico.org/</a><br><a href="https://github.com/projectcalico/calico" target="_blank" rel="noopener">https://github.com/projectcalico/calico</a></p>
+<p>Cilium Docs：</p>
+<p><a href="https://cilium.io/" target="_blank" rel="noopener">https://cilium.io/</a><br><a href="https://github.com/cilium/cilium" target="_blank" rel="noopener">https://github.com/cilium/cilium</a></p>
+<p>DANM Docs：</p>
+<p><a href="https://www.gitmemory.com/nokia/danm" target="_blank" rel="noopener">https://www.gitmemory.com/nokia/danm</a><br><a href="https://github.com/nokia/danm" target="_blank" rel="noopener">https://github.com/nokia/danm</a></p>
+<p>Nuage Docs：</p>
+<p><a href="https://www.nuagenetworks.net/" target="_blank" rel="noopener">https://www.nuagenetworks.net/</a><br><a href="https://github.com/nuagenetworks" target="_blank" rel="noopener">https://github.com/nuagenetworks</a></p>
+<p>Multus Docs： </p>
+<p><a href="https://01.org/kubernetes/building-blocks/multus-cni" target="_blank" rel="noopener">https://01.org/kubernetes/building-blocks/multus-cni</a><br><a href="https://github.com/intel/multus-cni" target="_blank" rel="noopener">https://github.com/intel/multus-cni</a></p>
+<p>Genie Docs： </p>
+<p><a href="https://asciinema.org/a/118191" target="_blank" rel="noopener">https://asciinema.org/a/118191</a><br><a href="https://github.com/cni-genie/CNI-Genie" target="_blank" rel="noopener">https://github.com/cni-genie/CNI-Genie</a></p>
+<p>IP：<a href="https://tools.ietf.org/html/rfc791" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc791</a><br>RIP：<a href="https://tools.ietf.org/html/rfc2453" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc2453</a><br>OSPF：<a href="https://tools.ietf.org/html/rfc2328" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc2328</a><br>BGP：<a href="https://tools.ietf.org/html/rfc1105" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc1105</a><br>3GPP：<a href="https://www.3gpp.org/" target="_blank" rel="noopener">https://www.3gpp.org/</a></p>
+<p><strong>本事实验环境：</strong></p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>virtualBox</td>
+<td>5.2.30</td>
+</tr>
+<tr>
+<td>wireshark</td>
+<td>2.6.20</td>
+</tr>
+<tr>
+<td>eNsp</td>
+<td>V100R003C00SPC100</td>
+</tr>
+</tbody></table>
+<h2 id="CentOS安装rpcapd服务（WinPcap）"><a href="#CentOS安装rpcapd服务（WinPcap）" class="headerlink" title="CentOS安装rpcapd服务（WinPcap）"></a>CentOS安装rpcapd服务（WinPcap）</h2><p><strong>安装命令如下：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">yum install byacc glibc-static libgcrypt-devel gcc flex</span><br><span class="line">wget http://www.winpcap.org/install/bin/WpcapSrc_4_1_2.zip</span><br><span class="line">unzip WpcapSrc_4_1_2.zip</span><br><span class="line"><span class="built_in">cd</span> winpcap/wpcap/libpcap</span><br><span class="line">chmod +x configure runlex.sh</span><br><span class="line">CFLAGS=-static ./configure</span><br><span class="line">make</span><br><span class="line"><span class="built_in">cd</span> rpcapd</span><br><span class="line">make</span><br><span class="line"></span><br><span class="line">./rpcapd -p 2002 -b 172.12.1.201 -n</span><br></pre></td></tr></table></figure>
+
+<h2 id="华为交换机命令"><a href="#华为交换机命令" class="headerlink" title="华为交换机命令"></a>华为交换机命令</h2><h3 id="查看设备的mac-table"><a href="#查看设备的mac-table" class="headerlink" title="查看设备的mac table"></a>查看设备的mac table</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[Huawei]dis mac-address</span><br><span class="line">MAC<span class="built_in"> address </span>table of slot 0:</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">MAC<span class="built_in"> Address </span>   VLAN/       PEVLAN CEVLAN<span class="built_in"> Port </span>          <span class="built_in"> Type </span>     LSP/LSR-ID  </span><br><span class="line">               VSI/SI                                              MAC-Tunnel  </span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">5489-9836-6440 1           -      -      GE0/0/3         dynamic   0/-         </span><br><span class="line">5489-983f-5752 1           -      -      GE0/0/2         dynamic   0/-         </span><br><span class="line">5489-98df-112c 1           -      -      GE0/0/1         dynamic   0/-         </span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">Total matching items on slot 0 displayed = 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="手工清除mac-address"><a href="#手工清除mac-address" class="headerlink" title="手工清除mac-address"></a>手工清除mac-address</h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">undo mac-address</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="IP-amp-MAC"><a href="#IP-amp-MAC" class="headerlink" title="IP &amp; MAC"></a>IP &amp; MAC</h1><h2 id="Network-MAC-Address"><a href="#Network-MAC-Address" class="headerlink" title="Network-MAC Address"></a>Network-MAC Address</h2><p>MAC（Media Access Control）地址用来定义网络设备的位置。MAC地址由48比特长、12位的16进制数字组成，其中从左到右开始，0到23bit是厂商向IETF等机构申请用来标识厂商的代码(OUI)，24到47bit由厂商自行分派，是各个厂商制造的所有网卡的一个唯一编号。<br>MAC地址可以分为3种类型：</p>
+<ul>
+<li>物理MAC地址：这种类型的MAC地址唯一的标识了以太网上的一个终端，该地址为全球唯一的硬件地址。</li>
+<li>广播MAC地址：全1的MAC地址（FF-FF-FF-FF-FF-FF），用来表示LAN上的所有终端设备。</li>
+<li>组播MAC地址：除广播地址外，第8bit为1的MAC地址为组播MAC地址（例如01-00-00-00-00-00），用来代表LAN上的一组终端。</li>
+</ul>
+<p><strong>静态MAC地址（Static MAC）</strong></p>
+<p>由用户通过命令配置的静态转发的MAC地址，静态MAC地址和动态MAC地址的功能不同 ，静态地址一旦被加入，该地址在删除之前将一直有效，不受最大老化时间的限制。</p>
+<p><strong>动态MAC地址（Dynamic MAC）</strong></p>
+<p>由交换机从接受到报文自动学习到的MAC地址，当端口收到一个报文时，会查找报文的源MAC地址是否存 在于MAC地址表中，如果不存在则会将相应的端口、VLAN和源MAC地址关联起来，并保存到MAC地址表中， 动态MAC地址在达到一定老化时间后会被老化删除，但如果该地址在老化时间内被正确使用过，则会重新 激活该条地址的老化时间，同时MAC地址和端口的对应关系会随着设备所连的交换机的端口的变化而变化。</p>
+<p><strong>过滤MAC地址、黑洞MAC地址</strong></p>
+<p>由用户通过命令配置的静态过滤的MAC地址，当网关接收到的报文中，源或者目的MAC 地址为过滤MAC地址，则直接丢弃该报文。</p>
+<h2 id="Network-MAC-Address-Table"><a href="#Network-MAC-Address-Table" class="headerlink" title="Network-MAC Address Table"></a>Network-MAC Address Table</h2><p>设备学习MAC地址的方法如下：如果从某接口（假设为接口A）收到一个数据帧，设备就会分析该数据帧的源MAC地址（假设为MAC-SOURCE）并认为目的MAC地址为MAC-SOURCE的报文可以由接口A转发；如果MAC地址表中已经包含MAC-SOURCE，设备将对该表项进行更新；</p>
+<p>如果MAC地址表中尚未包含MAC-SOURCE，设备则将这个新MAC地址以及该MAC地址对应的接口A作为一个新的表项加入到MAC地址表中。</p>
+<p>Note：用户手工配置的静态MAC地址表项和黑洞MAC地址表项不会被动态MAC地址表项覆盖，而动态MAC地址表项可以被静态MAC地址表项和黑洞MAC地址表项覆盖。</p>
+<p>设备在转发报文时，根据MAC地址表项信息，会采取以下两种转发方式：</p>
+<ul>
+<li>单播方式：当MAC地址表中包含与报文目的MAC地址对应的表项时，直接将报文从该表项中的转发出接口发送。</li>
+<li>广播方式：当设备收到目的地址为全1的报文，或MAC地址表中没有包含对应报文目的MAC地址的表项时，设备</li>
+</ul>
+<p>将采取广播方式将报文向除接收接口外的所有接口进行转发。</p>
+<img src="/network/index/image-20201119112801791.png" alt style="zoom:67%;">
+
+<h2 id="Network-MAC-Address-Table-Expiring"><a href="#Network-MAC-Address-Table-Expiring" class="headerlink" title="Network-MAC Address Table Expiring"></a>Network-MAC Address Table Expiring</h2><p>MAC地址老化过程：</p>
+<p>为适应网络的变化，MAC表需要不断更新。MAC表中自动生成的表项（即动态表项）并非永远有效，每一条表项都有一个生存周期，到达生存周期仍得不到更新的表项将被删除，这个生存周期被称作老化时间。如果在到达生存周期前记录被更新，则该表项的老化时间重新计算。</p>
+<img src="/network/index/image-20201119112855506.png" alt="image-20201119112855506" style="zoom:67%;">
+
+<p>设备MAC地址老化时间设置为T。在t1时刻有源MAC地址为00e0-fc00-0001、VLAN为1的报文从某接口进入。假定该接口已加入VLAN 1。</p>
+<p>如果之前MAC地址表不存在关于(MAC: 00e0-fc00-0001，VLAN: 1)的任何种类表项，那么这个地址就会作为动态MAC地址表项学习到地址表里，同时该表项的命中标志位被置1。</p>
+<p>设备周期性(每经过T时间)地对所有学习到的动态MAC地址表项进行检查。</p>
+<ul>
+<li>在t2时刻，检查到动态表项(MAC: 00e0-fc00-0001，VLAN: 1)的命中标志位为1，则将该表项的命中标志位置为0，但不删除这条表项。</li>
+<li>在t2时刻和t3时刻之间没有这种报文进入设备，那么该表项的命中标志位会一直保持为0。</li>
+<li>在t3时刻，设备检查到该表项的命中标志位为0，认为该表项的老化时间到达，将删除此条表项。</li>
+</ul>
+<h2 id="Network-IP-Address"><a href="#Network-IP-Address" class="headerlink" title="Network-IP Address"></a>Network-IP Address</h2><p>IP地址是在计算机网络中被用来唯一标识一台设备的一组数字。</p>
+<p>IPv4地址由32位二进制数值组成，但为了便于用户识别和记忆，采用了“点分十进制表示法”。</p>
+<p>采用了这种表示法的IPv4地址由4个点分十进制整数来表示，每个十进制整数对应一个字节。</p>
+<p>IPv4地址由如下两部分组成：</p>
+<ul>
+<li>网络号码字段（Net-id）：用来标识一个网络。</li>
+<li>主机号码字段（Host-id）：用来区分一个网络内的不同主机。对于网络号相同的设备，无论实际所处的物理位置如何，它们都是处在同一个网络中。</li>
+</ul>
+<p><strong>IPv4地址分类：</strong></p>
+<p><img src="/network/index/image-20201119113042601.png" alt="image-20201119113042601"></p>
+<h2 id="Network-IP-Packet-Format"><a href="#Network-IP-Packet-Format" class="headerlink" title="Network-IP Packet Format"></a>Network-IP Packet Format</h2><p><img src="/network/index/image-20201119114407628.png" alt="image-20201119114407628"></p>
+<img src="/network/index/image-20201119114820275.png" alt="image-20201119114820275" style="zoom:67%;">
+
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>长度</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>版本</td>
+<td>4比特</td>
+<td>IP协议的版本号，分为IPv4和IPv6协议。</td>
+</tr>
+<tr>
+<td>首部长度</td>
+<td>4比特</td>
+<td>IPv4的首部长度。</td>
+</tr>
+<tr>
+<td>区分服务</td>
+<td>8比特</td>
+<td>用来获得更好的服务。只有在使用区分服务时，这个字段才起作用。</td>
+</tr>
+<tr>
+<td>总长度</td>
+<td>16比特</td>
+<td>指首部和数据之和的长度。</td>
+</tr>
+<tr>
+<td>标识</td>
+<td>16比特</td>
+<td>IPv4软件在存储器中维持一个计数器，每产生一个数据报，计数器就加1,并将此值赋给标识字段。</td>
+</tr>
+<tr>
+<td>标志</td>
+<td>3比特</td>
+<td>目前只有两位有意义。最低位为1表示后面“还有分片”的数据报，为0表示这已经是最后一个数据片；中间一位为1表示“不能分片”，为0才允许分片。</td>
+</tr>
+<tr>
+<td>片位移</td>
+<td>13比特</td>
+<td>指出较长的分组在分片后，该片在原分组中的相对位置。</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>8比特</td>
+<td>表示数据报在网络中的寿命，功能是“跳数限制”。</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>8比特</td>
+<td>指出此数据报携带的数据是使用何种协议。</td>
+</tr>
+<tr>
+<td>首部佥3验和</td>
+<td>16比特</td>
+<td>数据报每经过一个设备，设备都要重新计算一下首部检验和，若首部未发生变化，则此结果必为0，于是就保留这个数据报。这个字段只检3佥数据报的首部，但不包括数据部分。</td>
+</tr>
+<tr>
+<td>源地址</td>
+<td>32比特</td>
+<td>报文发送方的IPv4地址。</td>
+</tr>
+<tr>
+<td>目的地址</td>
+<td>32比特</td>
+<td>报文接收方的IPv4地址。</td>
+</tr>
+<tr>
+<td>选项字段</td>
+<td>0~40字节</td>
+<td>用来支持排错、测量以及安全等措施。在必要的时候插入值为0的填充字节。</td>
+</tr>
+<tr>
+<td>数据部分</td>
+<td>可变</td>
+<td>用来填充报文。</td>
+</tr>
+</tbody></table>
+<h2 id="Network-VLSM"><a href="#Network-VLSM" class="headerlink" title="Network - VLSM"></a>Network - VLSM</h2><p>VLSM(可变长子网掩码) 是为了有效的使用无类别域间路由（CIDR）和路由汇聚(route summary)来控制路由表的大小，</p>
+<p>它是网络管理员常用的IP寻址技术，VLSM就是其中的常用方式，可以对子网进行层次化编址，以便最有效的利用现有的地址空间。</p>
+<p><img src="/network/index/image-20201119114850538.png" alt="image-20201119114850538"></p>
+<h2 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h2><p><img src="/network/index/image-20201123190923769.png" alt="image-20201123190923769"></p>
+<h2 id="OVS"><a href="#OVS" class="headerlink" title="OVS"></a>OVS</h2><p>Open vSwitch是一个高质量的、多层虚拟交换机，使用开源Apache2.0许可协议，由Nicira Networks开发，主要实现代码为可移植的C代码。它的目的是让大规模网络自动化可以通过编程扩展,同时仍然支持标准的管理接口和协议（例如NetFlow, sFlow, SPAN, RSPAN, CLI, LACP, 802.1ag）。此外,它被设计位支持跨越多个物理服务器的分布式环境，类似于VMware的vNetwork分布式vswitch或Cisco Nexus 1000 V。Open vSwitch支持多种linux 虚拟化技术，包括Xen/XenServer， KVM和irtualBox。当前最新代码包主要包括以下模块和特性：</p>
+<h2 id="IPVLAN"><a href="#IPVLAN" class="headerlink" title="IPVLAN"></a>IPVLAN</h2><h3 id="L2"><a href="#L2" class="headerlink" title="L2"></a>L2</h3><p>ipvlan L2 模式和 macvlan bridge 模式工作原理很相似，父接口作为交换机来转发子接口的数据。</p>
+<p>同一个网络的子接口可以通过父接口来转发数据，而如果想发送到其他网络，报文则会通过父接口的路由转发出去。</p>
+<p><img src="/network/index/image-20201123191225930.png" alt="image-20201123191225930"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ip netns add net1</span><br><span class="line">ip netns add net2</span><br><span class="line">ip link add ipvlan1 link eth0 type ipvlan mode l2</span><br><span class="line">ip link add ipvlan2 link eth0 type ipvlan mode l2</span><br><span class="line">ip link set ipvlan1 netns net1</span><br><span class="line">ip link set ipvlan2 netns net2</span><br><span class="line">ip netns exec net1 ifconfig ipvlan1 172.12.1.5/24 up</span><br><span class="line">ip netns exec net2 ifconfig ipvlan2 172.12.1.6/24 up</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#访问外网添加路由</span></span></span><br><span class="line">ip netns exec net1 route add -net 0.0.0.0/0 gw 172.12.1.2</span><br><span class="line">ip netns exec net2 route add -net 0.0.0.0/0 gw 172.12.1.2</span><br><span class="line"><span class="meta">$</span><span class="bash"> ip netns <span class="built_in">exec</span> net2 route -n</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">0.0.0.0         172.12.1.2      0.0.0.0         UG    0      0        0 ipvlan2</span><br><span class="line">172.12.1.0      0.0.0.0         255.255.255.0   U     0      0        0 ipvlan2</span><br></pre></td></tr></table></figure>
+
+<h3 id="L3"><a href="#L3" class="headerlink" title="L3"></a>L3</h3><p>ipvlan 有点像路由器的功能，它在各个虚拟网络和主机网络之间进行不同网络报文的路由转发工作。</p>
+<p>只要父接口相同，即使虚拟机/容器不在同一个网络，也可以互相 ping 通对方，因为 ipvlan 会在中间做报文的转发工作。</p>
+<p><img src="/network/index/image-20201123191347831.png" alt="image-20201123191347831"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ip netns add net1</span><br><span class="line">ip netns add net2</span><br><span class="line">ip link add ipvlan1 link eth0 <span class="built_in">type</span> ipvlan mode l3</span><br><span class="line">ip link add ipvlan2 link eth0 <span class="built_in">type</span> ipvlan mode l3</span><br><span class="line">ip link <span class="built_in">set</span> ipvlan1 netns net1</span><br><span class="line">ip link <span class="built_in">set</span> ipvlan2 netns net2</span><br><span class="line">ip netns <span class="built_in">exec</span> net1 ifconfig ipvlan1 172.12.10.5/24 up</span><br><span class="line">ip netns <span class="built_in">exec</span> net2 ifconfig ipvlan2 172.12.20.6/24 up</span><br><span class="line"><span class="comment">##添加路由</span></span><br><span class="line">ip netns <span class="built_in">exec</span> net1 route add -net 172.12.20.0/24 dev ipvlan1</span><br><span class="line">ip netns <span class="built_in">exec</span> net2 route add -net 172.12.10.0/24 dev ipvlan2</span><br></pre></td></tr></table></figure>
+
+<p>无法自己学习路由</p>
+<h2 id="MACVLAN"><a href="#MACVLAN" class="headerlink" title="MACVLAN"></a>MACVLAN</h2><p>Macvlan用简单的网桥连接父接口上的所有子接口。</p>
+<p>从一个接口到另一个接口的帧将直接发送，而不发送出去。</p>
+<p>广播帧被泛洪到所有其他网桥端口和外部接口，但是当它们从VEP交换机返回时，将被丢弃。 </p>
+<p>由于所有macvlan子接口MAC地址都是已知的，因此macvlan桥接模式不需要MAC学习，也不需要STP。</p>
+<p>桥接模式可在虚拟机之间提供最快的通信，但有一个“缺陷”，您应该注意–如果父接口状态下降，所有macvlan子接口也会下降。 当物理接口断开连接时，VM将无法相互通信。</p>
+<p><img src="/network/index/image-20201124222533450.png" alt="image-20201124222533450"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ifconfig eth0 promisc #开启混杂模式</span><br><span class="line">ip netns <span class="builtin-name">add</span> net1</span><br><span class="line">ip netns <span class="builtin-name">add</span> net2</span><br><span class="line">ip link <span class="builtin-name">add</span> link eth0 name macv1<span class="built_in"> type </span>macvlan mode bridge</span><br><span class="line">ip link <span class="builtin-name">add</span> link eth0 name macv2<span class="built_in"> type </span>macvlan mode bridge</span><br><span class="line">ip link <span class="builtin-name">set</span> macv1 netns net1</span><br><span class="line">ip link <span class="builtin-name">set</span> macv2 netns net2</span><br><span class="line">ip netns exec net1 ifconfig macv1 172.12.1.5/24 up</span><br><span class="line">ip netns exec net2 ifconfig macv2 172.12.1.6/24 up</span><br></pre></td></tr></table></figure>
+
+<h1 id="Linux网络"><a href="#Linux网络" class="headerlink" title="Linux网络"></a>Linux网络</h1><p><a href="https://mp.weixin.qq.com/s?__biz=MzU4MjQ0MTU4Ng==&mid=2247487543&idx=1&sn=fc33ac3574743cc40f9c365ee12d6607&chksm=fdb91f2acace963cc31fae75e756e4e2f932c81b5d6e0373d9f0deffb518d367812508c02f93&mpshare=1&scene=1&srcid=1123KlT4IX6BQOpdWV5RBnhx&sharer_sharetime=1606105541377&sharer_shareid=ca3338040ec98c721a207c338f2b28ab&key=6b64641f420daf84a6e3290aa9c671e729bf319c854c0a0ec398366272f7747e8041fb54fcdbea96e59ca5e0d474dccab6be322473a493af627232eed5b1a76469641429296deae5c1fdc874ea6db4735404d0a1693308f24543e6428e3b4f62e350500b02e503daed80a81053e2291c5a9c6c8ae61a9ea8f37b5de3e38a71a8&ascene=1&uin=MjAyODg3MjIxMQ%3D%3D&devicetype=Windows+10+x64&version=63000039&lang=zh_CN&exportkey=AxznzQ3Eng4sX%2FdGqy34KBc%3D&pass_ticket=W1194pkA1JXLzo%2FjY3QjrukvfFEVYvO1Ubf2IQqAIYkoCIW4Mrr9HocUwRF9hyl3&wx_header=0" target="_blank" rel="noopener">微信文章</a></p>
+<h2 id="网络命名空间"><a href="#网络命名空间" class="headerlink" title="网络命名空间"></a>网络命名空间</h2><p>我们知道容器运行时使用 namespace（命名空间）内核功能对系统资源进行分区，以实现某种形式的进程隔离，这样，对一个命名空间中资源的更改不会影响其他命名空间中的资源，包括进程 ID、主机名、用户 ID、文件名和网络接口等。</p>
+<p>网络名称空间可以虚拟化网络堆栈，每个网络名称空间都有自己的资源，例如网络接口、IP 地址、路由表、隧道、防火墙等，例如，<code>iptables</code>添加到网络名称空间的规则只会影响进入和离开该名称空间的流量。</p>
+<h2 id="VETH-PEER"><a href="#VETH-PEER" class="headerlink" title="VETH PEER"></a>VETH PEER</h2><p><img src="/network/index/image-20201125160513357.png" alt="image-20201125160513357"></p>
+<p>veth 接口通常被创建为一个对，其中一端传输的数据会立即被另一端接收，这种类型的接口在容器运行时通常用于在不同网络命名空间之间传输数据包。</p>
+<h3 id="配置第一个网络命名空间"><a href="#配置第一个网络命名空间" class="headerlink" title="配置第一个网络命名空间"></a>配置第一个网络命名空间</h3><p>首先我们使用 <code>ip link add</code> 命令创建一对新的 veth 接口：veth0 和 veth1：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一对名为 veth0 和 veth1 的 veth 接口。</span></span><br><span class="line">$ ip link add veth0 <span class="built_in">type</span> veth peer name veth1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认 veth0 已创建	</span></span><br><span class="line">$ ip link show veth0</span><br><span class="line">289: veth0@veth1: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span><br><span class="line">    link/ether 5e:87:df:87:af:c7 brd ff:ff:ff:ff:ff:ff</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认 veth1 已创建</span></span><br><span class="line">$ ip link show veth1</span><br><span class="line">288: veth1@veth0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span><br><span class="line">    link/ether be:0d:a4:8c:9f:2a brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    </span><br><span class="line"><span class="variable">$ip</span> netns <span class="built_in">exec</span> ns1 ethtool -S veth0</span><br><span class="line">NIC statistics:</span><br><span class="line">     peer_ifindex: 4 <span class="comment">#对端id</span></span><br><span class="line">     rx_queue_0_xdp_packets: 0</span><br><span class="line">     rx_queue_0_xdp_bytes: 0</span><br><span class="line">     rx_queue_0_drops: 0</span><br><span class="line">     rx_queue_0_xdp_redirect: 0</span><br><span class="line">     rx_queue_0_xdp_drops: 0</span><br><span class="line">     rx_queue_0_xdp_tx: 0</span><br><span class="line">     rx_queue_0_xdp_tx_errors: 0</span><br><span class="line">     tx_queue_0_xdp_xmit: 0</span><br><span class="line">     tx_queue_0_xdp_xmit_errors: 0</span><br><span class="line">$ ip a</span><br><span class="line">...</span><br><span class="line">4: veth1@if5: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN group default qlen 1000</span><br><span class="line">    link/ether 8a:5c:72:4b:c4:a3 brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br></pre></td></tr></table></figure>
+
+<p>veth 接口通常被创建为一个对，其中一端传输的数据会立即被另一端接收，这种类型的接口在容器运行时通常用于在不同网络命名空间之间传输数据包。</p>
+<p>让我们创建第一个网络命名空间 ns1，然后我们可以将 veth0 接口分配给这个网络命名空间，并将 <code>10.0.1.0/24</code> 的 IP 地址范围分配给它。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建 ns1 网络命名空间</span></span><br><span class="line">$<span class="built_in"> ip </span>netns <span class="builtin-name">add</span> ns1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分配 veth0 接口到 ns1 网络命名空间</span></span><br><span class="line">$<span class="built_in"> ip </span>link <span class="builtin-name">set</span> veth0 netns ns1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 10.0.1.0/24 IP 地址范围分配给 veth0 接口</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1 addr <span class="builtin-name">add</span> 10.0.1.0/24 dev veth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 veth0 接口 up 起来</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1 link <span class="builtin-name">set</span> veth0 up</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 lo 接口 up 起来，因为发往 10.0.1.0/24 的数据（本地的）</span></span><br><span class="line"><span class="comment"># （像 ping）要通过 local（本地）路由表</span></span><br><span class="line"><span class="comment"># 比如要 ping 自己</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1 link <span class="builtin-name">set</span> lo up </span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认接口已经 up 起来</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1 addr show</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN<span class="built_in"> group default </span>qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">289: veth0@if288: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state LOWERLAYERDOWN<span class="built_in"> group default </span>qlen 1000</span><br><span class="line">    link/ether 5e:87:df:87:af:c7 brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 10.0.1.0/24 scope global veth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p>现在如果我们从主机和 ns1 两个网络命名空间中去 ping veth0 接口会发生什么呢？</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># veth0 不在主机的根网络命名空间中</span></span><br><span class="line">$<span class="built_in"> ip </span>link show veth0            </span><br><span class="line">Device <span class="string">"veth0"</span> does <span class="keyword">not</span> exist.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从主机网络命名空间中 ping 不通</span></span><br><span class="line">$<span class="built_in"> ping </span>-c10 10.0.1.0</span><br><span class="line">PING 10.0.1.0 (10.0.1.0) 56(84) bytes of data.</span><br><span class="line">^C</span><br><span class="line">--- 10.0.1.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">3 packets transmitted, 0 received, 100% packet loss, time 1999ms</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到直接在主机的根网络命名空间中是找不到 veth0 这个接口的，当然也是 ping 不同 <code>10.0.1.0</code> 这个地址的，因为他们被绑定到 ns1 这个网络命名空间中，所以我们在操作的时候需要切换到这个命名空间下面。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>netns exec ns1<span class="built_in"> ping </span>-c10 10.0.1.0</span><br><span class="line">PING 10.0.1.0 (10.0.1.0) 56(84) bytes of data.</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=1 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.121 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=2 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.063 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=3 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.066 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=4 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.109 ms</span><br><span class="line">^C</span><br><span class="line">--- 10.0.1.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">4 packets transmitted, 4 received, 0% packet loss, time 3000ms</span><br><span class="line">rtt min/avg/max/mdev = 0.063/0.089/0.121/0.028 ms</span><br></pre></td></tr></table></figure>
+
+<p>这里我们使用了一条 <code>ip netns exec</code> 的命令，这个命令允许我们在指定的网络命名空间中去执行任意的命令，可以看到现在我们在 ns1 网络命名空中间去 ping <code>10.0.1.0</code> 就可以通了。</p>
+<h3 id="配置第二个网络命名空间"><a href="#配置第二个网络命名空间" class="headerlink" title="配置第二个网络命名空间"></a>配置第二个网络命名空间</h3><p>下面我们用上面的方式来创建第二个网络命名空间 <code>ns2</code>，然后将 veth1 接口分配给这个网络命名空间，并将 <code>10.0.2.0/24</code> 的 IP 地址范围分配给这个接口。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建名为 ns2 的网络命名空间</span></span><br><span class="line">$<span class="built_in"> ip </span>netns <span class="builtin-name">add</span> ns2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分配 veth1 接口到 ns2 网络命名空间</span></span><br><span class="line">$<span class="built_in"> ip </span>link <span class="builtin-name">set</span> veth1 netns ns2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 10.0.2.0/24 IP 地址范围分配给 veth1 接口</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2 addr <span class="builtin-name">add</span> 10.0.2.0/24 dev veth1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 veth1 接口 up 起来</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2 link <span class="builtin-name">set</span> veth1 up</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 lo 口 up 起来（这样可以 ping 通自己）</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2 link <span class="builtin-name">set</span> lo up </span><br><span class="line"></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2 addr show</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN<span class="built_in"> group default </span>qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">288: veth1@if289: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP<span class="built_in"> group default </span>qlen 1000</span><br><span class="line">    link/ether be:0d:a4:8c:9f:2a brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 10.0.2.0/24 scope global veth1</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::bc0d:a4ff:fe8c:9f2a/64 scope link</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p>为方便后面设置路由，这里我们为 veth1 接口分配一个不同的子网 IP 范围。和 veth0 接口类似，veth1 接口也不能从主机网络命名空间到达，只能在 ns2 本身的网络命名空间内工作。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>link show veth1</span><br><span class="line">Device <span class="string">"veth1"</span> does <span class="keyword">not</span> exist.</span><br><span class="line">$<span class="built_in"> ping </span>-c10 10.0.2.0</span><br><span class="line">PING 10.0.2.0 (10.0.2.0) 56(84) bytes of data.</span><br><span class="line"><span class="keyword">From</span> 180.149.159.13 <span class="attribute">icmp_seq</span>=2 Packet filtered</span><br><span class="line">^C</span><br><span class="line">--- 10.0.2.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">2 packets transmitted, 0 received, +1 errors, 100% packet loss, time 999</span><br><span class="line">$<span class="built_in"> ip </span>netns exec ns2<span class="built_in"> ping </span>-c10 10.0.2.0</span><br><span class="line">PING 10.0.2.0 (10.0.2.0) 56(84) bytes of data.</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=1 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.100 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=2 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.096 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=3 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.068 ms</span><br><span class="line">^C</span><br><span class="line">--- 10.0.2.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 1999ms</span><br><span class="line">rtt min/avg/max/mdev = 0.068/0.088/0.100/0.014 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置子网路由"><a href="#配置子网路由" class="headerlink" title="配置子网路由"></a>配置子网路由</h3><p>虽然在上面的两个网络空间内可以各自访问自己，但是他们互相之间是不能 ping 通的。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>netns exec ns1<span class="built_in"> ping </span>-c10 10.0.2.0</span><br><span class="line">connect:<span class="built_in"> Network </span>is unreachable</span><br><span class="line">$<span class="built_in"> ip </span>netns exec ns2<span class="built_in"> ping </span>-c10 10.0.1.0</span><br><span class="line">connect:<span class="built_in"> Network </span>is unreachable</span><br></pre></td></tr></table></figure>
+
+<p>veth0 和 veth1 这两个接口本身也都 up 起来了，而且在各种的网络命名空间中 ping 也能正常工作，所以互相直接不通那很可能和路由有关。下面我们使用 ip 命令来调试下，我们可以通过 <code>ip route get</code> 命令来确定一个数据包所走的路由。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>-n ns1<span class="built_in"> route </span><span class="builtin-name">get</span> 10.0.2.0</span><br><span class="line">RTNETLINK answers:<span class="built_in"> Network </span>is unreachable</span><br><span class="line">$<span class="built_in"> ip </span>-n ns2<span class="built_in"> route </span><span class="builtin-name">get</span> 10.0.1.0</span><br><span class="line">RTNETLINK answers:<span class="built_in"> Network </span>is unreachable</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到都是网络不可达，我们来检查下两个网络命名空间中的路由表信息。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>-n ns1 route</span><br><span class="line">10.0.1.0/24 dev veth0 proto kernel scope link src 10.0.1.0</span><br><span class="line">$<span class="built_in"> ip </span>-n ns2 route</span><br><span class="line">10.0.2.0/24 dev veth1 proto kernel scope link src 10.0.2.0</span><br></pre></td></tr></table></figure>
+
+<p>看到路由表是不是很清晰了，两个网络命名空间的路由表都只有各自 IP 范围的路由条目，并没有通往其他子网的路由，所以当然不能互通了，要解决也很简单，可以使用 <code>ip route add</code> 命令在路由表中插入新的路由条目是不是就可以了。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新 veth0 路由表，添加一条通往 10.0.2.0/24 的路由</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1<span class="built_in"> route </span><span class="builtin-name">add</span> 10.0.2.0/24 dev veth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认发往 10.0.2.0/24 的数据包被路由到 veth0</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns1<span class="built_in"> route </span><span class="builtin-name">get</span> 10.0.2.0</span><br><span class="line">10.0.2.0 dev veth0 src 10.0.1.0</span><br><span class="line">    cache</span><br><span class="line"></span><br><span class="line"><span class="comment"># 同样更新 veth1 路由表，添加一条通往 10.0.1.0/24 的路由</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2<span class="built_in"> route </span><span class="builtin-name">add</span> 10.0.1.0/24 dev veth1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认发往 10.0.1.0/24 的数据包被路由到 veth1</span></span><br><span class="line">$<span class="built_in"> ip </span>-n ns2<span class="built_in"> route </span><span class="builtin-name">get</span> 10.0.1.0</span><br><span class="line">10.0.1.0 dev veth1 src 10.0.2.0</span><br><span class="line">    cache</span><br></pre></td></tr></table></figure>
+
+<p>上面我们在各自的网络命名空间中添加了对方的路由信息，现在我们来尝试 ping 下对方的 veth 接口。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>netns exec ns1<span class="built_in"> ping </span>-c10 10.0.2.0</span><br><span class="line">PING 10.0.2.0 (10.0.2.0) 56(84) bytes of data.</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=1 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.140 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=2 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.080 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.2.0: <span class="attribute">icmp_seq</span>=3 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.091 ms</span><br><span class="line">^C</span><br><span class="line">--- 10.0.2.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 1999ms</span><br><span class="line">rtt min/avg/max/mdev = 0.080/0.103/0.140/0.028 ms</span><br><span class="line"></span><br><span class="line">$<span class="built_in"> ip </span>netns exec ns2<span class="built_in"> ping </span>-c10 10.0.1.0</span><br><span class="line">PING 10.0.1.0 (10.0.1.0) 56(84) bytes of data.</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=1 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.114 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=2 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.084 ms</span><br><span class="line">64 bytes <span class="keyword">from</span> 10.0.1.0: <span class="attribute">icmp_seq</span>=3 <span class="attribute">ttl</span>=64 <span class="attribute">time</span>=0.086 ms</span><br><span class="line">^C</span><br><span class="line">--- 10.0.1.0<span class="built_in"> ping </span>statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 2000ms</span><br><span class="line">rtt min/avg/max/mdev = 0.084/0.094/0.114/0.017 ms</span><br></pre></td></tr></table></figure>
+
+<p>可以看到已经通啦！！🎉🎉🎉 此外我们还可以使用 <code>tcpdump</code> 来捕获两个网络命名空间之间传输的数据包。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ ip netns exec ns1 tcpdump -i veth0 icmp -l</span><br><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on veth0, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">22.080392</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">1</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">22.080464</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">1</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">23.080409</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">2</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">23.080472</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">2</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">24.080357</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">3</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">24.080418</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">3</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">25.080346</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">4</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">25.080401</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">4</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">26.080417</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">5</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">26.080496</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">5</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">27.080454</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">6</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">27.080507</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">6</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">28.080398</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">7</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">28.080456</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">7</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">29.080390</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">8</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">29.080431</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">8</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">30.080524</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">9</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">30.080576</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">9</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">31.081895</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>: ICMP echo request, id <span class="number">7253</span>, seq <span class="number">10</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">11</span>:<span class="number">29</span>:<span class="number">31.081942</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>: ICMP echo reply, id <span class="number">7253</span>, seq <span class="number">10</span>, length <span class="number">64</span></span><br><span class="line">^C</span><br><span class="line"><span class="number">20</span> packets captured</span><br><span class="line"><span class="number">20</span> packets received by filter</span><br><span class="line"><span class="number">0</span> packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<h3 id="TCP-连接"><a href="#TCP-连接" class="headerlink" title="TCP 连接"></a>TCP 连接</h3><p>最好我们来测试下 TCP 连接，使用 nc 命令在 ns1 命名空间的 7096 端口启动一个 TCP 服务器，然后从 ns2 网络命名空间发起一个 TCP 握手连接。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$<span class="built_in"> ip </span>netns exec ns1 nc -l 10.0.1.0 7096 -v</span><br><span class="line">exec of <span class="string">"nc"</span> failed: <span class="literal">No</span> such file <span class="keyword">or</span> directory</span><br></pre></td></tr></table></figure>
+
+<p>上面命令报错是因为我们还没有安装 ns 这个工具，安装完成后就正常了。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y nc</span><br><span class="line"></span><br><span class="line">$ ip netns exec ns1 nc -l <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> <span class="number">7096</span> -v</span><br><span class="line">Ncat: Version <span class="number">7.50</span> ( https:<span class="comment">//nmap.org/ncat )</span></span><br><span class="line">Ncat: Listening on <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>:<span class="number">7096</span></span><br></pre></td></tr></table></figure>
+
+<p>然后重新开一个终端进行连接：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 使用 nc 从 ns2 发起 TCP 握手</span><br><span class="line">$ ip netns exec ns2 nc <span class="number">-4</span>t <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> <span class="number">7096</span> -v</span><br><span class="line">Ncat: Version <span class="number">7.50</span> ( https:<span class="comment">//nmap.org/ncat )</span></span><br><span class="line">Ncat: Connected to <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>:<span class="number">7096.</span></span><br><span class="line"></span><br><span class="line"># 这个时候正常会在前面的服务中看到连接状态</span><br><span class="line">$ ip netns exec ns1 nc -l <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> <span class="number">7096</span> -v</span><br><span class="line">Ncat: Version <span class="number">7.50</span> ( https:<span class="comment">//nmap.org/ncat )</span></span><br><span class="line">Ncat: Listening on <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>:<span class="number">7096</span></span><br><span class="line">Ncat: Connection <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>.</span><br><span class="line">Ncat: Connection <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>:<span class="number">34090.</span></span><br></pre></td></tr></table></figure>
+
+<p>一旦 TCP 连接建立，我们就可以从 ns2 向 ns1 发送测试消息了。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ip netns exec ns2 nc <span class="number">-4</span>t <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> <span class="number">7096</span> -v</span><br><span class="line">Ncat: Version <span class="number">7.50</span> ( https:<span class="comment">//nmap.org/ncat )</span></span><br><span class="line">Ncat: Connected to <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>:<span class="number">7096.</span></span><br><span class="line"><span class="keyword">this</span> <span class="keyword">is</span> a test message  # 在这里输入一段信息</span><br></pre></td></tr></table></figure>
+
+<p>此时我们在 ns1 这边的服务器端也会收到发送的消息。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ip netns exec ns1 nc -l <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span> <span class="number">7096</span> -v</span><br><span class="line">Ncat: Version <span class="number">7.50</span> ( https:<span class="comment">//nmap.org/ncat )</span></span><br><span class="line">Ncat: Listening on <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span>:<span class="number">7096</span></span><br><span class="line">Ncat: Connection <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>.</span><br><span class="line">Ncat: Connection <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span>:<span class="number">34090.</span></span><br><span class="line"><span class="keyword">this</span> <span class="keyword">is</span> a test message</span><br></pre></td></tr></table></figure>
+
+<p>同样我们也可以使用 tcpdump 来抓取所有在两个网络命名空间之间传输的数据包。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ ip netns exec ns1 tcpdump -X -i veth0 -n tcp -l</span><br><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on veth0, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">11</span>:<span class="number">42</span>:<span class="number">59.912176</span> IP <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span><span class="number">.34090</span> &gt; <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span><span class="number">.7096</span>: Flags [P.], seq <span class="number">118819706</span>:<span class="number">118819735</span>, ack <span class="number">1587208228</span>, win <span class="number">229</span>, options [nop,nop,TS val <span class="number">1970393377</span> ecr <span class="number">1970365937</span>], length <span class="number">29</span></span><br><span class="line"> <span class="number">0x0000</span>:  <span class="number">4500</span> <span class="number">0051</span> ad52 <span class="number">4000</span> <span class="number">4006</span> <span class="number">7655</span> <span class="number">0</span>a00 <span class="number">0200</span>  E..Q.<span class="symbol">R@</span>.@.vU....</span><br><span class="line"> <span class="number">0x0010</span>:  <span class="number">0</span>a00 <span class="number">0100</span> <span class="number">852</span>a <span class="number">1</span>bb8 <span class="number">0715</span> <span class="number">0</span>b7a <span class="number">5e9</span>a e024  .....*.....z^..$</span><br><span class="line"> <span class="number">0x0020</span>:  <span class="number">8018</span> <span class="number">00e5</span> <span class="number">1743</span> <span class="number">0000</span> <span class="number">0101</span> <span class="number">080</span>a <span class="number">7571</span> d121  .....C......uq.!</span><br><span class="line"> <span class="number">0x0030</span>:  <span class="number">7571</span> <span class="number">65f</span>1 <span class="number">7468</span> <span class="number">6973</span> <span class="number">2069</span> <span class="number">7320</span> <span class="number">616</span>e <span class="number">6f</span>74  uqe.<span class="keyword">this</span>.<span class="keyword">is</span>.anot</span><br><span class="line"> <span class="number">0x0040</span>:  <span class="number">6865</span> <span class="number">7220</span> <span class="number">7465</span> <span class="number">7374</span> <span class="number">206</span>d <span class="number">6573</span> <span class="number">7361</span> <span class="number">6765</span>  her.test.message</span><br><span class="line"> <span class="number">0x0050</span>:  <span class="number">0</span>a                                       .</span><br><span class="line"><span class="number">11</span>:<span class="number">42</span>:<span class="number">59.912207</span> IP <span class="number">10.0</span><span class="number">.1</span><span class="number">.0</span><span class="number">.7096</span> &gt; <span class="number">10.0</span><span class="number">.2</span><span class="number">.0</span><span class="number">.34090</span>: Flags [.], ack <span class="number">29</span>, win <span class="number">227</span>, options [nop,nop,TS val <span class="number">1970393377</span> ecr <span class="number">1970393377</span>], length <span class="number">0</span></span><br><span class="line"> <span class="number">0x0000</span>:  <span class="number">4500</span> <span class="number">0034</span> <span class="number">4612</span> <span class="number">4000</span> <span class="number">4006</span> ddb2 <span class="number">0</span>a00 <span class="number">0100</span>  E.<span class="number">.4</span>F.@.@.......</span><br><span class="line"> <span class="number">0x0010</span>:  <span class="number">0</span>a00 <span class="number">0200</span> <span class="number">1</span>bb8 <span class="number">852</span>a <span class="number">5e9</span>a e024 <span class="number">0715</span> <span class="number">0</span>b97  .......*^..$....</span><br><span class="line"> <span class="number">0x0020</span>:  <span class="number">8010</span> <span class="number">00e3</span> <span class="number">1726</span> <span class="number">0000</span> <span class="number">0101</span> <span class="number">080</span>a <span class="number">7571</span> d121  .....&amp;......uq.!</span><br><span class="line"> <span class="number">0x0030</span>:  <span class="number">7571</span> d121                                uq.!</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以将这个抓包结果保存下来然后用其他工具比如大白鲨来进行详细的分析。</p>
+<h2 id="Linux-Bridge"><a href="#Linux-Bridge" class="headerlink" title="Linux Bridge"></a>Linux Bridge</h2><p><img src="/network/index/image-20201125160546944.png" alt></p>
+<p>yum install bridge-utils</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建命名空间</span></span><br><span class="line">ip netns add ns1</span><br><span class="line">ip netns add ns2</span><br><span class="line"><span class="comment">#首先创建 bridge br0</span></span><br><span class="line">ip l a br0 <span class="built_in">type</span> bridge</span><br><span class="line">ip l s br0 up</span><br><span class="line"><span class="comment">#然后创建两对 veth-pair</span></span><br><span class="line">ip l a veth0 <span class="built_in">type</span> veth peer name br-veth0</span><br><span class="line">ip l a veth1 <span class="built_in">type</span> veth peer name br-veth1</span><br><span class="line"><span class="comment">#分别将两对 veth-pair 加入两个 ns 和 br0</span></span><br><span class="line">ip l s veth0 netns ns1</span><br><span class="line">ip l s br-veth0 master br0</span><br><span class="line">ip l s br-veth0 up</span><br><span class="line">ip l s veth1 netns ns2</span><br><span class="line">ip l s br-veth1 master br0</span><br><span class="line">ip l s br-veth1 up</span><br><span class="line"><span class="comment">#开启本地回环</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ip l s lo up</span><br><span class="line">ip netns <span class="built_in">exec</span> ns2 ip l s lo up</span><br><span class="line"><span class="comment">#给两个 ns 中的 veth 配置 IP 并启用</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ip a a 10.1.1.2/24 dev veth0</span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ip l s veth0 up</span><br><span class="line">ip netns <span class="built_in">exec</span> ns2 ip a a 10.1.1.3/24 dev veth1</span><br><span class="line">ip netns <span class="built_in">exec</span> ns2 ip l s veth1 up</span><br></pre></td></tr></table></figure>
+
+<h2 id="OVS-1"><a href="#OVS-1" class="headerlink" title="OVS"></a>OVS</h2><p><img src="/network/index/image-20201126094227071.png" alt="image-20201126094227071"></p>
+<h3 id="安装OVS："><a href="#安装OVS：" class="headerlink" title="安装OVS："></a>安装OVS：</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line">yum -y install make gcc openssl-devel autoconf automake rpm-build redhat-rpm-config</span><br><span class="line">yum -y install python-devel openssl-devel kernel-devel kernel-debug-devel libtool wget</span><br><span class="line">wget http://openvswitch.org/releases/openvswitch-2.5.2.tar.gz   //需要Retry//</span><br><span class="line">mkdir -p ~/rpmbuild/SOURCES</span><br><span class="line">cp openvswitch-2.5.2.tar.gz ~/rpmbuild/SOURCES/</span><br><span class="line"><span class="built_in">cd</span> ~/rpmbuild/SOURCES</span><br><span class="line">tar xvfz openvswitch-2.5.2.tar.gz</span><br><span class="line">sed <span class="string">'s/openvswitch-kmod, //g'</span> openvswitch-2.5.2/rhel/openvswitch.spec &gt; openvswitch-2.5.2/rhel/openvswitch_no_kmod.spec</span><br><span class="line"><span class="comment">## 修改bug文件</span></span><br><span class="line">vim /usr/include/linux/netfilter/nf_conntrack_sctp.h</span><br><span class="line">__be32 vtag[IP_CT_DIR_MAX];</span><br><span class="line">uint8_t last_dir;</span><br><span class="line">uint8_t flags;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rpmbuild -bb --nocheck openvswitch-2.5.2/rhel/openvswitch_no_kmod.spec</span><br><span class="line">yum localinstall ~/rpmbuild/RPMS/x86_64/openvswitch-2.5.2-1.x86_64.rpm</span><br><span class="line">systemctl restart  openvswitch</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用 ovs 提供的命令创建一个 ovs bridge</span></span><br><span class="line">ovs-vsctl add-br ovs-br</span><br><span class="line"><span class="comment">#创建两对 veth-pair</span></span><br><span class="line">ip l a veth0 <span class="built_in">type</span> veth peer name ovs-veth0</span><br><span class="line">ip l a veth1 <span class="built_in">type</span> veth peer name ovs-veth1</span><br><span class="line"><span class="comment">#将 veth-pair 两端分别加入到 ns 和 ovs bridge 中</span></span><br><span class="line">ip l s veth0 netns ns1</span><br><span class="line">ovs-vsctl add-port ovs-br ovs-veth0</span><br><span class="line">ip l s ovs-veth0 up</span><br><span class="line">ip l s veth1 netns ns2</span><br><span class="line">ovs-vsctl add-port ovs-br ovs-veth1</span><br><span class="line">ip l s ovs-veth1 up</span><br><span class="line"><span class="comment">#给 ns 中的 veth 配置 IP 并启用</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ip a a 10.1.1.2/24 dev veth0</span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ip l s veth0 up</span><br><span class="line">ip netns <span class="built_in">exec</span> ns2 ip a a 10.1.1.3/24 dev veth1</span><br><span class="line">ip netns <span class="built_in">exec</span> ns2 ip l s veth1 up</span><br></pre></td></tr></table></figure>
+
+<h3 id="OpenStack计算节点"><a href="#OpenStack计算节点" class="headerlink" title="OpenStack计算节点"></a>OpenStack计算节点</h3><p><img src="/network/index/image-20201126094310012.png" alt="image-20201126094310012"></p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#学习必备资源"><span class="nav-number">1.</span> <span class="nav-text">学习必备资源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#软件"><span class="nav-number">1.1.</span> <span class="nav-text">软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档"><span class="nav-number">1.2.</span> <span class="nav-text">文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CentOS安装rpcapd服务（WinPcap）"><span class="nav-number">1.3.</span> <span class="nav-text">CentOS安装rpcapd服务（WinPcap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华为交换机命令"><span class="nav-number">1.4.</span> <span class="nav-text">华为交换机命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看设备的mac-table"><span class="nav-number">1.4.1.</span> <span class="nav-text">查看设备的mac table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手工清除mac-address"><span class="nav-number">1.4.2.</span> <span class="nav-text">手工清除mac-address</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IP-amp-MAC"><span class="nav-number">2.</span> <span class="nav-text">IP &amp; MAC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-MAC-Address"><span class="nav-number">2.1.</span> <span class="nav-text">Network-MAC Address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-MAC-Address-Table"><span class="nav-number">2.2.</span> <span class="nav-text">Network-MAC Address Table</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-MAC-Address-Table-Expiring"><span class="nav-number">2.3.</span> <span class="nav-text">Network-MAC Address Table Expiring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-IP-Address"><span class="nav-number">2.4.</span> <span class="nav-text">Network-IP Address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-IP-Packet-Format"><span class="nav-number">2.5.</span> <span class="nav-text">Network-IP Packet Format</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-VLSM"><span class="nav-number">2.6.</span> <span class="nav-text">Network - VLSM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络模型"><span class="nav-number">2.7.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OVS"><span class="nav-number">2.8.</span> <span class="nav-text">OVS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPVLAN"><span class="nav-number">2.9.</span> <span class="nav-text">IPVLAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#L2"><span class="nav-number">2.9.1.</span> <span class="nav-text">L2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#L3"><span class="nav-number">2.9.2.</span> <span class="nav-text">L3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MACVLAN"><span class="nav-number">2.10.</span> <span class="nav-text">MACVLAN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux网络"><span class="nav-number">3.</span> <span class="nav-text">Linux网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络命名空间"><span class="nav-number">3.1.</span> <span class="nav-text">网络命名空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VETH-PEER"><span class="nav-number">3.2.</span> <span class="nav-text">VETH PEER</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置第一个网络命名空间"><span class="nav-number">3.2.1.</span> <span class="nav-text">配置第一个网络命名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置第二个网络命名空间"><span class="nav-number">3.2.2.</span> <span class="nav-text">配置第二个网络命名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置子网路由"><span class="nav-number">3.2.3.</span> <span class="nav-text">配置子网路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-连接"><span class="nav-number">3.2.4.</span> <span class="nav-text">TCP 连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-Bridge"><span class="nav-number">3.3.</span> <span class="nav-text">Linux Bridge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OVS-1"><span class="nav-number">3.4.</span> <span class="nav-text">OVS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装OVS："><span class="nav-number">3.4.1.</span> <span class="nav-text">安装OVS：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenStack计算节点"><span class="nav-number">3.4.2.</span> <span class="nav-text">OpenStack计算节点</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">屈辉</p>
+  <div class="site-description" itemprop="description">开心就好</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div> -->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='3423,34,234' opacity='0.35' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

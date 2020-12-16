@@ -123,17 +123,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">103</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">107</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">32</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">215</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">218</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,243 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" class="post-title-link" itemprop="url">阿里云ASM服务网格</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-01 22:57:50" itemprop="dateCreated datePublished" datetime="2020-08-01T22:57:50+08:00">2020-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/" class="post-title-link" itemprop="url">ingress强制https</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-01 22:04:25" itemprop="dateCreated datePublished" datetime="2020-08-01T22:04:25+08:00">2020-08-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 14:52:20" itemprop="dateModified" datetime="2020-08-19T14:52:20+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Ingress/" itemprop="url" rel="index">
+                    <span itemprop="name">Ingress</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>为ingress配置增加注解（annotations）：nginx.ingress.kubernetes.io/ssl-redirect: ‘true’ 就可以实现http强制跳转至https</p>
+<p>不过默认情况ingress是通过308重定向跳转到https， ie浏览器不一定支持308状态， 可以通过如下方式修改ingress配置，让ingress通过301跳转到https</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">yaml文本换行语法</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-30 13:57:07" itemprop="dateCreated datePublished" datetime="2020-07-30T13:57:07+08:00">2020-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-01 21:20:14" itemprop="dateModified" datetime="2020-08-01T21:20:14+08:00">2020-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="YAML中多行字符串的配置方法"><a href="#YAML中多行字符串的配置方法" class="headerlink" title="YAML中多行字符串的配置方法"></a>YAML中多行字符串的配置方法</h1><p>有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：</p>
+<ol>
+<li>文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。</li>
+<li>文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。</li>
+</ol>
+<p>简单的说，就是：</p>
+<ol>
+<li>配置与显示，都严格按段落展示</li>
+<li>配置按段落，显示不需要按段落</li>
+</ol>
+<p>假设，我们需要配置这样一段文字：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>下面，就针对上面的两种情况来看看可以怎么来实现：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -750,243 +987,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/" class="post-title-link" itemprop="url">跳板机sudo环境与命令过滤</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-02 17:05:12" itemprop="dateCreated datePublished" datetime="2020-07-02T17:05:12+08:00">2020-07-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-03 09:21:14" itemprop="dateModified" datetime="2020-07-03T09:21:14+08:00">2020-07-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="sudo找不到环境变量的问题"><a href="#sudo找不到环境变量的问题" class="headerlink" title="sudo找不到环境变量的问题"></a>sudo找不到环境变量的问题</h1><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>sudo命令会重置环境变量,查看文件/etc/sudoers,可以看到这样的配置<br>Defaults      env_reset</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/02/%E8%B7%B3%E6%9D%BF%E6%9C%BA/%E8%B7%B3%E6%9D%BF%E6%9C%BAsudo%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%91%BD%E4%BB%A4%E8%BF%87%E6%BB%A4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/17/k8s/kubeadm%E5%AE%89%E8%A3%85k8s/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/17/k8s/kubeadm%E5%AE%89%E8%A3%85k8s/" class="post-title-link" itemprop="url">kubeadm安装k8s</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-17 20:31:55" itemprop="dateCreated datePublished" datetime="2020-06-17T20:31:55+08:00">2020-06-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-07 16:07:52" itemprop="dateModified" datetime="2020-12-07T16:07:52+08:00">2020-12-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="安装前提"><a href="#安装前提" class="headerlink" title="安装前提"></a>安装前提</h2><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">设置主机名</span><br><span class="line"><span class="symbol">$</span> hostnamectl <span class="keyword">set</span>-hostname <span class="comment">k8s-master</span></span><br><span class="line">$ hostnamectl <span class="comment">set-hostname k8s-node1</span></span><br><span class="line"> </span><br><span class="line">关闭防火墙：</span><br><span class="line">$ systemctl <span class="comment">stop firewalld</span></span><br><span class="line">$ systemctl <span class="comment">disable firewalld</span></span><br><span class="line"> </span><br><span class="line">关闭selinux：</span><br><span class="line">$ sed <span class="comment">-i</span> <span class="comment">'s/enforcing/disabled/'</span> /etc/<span class="comment">selinux</span>/config</span><br><span class="line">$ setenforce <span class="number">0</span></span><br><span class="line"> </span><br><span class="line">关闭swap：</span><br><span class="line">$ swapoff -a  $ 临时</span><br><span class="line">$ vim /<span class="comment">etc</span>/fstab  $ 永久</span><br><span class="line"> </span><br><span class="line">添加主机名与IP对应关系（记得设置主机名）：</span><br><span class="line">cat &lt;&lt;EOF &gt; /<span class="comment">etc</span>/hosts</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::<span class="number">1</span>         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line"><span class="number">192.168</span><span class="number">.220</span><span class="number">.100</span> k8s-master</span><br><span class="line"><span class="number">192.168</span><span class="number">.220</span><span class="number">.101</span> k8s-node1</span><br><span class="line"><span class="number">192.168</span><span class="number">.220</span><span class="number">.102</span> k8s-node1</span><br><span class="line">EOF</span><br><span class="line"> </span><br><span class="line">将桥接的IPv4流量传递到iptables的链：</span><br><span class="line">$ cat &gt; /<span class="comment">etc</span>/sysctl.d/<span class="comment">k8s.conf &lt;&lt; EOF</span></span><br><span class="line">net.bridge.bridge-nf-call-ip6tables <span class="comment">= 1</span></span><br><span class="line">net.bridge.bridge-nf-call-iptables <span class="comment">= 1</span></span><br><span class="line">EOF</span><br><span class="line"> </span><br><span class="line">$ sysctl <span class="comment">--system</span></span><br><span class="line"></span><br><span class="line">安装Docker</span><br><span class="line">$ wget <span class="comment">https:</span>//<span class="comment">mirrors.aliyun.com</span>/docker-ce/<span class="comment">linux</span>/centos/<span class="comment">docker-ce.repo -O</span> /etc/<span class="comment">yum.repos.d</span>/docker-ce.repo</span><br><span class="line">$ yum -y install docker-ce<span class="number">-18.06</span><span class="number">.1</span>.ce<span class="number">-3.</span>el7</span><br><span class="line">$ systemctl enable docker &amp;&amp; systemctl start docker</span><br><span class="line">$ docker --version</span><br><span class="line">Docker version <span class="number">18.06</span><span class="number">.1</span>-ce, build e68fc7a</span><br><span class="line"></span><br><span class="line">docker 加速镜像配置</span><br><span class="line">$ mkdir /<span class="comment">etc</span>/docker/</span><br><span class="line">cat <span class="comment">&gt;</span> /etc/<span class="comment">docker</span>/daemon.json &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">"exec-opts"</span>: [<span class="comment">"native.cgroupdriver=systemd"</span>],</span><br><span class="line">  <span class="comment">"log-driver"</span>: <span class="comment">"json-file"</span>,</span><br><span class="line">  <span class="comment">"log-opts"</span>: &#123;</span><br><span class="line">    <span class="comment">"max-size"</span>: <span class="comment">"100m"</span>, <span class="comment">"max-file"</span>:<span class="comment">"3"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">"storage-driver"</span>: <span class="comment">"overlay2"</span>,</span><br><span class="line">  <span class="comment">"storage-opts"</span>: [</span><br><span class="line">    <span class="comment">"overlay2.override_kernel_check=true"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"> </span><br><span class="line"># Restart docker.</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br><span class="line"> </span><br><span class="line">##<span class="built-in">max</span>-<span class="keyword">file</span>=<span class="number">3</span>，意味着一个容器有三个日志，分别是id+.json、id+<span class="number">1.</span>json、id+<span class="number">2.</span>json</span><br><span class="line"> </span><br><span class="line">尝试过修改kubelet的cgroup dirver(文件位置：/<span class="comment">lib</span>/systemd/<span class="comment">system</span>/kubelet.service.d/<span class="comment">10-kubeadm.conf)</span>，但是每次启动<span class="comment">kubeadm</span>时会被覆盖掉，导致<span class="comment">kubelet</span>启动失败，只能修改<span class="comment">docker</span>的<span class="comment">cgroup dirver</span>设置；</span><br><span class="line">文档中docker驱动是systemd</span><br><span class="line"> </span><br><span class="line">参考：https:<span class="comment">//kubernetes.io/docs/setup/production-environment/container-runtimes/</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/17/k8s/kubeadm%E5%AE%89%E8%A3%85k8s/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/12/docker/docker-daemon%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/12/docker/docker-daemon%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">docker-daemon配置文件</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-12 09:40:14 / 修改时间：17:22:15" itemprop="dateCreated datePublished" datetime="2020-06-12T09:40:14+08:00">2020-06-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index">
-                    <span itemprop="name">docker</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"experimental"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"registry-mirrors"</span>: [</span><br><span class="line">        <span class="string">"http://bc437cce.m.daocloud.io"</span>,</span><br><span class="line">        <span class="string">"https://docker.mirrors.ustc.edu.cn/"</span>,</span><br><span class="line">        <span class="string">"https://reg-mirror.qiniu.com"</span>,</span><br><span class="line">        <span class="string">"https://mirror.ccs.tencentyun.com"</span>,</span><br><span class="line">        <span class="string">"https://hub-mirror.c.163.com"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"log-driver"</span>: <span class="string">"json-file"</span>,</span><br><span class="line">  <span class="attr">"log-opts"</span>: &#123;</span><br><span class="line">    <span class="attr">"max-size"</span>: <span class="string">"100m"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"storage-driver"</span>: <span class="string">"overlay2"</span>,</span><br><span class="line">  <span class="attr">"debug"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1057,20 +1057,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">215</span>
+          <span class="site-state-item-count">218</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">103</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

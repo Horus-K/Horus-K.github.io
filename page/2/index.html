@@ -123,17 +123,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">103</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">107</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">30</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">32</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">215</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">218</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,239 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/22/k8s%E6%95%85%E9%9A%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/22/k8s%E6%95%85%E9%9A%9C/" class="post-title-link" itemprop="url">k8s故障</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-22 10:59:35 / 修改时间：11:10:30" itemprop="dateCreated datePublished" datetime="2020-09-22T10:59:35+08:00">2020-09-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1"><a href="#1" class="headerlink" title="1"></a>1</h2><h3 id="故障现象"><a href="#故障现象" class="headerlink" title="故障现象"></a>故障现象</h3><p>kubelet 启动不了，通过命令 <code>journalctl -u kubelet</code> 查看日志，报 <code>Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup subsystems for cgroup [kubepods burstable]: failed to find subsystem mount for required subsystem: pids</code></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/22/k8s%E6%95%85%E9%9A%9C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/" class="post-title-link" itemprop="url">使用 Kustomize 定制 Helm Chart</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-22 10:40:01 / 修改时间：10:41:04" itemprop="dateCreated datePublished" datetime="2020-09-22T10:40:01+08:00">2020-09-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果你经常使用 Kubernetes，那么应该对 Helm 和 Kustomize 不陌生，这两个工具都是用来管理 Kubernetes 资源清单的，但是二者有着不同的工作方式。</p>
+<p>Helm 使用的是模板，一个 Helm Chart 包中包含了很多模板和值文件，当被渲染时模板中的变量会使用值文件中对应的值替换。而 Kustomize 使用的是一种无模板的方式，它对 YAML 文件进行修补和合并操作，此外 Kustomize 也已经被原生内置到 kubectl 中了。这两个工具在 Kubernetes 的生态系统中都被广泛使用，而且这两个工具也可以一起结合使用。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/22/%E4%BD%BF%E7%94%A8-Kustomize-%E5%AE%9A%E5%88%B6-Helm-Chart/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/22/Kubernetes%E6%95%B0%E6%8D%AE%E5%BA%93Etcd%E6%97%A5%E5%B8%B8%E8%BF%90%E7%BB%B4%E5%8F%8A%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/22/Kubernetes%E6%95%B0%E6%8D%AE%E5%BA%93Etcd%E6%97%A5%E5%B8%B8%E8%BF%90%E7%BB%B4%E5%8F%8A%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Kubernetes数据库Etcd日常运维及技巧</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-22 10:30:24 / 修改时间：10:33:57" itemprop="dateCreated datePublished" datetime="2020-09-22T10:30:24+08:00">2020-09-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>etcd 是基于 raft算法的分布式键值数据库，生来就为集群化而设计的，由于Raft算法在做决策时需要超半数节点的投票，所以etcd集群一般推荐奇数节点，如3、5或者7个节点构成一个集群。</p>
+<p>以上是etcd集群部署的共识，但是还需要注意以下问题：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/22/Kubernetes%E6%95%B0%E6%8D%AE%E5%BA%93Etcd%E6%97%A5%E5%B8%B8%E8%BF%90%E7%BB%B4%E5%8F%8A%E6%8A%80%E5%B7%A7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -763,219 +996,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/15/%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-09-15 10:52:32 / 修改时间：11:26:39" itemprop="dateCreated datePublished" datetime="2020-09-15T10:52:32+08:00">2020-09-15</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="初中级运维工程师："><a href="#初中级运维工程师：" class="headerlink" title="初中级运维工程师："></a>初中级运维工程师：</h1><p>负载均衡：haproxy lvs nginx，调度算法和具体区别</p>
-<p>监控服务zabbix：主被动模式和自定义监控项及模板</p>
-<p>web服务器：nginx php tomcat apache，动静分离，location，优化配置，apache三种运行模式的区别，tomcat的java选项</p>
-<p>数据库：mysql主从 数据备份恢复 读写分离 双主 结合业务与开发拆库拆表</p>
-<p>iptables：源地址，目标地址转换 端口转换 访问禁止等</p>
-<p>熟练使用jenkins</p>
-<p>nfs等数据共享，实线基于共享存储的动静分离lnmp等web环境</p>
-<h1 id="高级运维工程师："><a href="#高级运维工程师：" class="headerlink" title="高级运维工程师："></a>高级运维工程师：</h1><p>内核参数调优 公有云使用 网络知识 vmware docker  熟练k8s运行各种服务 kvm openstack 熟练shell脚本 微服务，实现业务高并发，稳定性，横向扩容</p>
-<p>gitlab+jenkins：结合或python实现代码自动化部署与回滚</p>
-<p>elk：各种业务日志收集雨分析，展示，故障定位</p>
-<h1 id="架构师："><a href="#架构师：" class="headerlink" title="架构师："></a>架构师：</h1><p>熟练python 微服务 自动化 良好的故障定位及排除能力 安全技术 业务流程异步处理 分布式web集群  弹性扩容 业务自治愈 多数据中心业务管理 </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/15/%E6%80%BB%E7%BB%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/14/%E8%AE%BE%E7%BD%AEzookeeperJVM%E5%A4%A7%E5%B0%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/14/%E8%AE%BE%E7%BD%AEzookeeperJVM%E5%A4%A7%E5%B0%8F/" class="post-title-link" itemprop="url">设置zookeeperJVM大小</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-09-14 09:20:49 / 修改时间：11:33:40" itemprop="dateCreated datePublished" datetime="2020-09-14T09:20:49+08:00">2020-09-14</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zookeeper/" itemprop="url" rel="index">
-                    <span itemprop="name">zookeeper</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>zookeeper启动时报错，日志提示“Java heap space”</p>
-<p>按照网上的办法，应该是需要配置zookeeper的JVM</p>
-<p>配置文件在那里呢？请查看文件路径：zookeeper/bin/zkEnv.sh</p>
-<p>配置文件路径在zookeeper/conf/java.env,如果java.env该文件不存在，那么就创建该文件</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/jdk <span class="comment"># 这是你JDK安装路劲</span></span><br><span class="line"><span class="comment">#export JAVA_HOME=/home/jdk1.8.0_131</span></span><br><span class="line"><span class="comment"># heap size MUST be modified according to cluster environment</span></span><br><span class="line"><span class="built_in">export</span> JVMFLAGS=<span class="string">"-Xms512m -Xmx1024m <span class="variable">$JVMFLAGS</span>"</span> <span class="comment">#这里是需要设置的内存大小</span></span><br></pre></td></tr></table></figure>
-
-<p>确保设置一个合理的JVM堆大小，如果设置太大，会让内存与磁盘进行交换，这将使ZK的性能大打折扣。例如一个4G内存的机器的，如果你把JVM的堆大小设置为4G或更大，那么会使频繁发生内存与磁盘空间的交换，通常设置成3G就可以了。当然，为了获得一个最好的堆大小值，在特定的使用场景下进行一些压力测试。</p>
-<h1 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h1><p>运行zookeeper时，使用jmap -heap ${pid} 命令查看内存情况如下</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/08/jenkins%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86https/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/08/jenkins%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86https/" class="post-title-link" itemprop="url">jenkins反向代理https</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-09-08 15:25:31 / 修改时间：15:26:50" itemprop="dateCreated datePublished" datetime="2020-09-08T15:25:31+08:00">2020-09-08</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>使用nginx 对Jenkins做反向代理，nginx使用https协议，Jenkins使用http访问，用<a href="https://jenkins.com" target="_blank" rel="noopener">https://jenkins.com</a> 访问可以正常进入首页，在首页里点击其他功能页时，跳转会自动请求协议为http的协议。所以我们需要将跳转其他功能页时，使用的协议也修改为https。</p>
-<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>需要在nginx配置中加入 proxy_set_header X-Forwarded-Proto $scheme; 这个请求头。</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> jenkins.flashwhale.com;</span><br><span class="line">        <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> /etc/nginx/cert/jenkins/1_flashwhale.com_bundle.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /etc/nginx/cert/jenkins/2_flashwhale.com.key;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ /*</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span>      http://jenkins;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Rea <span class="variable">$remote_addr</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> Host <span class="variable">$http_host</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">         	&#125;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>  <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> jenkins.flashwhale.com;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$host</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="attribute">upstream</span> jenkins &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1046,20 +1066,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">215</span>
+          <span class="site-state-item-count">218</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">103</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

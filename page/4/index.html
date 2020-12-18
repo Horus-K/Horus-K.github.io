@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">218</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,72 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">k8s-HostAliases-Pod域名解析</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 17:07:20 / 修改时间：17:10:12" itemprop="dateCreated datePublished" datetime="2020-08-25T17:07:20+08:00">2020-08-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns来完成有时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但操作dns模块也不太方便，那么k8s上有没有想linux主机那样可以直接在host文件设置域名解析呢，容易想到的是，将域名记录到容器镜像的/etc/hosts文件，这样容器运行时就可以正确解析了。然而这样是不行的。k8s会管理这个文件，打到镜像里的文件实际并不会起作用。举个例子。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -915,99 +981,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" class="post-title-link" itemprop="url">nginx日志切割</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">nginx</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
-<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
-<li>nginx -c nginx配置文件地址 启动</li>
-<li>nginx -s reload 重启</li>
-<li>nginx -s reopen 重新打开日志</li>
-<li>nginx -t 检查配置文件是否正确</li>
-<li>kill -INT pid 表示快速关闭</li>
-<li>kill -HUP pid表示重启</li>
-<li>通过信号控制的方式实现和命令相同的功能</li>
-</ol>
-<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1078,7 +1051,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">218</span>
+          <span class="site-state-item-count">219</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

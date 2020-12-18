@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">218</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,77 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">kubeasz快速部署二进制k8s集群</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-17 16:38:30 / 修改时间：17:59:44" itemprop="dateCreated datePublished" datetime="2020-09-17T16:38:30+08:00">2020-09-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md</span></span><br><span class="line">yum update</span><br><span class="line">yum install git python-pip -y</span><br><span class="line">pip install pip --upgrade -i https://mirrors.aliyun.com/pypi/simple/</span><br><span class="line">pip install ansible==2.6.18 netaddr==0.7.19 -i https://mirrors.aliyun.com/pypi/simple/</span><br><span class="line">ssh-keygen -t rsa -b 2048 -N <span class="string">''</span> -f ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装docker</span></span><br><span class="line"><span class="comment">#略</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载工具脚本easzup，举例使用kubeasz版本2.2.1</span></span><br><span class="line"><span class="built_in">export</span> release=2.2.1</span><br><span class="line">curl -C- -fLO --retry 3 https://github.com/easzlab/kubeasz/releases/download/<span class="variable">$&#123;release&#125;</span>/easzup</span><br><span class="line">chmod +x ./easzup</span><br><span class="line">./easzup -D -d 19.03.5 -k v1.16.9</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装集群</span></span><br><span class="line">./easzup -S</span><br><span class="line"><span class="comment"># 使用默认配置安装 aio 集群</span></span><br><span class="line">docker <span class="built_in">exec</span> -it kubeasz easzctl start-aio</span><br><span class="line">.验证安装</span><br><span class="line">如果提示kubectl: <span class="built_in">command</span> not found，退出重新ssh登录一下，环境变量生效即可</span><br><span class="line"></span><br><span class="line">$ kubectl version         <span class="comment"># 验证集群版本     </span></span><br><span class="line">$ kubectl get node        <span class="comment"># 验证节点就绪 (Ready) 状态</span></span><br><span class="line">$ kubectl get pod -A      <span class="comment"># 验证集群pod状态，默认已安装网络插件、coredns、metrics-server等</span></span><br><span class="line">$ kubectl get svc -A      <span class="comment"># 验证集群服务状态</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -874,72 +945,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">k8s-HostAliases-Pod域名解析</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-08-25 17:07:20 / 修改时间：17:10:12" itemprop="dateCreated datePublished" datetime="2020-08-25T17:07:20+08:00">2020-08-25</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>k8s上不同服务之间可以通过service的域名来互相访问。域名的解析是一般是通过在集群中的kube-dns来完成有时候，我们希望给运行在k8s上的Pod增加一些域名的解析（例如宿主机的主机名），但操作dns模块也不太方便，那么k8s上有没有想linux主机那样可以直接在host文件设置域名解析呢，容易想到的是，将域名记录到容器镜像的/etc/hosts文件，这样容器运行时就可以正确解析了。然而这样是不行的。k8s会管理这个文件，打到镜像里的文件实际并不会起作用。举个例子。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/25/k8s/%C2%96k8s-HostAliases-Pod%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1010,7 +1015,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">218</span>
+          <span class="site-state-item-count">219</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

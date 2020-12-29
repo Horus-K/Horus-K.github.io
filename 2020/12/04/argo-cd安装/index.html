@@ -23,15 +23,15 @@
     var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.0-rc2&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:">
+  <meta name="description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.1&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:wget">
 <meta property="og:type" content="article">
 <meta property="og:title" content="argo cd安装">
 <meta property="og:url" content="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
-<meta property="og:description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.0-rc2&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:">
+<meta property="og:description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.1&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:wget">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-04T07:23:39.000Z">
-<meta property="article:modified_time" content="2020-12-04T12:46:20.197Z">
+<meta property="article:modified_time" content="2020-12-24T11:44:07.380Z">
 <meta property="article:author" content="屈辉">
 <meta property="article:tag" content="cicd">
 <meta property="article:tag" content="argo">
@@ -137,7 +137,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -230,10 +230,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-12-04 15:23:39 / 修改时间：20:46:20" itemprop="dateCreated datePublished" datetime="2020-12-04T15:23:39+08:00">2020-12-04</time>
+              <time title="创建时间：2020-12-04 15:23:39" itemprop="dateCreated datePublished" datetime="2020-12-04T15:23:39+08:00">2020-12-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-24 19:44:07" itemprop="dateModified" datetime="2020-12-24T19:44:07+08:00">2020-12-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -259,7 +265,7 @@
       
         <p>官方仓库：</p>
 <p><a href="https://github.com/argoproj/argo-cd" target="_blank" rel="noopener">https://github.com/argoproj/argo-cd</a></p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace argocd</span><br><span class="line">#Non-HA:</span><br><span class="line">wget http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/argoproj/argo-<span class="keyword">cd</span>/v1.<span class="number">8.0</span>-rc2/manifests/install.yaml -O argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">#HA:</span><br><span class="line">wget http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/argoproj/argo-<span class="keyword">cd</span>/v1.<span class="number">8.0</span>-rc2/manifests/<span class="keyword">ha</span>/install.yaml -O argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">#替换镜像</span><br><span class="line">sed -i -<span class="keyword">e</span> <span class="string">'s?image: argoproj?image: dockerhub.azk8s.cn/argoproj?g'</span>  -<span class="keyword">e</span> <span class="string">'s?quay.io?quay.azk8s.cn?g'</span> -<span class="keyword">e</span> <span class="string">'s?k8s.gcr.io?gcr.azk8s.cn/google-containers?g'</span>  argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">kubectl apply -n argocd -<span class="keyword">f</span> argo-<span class="keyword">cd</span>.yaml</span><br></pre></td></tr></table></figure>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace argocd</span><br><span class="line">#Non-HA:</span><br><span class="line">wget http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/argoproj/argo-<span class="keyword">cd</span>/v1.<span class="number">8.1</span>/manifests/install.yaml -O argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">#HA:</span><br><span class="line">wget http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/argoproj/argo-<span class="keyword">cd</span>/v1.<span class="number">8.1</span>/manifests/<span class="keyword">ha</span>/install.yaml -O argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">#替换镜像</span><br><span class="line">sed -i -<span class="keyword">e</span> <span class="string">'s?image: argoproj?image: dockerhub.azk8s.cn/argoproj?g'</span>  -<span class="keyword">e</span> <span class="string">'s?quay.io?quay.azk8s.cn?g'</span> -<span class="keyword">e</span> <span class="string">'s?k8s.gcr.io?gcr.azk8s.cn/google-containers?g'</span>  argo-<span class="keyword">cd</span>.yaml</span><br><span class="line">kubectl apply -n argocd -<span class="keyword">f</span> argo-<span class="keyword">cd</span>.yaml</span><br></pre></td></tr></table></figure>
 
 <a id="more"></a>
 
@@ -283,6 +289,31 @@
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n argocd patch<span class="built_in"> secret </span>argocd-secret   -p <span class="string">'&#123;"stringData": &#123;</span></span><br><span class="line"><span class="string">      "admin.password": "$2a$10$88NHgAw3gSbPmMGvPH8wl.E.wh/JpxF6LpAkN.3YzI8vCKqz92rpi",</span></span><br><span class="line"><span class="string">      "admin.passwordMtime": "'</span>$(date +%FT%T%Z)<span class="string">'"</span></span><br><span class="line"><span class="string">    &#125;&#125;'</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="范例应用"><a href="#范例应用" class="headerlink" title="范例应用"></a>范例应用</h2><p><a href="https://github.com/argoproj/argocd-example-apps" target="_blank" rel="noopener">https://github.com/argoproj/argocd-example-apps</a></p>
+<h2 id="下载Argo-CD-CLI"><a href="#下载Argo-CD-CLI" class="headerlink" title="下载Argo CD CLI"></a>下载Argo CD CLI</h2><ul>
+<li>Linux安装</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VERSION=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')</span><br><span class="line">curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64</span><br><span class="line">chmod +x /usr/local/bin/argocd</span><br></pre></td></tr></table></figure>
+
+<p>可以参考：<a href="https://argoproj.github.io/argo-cd/cli_installation/" target="_blank" rel="noopener">https://argoproj.github.io/argo-cd/cli_installation/</a></p>
+<h2 id="通过CLI登录Argo"><a href="#通过CLI登录Argo" class="headerlink" title="通过CLI登录Argo"></a>通过CLI登录Argo</h2><p>初始密码将自动生成为Argo CD API服务器的容器名称。可以使用以下命令进行检索：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">[root@master</span> <span class="string">~]#</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pods</span> <span class="string">-n</span> <span class="string">argocd</span> <span class="string">-l</span> <span class="string">app.kubernetes.io/name=argocd-server</span> <span class="string">-o</span> <span class="string">name</span> <span class="string">|</span> <span class="string">cut</span> <span class="string">-d'/'</span> <span class="string">-f</span> <span class="number">2</span></span><br><span class="line"><span class="string">argocd-server-656f9b895b-bfjvw</span></span><br></pre></td></tr></table></figure>
+
+<p>使用用户名admin和上面的密码，登录到Argo CD的IP或主机名：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd login <span class="tag">&lt;<span class="name">ARGOCD_SERVER</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用以下命令更改密码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">argocd account <span class="keyword">update</span>-<span class="keyword">password</span></span><br><span class="line"><span class="comment"># 登录</span></span><br><span class="line">[root@<span class="keyword">master</span> ~]<span class="comment"># argocd login localhost:8080</span></span><br><span class="line"><span class="keyword">WARNING</span>: <span class="keyword">server</span> certificate had <span class="keyword">error</span>: x509: certificate signed <span class="keyword">by</span> <span class="literal">unknown</span> authority. Proceed insecurely (y/n)? yes</span><br><span class="line">Username: <span class="keyword">admin</span></span><br><span class="line"><span class="keyword">Password</span>: </span><br><span class="line"><span class="string">'admin'</span> logged <span class="keyword">in</span> successfully</span><br><span class="line"><span class="keyword">Context</span> <span class="string">'localhost:8080'</span> <span class="keyword">updated</span></span><br><span class="line"><span class="comment"># 修改密码</span></span><br><span class="line">[root@<span class="keyword">master</span> ~]<span class="comment"># argocd account update-password</span></span><br><span class="line">*** Enter <span class="keyword">current</span> <span class="keyword">password</span>: </span><br><span class="line">*** Enter <span class="keyword">new</span> <span class="keyword">password</span>: </span><br><span class="line">*** <span class="keyword">Confirm</span> <span class="keyword">new</span> <span class="keyword">password</span>: </span><br><span class="line"><span class="keyword">Password</span> <span class="keyword">updated</span></span><br><span class="line"><span class="keyword">Context</span> <span class="string">'localhost:8080'</span> <span class="keyword">updated</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="注册集群"><a href="#注册集群" class="headerlink" title="注册集群"></a>注册集群</h2><p>此步骤将群集的凭据注册到Argo CD，仅在部署到外部群集时才需要。在内部进行部署（到与Argo CD运行所在的同一集群）时，应将https：<a href="https://kubernetes.default.xn--svck8s-ym9is15hjba0855bca192bm1o/" target="_blank" rel="noopener">//kubernetes.default.svc用作应用程序的K8s</a> API服务器地址。</p>
+<p>首先列出当前kubconfig中的所有集群上下文：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd <span class="keyword">cluster</span> <span class="keyword">add</span> <span class="comment">--kubeconfig=</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的命令将ServiceAccount（argocd-manager）安装到该kubectl上下文的kube-system命名空间中，并将服务帐户绑定到管理员级别的ClusterRole。Argo CD使用此服务帐户令牌执行其管理任务（即部署/监视）。</p>
+<p>可以修改argocd-manager-role角色的规则，使其仅具有对一组有限的名称空间，组和种类的创建，更新，修补，删除特权。但是，在群集作用域中，获取，列出，监视特权是Argo CD起作用所必需的。</p>
+<h2 id="通过CLI创建APP"><a href="#通过CLI创建APP" class="headerlink" title="通过CLI创建APP"></a>通过CLI创建APP</h2><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd app create guestbook <span class="params">--repo</span> https:<span class="string">//github.com/argoproj/argocd-example-apps.git</span> <span class="params">--path</span> guestbook <span class="params">--dest-server</span> https:<span class="string">//kubernetes.default.svc</span> <span class="params">--dest-namespace</span> default</span><br></pre></td></tr></table></figure>
+
+<h2 id="同步（部署）应用"><a href="#同步（部署）应用" class="headerlink" title="同步（部署）应用"></a>同步（部署）应用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">argocd app list</span><br><span class="line">argocd app get t1</span><br><span class="line">argocd app sync t1</span><br><span class="line">argocd app <span class="built_in">wait</span> t1</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -368,7 +399,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置访问入口"><span class="nav-number">1.0.1.</span> <span class="nav-text">配置访问入口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#选项1：SSL传递"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">选项1：SSL传递</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-admin-密码的方式"><span class="nav-number">1.1.</span> <span class="nav-text">修改 admin 密码的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#范例应用"><span class="nav-number">1.2.</span> <span class="nav-text">范例应用</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置访问入口"><span class="nav-number">1.0.1.</span> <span class="nav-text">配置访问入口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#选项1：SSL传递"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">选项1：SSL传递</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-admin-密码的方式"><span class="nav-number">1.1.</span> <span class="nav-text">修改 admin 密码的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#范例应用"><span class="nav-number">1.2.</span> <span class="nav-text">范例应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载Argo-CD-CLI"><span class="nav-number">1.3.</span> <span class="nav-text">下载Argo CD CLI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过CLI登录Argo"><span class="nav-number">1.4.</span> <span class="nav-text">通过CLI登录Argo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册集群"><span class="nav-number">1.5.</span> <span class="nav-text">注册集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过CLI创建APP"><span class="nav-number">1.6.</span> <span class="nav-text">通过CLI创建APP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步（部署）应用"><span class="nav-number">1.7.</span> <span class="nav-text">同步（部署）应用</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -382,7 +413,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-count">220</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

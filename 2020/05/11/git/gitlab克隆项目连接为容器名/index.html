@@ -23,15 +23,15 @@
     var CONFIG = {"hostname":"horus-k.github.io","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="用docker启动的gitlab克隆项目连接为容器名 解决： 重新初始化容器 12345docker run -d \    --hostname gitlab.qh.com \    -p 443:443 -p 8080:80 -p 2222:22 \    --name gitlab \    registry.cn-hangzhou.aliyuncs.com&#x2F;imooc&#x2F;gitlab-ce:">
+  <meta name="description" content="用docker启动的gitlab克隆项目连接为容器名 解决： 重新初始化容器 1234567891011docker run \    --detach \    --hostname gitlab.qh.com \    --publish 2222:22 \    --publish 80:80 \    --name gitlab \    --restart unless-stopped">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gitlab克隆项目连接为容器名">
 <meta property="og:url" content="https://horus-k.github.io/2020/05/11/git/gitlab%E5%85%8B%E9%9A%86%E9%A1%B9%E7%9B%AE%E8%BF%9E%E6%8E%A5%E4%B8%BA%E5%AE%B9%E5%99%A8%E5%90%8D/index.html">
 <meta property="og:site_name" content="Q&#39;s blog">
-<meta property="og:description" content="用docker启动的gitlab克隆项目连接为容器名 解决： 重新初始化容器 12345docker run -d \    --hostname gitlab.qh.com \    -p 443:443 -p 8080:80 -p 2222:22 \    --name gitlab \    registry.cn-hangzhou.aliyuncs.com&#x2F;imooc&#x2F;gitlab-ce:">
+<meta property="og:description" content="用docker启动的gitlab克隆项目连接为容器名 解决： 重新初始化容器 1234567891011docker run \    --detach \    --hostname gitlab.qh.com \    --publish 2222:22 \    --publish 80:80 \    --name gitlab \    --restart unless-stopped">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-05-11T06:05:10.000Z">
-<meta property="article:modified_time" content="2020-05-11T06:30:35.278Z">
+<meta property="article:modified_time" content="2020-12-19T12:28:32.102Z">
 <meta property="article:author" content="屈辉">
 <meta name="twitter:card" content="summary">
 
@@ -135,7 +135,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -228,10 +228,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-05-11 14:05:10 / 修改时间：14:30:35" itemprop="dateCreated datePublished" datetime="2020-05-11T14:05:10+08:00">2020-05-11</time>
+              <time title="创建时间：2020-05-11 14:05:10" itemprop="dateCreated datePublished" datetime="2020-05-11T14:05:10+08:00">2020-05-11</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-19 20:28:32" itemprop="dateModified" datetime="2020-12-19T20:28:32+08:00">2020-12-19</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -258,13 +264,13 @@
         <p>用docker启动的gitlab克隆项目连接为容器名</p>
 <p>解决：</p>
 <p>重新初始化容器</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">    --hostname gitlab.qh.com \</span><br><span class="line">    -p 443:443 -p 8080:80 -p 2222:22 \</span><br><span class="line">    --name gitlab \</span><br><span class="line">    registry.cn-hangzhou.aliyuncs.com/imooc/gitlab-ce:latest</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">    --detach \</span><br><span class="line">    --hostname gitlab.qh.com \</span><br><span class="line">    --publish 2222:22 \</span><br><span class="line">    --publish 80:80 \</span><br><span class="line">    --name gitlab \</span><br><span class="line">    --restart unless-stopped \</span><br><span class="line">    -v /data/gitlab/etc:/etc/gitlab \</span><br><span class="line">    -v /data/gitlab/<span class="built_in">log</span>:/var/<span class="built_in">log</span>/gitlab \</span><br><span class="line">    -v /data/gitlab/data:/var/opt/gitlab \</span><br><span class="line">    gitlab/gitlab-ce:13.6.3-ce.0</span><br></pre></td></tr></table></figure>
 
 <p>改ssh端口</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/gitlab/gitlab.rb</span><br><span class="line">gitlab_rails[<span class="string">'gitlab_shell_ssh_port'</span>] = 2222</span><br></pre></td></tr></table></figure>
 
-
-
+<p>重新编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl stop</span><br><span class="line">gitlab-ctl reconfigure</span><br><span class="line">gitlab-ctl start</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -358,7 +364,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-count">220</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,83 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/08/LDAP/k8s%E5%92%8Cdocker%E4%B8%AD%E6%90%AD%E5%BB%BAldap-manager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/08/LDAP/k8s%E5%92%8Cdocker%E4%B8%AD%E6%90%AD%E5%BB%BAldap-manager/" class="post-title-link" itemprop="url">k8s和docker中搭建ldap+manager</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-08 15:59:07 / 修改时间：16:29:35" itemprop="dateCreated datePublished" datetime="2020-07-08T15:59:07+08:00">2020-07-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="docker中搭建"><a href="#docker中搭建" class="headerlink" title="docker中搭建"></a>docker中搭建</h1><h2 id="没用官方最新1-4-0镜像，在k8s中起不来，低版本可以1-2-xxx"><a href="#没用官方最新1-4-0镜像，在k8s中起不来，低版本可以1-2-xxx" class="headerlink" title="没用官方最新1.4.0镜像，在k8s中起不来，低版本可以1.2.xxx"></a>没用官方最新1.4.0镜像，在k8s中起不来，低版本可以1.2.xxx</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">docker run  \</span><br><span class="line">-v /data/ldap/ldap:/var/lib/ldap \</span><br><span class="line">-v /data/ldap/slapd.d:/etc/ldap/slapd.d \</span><br><span class="line">--name ldap \</span><br><span class="line">--env LDAP_TLS=<span class="literal">false</span> \</span><br><span class="line">--env LDAP_ORGANISATION=<span class="string">"flashwhale"</span> \</span><br><span class="line">--env LDAP_DOMAIN=<span class="string">"flashwhale.com"</span> \</span><br><span class="line">--env LDAP_ADMIN_PASSWORD=<span class="string">"djadmin"</span> \</span><br><span class="line">--env LDAP_CONFIG_PASSWORD=<span class="string">"djadmin"</span> \</span><br><span class="line">-p 389:389 -p 636:636  \</span><br><span class="line">--restart always \</span><br><span class="line">--detach dinkel/openldap:2.4.40</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认配置(不加变量)</span></span><br><span class="line">dn          dc=example,dc=org</span><br><span class="line">admin       admin,dc=example,dc=org</span><br><span class="line">password    admin</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/08/LDAP/k8s%E5%92%8Cdocker%E4%B8%AD%E6%90%AD%E5%BB%BAldap-manager/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -904,90 +981,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/" class="post-title-link" itemprop="url">k8s下使用Ingress开启跨域(CORS)</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-02 14:56:09" itemprop="dateCreated datePublished" datetime="2020-06-02T14:56:09+08:00">2020-06-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-08 20:08:49" itemprop="dateModified" datetime="2020-07-08T20:08:49+08:00">2020-07-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在Ingress中，跨域(CORS)的配置如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">nginx.ingress.kubernetes.io/cors-allow-headers:</span> <span class="string">&gt;-</span></span><br><span class="line">      <span class="string">DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/cors-allow-methods:</span> <span class="string">'PUT, GET, POST, OPTIONS'</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/cors-allow-origin:</span> <span class="string">'*'</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/enable-cors:</span> <span class="string">'true'</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1058,7 +1051,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-count">220</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

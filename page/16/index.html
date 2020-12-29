@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">219</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,91 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">redis集群</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-09 16:39:04" itemprop="dateCreated datePublished" datetime="2020-03-09T16:39:04+08:00">2020-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-10 18:27:42" itemprop="dateModified" datetime="2020-03-10T18:27:42+08:00">2020-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">上一个步骤的主从架构无法实现 <span class="keyword">master</span> <span class="title">和 slave</span> 角色的自动切换，即当 <span class="keyword">master</span> <span class="title">出现redis</span> 服务异常、主机断电、磁盘损坏等问题导致 <span class="keyword">master</span> <span class="title">无法使用，而 redis</span> 高可用无法实现自故障转移(将 <span class="literal">slave</span> 提升为 <span class="literal">master</span>)，需要手动改环境配置才能切换到 <span class="literal">slave</span> redis 服务器，另外也无法横向扩展 Redis 服务的并</span><br><span class="line">行写入性能，当单台 Redis 服务器性能无法满足业务写入需求的时候就必须需要一种方式解决以上的两个核心问题，即：<span class="number">1</span>.<span class="keyword">master</span> <span class="title">和 slave</span> 角色的无缝切换，让业务无感知从而不影响业务使用 <span class="number">2</span>.可以横向动态扩展 Redis 服务器，从而实现多台服务器并行写入以实现更高并发的目的。</span><br></pre></td></tr></table></figure>
+
+<p>Redis 集群实现方式：客户端分片 代理分片 Redis Cluster</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -949,89 +1034,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/" class="post-title-link" itemprop="url">OpenStack网络服务部署neutron</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-09 15:55:22" itemprop="dateCreated datePublished" datetime="2020-03-09T15:55:22+08:00">2020-03-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-10 18:56:22" itemprop="dateModified" datetime="2020-03-10T18:56:22+08:00">2020-03-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>neutron是openstack的网络组件，是OpenStack的网络服务</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1102,7 +1104,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-count">220</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

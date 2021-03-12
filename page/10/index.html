@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">222</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,255 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">基于map/reduce无锁设计的优选设计实现</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-03 15:04:29" itemprop="dateCreated datePublished" datetime="2020-04-03T15:04:29+08:00">2020-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-09 14:52:01" itemprop="dateModified" datetime="2020-04-09T14:52:01+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">调度器核心数据结构与算法分析</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基于map-reduce无锁设计的优选设计实现"><a href="#基于map-reduce无锁设计的优选设计实现" class="headerlink" title="基于map/reduce无锁设计的优选设计实现"></a>基于map/reduce无锁设计的优选设计实现</h1><p>优选阶段通过分离计算对象来实现多个node和多种算法的并行计算，并且通过基于二级索引来设计最终的存储结果，从而达到整个计算过程中的无锁设计，同时为了保证分配的随机性，针对同等优先级的采用了随机的方式来进行最终节点的分配，如果大家后续有类似的需求，不妨可以借鉴借鉴</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8Emap-reduce%E6%97%A0%E9%94%81%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%BC%98%E9%80%89%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8E%E5%B9%B6%E8%A1%8C%E7%AD%9B%E9%80%89%E7%9A%84%E9%A2%84%E9%80%89%E8%AE%BE%E8%AE%A1%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8E%E5%B9%B6%E8%A1%8C%E7%AD%9B%E9%80%89%E7%9A%84%E9%A2%84%E9%80%89%E8%AE%BE%E8%AE%A1%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">基于并行筛选的预选设计设计实现</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-03 15:03:30" itemprop="dateCreated datePublished" datetime="2020-04-03T15:03:30+08:00">2020-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-09 14:54:21" itemprop="dateModified" datetime="2020-04-09T14:54:21+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">调度器核心数据结构与算法分析</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基于并行筛选的预选设计设计实现"><a href="#基于并行筛选的预选设计设计实现" class="headerlink" title="基于并行筛选的预选设计设计实现"></a>基于并行筛选的预选设计设计实现</h1><h1 id="1-基础设计"><a href="#1-基础设计" class="headerlink" title="1. 基础设计"></a>1. 基础设计</h1><h2 id="1-1-预选场景"><a href="#1-1-预选场景" class="headerlink" title="1.1 预选场景"></a>1.1 预选场景</h2><p>预选顾名思义就是从当前集群中的所有的node中，选择出满足当前pod资源和亲和性等需求的node节点，如何在集群中快速选择这样的节点，是个复杂的问题</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8E%E5%B9%B6%E8%A1%8C%E7%AD%9B%E9%80%89%E7%9A%84%E9%A2%84%E9%80%89%E8%AE%BE%E8%AE%A1%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">ScheduleAlgorithm调度算法框架实现</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-03 14:58:59" itemprop="dateCreated datePublished" datetime="2020-04-03T14:58:59+08:00">2020-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-09 14:54:47" itemprop="dateModified" datetime="2020-04-09T14:54:47+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">调度器核心数据结构与算法分析</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="ScheduleAlgorithm调度算法框架实现"><a href="#ScheduleAlgorithm调度算法框架实现" class="headerlink" title="ScheduleAlgorithm调度算法框架实现"></a>ScheduleAlgorithm调度算法框架实现</h1><p>ScheduleAlgorithm是一个接口负责为pod选择一个合适的node节点,本节主要解析如何实现一个可扩展、可配置的通用算法框架来实现通用调度</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -764,249 +1013,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/" class="post-title-link" itemprop="url">Kubernetes面试题</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-26 15:28:19" itemprop="dateCreated datePublished" datetime="2020-03-26T15:28:19+08:00">2020-03-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 09:50:08" itemprop="dateModified" datetime="2020-03-27T09:50:08+08:00">2020-03-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？"><a href="#一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？" class="headerlink" title="一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？"></a>一、k8s集群规模，使用的版本及部署方式，master节点跑了什么组件，每个组件作用？</h3><p>k8s集群规模<code>：个人推荐 K8S 集群规模不要超过</code>千台节点</p>
-<p><code>k8s使用版本</code>：比最新版本低一个版本（例：目前最新是1.17版本，生产推荐使用 1.16版本）</p>
-<p><code>k8s部署方式</code>：个人推荐使用 <code>kubeadm</code> 和 <code>二进制</code> 部署</p>
-<p>K8S Master节点一般跑了:<code>ETCD</code>,<code>ApiServer</code>,<code>Controller Manager</code> ,<code>Scheduler</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/26/k8s/Kubernetes%E9%9D%A2%E8%AF%95%E9%A2%98/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/24/Linux/%E6%8E%92%E6%9F%A5inodes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/24/Linux/%E6%8E%92%E6%9F%A5inodes/" class="post-title-link" itemprop="url">排查inodes</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-24 18:27:41" itemprop="dateCreated datePublished" datetime="2020-03-24T18:27:41+08:00">2020-03-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 09:54:30" itemprop="dateModified" datetime="2020-03-27T09:54:30+08:00">2020-03-27</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> ./*; <span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span>; find <span class="variable">$i</span> |wc -l; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-<p>循环查询目录文件个数</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/23/k8s/traefik2-1%E9%83%A8%E7%BD%B2%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/23/k8s/traefik2-1%E9%83%A8%E7%BD%B2%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">traefik2.1部署使用</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-23 11:13:18" itemprop="dateCreated datePublished" datetime="2020-03-23T11:13:18+08:00">2020-03-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 09:47:12" itemprop="dateModified" datetime="2020-03-27T09:47:12+08:00">2020-03-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a href="https://github.com/containous/traefik" target="_blank" rel="noopener">Traefik</a> 是一个开源的可以使服务发布变得轻松有趣的边缘路由器。它负责接收你系统的请求，然后使用合适的组件来对这些请求进行处理。</p>
-<p>除了众多的功能之外，Traefik 的与众不同之处还在于它会自动发现适合你服务的配置。当 Traefik 在检查你的服务时，会找到服务的相关信息并找到合适的服务来满足对应的请求。</p>
-<p>Traefik 兼容所有主流的集群技术，比如 Kubernetes，Docker，Docker Swarm，AWS，Mesos，Marathon，等等；并且可以同时处理多种方式。（甚至可以用于在裸机上运行的比较旧的软件。）</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/23/k8s/traefik2-1%E9%83%A8%E7%BD%B2%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1072,7 +1083,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">220</span>
+          <span class="site-state-item-count">222</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

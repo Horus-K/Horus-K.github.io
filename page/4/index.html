@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">222</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,233 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/Prometheus/%C2%96Prometheus-%E6%8A%A5%E8%AD%A6%E8%A7%84%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/Prometheus/%C2%96Prometheus-%E6%8A%A5%E8%AD%A6%E8%A7%84%E5%88%99/" class="post-title-link" itemprop="url">Prometheus 报警规则</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 17:38:36 / 修改时间：17:51:07" itemprop="dateCreated datePublished" datetime="2020-08-25T17:38:36+08:00">2020-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Prometheus/" itemprop="url" rel="index">
+                    <span itemprop="name">Prometheus</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>链接：</p>
+<p><a href="https://github.com/samber/awesome-prometheus-alerts" target="_blank" rel="noopener">https://github.com/samber/awesome-prometheus-alerts</a></p>
+<p><a href="https://awesome-prometheus-alerts.grep.to/" target="_blank" rel="noopener">https://awesome-prometheus-alerts.grep.to/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96Pod-%E6%97%B6%E5%8C%BA%E5%90%8C%E6%AD%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/k8s/%C2%96Pod-%E6%97%B6%E5%8C%BA%E5%90%8C%E6%AD%A5/" class="post-title-link" itemprop="url">Pod 时区同步</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 17:33:52 / 修改时间：17:38:18" itemprop="dateCreated datePublished" datetime="2020-08-25T17:33:52+08:00">2020-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Pod 时区同步</strong></p>
+<p>往往都会遇到修改 Pod 时区的需求，更多的需求是要求所有的 Pod 都在同一个时区，比如我们所在的东8区，一般我们可以通过环境变量或者挂载主机的时区文件到 Pod 中来实现同步，但是这样需要我们对每一个 Pod 手动做这样的操作，一个更好的方式就是利用 PodPreset 来预设。首先启用 PodPreset：在 kube-apiserver 启动参数 -runtime-config 增加 settings.k8s.io/v1alpha1=true; 然后在 –admission-control 增加 PodPreset 启用。最后重启 kube-apiserver 即表示启用成功。可以通过如下命令查看是否启用成功：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get podpresets</span><br></pre></td></tr></table></figure>
+
+<p>然后创建一个 PodPresents 资源对象：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">settings.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PodPreset</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tz-env</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">  <span class="attr">env:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TZ</span></span><br><span class="line">    <span class="attr">values:</span> <span class="string">Asia/Shanghai</span></span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的地方是，一定需要写 selector…matchLabels，但是 matchLabels 为空，表示应用于所有容器，这个就是我们想要的，创建上面这个资源对象，然后我们去创建一个普通的 Pod 可以查看下是否注入了上面的 TZ 这个环境变量。需要注意的是，PodPreset 是 namespace 级别的对象，其作用范围只能是同一个命名空间下的容器。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Dockerfile 中添加交互式命令</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 17:26:17 / 修改时间：17:32:20" itemprop="dateCreated datePublished" datetime="2020-08-25T17:26:17+08:00">2020-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Dockerfile 中添加交互式命令</strong></p>
+<p>一个有趣的问题，需要在 Dockerfile 里面添加交互式的命令，类似于我们平时安装软件的时候输入 yes，我们可以通过 yum install -y 来默认安装，避免用户输入，但是有的时候没办法避免的时候，一定需要输入交互命令的时候应该咋办呢？能想到的一个比较好的办法是暂时在 Dockerfile 中不添加这条交互式命令，先制作一个镜像，然后使用这个镜像运行一个容器，然后到容器中去运行这个交互式命令，然后配置完后 commit 下这个容器成一个新的镜像即可。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -744,245 +971,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/20/k8s/k8s%E5%AE%B9%E5%99%A8%E6%8E%A2%E9%92%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/20/k8s/k8s%E5%AE%B9%E5%99%A8%E6%8E%A2%E9%92%88/" class="post-title-link" itemprop="url">k8s容器探针</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-08-20 22:50:48 / 修改时间：22:52:33" itemprop="dateCreated datePublished" datetime="2020-08-20T22:50:48+08:00">2020-08-20</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一旦启动探针探测成功之后，就会被livenessProbe接管，以下是1.17支持的三种probe example</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/20/k8s/k8s%E5%AE%B9%E5%99%A8%E6%8E%A2%E9%92%88/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">HPA控制器算法</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-08-19 14:50:04 / 修改时间：16:29:25" itemprop="dateCreated datePublished" datetime="2020-08-19T14:50:04+08:00">2020-08-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>HPA 控制器与聚合 API 获取到 Pod 性能指标数据之后，基于下面的算法计算出目标 Pod 副本数量，与当前运行的 Pod 副本数量进行对比，决定是否需要进行扩缩容操作：</p>
-<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">desiredReplicas</span> = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]</span><br><span class="line">即当前副本数 * （当前指标值/期望的指标值），将结果向上取整</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/" class="post-title-link" itemprop="url">grafana仪表盘</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-18 16:47:57" itemprop="dateCreated datePublished" datetime="2020-08-18T16:47:57+08:00">2020-08-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-20 23:39:25" itemprop="dateModified" datetime="2020-08-20T23:39:25+08:00">2020-08-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/prometheus/" itemprop="url" rel="index">
-                    <span itemprop="name">prometheus</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>11074</p>
-<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200818164927016.png" alt="image-20200818164927016"></p>
-<p>8919</p>
-<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200820233915655.png" alt="image-20200820233915655"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1048,7 +1041,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">220</span>
+          <span class="site-state-item-count">222</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

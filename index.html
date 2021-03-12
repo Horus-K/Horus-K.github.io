@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">222</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,149 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/03/04/ktctl-k8s%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/04/ktctl-k8s%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">ktctl-k8s开发调试</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-04 20:46:18 / 修改时间：22:01:02" itemprop="dateCreated datePublished" datetime="2021-03-04T20:46:18+08:00">2021-03-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/k8s/" itemprop="url" rel="index">
+                    <span itemprop="name">k8s</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>文档参考：</p>
+<p><a href="https://alibaba.github.io/kt-connect/" target="_blank" rel="noopener">https://alibaba.github.io/kt-connect/</a></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装pip</span></span><br><span class="line">wget https://bootstrap.pypa.io/3.5/get-pip.py</span><br><span class="line">python3 get-pip.py</span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装sshuttle</span></span><br><span class="line">pip install sshuttle</span><br><span class="line"><span class="meta">#</span><span class="bash"> 下载并安装KT</span></span><br><span class="line">curl -OL https://rdc-incubators.oss-cn-beijing.aliyuncs.com/stable/ktctl_linux_amd64.tar.gz</span><br><span class="line">tar -xzvf ktctl_linux_amd64.tar.gz</span><br><span class="line">mv ktctl_linux_amd64 /usr/local/bin/ktctl</span><br><span class="line">ktctl -h</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/" class="post-title-link" itemprop="url">mysql主主+keeplived</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-23 11:30:39 / 修改时间：19:33:43" itemprop="dateCreated datePublished" datetime="2021-02-23T11:30:39+08:00">2021-02-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>查看对端log bin日志和pos值位置</strong></p>
+<img src="/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/image-20210223113218710.png" alt="image-20210223113218710" style="zoom:50%;">
+
+<h2 id="Master配置"><a href="#Master配置" class="headerlink" title="Master配置"></a>Master配置</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;&gt;&gt;</span><br><span class="line"></span><br><span class="line">GRANT  REPLICATION SLAVE ON *.* <span class="keyword">TO</span> <span class="string">'replication'</span>@<span class="string">'172.12.1.%'</span> IDENTIFIED  BY <span class="string">'replication'</span>;</span><br><span class="line"></span><br><span class="line">change  master <span class="keyword">to</span></span><br><span class="line"><span class="attribute">master_host</span>=<span class="string">'172.12.1.200'</span>,</span><br><span class="line"><span class="attribute">master_user</span>=<span class="string">'replication'</span>,</span><br><span class="line"><span class="attribute">master_password</span>=<span class="string">'replication'</span>,</span><br><span class="line"><span class="attribute">master_log_file</span>=<span class="string">'mysql-bin.000001'</span>,</span><br><span class="line"><span class="attribute">master_log_pos</span>=496;  #对端状态显示的值</span><br><span class="line"></span><br><span class="line">start  slave;         #启动同步</span><br><span class="line">show slave status \G;</span><br></pre></td></tr></table></figure>
+
+<h2 id="slave配置"><a href="#slave配置" class="headerlink" title="slave配置"></a>slave配置</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span>  <span class="keyword">REPLICATION</span> <span class="keyword">SLAVE</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">'replication'</span>@<span class="string">'172.12.1.%'</span> <span class="keyword">IDENTIFIED</span>  <span class="keyword">BY</span> <span class="string">'replication'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">change</span>  <span class="keyword">master</span> <span class="keyword">to</span></span><br><span class="line">master_host=<span class="string">'172.12.1.100'</span>,</span><br><span class="line">master_user=<span class="string">'replication'</span>,</span><br><span class="line">master_password=<span class="string">'replication'</span>,</span><br><span class="line">master_log_file=<span class="string">'mysql-bin.000001'</span>,</span><br><span class="line">master_log_pos=<span class="number">496</span>;  <span class="comment">#对端状态显示的值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">start</span>  <span class="keyword">slave</span>;         <span class="comment">#启动同步</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">slave</span> <span class="keyword">status</span> \G;</span><br></pre></td></tr></table></figure>
+
+<p><strong>主主同步配置完毕，查看同步状态Slave_IO和Slave_SQL是YES说明主主同步成功。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span>  <span class="keyword">REPLICATION</span> <span class="keyword">SLAVE</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">'root'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span>  <span class="keyword">BY</span> <span class="string">'123456'</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭建keeplived"><a href="#搭建keeplived" class="headerlink" title="搭建keeplived"></a>搭建keeplived</h2><h2 id="清除slave状态"><a href="#清除slave状态" class="headerlink" title="清除slave状态"></a>清除slave状态</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reset</span> <span class="keyword">slave</span> <span class="keyword">all</span>;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -307,7 +450,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-29 18:53:05" itemprop="dateModified" datetime="2021-01-29T18:53:05+08:00">2021-01-29</time>
+                <time title="修改时间：2021-03-11 13:45:30" itemprop="dateModified" datetime="2021-03-11T13:45:30+08:00">2021-03-11</time>
               </span>
 
           
@@ -323,7 +466,8 @@
       
           <h2 id="容器3个探针"><a href="#容器3个探针" class="headerlink" title="容器3个探针"></a>容器3个探针</h2><h3 id="Readiness-就绪探针"><a href="#Readiness-就绪探针" class="headerlink" title="Readiness-就绪探针"></a><strong>Readiness-就绪探针</strong></h3><p>就绪探针的目的是让Kubernetes知道该应用是否已经准备好为流量服务。Kubernetes将始终确保准备就绪探针通过之后开始分配服务，将流量发送到Pod。</p>
 <h3 id="Liveness-存活探针"><a href="#Liveness-存活探针" class="headerlink" title="Liveness-存活探针"></a>Liveness-存活探针</h3><p>你怎么知道你的应用程序是活的还是死的?存活探针可以让你做到这一点。如果你的应用死了，Kubernetes会移除旧的Pod并用新Pod替换它。</p>
-<h3 id="startup-启动探针"><a href="#startup-启动探针" class="headerlink" title="startup-启动探针"></a>startup-启动探针</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">readinessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br></pre></td></tr></table></figure>
+<h3 id="startup-启动探针"><a href="#startup-启动探针" class="headerlink" title="startup-启动探针"></a>startup-启动探针</h3><p>指示容器中的应用是否已经启动。如果提供了启动探针(startup probe)，则禁用所有其他探针，直到它成功为止。如果启动探针失败，kubelet 将杀死容器，容器服从其重启策略进行重启。如果容器没有提供启动探针，则默认状态为成功Success。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">readinessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/#more" rel="contents">
@@ -843,169 +987,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/03/calico%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E8%A7%A3%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/03/calico%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">calico网络通信解析</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-03 11:17:29 / 修改时间：11:29:13" itemprop="dateCreated datePublished" datetime="2020-12-03T11:17:29+08:00">2020-12-03</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/k8s/" itemprop="url" rel="index">
-                    <span itemprop="name">k8s</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Calico-网络通信解析"><a href="#Calico-网络通信解析" class="headerlink" title="Calico 网络通信解析"></a>Calico 网络通信解析</h1><p>在 Kubernetes 集群中，Calico 区别于 Flannel 的最显著特征，就是其宣称可以不借助隧道技术，是建立在纯三层协议上的解决方案。也就是说，Calico 通过建立一些路由信息，就构建了单节点/多节点网络命名空间隔离下的通信网络。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/03/calico%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E8%A7%A3%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/03/grafana-%E5%9B%BE%E8%A1%A8%E6%89%B9%E9%87%8F%E5%AF%BC%E5%87%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/03/grafana-%E5%9B%BE%E8%A1%A8%E6%89%B9%E9%87%8F%E5%AF%BC%E5%87%BA/" class="post-title-link" itemprop="url">grafana 图表批量导出</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-03 10:42:31 / 修改时间：11:29:34" itemprop="dateCreated datePublished" datetime="2020-12-03T10:42:31+08:00">2020-12-03</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/grafana/" itemprop="url" rel="index">
-                    <span itemprop="name">grafana</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>网上很多支持grafana导入导出的小工具/脚本，此处采用 <a href="https://gist.github.com/crisidev/bd52bdcc7f029be2f295" target="_blank" rel="noopener">https://gist.github.com/crisidev/bd52bdcc7f029be2f295</a></p>
-<p>一般定时备份/var/lib/grafana文件夹就可以</p>
-<p>1.grafana中获取api key</p>
-<p>2.脚本中使用到 jq tr命令，需要提前安装</p>
-<p>3.脚本使用 sh grafana_db_bak.sh $host $key</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/03/grafana-%E5%9B%BE%E8%A1%A8%E6%89%B9%E9%87%8F%E5%AF%BC%E5%87%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1071,7 +1057,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">220</span>
+          <span class="site-state-item-count">222</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

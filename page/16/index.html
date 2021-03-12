@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">220</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">222</span></a>
 
   </li>
         <li class="menu-item menu-item-ceph">
@@ -200,6 +200,164 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">redis主从同步优化</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-09 16:42:09" itemprop="dateCreated datePublished" datetime="2020-03-09T16:42:09+08:00">2020-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-10 19:21:52" itemprop="dateModified" datetime="2020-03-10T19:21:52+08:00">2020-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Redis 在 <span class="number">2.8</span> 版本之前没有提供增量部分复制的功能，当网络闪断或者 <span class="literal">slave</span> Redis 重启之后会导致主从之间的全量同步，即从 <span class="number">2.8</span> 版本开始增加了部分复制的功能。</span><br><span class="line">repl-diskless-sync yes   </span><br><span class="line"><span class="comment">#yes 为支持 disk，master 将 RDB 文件先保存到磁盘在发送给 slave，no 为 maste接将 RDB 文件发送给 slave，默认即为使用 no，Master RDB 文件不需要与磁盘交互。</span></span><br><span class="line">repl-diskless-sync-delay <span class="number">5</span> </span><br><span class="line"><span class="comment">#Master 准备好 RDB 文件后等等待传输时间</span></span><br><span class="line">repl-ping-<span class="literal">slave</span>-period <span class="number">10</span> </span><br><span class="line"><span class="comment">#slave 端向 server 端发送 ping 的时间区间设置，默认为 10 秒</span></span><br><span class="line">repl-timeout <span class="number">60</span> </span><br><span class="line"><span class="comment">#设置超时时间</span></span><br><span class="line">repl-disable-tcp-nodelay no </span><br><span class="line"><span class="comment">#是否启用 TCP_NODELAY，如设置成 yes，则 redis 会合并小的 TCP 包从而节省带宽，但会增加同步延迟（40ms），造成 master 与 slave 数据不一致，假如设置成 no，则 redis master会立即发送同步数据，没有延迟，前者关注性能，后者关注一致性</span></span><br><span class="line">repl-backlog-size <span class="number">1m</span>b </span><br><span class="line"><span class="comment">#master 的写入数据缓冲区，用于记录自上一次同步后到下一次同步过程中</span></span><br><span class="line">间的写入命令，计算公式：b repl-backlog-size = 允许从节点最大中断时长 * 主实例 offset 每秒写入量，比如 <span class="keyword">master</span> <span class="title">每秒最大写入 64mb</span>，最大允许 <span class="number">60</span> 秒，那么就要设置为 <span class="number">64m</span>b*<span class="number">60</span> 秒=<span class="number">3840m</span>b(<span class="number">3.8</span>G)=repl-backlog-ttl <span class="number">3600</span> <span class="comment">#如果一段时间后没有 slave 连接到 master，则 backlog size 的内存将会被释放。如果值为 0 则表示永远不释放这部份内存。</span></span><br><span class="line"><span class="literal">slave</span>-priority <span class="number">100</span> </span><br><span class="line"><span class="comment">#slave 端的优先级设置，值是一个整数，数字越小表示优先级越高。当 master 故障时将会按照优先级来选择 slave 端进行恢复，如果值设置为 0，则表示该 slave 永远不会被选择。</span></span><br><span class="line"><span class="comment">#min-slaves-to-write 0 #</span></span><br><span class="line"><span class="comment">#min-slaves-max-lag 10 #设置当一个 master 端的可用 slave 少于 N 个，延迟时间大于 M 秒时，不接收写操作。</span></span><br><span class="line"><span class="keyword">Master</span> <span class="title">的重启会导致 master_replid</span> 发生变化，<span class="literal">slave</span> 之前的 master_replid 就和 <span class="keyword">master</span> <span class="title">不一致从而会引发所有 slave</span> 的全量同步。</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">redis主从复制过程</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-09 16:40:40" itemprop="dateCreated datePublished" datetime="2020-03-09T16:40:40+08:00">2020-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-10 18:28:43" itemprop="dateModified" datetime="2020-03-10T18:28:43+08:00">2020-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Redis 支持主从复制分为全量同步和增量同步，首次同步是全量同步</span><br><span class="line">主从同步可以让从服务器从主服务器备份数据，而且从服务器还可与有从服务器，即另外一台 redis 服务器可以从一台从服务器进行数据同步，</span><br><span class="line">redis 的主从同步是非阻塞的，其收到从服务器的 <span class="keyword">sync(2.8 </span>版本之前是 PSYNC)命令会fork 一个子进程在后台执行 <span class="keyword">bgsave </span>命令，并将新写入的数据写入到一个缓冲区里面，<span class="keyword">bgsave </span>执行完成之后并生成的将 RDB 文件发送给客户端，客户端将收到后的 RDB 文件载入自己的内存，然后主 redis将缓冲区的内容在全部发送给从 redis，之后的同步从服务器会发送一个 offset 的位置(等同于 MySQL的 <span class="keyword">binlog </span>的位置)给主服务器，主服务器检查后位置没有错误将此位置之后的数据包括写在缓冲区的积压数据发送给 redis 从服务器，从服务器将主服务器发送的挤压数据写入内存，这样一次完整的数据同步，再之后再同步的时候从服务器只要发送当前的 offset 位 置给主服务器，然后主服务器根据响应的位置将之后的数据发送给从服务器保存到其内存即可。</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -868,177 +1026,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/" class="post-title-link" itemprop="url">镜像服务部署glance</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-09 16:11:43" itemprop="dateCreated datePublished" datetime="2020-03-09T16:11:43+08:00">2020-03-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-10 18:57:13" itemprop="dateModified" datetime="2020-03-10T18:57:13+08:00">2020-03-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Glance是OpenStack镜像服务组件，glance服务默认监听在9292端口，其接受REST API请求，然后通过其他模块（glance-registry及image store）来完成诸如镜像的获取、上传、删除等操作。Glance提供restful API可以查询虚拟机镜像的metadata，并且可以获得镜像，通过Glance，虚拟机镜像可以被存储到多种存储上，比如简单的文件存储或者 对象存储（OpenStack中swift项目）是在创建虚拟机的时候，需要先把镜像上传到glance，对镜像的列出镜像、删除镜像和上传镜像都是通过glance进行处理。glance有两个主要的服务，一个是glance-api接受镜像的删除和读取，一个是glance-Registry。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/" class="post-title-link" itemprop="url">OpenStack计算服务部署nova</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-09 16:10:48" itemprop="dateCreated datePublished" datetime="2020-03-09T16:10:48+08:00">2020-03-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-10 18:56:13" itemprop="dateModified" datetime="2020-03-10T18:56:13+08:00">2020-03-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>nova是OpenStack最早的组件之一，nova分为控制节点和计算节点，计算节点通过nova computer进行虚拟机创建，通过libvirt调用kvm创建虚拟机，nova之间通信通过rabbitMQ队列进行通信。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1104,7 +1096,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">220</span>
+          <span class="site-state-item-count">222</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

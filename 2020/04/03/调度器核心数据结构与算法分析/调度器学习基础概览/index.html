@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="调度器学习基础概览1. 资源调度基础scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念">
+<meta property="og:type" content="article">
+<meta property="og:title" content="调度器学习基础概览">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="调度器学习基础概览1. 资源调度基础scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578474232951-89fe8f0f-350a-40bd-b3ab-2cd9e725232b.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578476614096-330fd19e-1ff7-4068-8999-bd48751bfcae.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578476742837-4fb88f31-3e93-44e8-8959-e2a411cff3cf.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477131618-96b8fead-04d4-4ef1-b351-901a046963ac.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578478349785-f5f4cfb9-61ff-469d-ac15-ad70b75c8687.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477622551-b0bc9981-4dcc-4605-aeda-150c4a73a426.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477890421-50d0b4b9-334f-4df9-94d3-6ed406d09e97.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578556897111-6556c220-75db-4b54-804b-90e6f45f6d5c.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578557144870-ed127b9c-a5ef-41c6-9658-67f49b0ea470.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558102514-7be7dec2-923d-4823-a910-18e5e1772605.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558736579-5ccecb0b-bbdf-49b6-852c-57ab4e115538.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558976602-38e238fb-d2f7-40cb-a8f8-6d4ce4abc440.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578559951157-3950a00d-028c-48ce-aa95-fa5be7c69091.png">
+<meta property="article:published_time" content="2020-04-03T06:53:27.000Z">
+<meta property="article:modified_time" content="2020-04-09T06:55:33.164Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578474232951-89fe8f0f-350a-40bd-b3ab-2cd9e725232b.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/","path":"2020/04/03/调度器核心数据结构与算法分析/调度器学习基础概览/","title":"调度器学习基础概览"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>调度器学习基础概览 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="调度器学习基础概览 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          调度器学习基础概览
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-03 14:53:27" itemprop="dateCreated datePublished" datetime="2020-04-03T14:53:27+08:00">2020-04-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-09 14:55:33" itemprop="dateModified" datetime="2020-04-09T14:55:33+08:00">2020-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">调度器核心数据结构与算法分析</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="调度器学习基础概览"><a href="#调度器学习基础概览" class="headerlink" title="调度器学习基础概览"></a>调度器学习基础概览</h1><h1 id="1-资源调度基础"><a href="#1-资源调度基础" class="headerlink" title="1. 资源调度基础"></a>1. 资源调度基础</h1><p>scheudler是kubernetes中的核心组件，负责为用户声明的pod资源选择合适的node,同时保证集群资源的最大化利用，这里先介绍下资源调度系统设计里面的一些基础概念</p>
+<span id="more"></span>
+
+<h2 id="1-1-基础任务资源调度"><a href="#1-1-基础任务资源调度" class="headerlink" title="1.1 基础任务资源调度"></a>1.1 基础任务资源调度</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578474232951-89fe8f0f-350a-40bd-b3ab-2cd9e725232b.png" alt="image.png"></p>
+<p>基础的任务资源调度通常包括三部分：</p>
+<table>
+<thead>
+<tr>
+<th>角色类型</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>node</td>
+<td>node负责具体任务的执行,同时对包汇报自己拥有的资源</td>
+</tr>
+<tr>
+<td>resource manager</td>
+<td>汇总当前集群中所有node提供的资源,供上层的scheduler的调用获取,同时根据node汇报的任务信息来进行当前集群资源的更新</td>
+</tr>
+<tr>
+<td>scheduler</td>
+<td>结合当前集群的资源和用户提交的任务信息,选择合适的node节点当前的资源，分配节点任务，尽可能保证任务的运行</td>
+</tr>
+</tbody></table>
+<p>通用的调度框架往往还会包含一个上层的集群管理器，负责针对集群中scheduler的管理和资源分配工作，同时负责scheduler集群状态甚至resource manager的保存</p>
+<h2 id="1-2-资源调度设计的挑战"><a href="#1-2-资源调度设计的挑战" class="headerlink" title="1.2 资源调度设计的挑战"></a>1.2 资源调度设计的挑战</h2><h3 id="1-2-1-资源：集群资源利用的最大化与平均"><a href="#1-2-1-资源：集群资源利用的最大化与平均" class="headerlink" title="1.2.1 资源：集群资源利用的最大化与平均"></a>1.2.1 资源：集群资源利用的最大化与平均</h3><p>传统的IDC集群资源利用：</p>
+<p>在IDC环境中我们通常希望机器利用率能够平均,让机器保持在某个平均利用率，然后根据资源的需要预留足够的buffer, 来应对集群的资源利用高峰，毕竟采购通常都有周期，我们既不能让机器空着，也不能让他跑满(业务无法弹性)</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578476614096-330fd19e-1ff7-4068-8999-bd48751bfcae.png" alt="image.png"></p>
+<p>云环境下的资源利用：</p>
+<p>而云环境下我们可以按需分配，而且云厂商通常都支持秒级交付，那其实下面的这种资源利用率其实也可以</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578476742837-4fb88f31-3e93-44e8-8959-e2a411cff3cf.png" alt="image.png"></p>
+<p>可以看到仅仅是环境的不一致，就可能会导致不同的调度结果，所有针对集群资源利用最大化这个目标，其实会有很多的不同</p>
+<h3 id="1-2-2-调度-任务最少等待时间与优先级"><a href="#1-2-2-调度-任务最少等待时间与优先级" class="headerlink" title="1.2.2 调度: 任务最少等待时间与优先级"></a>1.2.2 调度: 任务最少等待时间与优先级</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477131618-96b8fead-04d4-4ef1-b351-901a046963ac.png" alt="image.png"></p>
+<p>在集群任务繁忙的时候，可能会导致集群资源部足以分配给当前集群中的所有任务，在让所有任务都能够尽快完成的同时，我们还要保证高优先级的任务优先被完成</p>
+<h3 id="1-2-3-调度-任务本地性"><a href="#1-2-3-调度-任务本地性" class="headerlink" title="1.2.3 调度: 任务本地性"></a>1.2.3 调度: 任务本地性</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578478349785-f5f4cfb9-61ff-469d-ac15-ad70b75c8687.png" alt="image.png"></p>
+<p>本地性是指在大数据处理中常用的一种机制，其核心是尽可能将任务分配到包含其任务执行资源的节点上，避免数据的复制</p>
+<h3 id="1-2-4-集群-高可用性"><a href="#1-2-4-集群-高可用性" class="headerlink" title="1.2.4 集群: 高可用性"></a>1.2.4 集群: 高可用性</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477622551-b0bc9981-4dcc-4605-aeda-150c4a73a426.png" alt="image.png"></p>
+<p>在调度过程中可能由于硬件、系统或者软件导致任务的不可用，通常会由需要一些高可用机制，来保证当前集群不会因为部分节点宕机而导致整个系统不可用</p>
+<h3 id="1-2-5-系统-可扩展性"><a href="#1-2-5-系统-可扩展性" class="headerlink" title="1.2.5 系统: 可扩展性"></a>1.2.5 系统: 可扩展性</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578477890421-50d0b4b9-334f-4df9-94d3-6ed406d09e97.png" alt="image.png"></p>
+<p>扩展机制主要是指的，系统如何如何应对业务需求的变化，提供的一种可扩展机制，在集群默认调度策略不满足业务需求时，通过扩展接口，来进行系统的扩展满足业务需求</p>
+<h2 id="1-3-Pod调度场景的挑战"><a href="#1-3-Pod调度场景的挑战" class="headerlink" title="1.3 Pod调度场景的挑战"></a>1.3 Pod调度场景的挑战</h2><p>Pod调度场景其实可以看做一类特殊的任务，除了上面资源调度的挑战，还有一些针对pod调度这个具体的场景(有些是共同的,这里通过pod来描述会比较清晰)</p>
+<h3 id="1-3-1-亲和与反亲和"><a href="#1-3-1-亲和与反亲和" class="headerlink" title="1.3.1 亲和与反亲和"></a>1.3.1 亲和与反亲和</h3><p>在kubernetes中的亲和性主要体现pod和node两种资源，主要体现在两个方面:</p>
+<p>1.亲和性: 1)pod之间的亲和性 2)pod与node之间的亲和性</p>
+<p>2.反亲和: 1)pod之间的反亲和性  2)pod与node之间的反亲和</p>
+<p>简单举例：</p>
+<p>1.pod之间的反亲和: 为了保证高可用我们通常会将同一业务的多个节点分散在不通的数据中心和机架</p>
+<p>2.pod与node亲和性: 比如某些需要磁盘io操作的pod，我们可以调度到具有ssd的机器上，提高IO性能</p>
+<h3 id="1-3-2-多租户与容量规划"><a href="#1-3-2-多租户与容量规划" class="headerlink" title="1.3.2 多租户与容量规划"></a>1.3.2 多租户与容量规划</h3><p>多租户通常是为了进行集群资源的隔离，在业务系统中，通常会按照业务线来进行资源的隔离，同时会给业务设定对应的容量，从而避免单个业务线资源的过度使用影响整个公司的所有业务</p>
+<h3 id="1-3-3-Zone与node选择"><a href="#1-3-3-Zone与node选择" class="headerlink" title="1.3.3 Zone与node选择"></a>1.3.3 Zone与node选择</h3><p>zone通常是在业务容灾中常见的概念，通过将服务分散在多个数据中心，避免因为单个数据中心故障导致业务完全不可用</p>
+<p>因为之前亲和性的问题，如何在多个zone中的所有node中选择出一个合适的节点，则是一个比较大的挑战</p>
+<h3 id="1-3-4-多样化资源的扩展"><a href="#1-3-4-多样化资源的扩展" class="headerlink" title="1.3.4 多样化资源的扩展"></a>1.3.4 多样化资源的扩展</h3><p>系统资源除了cpu、内存还包括网络、磁盘io、gpu等等，针对其余资源的分配调度，kubernetes还需要提供额外的扩展机制来进行调度扩展的支持</p>
+<h3 id="1-3-5-资源混部"><a href="#1-3-5-资源混部" class="headerlink" title="1.3.5 资源混部"></a>1.3.5 资源混部</h3><p>kubernetes初期是针对pod调度场景而生，主要其实是在线web业务，这类任务的特点大部分都是无状态的，那如何针对离线场景的去支持离线的批处理计算等任务</p>
+<h1 id="2-kubernetes中的调度初识"><a href="#2-kubernetes中的调度初识" class="headerlink" title="2. kubernetes中的调度初识"></a>2. kubernetes中的调度初识</h1><h2 id="2-1-中心化数据集中存储"><a href="#2-1-中心化数据集中存储" class="headerlink" title="2.1 中心化数据集中存储"></a>2.1 中心化数据集中存储</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578556897111-6556c220-75db-4b54-804b-90e6f45f6d5c.png" alt="image.png"></p>
+<h3 id="2-1-1-中心化的数据存储"><a href="#2-1-1-中心化的数据存储" class="headerlink" title="2.1.1 中心化的数据存储"></a>2.1.1 中心化的数据存储</h3><p>kubernetes是一个数据中心化存储的系统，集群中的所有数据都通过apiserver存储到etcd中，包括node节点的资源信息、节点上面的pod信息、当前集群的所有pod信息，在这里其实apiserver也充当了resource manager的角色，存储所有的集群资源和已经分配的资源</p>
+<h3 id="2-1-2-调度数据的存储与获取"><a href="#2-1-2-调度数据的存储与获取" class="headerlink" title="2.1.2 调度数据的存储与获取"></a>2.1.2 调度数据的存储与获取</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578557144870-ed127b9c-a5ef-41c6-9658-67f49b0ea470.png" alt="image.png"></p>
+<p>kubernetes中采用了一种list watch的机制，用于集群中其他节点从apiserver感知数据，scheduler也采用该机制，通过在感知apiserver的数据变化，同时在本地memory中构建一份cache数据(资源数据)，来提供调度使用，即SchedulerCache</p>
+<h3 id="2-1-3-scheduler的高可用"><a href="#2-1-3-scheduler的高可用" class="headerlink" title="2.1.3 scheduler的高可用"></a>2.1.3 scheduler的高可用</h3><p>大多数系统的高可用机制都是通过类似zookeeper、etcd等AP系统实现，通过临时节点或者锁机制机制来实现多个节点的竞争，从而在主节点宕机时，能够快速接管， scheduler自然也是这种机制，通过apiserver底层的etcd来实现锁的竞争，然后通过apiserver的数据，就可以保证调度器的高可用</p>
+<h2 id="2-2-调度器内部组成"><a href="#2-2-调度器内部组成" class="headerlink" title="2.2 调度器内部组成"></a>2.2 调度器内部组成</h2><h3 id="2-2-1-调度队列"><a href="#2-2-1-调度队列" class="headerlink" title="2.2.1 调度队列"></a>2.2.1 调度队列</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558102514-7be7dec2-923d-4823-a910-18e5e1772605.png" alt="image.png"></p>
+<p>当从apiserver感知到要调度的pod的时候,scheduler会根据pod的优先级，来讲其加入到内部的一个优先级队列中，后续调度的时候，会先获取优先级比较高的pod来进行优先满足调度</p>
+<p>这里还有一个点就是如果优先调度了优先级比较低的pod，其实在后续的抢占过程中，也会被驱逐出去</p>
+<h3 id="2-2-2-调度与抢占调度"><a href="#2-2-2-调度与抢占调度" class="headerlink" title="2.2.2 调度与抢占调度"></a>2.2.2 调度与抢占调度</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558736579-5ccecb0b-bbdf-49b6-852c-57ab4e115538.png" alt="image.png"></p>
+<p>前面提到过抢占,kubernetes默认会对所有的pod来尝试进行调度，当集群资源部满足的时候，则会尝试抢占调度，通过抢占调度，为高优先级的pod来进行优先调度 其核心都是通过调度算法实现即ScheduleAlgorithm</p>
+<p>这里的调度算法实际上是一堆调度算法和调度配置的集合</p>
+<h3 id="2-2-3-外部扩展机制"><a href="#2-2-3-外部扩展机制" class="headerlink" title="2.2.3 外部扩展机制"></a>2.2.3 外部扩展机制</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578558976602-38e238fb-d2f7-40cb-a8f8-6d4ce4abc440.png" alt="image.png"></p>
+<p>scheduler extender是k8s对调度器的一种扩展机制，我们可以定义对应的extender,在对应资源的调度的时候，k8s会检查对应的资源，如果发现需要调用外部的extender,则将当前的调度数据发送给extender,然后汇总调度数据，决定最终的调度结果</p>
+<h3 id="2-2-4-内部扩展机制"><a href="#2-2-4-内部扩展机制" class="headerlink" title="2.2.4 内部扩展机制"></a>2.2.4 内部扩展机制</h3><p>上面提到调度算法是一组调度算法和调度配置的集合，kubernetes scheduler framework是则是一个框架声明对应插件的接口，从而支持用户编写自己的plugin,来影响调度决策，个人感觉这并不是一种好的机制，因为要修改代码，或者通过修改kubernetes scheduler启动来进行自定义插件的加载</p>
+<h2 id="2-3-调度基础架构"><a href="#2-3-调度基础架构" class="headerlink" title="2.3 调度基础架构"></a>2.3 调度基础架构</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/1578559951157-3950a00d-028c-48ce-aa95-fa5be7c69091.png" alt="image.png"></p>
+<p>结合上面所说的就得到了一个最简单的架构，主要调度流程分为如下几部分：</p>
+<p>0.通过apiserver来进行主节点选举，成功者进行调度业务流程处理</p>
+<p>1.通过apiserver感知集群的资源数据和pod数据，更新本地schedulerCache</p>
+<p>2.通过apiserver感知用户或者controller的pod调度请求，加入本地调度队列</p>
+<p>3.通过调度算法来进行pod请求的调度，分配合适的node节点，此过程可能会发生抢占调度</p>
+<p>4.将调度结果返回给apiserver,然后由kubelet组件进行后续pod的请求处理</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E8%B0%83%E5%BA%A6%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E6%A6%82%E8%A7%88/" title="调度器学习基础概览">https://horus-k.github.io/2020/04/03/调度器核心数据结构与算法分析/调度器学习基础概览/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/02/Linux/vimrc/" rel="prev" title="vimrc">
+                  <i class="fa fa-chevron-left"></i> vimrc
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/" rel="next" title="SchedulingQueue三级调度队列实现">
+                  SchedulingQueue三级调度队列实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

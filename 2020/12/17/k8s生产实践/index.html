@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="k8s在生产中需要注意的各种事项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s生产实践">
+<meta property="og:url" content="https://horus-k.github.io/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="k8s在生产中需要注意的各种事项">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-17T07:02:55.000Z">
+<meta property="article:modified_time" content="2023-04-19T07:03:12.450Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/","path":"2020/12/17/k8s生产实践/","title":"k8s生产实践"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s生产实践 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s生产实践 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s生产实践
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-17 15:02:55" itemprop="dateCreated datePublished" datetime="2020-12-17T15:02:55+08:00">2020-12-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-19 15:03:12" itemprop="dateModified" datetime="2023-04-19T15:03:12+08:00">2023-04-19</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>k8s在生产中需要注意的各种事项</p>
+<span id="more"></span> 
+
+<h2 id="pod亲和性"><a href="#pod亲和性" class="headerlink" title="pod亲和性"></a>pod亲和性</h2><p><code>podAffinity</code> 亲和性</p>
+<p><code>podAntiAffinity</code> 反亲和性</p>
+<p>差异：</p>
+<ul>
+<li><p>匹配过程相同</p>
+</li>
+<li><p>最终处理调度结果时取反</p>
+<p>即</p>
+<p>podAffinity中可调度节点,在 podAntiAffinity中为不可调度<br>podAffini中高分节点,在 podAntiAffinity中为低分</p>
+</li>
+</ul>
+<p><code>requiredDuringSchedulingIgnoredDuringExecution</code>: #硬策略</p>
+<p><code>preferredDuringSchedulingIgnoredDuringExecution</code>: #软策略</p>
+<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-anti-affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">anti-affinity-demo:</span> <span class="string">anti-affinity-demo-yahaha</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span> <span class="comment">#硬策略</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">label_key_135</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">label_value_135</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-anti-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-anti-affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">anti-affinity-demo:</span> <span class="string">anti-affinity-demo-yahaha</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">        <span class="attr">podAntiAffinity:</span></span><br><span class="line">          <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">100</span></span><br><span class="line">            <span class="attr">podAffinityTerm:</span></span><br><span class="line">              <span class="attr">topologyKey:</span> <span class="string">&quot;kubernetes.io/hostname&quot;</span></span><br><span class="line">              <span class="attr">labelSelector:</span></span><br><span class="line">                <span class="attr">matchExpressions:</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">&quot;label_key_135&quot;</span></span><br><span class="line">                    <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">                    <span class="attr">values:</span></span><br><span class="line">                      <span class="bullet">-</span> <span class="string">&quot;label_value_135&quot;</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-anti-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="ingress"><a href="#ingress" class="headerlink" title="ingress"></a>ingress</h2><h3 id="apisix"><a href="#apisix" class="headerlink" title="apisix"></a>apisix</h3><h4 id="开启gzip"><a href="#开启gzip" class="headerlink" title="开启gzip"></a>开启gzip</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;comp_level&quot;</span><span class="punctuation">:</span> <span class="number">9</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;disable&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;types&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;text/plain&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;text/css&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;application/json&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;application/javascript&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;text/xml&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;application/xml&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;application/xml+rss&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;text/javascript&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="nginx-ingress"><a href="#nginx-ingress" class="headerlink" title="nginx-ingress"></a>nginx-ingress</h3><h4 id="开启gzip-1"><a href="#开启gzip-1" class="headerlink" title="开启gzip"></a>开启gzip</h4><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span>-gzip: <span class="string">&#x27;true&#x27;</span></span><br><span class="line">gzip-level: <span class="string">&#x27;5&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置gzip的时候，若更改好ingress controler 的configmap， 默认情况下所有域名都开了gzip，若需要关闭指定的域名，那么直接在 annotations 中设置 nginx.ingress.kubernetes.io&#x2F;server-snippet: gzip off;</p>
+<h4 id="上传文件大小："><a href="#上传文件大小：" class="headerlink" title="上传文件大小："></a>上传文件大小：</h4><p>cm: nginx-configuration</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxy-body-size: <span class="number">500</span>m</span><br><span class="line">client-body-buffer-size: <span class="number">100</span>m</span><br></pre></td></tr></table></figure>
+
+<h4 id="超时时间"><a href="#超时时间" class="headerlink" title="超时时间"></a>超时时间</h4><p>出于某种原因，nginx进程不断重新加载 - 每30秒 . 每次重新加载时，所有连接都被删除 .</p>
+<p>解决方案是设置：</p>
+<p>在nginx-ingress <code>config-map</code> 中 .</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker-shutdown-<span class="keyword">timeout</span>: <span class="string">&quot;900s&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置了nginx-ingress超时：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx<span class="selector-class">.ingress</span><span class="selector-class">.kubernetes</span>.io/proxy-send-timeout: <span class="string">&quot;300&quot;</span></span><br><span class="line">nginx<span class="selector-class">.ingress</span><span class="selector-class">.kubernetes</span>.io/proxy-read-timeout: <span class="string">&quot;300&quot;</span></span><br><span class="line">nginx<span class="selector-class">.ingress</span><span class="selector-class">.kubernetes</span>.io/proxy-connect-timeout: <span class="string">&quot;300&quot;</span></span><br><span class="line">nginx<span class="selector-class">.ingress</span><span class="selector-class">.kubernetes</span>.io/proxy-body-size: <span class="string">&quot;1024m&quot;</span></span><br><span class="line">proxy-next-upstream-timeout</span><br></pre></td></tr></table></figure>
+
+<p>proxy_connect_timeout :后端服务器连接的超时时间_发起握手等候响应超时时间（默认60秒）</p>
+<p>proxy_read_timeout:连接成功后_等候后端服务器响应时间_其实已经进入后端的排队之中等候处理（也可以说是后端服务器处理请求的时间）</p>
+<p>proxy_send_timeout :后端服务器数据回传时间_就是在规定时间之内后端服务器必须传完所有的数据</p>
+<h2 id="代理k8s-api-server"><a href="#代理k8s-api-server" class="headerlink" title="代理k8s api-server"></a>代理k8s api-server</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#先使用frp或ssh将端口代理至可达网络主机</span></span><br><span class="line">尝试连接如果报x509 ip 认证失败没查证书可信域名</span><br><span class="line">https:<span class="regexp">//</span>www.jianshu.com<span class="regexp">/p/</span><span class="number">35</span>ac252b5045</span><br><span class="line">后添加hosts即可连接</span><br></pre></td></tr></table></figure>
+
+<h2 id="容器3个探针"><a href="#容器3个探针" class="headerlink" title="容器3个探针"></a>容器3个探针</h2><h3 id="Readiness-就绪探针"><a href="#Readiness-就绪探针" class="headerlink" title="Readiness-就绪探针"></a><strong>Readiness-就绪探针</strong></h3><p>就绪探针的目的是让Kubernetes知道该应用是否已经准备好为流量服务。Kubernetes将始终确保准备就绪探针通过之后开始分配服务，将流量发送到Pod。</p>
+<h3 id="Liveness-存活探针"><a href="#Liveness-存活探针" class="headerlink" title="Liveness-存活探针"></a>Liveness-存活探针</h3><p>你怎么知道你的应用程序是活的还是死的?存活探针可以让你做到这一点。如果你的应用死了，Kubernetes会移除旧的Pod并用新Pod替换它。</p>
+<h3 id="startup-启动探针"><a href="#startup-启动探针" class="headerlink" title="startup-启动探针"></a>startup-启动探针</h3><p>指示容器中的应用是否已经启动。如果提供了启动探针(startup probe)，则禁用所有其他探针，直到它成功为止。如果启动探针失败，kubelet 将杀死容器，容器服从其重启策略进行重启。如果容器没有提供启动探针，则默认状态为成功Success。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">readinessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">20011</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/actuator/health</span></span><br><span class="line">      <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">      <span class="attr">httpHeaders:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Content-Type</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">application/json</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">95</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">15</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="限制-CPU-和内存资源"><a href="#限制-CPU-和内存资源" class="headerlink" title="限制 CPU 和内存资源"></a>限制 CPU 和内存资源</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">resources:</span></span><br><span class="line">  <span class="attr">requests:</span></span><br><span class="line">    <span class="attr">cpu:</span> <span class="string">&quot;0.5&quot;</span></span><br><span class="line">    <span class="attr">memory:</span> <span class="string">2Gi</span></span><br><span class="line">  <span class="attr">limits:</span></span><br><span class="line">    <span class="attr">cpu:</span> <span class="string">&quot;2&quot;</span></span><br><span class="line">    <span class="attr">memory:</span> <span class="string">2Gi</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="kubectl-patch"><a href="#kubectl-patch" class="headerlink" title="kubectl patch"></a>kubectl patch</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">APP_LIST=`kubectl get deployments.apps -n suosi-prod | egrep -v <span class="string">&#x27;NAME|nacos|redis|artemis|rocket&#x27;</span> | grep <span class="string">&#x27;suosi-&#x27;</span>|awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>`</span><br><span class="line"><span class="keyword">for</span> deploy <span class="keyword">in</span> <span class="variable">$APP_LIST</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$deploy</span></span><br><span class="line">  kubectl patch deploy -n suosi-prod <span class="variable">$deploy</span> -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;containers&quot;:[&#123;&quot;name&quot;:&quot;&#x27;</span><span class="variable">$&#123;deploy&#125;</span><span class="string">&#x27;&quot;,&quot;env&quot;:[&#123;&quot;name&quot;:&quot;aliyun_logs_suosi-app-logs&quot;,&quot;value&quot;:&quot;stdout&quot;&#125;,&#123;&quot;name&quot;:&quot;aliyun_logs_logtag_tags&quot;,&quot;value&quot;:&quot;app=&#x27;</span><span class="variable">$&#123;deploy&#125;</span><span class="string">&#x27;&quot;&#125;,&#123;&quot;name&quot;:&quot;TZ&quot;,&quot;value&quot;:&quot;Asia/Shanghai&quot;&#125;]&#125;]&#125;&#125;&#125;&#125;&#x27;</span></span><br><span class="line">  <span class="built_in">sleep</span> 20</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">&#123;<span class="string">&quot;spec&quot;</span>:&#123;<span class="string">&quot;template&quot;</span>:&#123;<span class="string">&quot;spec&quot;</span>:&#123;<span class="string">&quot;containers&quot;</span>:[&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;&#x27;<span class="variable">$&#123;deploy&#125;</span>&#x27;&quot;</span>,<span class="string">&quot;env&quot;</span>:[&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;TZ&quot;</span>,<span class="string">&quot;value&quot;</span>:<span class="string">&quot;Asia/Shanghai&quot;</span>&#125;]&#125;]&#125;&#125;&#125;&#125;</span><br><span class="line"></span><br><span class="line">kubectl <span class="built_in">set</span> <span class="built_in">env</span> -n suosi-dev deployment/fe-manager-container -c fe-manager-container TZ=Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h2 id="启用RBAC"><a href="#启用RBAC" class="headerlink" title="启用RBAC"></a>启用RBAC</h2><p>人数少可使用<code>permission-manager</code>插件，多了就直接用rancher</p>
+<h2 id="配置网络策略"><a href="#配置网络策略" class="headerlink" title="配置网络策略"></a>配置网络策略</h2><p>网络策略只不过是一个对象，它使你能够明确地声明和决定哪些流量是允许的，哪些是不允许的。这样，Kubernetes将能够阻止所有其他不想要的和不符合规则的流量。在我们的集群中定义和限制网络流量是强烈推荐的基本且必要的安全措施之一。</p>
+<h2 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h2><p>标准输出只输出warn，后端程序直接推送至logstore，或写文件后抓取</p>
+<h2 id="磁盘-日志-清理"><a href="#磁盘-日志-清理" class="headerlink" title="磁盘(日志)清理"></a>磁盘(日志)清理</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">docker image prune -a -f</span><br><span class="line">docker container prune -f</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/docker/</span>overlay2<span class="regexp">/ -name &quot;info-log.log&quot; -exec cp /</span>dev/null &#123;&#125; \;</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/docker/</span>overlay2/ -name <span class="string">&quot;ons.log.*&quot;</span> -exec rm -rf &#123;&#125; \;</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/docker/</span>overlay2<span class="regexp">/ -name &quot;ons.log&quot; -exec cp /</span>dev/null &#123;&#125; \;</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/docker/</span>containers/ -name <span class="string">&quot;*-json.log.*&quot;</span> -exec rm -rf &#123;&#125; \;</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/docker/</span>overlay2<span class="regexp">/*/</span>diff<span class="regexp">/data/</span>applogs<span class="regexp">/xxl-job/</span>jobhandler/ -name <span class="string">&quot;*.log&quot;</span> -mtime +<span class="number">1</span> -exec rm -rf &#123;&#125; \;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">vim <span class="regexp">/etc/</span>crictl.yaml</span><br><span class="line">runtime-endpoint: unix:<span class="regexp">//</span><span class="regexp">/run/</span>containerd/containerd.sock</span><br><span class="line">image-endpoint: unix:<span class="regexp">//</span><span class="regexp">/run/</span>containerd/containerd.sock</span><br><span class="line">crictl 要下载k8s对应版本</span><br><span class="line"><span class="comment">#wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.20.0/crictl-v1.20.0-linux-amd64.tar.gz</span></span><br><span class="line">wget https:<span class="regexp">//</span>kgithub.com<span class="regexp">/kubernetes-sigs/</span>cri-tools<span class="regexp">/releases/</span>download<span class="regexp">/v1.20.0/</span>crictl-v1.<span class="number">20.0</span>-linux-amd64.tar.gz</span><br><span class="line"><span class="comment">#wget https://kgithub.com/kubernetes-sigs/cri-tools/releases/download/v1.20.0/critest-v1.20.0-linux-amd64.tar.gz</span></span><br><span class="line">crictl rmi --prune</span><br><span class="line">find <span class="regexp">/var/</span>lib<span class="regexp">/container/</span>containerd<span class="regexp">/io.containerd.snapshotter.v1.overlayfs/</span>snapshots<span class="regexp">/ -name &quot;info-log.log&quot; -exec cp /</span>dev/null &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">forfiles</span> -p <span class="string">&quot;C:\comchatlog&quot;</span> -s -m <span class="regexp">*.log</span> -d -<span class="number">5</span> -c <span class="string">&quot;cmd /c del <span class="variable">@path</span>&quot;</span></span><br><span class="line">forfiles -p <span class="string">&quot;C:\comchatlog&quot;</span> -s -m <span class="regexp">*.log</span> -d -<span class="number">5</span> -c <span class="string">&quot;cmd /c echo <span class="variable">@path</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><p>spring-cloud-prometheus插件，钉钉告警</p>
+<h2 id="无状态，不可变"><a href="#无状态，不可变" class="headerlink" title="无状态，不可变"></a>无状态，不可变</h2><p>镜像里只有运行代码</p>
+<h2 id="自动扩缩容"><a href="#自动扩缩容" class="headerlink" title="自动扩缩容"></a>自动扩缩容</h2><p>水平pod自动伸缩(HPA)、垂直pod自动伸缩(VPA)和集群自动伸缩。</p>
+<h2 id="控制镜像拉取来源"><a href="#控制镜像拉取来源" class="headerlink" title="控制镜像拉取来源"></a>控制镜像拉取来源</h2><p>控制在集群中运行所有容器的镜像源。如果您允许您的Pod从公共资源中拉取镜像，您就不知道其中真正运行的是什么。</p>
+<p>如果从受信任的注册表中提取它们，则可以在注册表上应用策略以提取安全和经过认证的镜像。</p>
+<h2 id="持续学习"><a href="#持续学习" class="headerlink" title="持续学习"></a>持续学习</h2><p>不断评估应用程序的状态和设置，以学习和改进。例如，回顾容器的历史内存使用情况可以得出这样的结论:我们可以分配更少的内存，在长期内节省成本。</p>
+<h2 id="零停机时间"><a href="#零停机时间" class="headerlink" title="零停机时间"></a>零停机时间</h2><p>通过在HA中运行所有服务，支持集群和服务的零停机升级。这也将保证您的客户获得更高的可用性。</p>
+<p>使用pod反亲和性来确保在不同的节点上调度一个pod的多个副本，从而通过计划中的和计划外的集群节点停机来确保服务可用性。</p>
+<p>使用pod Disruptions策略，不惜一切代价确保您有最低的Pod副本数量!</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">lifecycle:</span></span><br><span class="line">  <span class="attr">preStop:</span></span><br><span class="line">    <span class="attr">exec:</span></span><br><span class="line">      <span class="attr">command:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;sh&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;-c&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line">          <span class="string">curl</span> <span class="string">-X</span> <span class="string">&quot;PUT&quot;</span> <span class="string">http://eureka:20001/eureka/apps/&lt;APP-NAME&gt;/$&#123;HOSTNAME&#125;/status?value=DOWN;sleep</span> <span class="number">90</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="为容器配置-Security-Context"><a href="#为容器配置-Security-Context" class="headerlink" title="为容器配置 Security Context"></a>为容器配置 Security Context</h2><p>大部分情况下容器不需要太多的权限，我们可以通过 <code>Security Context</code> 限定容器的权限和访问控制，只需加上 SecurityContext 字段：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;Pod</span> <span class="string">name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="string">-</span> <span class="attr">name:</span> <span class="string">&lt;container</span> <span class="string">name&gt;</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">&lt;image&gt;</span></span><br><span class="line"><span class="string">+</span>   <span class="attr">securityContext:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="禁用-allowPrivilegeEscalation"><a href="#禁用-allowPrivilegeEscalation" class="headerlink" title="禁用 allowPrivilegeEscalation"></a>禁用 allowPrivilegeEscalation</h2><p><code>allowPrivilegeEscalation=true</code> 表示容器的任何子进程都可以获得比父进程更多的权限。最好将其设置为 false，以确保 <code>RunAsUser</code> 命令不能绕过其现有的权限集。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;Pod</span> <span class="string">name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="string">-</span> <span class="attr">name:</span> <span class="string">&lt;container</span> <span class="string">name&gt;</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">&lt;image&gt;</span></span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">  <span class="string">+</span>   <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="不要使用-root-用户"><a href="#不要使用-root-用户" class="headerlink" title="不要使用 root 用户"></a>不要使用 root 用户</h2><p>为了防止来自容器内的提权攻击，最好不要使用 root 用户运行容器内的应用。UID 设置大一点，尽量大于 <code>3000</code>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">securityContext:</span></span><br><span class="line"><span class="string">+</span>   <span class="attr">runAsUser:</span> <span class="string">&lt;UID</span> <span class="string">higher</span> <span class="string">than</span> <span class="number">1000</span><span class="string">&gt;</span></span><br><span class="line"><span class="string">+</span>   <span class="attr">runAsGroup:</span> <span class="string">&lt;UID</span> <span class="string">higher</span> <span class="string">than</span> <span class="number">3000</span><span class="string">&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="不必挂载-Service-Account-Token"><a href="#不必挂载-Service-Account-Token" class="headerlink" title="不必挂载 Service Account Token"></a>不必挂载 Service Account Token</h2><p>ServiceAccount 为 Pod 中运行的进程提供身份标识，怎么标识呢？当然是通过 Token 啦，有了 Token，就防止假冒伪劣进程。如果你的应用不需要这个身份标识，可以不必挂载：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="string">+</span> <span class="attr">automountServiceAccountToken:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="确保-seccomp-设置正确"><a href="#确保-seccomp-设置正确" class="headerlink" title="确保 seccomp 设置正确"></a>确保 seccomp 设置正确</h2><p>对于 Linux 来说，用户层一切资源相关操作都需要通过系统调用来完成，那么只要对系统调用进行某种操作，用户层的程序就翻不起什么风浪，即使是恶意程序也就只能在自己进程内存空间那一分田地晃悠，进程一终止它也如风消散了。seccomp（secure computing mode）就是一种限制系统调用的安全机制，可以可以指定允许那些系统调用。</p>
+<p>对于 Kubernetes 来说，大多数容器运行时都提供一组允许或不允许的默认系统调用。通过使用 <code>runtime/default</code> 注释或将 Pod 或容器的安全上下文中的 seccomp 类型设置为 <code>RuntimeDefault</code>，可以轻松地在 Kubernetes 中应用默认值。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;name&gt;</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">  <span class="string">+</span> <span class="attr">seccomp.security.alpha.kubernetes.io/pod:</span> <span class="string">&quot;runtime/default&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>默认的 seccomp 配置文件应该为大多数工作负载提供足够的权限。如果你有更多的需求，可以自定义配置文件。</p>
+<h2 id="限制容器的-capabilities"><a href="#限制容器的-capabilities" class="headerlink" title="限制容器的 capabilities"></a>限制容器的 capabilities</h2><p>容器依赖于传统的Unix安全模型，通过控制资源所属用户和组的权限，来达到对资源的权限控制。以 root 身份运行的容器拥有的权限远远超过其工作负载的要求，一旦发生泄露，攻击者可以利用这些权限进一步对网络进行攻击。</p>
+<p>默认情况下，使用 Docker 作为容器运行时，会启用 <code>NET_RAW</code> capability，这可能会被恶意攻击者进行滥用。因此，建议至少定义一个<code>PodSecurityPolicy</code>(PSP)，以防止具有 NET_RAW 功能的容器启动。</p>
+<p>通过限制容器的 capabilities，可以确保受攻击的容器无法为攻击者提供横向攻击的有效路径，从而缩小攻击范围。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">securityContext:</span></span><br><span class="line">  <span class="string">+</span> <span class="attr">runAsNonRoot:</span> <span class="literal">true</span></span><br><span class="line">  <span class="string">+</span> <span class="attr">runAsUser:</span> <span class="string">&lt;specific</span> <span class="string">user&gt;</span></span><br><span class="line">  <span class="attr">capabilities:</span></span><br><span class="line">  <span class="attr">drop:</span></span><br><span class="line">  <span class="string">+</span> <span class="string">-NET_RAW</span></span><br><span class="line">  <span class="string">+</span> <span class="string">-ALL</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你对 Linux capabilities 这个词一脸懵逼，建议去看看脑残入门系列：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://fuckcloudnative.io/posts/linux-capabilities-why-they-exist-and-how-they-work/">Linux Capabilities 入门教程：概念篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://fuckcloudnative.io/posts/linux-capabilities-in-practice-1/">Linux Capabilities 入门教程：基础实战篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://fuckcloudnative.io/posts/linux-capabilities-in-practice-2/">Linux Capabilities 入门教程：进阶实战篇</a></li>
+</ul>
+<h2 id="只读"><a href="#只读" class="headerlink" title="只读"></a>只读</h2><p>如果容器不需要对根文件系统进行写入操作，最好以只读方式加载容器的根文件系统，可以进一步限制攻击者的手脚。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;Pod</span> <span class="string">name&gt;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="string">-</span> <span class="attr">name:</span> <span class="string">&lt;container</span> <span class="string">name&gt;</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">&lt;image&gt;</span></span><br><span class="line">  <span class="attr">securityContext:</span></span><br><span class="line">  <span class="string">+</span> <span class="attr">readOnlyRootFilesystem:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="node污点"><a href="#node污点" class="headerlink" title="node污点"></a>node污点</h2><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint <span class="keyword">node</span> <span class="title">cn-hangzhou</span>.<span class="number">10.10</span>.<span class="number">198.18</span> <span class="attr">schedule_type=</span><span class="literal">true</span>:PreferNoSchedule</span><br></pre></td></tr></table></figure>
+
+<p>NoSchedule：只有拥有和这个 taint 相匹配的 toleration 的 pod 才能够被分配到这个节点。</p>
+<p>PreferNoSchedule：系统会尽量避免将 pod 调度到存在其不能容忍 taint 的节点上，但这不是强制的。</p>
+<p>NoExecute ：任何不能忍受这个 taint 的 pod 都会马上被驱逐，任何可以忍受这个 taint 的 pod 都不会被驱逐。</p>
+<h2 id="node预留资源"><a href="#node预留资源" class="headerlink" title="node预留资源"></a>node预留资源</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/administer-cluster/out-of-resource/#">https://kubernetes.io/zh/docs/tasks/administer-cluster/out-of-resource/#</a></p>
+<p>K8S 把计算节点资源分为 4 个部分：</p>
+<ul>
+<li><p>Kube Reserved：预留给 K8S 管理进程的资源，如 Kubelet，Docker Daemon 等</p>
+</li>
+<li><p>System Reserved：预留给系统资源，如 kernel，sshd，udev 等</p>
+</li>
+<li><p>Eviction Thresholds：驱逐（Eviction）的阈值，只支持 memory 和 storage。</p>
+</li>
+<li><p>Allocatable(available for pods)：pods 可以使用的资源</p>
+</li>
+</ul>
+<p>为了简化管理，建议不对 kube-reserved&#x2F;system-reserved 做区分，直接使用 <code>--system-reserved</code>做系统预留。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--system-reserved=memory=4Gi,storage=5Gi \ <span class="comment"># 保留4G内存 5G磁盘</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="node驱逐阈值"><a href="#node驱逐阈值" class="headerlink" title="node驱逐阈值"></a>node驱逐阈值</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 软驱逐阈值</span></span><br><span class="line">--eviction-soft=memory.available&lt;4Gi,nodefs.available&lt;15Gi,imagefs.available&lt;20Gi \ <span class="comment"># 驱逐阈值的集合</span></span><br><span class="line">--eviction-soft-grace-period=memory.available=2m,nodefs.available=2m,imagefs.available=2m \ <span class="comment"># 驱逐宽限期的集合</span></span><br><span class="line">--eviction-max-pod-grace-period=30 \ <span class="comment"># 当满足软驱逐阈值并终止 pod 时允许的最大宽限期值</span></span><br><span class="line"><span class="comment"># 硬驱逐阈值</span></span><br><span class="line">--eviction-hard=memory.available&lt;1Gi,nodefs.available&lt;10Gi,imagefs.available&lt;15Gi \ <span class="comment"># 如果满足条件将触发 Pod 驱逐。</span></span><br><span class="line">--eviction-minimum-reclaim=memory.available=500Mi,nodefs.available=500Mi,imagefs.available=2Gi \ <span class="comment"># 最小驱逐回收</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="驱逐监控时间间隔"><a href="#驱逐监控时间间隔" class="headerlink" title="驱逐监控时间间隔"></a>驱逐监控时间间隔</h3><p><code>kubelet</code> 根据其配置的整理时间间隔计算驱逐阈值。</p>
+<ul>
+<li><code>housekeeping-interval</code> 是容器管理时间间隔。</li>
+</ul>
+<h2 id="增大内核选项配置"><a href="#增大内核选项配置" class="headerlink" title="增大内核选项配置"></a>增大内核选项配置</h2><p><code>/etc/sysctl.conf</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 表示系统级别的能够打开的文件句柄的数量， 一般如果遇到文件句柄达到上限时，会碰到&quot;Too many open files&quot;或者Socket/File: Can’t open so many files等错误。</span></span><br><span class="line">fs.file-max=52706963</span><br><span class="line">fs.nr_open = 52706963</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 最大文件句柄</span></span><br><span class="line">vm.max_map_count = 262144</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 最大跟踪连接数，默认 nf_conntrack_buckets * 4</span></span><br><span class="line">net.nf_conntrack_max = 10485760</span><br><span class="line"><span class="comment"># 允许的最大跟踪连接条目，是在内核内存中netfilter可以同时处理的“任务”（连接跟踪条目）</span></span><br><span class="line">net.netfilter.nf_conntrack_max=10485760</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line">vm.panic_on_oom=0 <span class="comment"># 等于0时，表示当内存耗尽时，内核会触发OOM killer杀掉最耗内存的进程</span></span><br><span class="line">vm.overcommit_memory=1 <span class="comment"># 不检查物理内存是否够用</span></span><br><span class="line"><span class="comment"># 0：表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。 </span></span><br><span class="line"><span class="comment"># 1：表示内核允许分配所有的物理内存，而不管当前的内存状态如何</span></span><br><span class="line"><span class="comment"># 2：表示内核允许分配超过所有物理内存和交换空间总和的内存</span></span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 配置arp cache 大小</span></span><br><span class="line"><span class="comment"># 存在于ARP高速缓存中的最少层数，如果少于这个数，垃圾收集器将不会运行。缺省值是128。</span></span><br><span class="line">net.ipv4.neigh.default.gc_thresh1=1024</span><br><span class="line"><span class="comment"># 保存在 ARP 高速缓存中的最多的记录软限制。垃圾收集器在开始收集前，允许记录数超过这个数字 5 秒。缺省值是 512。</span></span><br><span class="line">net.ipv4.neigh.default.gc_thresh2=4096</span><br><span class="line"><span class="comment"># 保存在 ARP 高速缓存中的最多记录的硬限制，一旦高速缓存中的数目高于此，垃圾收集器将马上运行。缺省值是1024。</span></span><br><span class="line">net.ipv4.neigh.default.gc_thresh3=8192</span><br><span class="line"><span class="comment"># 以上三个参数，当内核维护的arp表过于庞大时候，可以考虑优化</span></span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 该参数用于设定系统中最多允许存在多少tcp套接字不被关联到任何一个用户文件句柄上</span></span><br><span class="line">net.ipv4.tcp_max_orphans = 32768</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 在 TIME_WAIT 数量等于 tcp_max_tw_buckets 时，不会有新的 TIME_WAIT 产生</span></span><br><span class="line">net.ipv4.tcp_max_tw_buckets = 32768</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># tcp_max_syn_backlog是指定所能接受SYN同步包的最大客户端数量，即半连接上限，默认值是128,即SYN_REVD状态的连接数</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 8096</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 每个网络接口接收数据包的速率比内核处理这些包的速率快时，允许送到队列的数据包的最大数目。</span></span><br><span class="line">net.netfilter.nf_conntrack_tcp_timeout_established=300</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 哈希表大小（只读）（64位系统、8G内存默认 65536，16G翻倍，如此类推）</span></span><br><span class="line">net.netfilter.nf_conntrack_buckets = 65536</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 关于conntrack的详细说明：https://testerhome.com/topics/7509</span></span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 默认值: 128 指定了每一个real user ID可创建的inotify instatnces的数量上限</span></span><br><span class="line">fs.inotify.max_user_instances=524288</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 默认值: 8192 指定了每个inotify instance相关联的watches的上限</span></span><br><span class="line">fs.inotify.max_user_watches=524288</span><br><span class="line"><span class="comment">#-----------------------</span></span><br><span class="line"><span class="comment"># 每个网络接口接收数据包的速率比内核处理这些包的速率快时，允许送到队列的数据包的最大数目</span></span><br><span class="line">net.core.netdev_max_backlog = 10000</span><br><span class="line"><span class="comment"># 表示socket监听(listen)的backlog上限，也就是就是socket的监听队列(accept queue)，当一个tcp连接尚未被处理或建立时(半连接状态)，会保存在这个监听队列，默认为 128，在高并发场景下偏小，优化到 32768。参考 https://imroc.io/posts/kubernetes-overflow-and-drop/</span></span><br><span class="line">net.core.somaxconn = 32768</span><br><span class="line"><span class="comment"># PID 与线程限制</span></span><br><span class="line">kernel.pid_max=655350</span><br><span class="line">kernel.threads-max=655350</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#net.netfilter.nf_conntrack_max = 262144</span></span><br><span class="line"><span class="comment">#net.nf_conntrack_max = 262144</span></span><br><span class="line">net.netfilter.nf_conntrack_max=10485760</span><br><span class="line">net.nf_conntrack_max = 10485760</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 120</span></span><br><span class="line"><span class="comment">#net.netfilter.nf_conntrack_tcp_timeout_time_wait = 120</span></span><br><span class="line"><span class="comment">#net.netfilter.nf_conntrack_tcp_timeout_close_wait = 3600</span></span><br><span class="line"><span class="comment">#net.netfilter.nf_conntrack_tcp_timeout_established = 86400</span></span><br><span class="line"></span><br><span class="line">net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 60</span><br><span class="line">net.netfilter.nf_conntrack_tcp_timeout_time_wait = 60</span><br><span class="line">net.netfilter.nf_conntrack_tcp_timeout_close_wait = 360</span><br><span class="line">net.netfilter.nf_conntrack_tcp_timeout_established = 8640</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/security/limits.conf</code></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root soft nofile 655350</span><br><span class="line">root hard nofile 655350</span><br><span class="line"><span class="bullet">* </span>soft nofile 655350</span><br><span class="line"><span class="bullet">* </span>hard nofile 655350</span><br></pre></td></tr></table></figure>
+
+<h2 id="SLB实例压测请求超时"><a href="#SLB实例压测请求超时" class="headerlink" title="SLB实例压测请求超时"></a>SLB实例压测请求超时</h2><ol>
+<li>登录后端服务器，排查发现Nginx日志没有异常，但是messages日志存在“nf_conntrack: table full, dropping packet”错误。该信息是因为Linux系统为每个经过内核网络栈的数据包，都生成一个新的连接记录项，当服务器处理的连接过多时，连接跟踪表无法记录新的连接记录项，服务器会丢弃新建连接的数据包。所以导致SLB和后端服务器TCP三次握手失败，出现504状态码。</li>
+</ol>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ol>
+<li><p>建议调整nf_conntrack参数，调整命令如下所示，参数值请以实际情况为准。</p>
+<blockquote>
+<p><strong>说明</strong>：该方法会临时修改参数，重启实例后配置会不生效。</p>
+</blockquote>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.netfilter.<span class="attribute">nf_conntrack_max</span>=1048576</span><br><span class="line">sysctl -w net.netfilter.<span class="attribute">nf_conntrack_buckets</span>=262144</span><br><span class="line">sysctl -w net.netfilter.<span class="attribute">nf_conntrack_tcp_timeout_established</span>=3600</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="在init-container做信号量限制放开"><a href="#在init-container做信号量限制放开" class="headerlink" title="在init-container做信号量限制放开"></a>在init-container做信号量限制放开</h2><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w kernel.sem<span class="operator">=</span><span class="string">&quot;1034 32000 100 1000&quot;</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Pod-时区同步-PodPreset"><a href="#Pod-时区同步-PodPreset" class="headerlink" title="Pod 时区同步(PodPreset)"></a>Pod 时区同步(PodPreset)</h2><p>往往都会遇到修改 Pod 时区的需求，更多的需求是要求所有的 Pod 都在同一个时区，比如我们所在的东8区，一般我们可以通过环境变量或者挂载主机的时区文件到 Pod 中来实现同步，但是这样需要我们对每一个 Pod 手动做这样的操作，一个更好的方式就是利用 PodPreset 来预设。</p>
+<p>首先启用 PodPreset：在 kube-apiserver 启动参数 -runtime-config 增加 <code>settings.k8s.io/v1alpha1=true</code>;</p>
+<p>然后在 –admission-control 增加 PodPreset 启用。最后重启 kube-apiserver 即表示启用成功。可以通过如下命令查看是否启用成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get podpresets</span></span><br></pre></td></tr></table></figure>
+
+<p>然后创建一个 PodPresents 资源对象：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">settings.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PodPreset</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tz-env</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">  <span class="attr">env:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TZ</span></span><br><span class="line">    <span class="attr">values:</span> <span class="string">Asia/Shanghai</span></span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的地方是，一定需要写 <code>selector...matchLabels</code>，但是 matchLabels 为空，表示应用于所有容器，这个就是我们想要的，创建上面这个资源对象，然后我们去创建一个普通的 Pod 可以查看下是否注入了上面的 TZ 这个环境变量。需要注意的是，PodPreset 是 namespace 级别的对象，其作用范围只能是同一个命名空间下的容器。</p>
+<h2 id="限制日志大小和emptydir"><a href="#限制日志大小和emptydir" class="headerlink" title="限制日志大小和emptydir"></a>限制日志大小和emptydir</h2><p>v1.7 + 支持对基于本地存储（如 hostPath, emptyDir, gitRepo 等）的容量进行调度限额。为了支持这个特性，Kubernetes 将本地存储分为两类：</p>
+<ul>
+<li><code>storage.kubernetes.io/overlay</code>，即 <code>/var/lib/docker</code> 的大小</li>
+<li><code>storage.kubernetes.io/scratch</code>，即 <code>/var/lib/kubelet</code> 的大小</li>
+</ul>
+<p>Kubernetes 根据 <code>storage.kubernetes.io/scratch</code> 的大小来调度本地存储空间，而根据 <code>storage.kubernetes.io/overlay</code> 来调度容器的存储。比如为容器请求 64MB 的可写层存储空间：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ls1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">hello</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;df&quot;</span>]</span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">storage.kubernetes.io/overlay:</span> <span class="string">64Mi</span></span><br></pre></td></tr></table></figure>
+
+<p>为 emptyDir 请求 64MB 的存储空间：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ls1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">hello</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;df&quot;</span>]</span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">    <span class="attr">emptyDir:</span></span><br><span class="line">      <span class="attr">sizeLimit:</span> <span class="string">64Mi</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="lxcfs让pod正确的意识到给自己分配的资源"><a href="#lxcfs让pod正确的意识到给自己分配的资源" class="headerlink" title="lxcfs让pod正确的意识到给自己分配的资源"></a>lxcfs让pod正确的意识到给自己分配的资源</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git <span class="built_in">clone</span> https://gitclone.com/github.com/denverdino/lxcfs-admission-webhook.git</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl apply -f lxcfs-admission-webhook/deployment/lxcfs-daemonset.yaml</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> lxcfs-admission-webhook &amp;&amp; deployment/install.sh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl label namespace default lxcfs-admission-webhook=enabled</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>不支持alpine镜像</strong></p>
+<h2 id="DEBUG"><a href="#DEBUG" class="headerlink" title="DEBUG"></a>DEBUG</h2><h3 id="如何摘下某个Pod进行Debug"><a href="#如何摘下某个Pod进行Debug" class="headerlink" title="如何摘下某个Pod进行Debug"></a>如何摘下某个Pod进行Debug</h3><p>使用label机制，对Pod进行标记。在Service定义中，我们添加 status: serving字段。当需要摘下某个Pod做Debug，而又不影响整个服务，可以：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pods --selector=<span class="string">&quot;status=serving&quot;</span></span><br><span class="line">$ kubectl label pods webserver-rc-lxag2 --overwrite status=debuging</span><br></pre></td></tr></table></figure>
+
+<p>此时kubelet就会把这个Pod从Service的后端列表中删掉。等到Debug完，想恢复？再改回去就好了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl label pods webserver-rc-lxag2 --overwrite status=serving</span><br></pre></td></tr></table></figure>
+
+<h3 id="Pod重启了，如何看重启之前的日志？"><a href="#Pod重启了，如何看重启之前的日志？" class="headerlink" title="Pod重启了，如何看重启之前的日志？"></a>Pod重启了，如何看重启之前的日志？</h3><p>下面的命令只能看到当前Pod的日志：</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>kubectl logs zookeeper-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>--previous</code>参数可以看之前Pod的日志</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl logs zookeeper-<span class="number">1</span> <span class="comment">--previous</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="kubectl-debug"><a href="#kubectl-debug" class="headerlink" title="kubectl debug"></a>kubectl debug</h3><p><a target="_blank" rel="noopener" href="https://github.com/aylei/kubectl-debug/blob/master/docs/zh-cn.md">https://github.com/aylei/kubectl-debug/blob/master/docs/zh-cn.md</a></p>
+<p>kubectl-debug 包含两部分:<br>kubectl-debug：命令行工具；<br>debug-agent：部署在K8s的node上，用于启动关联排错工具容器</p>
+<p>1.20版本之前的k8s都需要安装插件后kubectl就能自动识别插件(1.15之前都需要使用kubect-debug二进制命令)</p>
+<p>containerd 支持要安装pre最新分支</p>
+<p>kubectl-debug –agentless&#x3D;false -n suosi-prod xxl-job-78dfcbdcff-58nql  # 最新分支无法使用配置文件</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/aylei/kubectl-debug/issues/140">https://github.com/aylei/kubectl-debug/issues/140</a></p>
+<h4 id="客户端安装"><a href="#客户端安装" class="headerlink" title="客户端安装"></a>客户端安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -Lo debug_0.1.1_linux_amd64.tar.gz https://ghproxy.com/https://github.com/aylei/kubectl-debug/releases/download/v0.1.1/kubectl-debug_0.1.1_linux_amd64.tar.gz</span><br><span class="line">tar xf debug_0.1.1_linux_amd64.tar.gz</span><br><span class="line"><span class="built_in">mv</span> kubectl-debug /usr/local/bin/</span><br><span class="line">kubectl debug -h</span><br></pre></td></tr></table></figure>
+
+<h4 id="服务端安装"><a href="#服务端安装" class="headerlink" title="服务端安装"></a>服务端安装</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">https://raw.githubusercontent.com/aylei/kubectl-debug/master/scripts/agent_daemonset.yml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">debug-agent</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">debug-agent</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">debug-agent</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">debug-agent</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">hostPID:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">tolerations:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">node-role.kubernetes.io/master</span></span><br><span class="line">          <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">debug-agent</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">aylei/debug-agent:v0.1.1</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">          <span class="attr">securityContext:</span></span><br><span class="line">            <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">livenessProbe:</span></span><br><span class="line">            <span class="attr">failureThreshold:</span> <span class="number">3</span></span><br><span class="line">            <span class="attr">httpGet:</span></span><br><span class="line">              <span class="attr">path:</span> <span class="string">/healthz</span></span><br><span class="line">              <span class="attr">port:</span> <span class="number">10027</span></span><br><span class="line">              <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">            <span class="attr">initialDelaySeconds:</span> <span class="number">10</span></span><br><span class="line">            <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">            <span class="attr">successThreshold:</span> <span class="number">1</span></span><br><span class="line">            <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">10027</span></span><br><span class="line">              <span class="attr">hostPort:</span> <span class="number">10027</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cgroup</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/sys/fs/cgroup</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lxcfs</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib/lxc</span></span><br><span class="line">              <span class="attr">mountPropagation:</span> <span class="string">Bidirectional</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">&quot;/var/run/docker.sock&quot;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">runcontainerd</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">&quot;/run/containerd&quot;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">runrunc</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">&quot;/run/runc&quot;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">vardata</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">&quot;/var/data&quot;</span></span><br><span class="line">      <span class="attr">hostNetwork:</span> <span class="literal">true</span>  <span class="comment">#要开启</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cgroup</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/sys/fs/cgroup</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lxcfs</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/lib/lxc</span></span><br><span class="line">            <span class="attr">type:</span> <span class="string">DirectoryOrCreate</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">        <span class="comment"># containerd client will need to access /var/data, /run/containerd and /run/runc</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">vardata</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/data</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">runcontainerd</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/run/containerd</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">runrunc</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/run/runc</span></span><br><span class="line">  <span class="attr">updateStrategy:</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span></span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">5</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span></span><br></pre></td></tr></table></figure>
+
+<p>debug-agent 两种运行方式：<br>daemon-set模式，agent pod预先部署在所有node上，会始终占用资源，对于排错调试频率不高的环境造成资源浪费；<br>agentless模式，kubectl-debug执行命令后，才创建agent pod和排错工具容器，并在退出后删除工具容器和agent pod。由于每次执行都要重新拉起agent，启动会比daemon-set模式稍慢。<br>使用-a, –agentless开启agentless模式：</p>
+<p><strong>需要配置文件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">cat .kube/debug-config</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">debug-agent 映射到宿主机的端口</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 10027</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentPort: 10027</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">是否开启ageless模式</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 <span class="literal">true</span></span></span><br><span class="line">agentless: false</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">agentPod 的 namespace, agentless模式可用</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 default</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentPodNamespace: default</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">agentPod 的名称前缀，后缀是目的主机名, agentless模式可用</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 debug-agent-pod</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentPodNamePrefix: debug-agent-pod</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">agentPod 的镜像, agentless模式可用</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 aylei/debug-agent:latest</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentImage: aylei/debug-agent:latest</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">debug-agent DaemonSet 的名字, port-forward 模式时会用到</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 <span class="string">&#x27;debug-agent&#x27;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">debugAgentDaemonset: debug-agent</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">debug-agent DaemonSet 的 namespace, port-forward 模式会用到</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 <span class="string">&#x27;default&#x27;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">debugAgentNamespace: devops</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">是否开启 port-forward 模式</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认 <span class="literal">true</span></span></span><br><span class="line">portForward: false</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">image of the debug container</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">default as showed</span></span><br><span class="line">image: registry-vpc.cn-hangzhou.aliyuncs.com/nbugs-share/share:debug_imagev1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">start <span class="built_in">command</span> of the debug container</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">default [<span class="string">&#x27;bash&#x27;</span>]</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">command</span>:</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">- <span class="string">&#x27;/bin/bash&#x27;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">- <span class="string">&#x27;-l&#x27;</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">private docker registry auth kuberntes secret, default is kubectl-debug-registry-secret</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用私有仓库镜像,并设置私有仓库使用的kubernetes secret</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">secret data原文请设置为 &#123;Username: &lt;username&gt;, Password: &lt;password&gt;&#125;</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认RegistrySecretName为kubectl-debug-registry-secret,默认RegistrySecretNamespace为default</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">RegistrySecretName: qh-docker-registry</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">RegistrySecretNamespace: default</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在默认的agentless模式下可以设置agent pod的resource资源限制</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">若不设置,默认为空</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentCpuRequests: <span class="string">&quot;&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentCpuLimits: <span class="string">&quot;&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentMemoryRequests: <span class="string">&quot;&quot;</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">agentMemoryLimits: <span class="string">&quot;&quot;</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当使用fork mode时,如果需要复制出来的pod保留原pod的labels,可以设置需要保留的labels列表</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">格式为[]string</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">默认为空(既不保留任何原POD的labels,新fork出pod的labels)</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">forkPodRetainLabels: []</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>建议使用daemon-set模式</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">进阶使用：</span><br><span class="line">排错init-container：</span><br><span class="line">kubectl <span class="built_in">debug</span> demo-pod <span class="attribute">--container</span>=init-pod</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">排错crash pod：</span><br><span class="line">kubectl <span class="built_in">debug</span> POD_NAME <span class="comment">--fork</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/" title="k8s生产实践">https://horus-k.github.io/2020/12/17/k8s生产实践/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/16/CRI%E4%B8%8EOCI/" rel="prev" title="CRI与OCI">
+                  <i class="fa fa-chevron-left"></i> CRI与OCI
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/" rel="next" title="PostgreSQL实践">
+                  PostgreSQL实践 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <i class="fa fa-thumb-tack"></i>
+  <font >置顶</font>
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

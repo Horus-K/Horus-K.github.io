@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="jpsJava版的ps命令，查看java进程及其相关的信息，如果你想找到一个java进程的pid，那可以用jps命令替代linux中的ps命令了，简单而方便。 命令格式： jps [options] [hostid] options参数解释：  -l : 输出主类全名或jar路径 -q : 只输出LVMID -m : 输出JVM启动时传递给main()的参数 -v : 输出JVM启动时显示指定的J">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM命令总结">
+<meta property="og:url" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="jpsJava版的ps命令，查看java进程及其相关的信息，如果你想找到一个java进程的pid，那可以用jps命令替代linux中的ps命令了，简单而方便。 命令格式： jps [options] [hostid] options参数解释：  -l : 输出主类全名或jar路径 -q : 只输出LVMID -m : 输出JVM启动时传递给main()的参数 -v : 输出JVM启动时显示指定的J">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022151454107.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022151728763.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152045329.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152219560.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152336027.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152412129.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022155114797.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022155138061.png">
+<meta property="article:published_time" content="2020-10-22T06:39:16.000Z">
+<meta property="article:modified_time" content="2020-12-11T02:23:24.179Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022151454107.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/","path":"2020/10/22/JVM命令总结/","title":"JVM命令总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JVM命令总结 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JVM命令总结 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM命令总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-22 14:39:16" itemprop="dateCreated datePublished" datetime="2020-10-22T14:39:16+08:00">2020-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-12-11 10:23:24" itemprop="dateModified" datetime="2020-12-11T10:23:24+08:00">2020-12-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h1><p>Java版的ps命令，查看java进程及其相关的信息，如果你想找到一个java进程的pid，那可以用jps命令替代linux中的ps命令了，简单而方便。</p>
+<p>命令格式：</p>
+<p><strong><code>jps [options] [hostid]</code></strong></p>
+<p>options参数解释：</p>
+<ul>
+<li>-l : 输出主类全名或jar路径</li>
+<li>-q : 只输出LVMID</li>
+<li>-m : 输出JVM启动时传递给main()的参数</li>
+<li>-v : 输出JVM启动时显示指定的JVM参数</li>
+</ul>
+<p>最常用示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jps -l 输出jar包路径，类全名</span><br><span class="line">jps -m 输出main参数</span><br><span class="line">jps -v 输出JVM参数</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h1><p>jinfo是用来查看JVM参数和动态修改部分JVM参数的命令</p>
+<p>命令格式：</p>
+<p><strong>jinfo [option] <pid></pid></strong></p>
+<p>options参数解释：</p>
+<ul>
+<li>-flag <name> 打印指定名称的参数</name></li>
+<li>-flag [+|-]<name> 打开或关闭参数</name></li>
+<li>-flag <name>&#x3D;<value> 设置参数</value></name></li>
+<li>-flags 打印所有参数</li>
+<li>-sysprops 打印系统配置</li>
+<li><no option> 打印上面两个选项</no></li>
+</ul>
+<p>最常用示例：</p>
+<p>其中11666为pid</p>
+<p>查看JVM参数和系统配置</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">jinfo</span> <span class="number">11666</span> </span><br><span class="line"><span class="attribute">jinfo</span> -flags <span class="number">11666</span></span><br><span class="line"><span class="attribute">jinfo</span> -sysprops <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>查看打印GC日志参数</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">jinfo</span> -flag PrintGC <span class="number">11666</span> </span><br><span class="line"><span class="attribute">jinfo</span> -flag PrintGCDetails <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>打开GC日志参数</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">jinfo</span> -flag +PrintGC <span class="number">11666</span> </span><br><span class="line"><span class="attribute">jinfo</span> -flag +PrintGCDetails <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>关闭GC日志参数</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">jinfo</span> -flag -PrintGC <span class="number">11666</span> </span><br><span class="line"><span class="attribute">jinfo</span> -flag -PrintGCDetails <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以使用下面的命令查看那些参数可以使用jinfo命令来管理：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -<span class="variable constant_">XX</span><span class="symbol">:+PrintFlagsFinal</span> -version |<span class="params"> grep manageable</span></span><br></pre></td></tr></table></figure>
+
+<p>常用JVM参数：</p>
+<p><strong>-Xms</strong>：初始堆大小，默认为物理内存的1&#x2F;64(&lt;1GB)；默认(MinHeapFreeRatio参数可以调整)空余堆内存小于40%时，JVM就会增大堆直到-Xmx的最大限制<br><strong>-Xmx</strong>：最大堆大小，默认(MaxHeapFreeRatio参数可以调整)空余堆内存大于70%时，JVM会减少堆直到 -Xms的最小限制<br><strong>-Xmn</strong>：新生代的内存空间大小，注意：此处的大小是（eden+ 2 survivor space)。与jmap -heap中显示的New gen是不同的。整个堆大小&#x3D;新生代大小 + 老生代大小 + 永久代大小。在保证堆大小不变的情况下，增大新生代后,将会减小老生代大小。此值对系统性能影响较大,Sun官方推荐配置为整个堆的3&#x2F;8。<br><strong>-XX:SurvivorRatio</strong>：新生代中Eden区域与Survivor区域的容量比值，默认值为8。两个Survivor区与一个Eden区的比值为2:8,一个Survivor区占整个年轻代的1&#x2F;10。<br><strong>-Xss</strong>：每个线程的堆栈大小。JDK5.0以后每个线程堆栈大小为1M,以前每个线程堆栈大小为256K。应根据应用的线程所需内存大小进行适当调整。在相同物理内存下,减小这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值在3000~5000左右。一般小的应用， 如果栈不是很深， 应该是128k够用的，大的应用建议使用256k。这个选项对性能影响比较大，需要严格的测试。和threadstacksize选项解释很类似,官方文档似乎没有解释,在论坛中有这样一句话:”-Xss is translated in a VM flag named ThreadStackSize”一般设置这个值就可以了。<br><strong>-XX:PermSize</strong>：设置永久代(perm gen)初始值。默认值为物理内存的1&#x2F;64。<br><strong>-XX:MaxPermSize</strong>：设置持久代最大值。物理内存的1&#x2F;4。</p>
+<h1 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h1><p>jstack是用来查看JVM线程快照的命令，线程快照是当前JVM线程正在执行的方法堆栈集合。使用jstack命令可以定位线程出现长时间卡顿的原因，例如死锁，死循环等。jstack还可以查看程序崩溃时生成的core文件中的stack信息。</p>
+<p>命令格式：</p>
+<p><strong>jstack [-l] <pid> (连接运行中的进程)</pid></strong><br><strong>jstack -F [-m] [-l] <pid> (连接挂起的进程)</pid></strong><br><strong>jstack [-m] [-l] <executable> <core> (连接core文件)</core></executable></strong><br><strong>jstack [-m] [-l] [server_id@]<remote server ip or hostname> (连接远程debug服务器)</remote></strong></p>
+<p>option参数解释：</p>
+<ul>
+<li>-F 当使用jstack <pid>无响应时，强制输出线程堆栈。</pid></li>
+<li>-m 同时输出java和本地堆栈(混合模式)</li>
+<li>-l 额外显示锁信息</li>
+</ul>
+<p>常用示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack -l <span class="number">11666</span> <span class="string">| more</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h1><p>jmap是用来生成堆dump文件和查看堆相关的各类信息的命令，例如查看finalize执行队列，heap的详细信息和使用情况。</p>
+<p>命令格式：</p>
+<p><strong>jmap [option] <pid> (连接正在执行的进程)</pid></strong><br><strong>jmap [option] &lt;executable <core> (连接一个core文件)</core></strong><br><strong>jmap [option] [server_id@]<remote server ip or hostname> (链接远程服务器)</remote></strong></p>
+<p>option参数解释：</p>
+<ul>
+<li><none> to print same info as Solaris pmap</none></li>
+<li>-heap 打印java heap摘要</li>
+<li>-histo[:live] 打印堆中的java对象统计信息</li>
+<li>-clstats 打印类加载器统计信息</li>
+<li>-finalizerinfo 打印在f-queue中等待执行finalizer方法的对象</li>
+<li>-dump:<dump-options> 生成java堆的dump文件</dump-options></li>
+</ul>
+<p>　　　　　　dump-options:</p>
+<p>　　　　　　live 只转储存活的对象，如果没有指定则转储所有对象</p>
+<p>　　　　　　format&#x3D;b 二进制格式</p>
+<p>　　　　　　file&#x3D;<file> 转储文件到 <file></file></file></p>
+<ul>
+<li>-F 强制选项</li>
+</ul>
+<p> 常用示例：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -<span class="keyword">dump</span>:live,format=b,<span class="keyword">file</span>=<span class="keyword">dump</span>.hprof <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Dumping heap to /<span class="keyword">dump</span>.hprof ...</span><br><span class="line">Heap <span class="keyword">dump</span> <span class="keyword">file</span> created</span><br></pre></td></tr></table></figure>
+
+<p>这个命令是要把java堆中的存活对象信息转储到dump.hprof文件</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">jmap</span> -finalizerinfo <span class="number">11666</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Attaching</span> to process ID <span class="number">11666</span>, please wait...</span><br><span class="line"><span class="attribute">Debugger</span> attached successfully.</span><br><span class="line"><span class="attribute">Server</span> compiler detected.</span><br><span class="line"><span class="attribute">JVM</span> version is <span class="number">24</span>.<span class="number">71</span>-b01</span><br><span class="line"><span class="attribute">Number</span> of objects pending for finalization: <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果的含义为当前没有在等待执行finalizer方法的对象</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -heap 11666 #jhsdb jmap --heap --pid 1 已换为</span><br></pre></td></tr></table></figure>
+
+<p>输出堆的详细信息</p>
+<p>输出：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">Attaching to process ID 11666, please <span class="built_in">wait</span>...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.25-b02</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line">Parallel GC with 4 thread(s)</span><br><span class="line"></span><br><span class="line">Heap Configuration: //堆内存初始化配置</span><br><span class="line">   MinHeapFreeRatio         = 0 //对应jvm启动参数-XX:MinHeapFreeRatio设置JVM堆最小空闲比率(default 40)</span><br><span class="line">   MaxHeapFreeRatio         = 100 //对应jvm启动参数 -XX:MaxHeapFreeRatio设置JVM堆最大空闲比率(default 70)</span><br><span class="line">   MaxHeapSize              = 1073741824 (1024.0MB) //对应jvm启动参数-XX:MaxHeapSize=设置JVM堆的最大大小</span><br><span class="line">   NewSize                  = 22020096 (21.0MB) //对应jvm启动参数-XX:NewSize=设置JVM堆的新生代的默认大小</span><br><span class="line">   MaxNewSize               = 357564416 (341.0MB) //对应jvm启动参数-XX:MaxNewSize=设置JVM堆的新生代的最大大小</span><br><span class="line">   OldSize                  = 45088768 (43.0MB) //对应jvm启动参数-XX:OldSize=&lt;value&gt;:设置JVM堆的老年代的大小</span><br><span class="line">   NewRatio                 = 2 //对应jvm启动参数-XX:NewRatio=:新生代和老生代的大小比率</span><br><span class="line">   SurvivorRatio            = 8 //对应jvm启动参数-XX:SurvivorRatio=设置新生代中Eden区与Survivor区的大小比值</span><br><span class="line">   MetaspaceSize            = 21807104 (20.796875MB) // 元数据区大小</span><br><span class="line">   CompressedClassSpaceSize = 1073741824 (1024.0MB) //类压缩空间大小</span><br><span class="line">   MaxMetaspaceSize         = 17592186044415 MB //元数据区最大大小</span><br><span class="line">   G1HeapRegionSize         = 0 (0.0MB) //G1垃圾收集器每个Region大小</span><br><span class="line"></span><br><span class="line">Heap Usage: //堆内存使用情况</span><br><span class="line">PS Young Generation </span><br><span class="line">Eden Space: //Eden区内存分布</span><br><span class="line">   capacity = 17825792 (17.0MB) //Eden区总容量</span><br><span class="line">   used     = 12704088 (12.115562438964844MB) //Eden区已使用</span><br><span class="line">   free     = 5121704 (4.884437561035156MB) //Eden区剩余容量</span><br><span class="line">   71.26801434685203% used //Eden区使用比率</span><br><span class="line">From Space: //其中一个Survivor区的内存分布</span><br><span class="line">   capacity = 2097152 (2.0MB)</span><br><span class="line">   used     = 1703936 (1.625MB)</span><br><span class="line">   free     = 393216 (0.375MB)</span><br><span class="line">   81.25% used</span><br><span class="line">To Space: //另一个Survivor区的内存分布</span><br><span class="line">   capacity = 2097152 (2.0MB)</span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line">   free     = 2097152 (2.0MB)</span><br><span class="line">   0.0% used</span><br><span class="line">PS Old Generation</span><br><span class="line">   capacity = 52428800 (50.0MB) //老年代容量</span><br><span class="line">   used     = 28325712 (27.013504028320312MB) //老年代已使用</span><br><span class="line">   free     = 24103088 (22.986495971679688MB) //老年代空闲</span><br><span class="line">   54.027008056640625% used //老年代使用比率</span><br><span class="line"></span><br><span class="line">15884 interned Strings occupying 2075304 bytes.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -histo:live <span class="number">11666</span> <span class="string">| ``more</span></span><br></pre></td></tr></table></figure>
+
+<p>输出存活对象统计信息</p>
+<p>输出：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">num     <span class="selector-id">#instances</span>         <span class="selector-id">#bytes</span>  class name</span><br><span class="line">----------------------------------------------</span><br><span class="line"><span class="number">1</span>:         <span class="number">46608</span>        <span class="number">1111232</span>  java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line"><span class="number">2</span>:          <span class="number">6919</span>         <span class="number">734516</span>  java<span class="selector-class">.lang</span><span class="selector-class">.Class</span></span><br><span class="line"><span class="number">3</span>:          <span class="number">4787</span>         <span class="number">536164</span>  java<span class="selector-class">.net</span><span class="selector-class">.SocksSocketImpl</span></span><br><span class="line"><span class="number">4</span>:         <span class="number">15935</span>         <span class="number">497100</span>  java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span>.ConcurrentHashMap<span class="variable">$Node</span></span><br><span class="line"><span class="number">5</span>:         <span class="number">28561</span>         <span class="number">436016</span>  java<span class="selector-class">.lang</span>.Object</span><br></pre></td></tr></table></figure>
+
+<h1 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h1><p>jhat是用来分析jmap生成dump文件的命令，jhat内置了应用服务器，可以通过网页查看dump文件分析结果，jhat一般是用在离线分析上。</p>
+<p>命令格式：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jhat <span class="selector-attr">[option]</span> <span class="selector-attr">[dumpfile]</span></span><br></pre></td></tr></table></figure>
+
+<p>option参数解释：</p>
+<ul>
+<li>-stack false: 关闭对象分配调用堆栈的跟踪</li>
+<li>-refs false: 关闭对象引用的跟踪</li>
+<li>-port <port>: HTTP服务器端口，默认是7000</port></li>
+<li>-debug <int>: debug级别</int></li>
+</ul>
+<p>　　 0: 无debug输出</p>
+<p>　　 1: Debug hprof file parsing</p>
+<p>　　 2: Debug hprof file parsing, no server</p>
+<ul>
+<li>-version 分析报告版本</li>
+</ul>
+<p>常用示例：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jhat <span class="keyword">dump</span>.hprof</span><br></pre></td></tr></table></figure>
+
+<h1 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h1><h2 id="输入：jstat-option得到以下选项"><a href="#输入：jstat-option得到以下选项" class="headerlink" title="输入：jstat -option得到以下选项"></a><strong>输入：jstat -option得到以下选项</strong></h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># jstat -options</span></span><br><span class="line">-class             // 显示类加载信息</span><br><span class="line">-compiler          // 显示编译信息</span><br><span class="line">-gc                // 显示GC相关信息</span><br><span class="line">-gccapacity        // 显示各区域容量及使用情况</span><br><span class="line">-gccause           // 显示垃圾回收信息</span><br><span class="line">-gcmetacapacity    // 显示元空间容量信息</span><br><span class="line">-gcnew             // 显示新生代信息</span><br><span class="line">-gcnewcapacity     // 显示新生代容量信息</span><br><span class="line">-gcold             // 显示老年代信息</span><br><span class="line">-gcoldcapacity     // 显示老年代容量信息</span><br><span class="line">-gcutil            // 显示垃圾收集信息</span><br><span class="line">-printcompilation  // 显示JIT编译的方法信息</span><br></pre></td></tr></table></figure>
+
+<h2 id="class-类加载统计"><a href="#class-类加载统计" class="headerlink" title="class 类加载统计"></a><strong>class 类加载统计</strong></h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># jstat -class 1</span></span><br><span class="line">Loaded  Bytes  Unloaded  Bytes     Time   </span><br><span class="line"> 28364 50234.7     1164  1187.9      69.24</span><br><span class="line"></span><br><span class="line">Loaded:加载class的数量</span><br><span class="line">Bytes：所占用空间大小</span><br><span class="line">Unloaded：未加载数量</span><br><span class="line">Bytes:未加载占用空间</span><br><span class="line">Time：时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="compiler编译统计"><a href="#compiler编译统计" class="headerlink" title="compiler编译统计"></a><strong>compiler编译统计</strong></h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">jstat -compiler 1</span><br><span class="line">Compiled Failed Invalid   Time   FailedType FailedMethod</span><br><span class="line">   34529      0       0   166.27          0</span><br><span class="line">Compiled：编译数量。</span><br><span class="line">Failed：失败数量</span><br><span class="line">Invalid：不可用数量</span><br><span class="line">Time：时间</span><br><span class="line">FailedType：失败类型</span><br><span class="line">FailedMethod：失败的方法</span><br></pre></td></tr></table></figure>
+
+<h2 id="gc垃圾回收统计"><a href="#gc垃圾回收统计" class="headerlink" title="gc垃圾回收统计"></a><strong>gc垃圾回收统计</strong></h2><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># jstat -gc 1</span></span><br><span class="line">S0C：第一个幸存区的大小</span><br><span class="line">S1C：第二个幸存区的大小</span><br><span class="line">S0U：第一个幸存区的使用大小</span><br><span class="line">S1U：第二个幸存区的使用大小</span><br><span class="line">EC：伊甸园区的大小</span><br><span class="line">EU：伊甸园区的使用大小</span><br><span class="line">OC：老年代大小</span><br><span class="line">OU：老年代使用大小</span><br><span class="line">MC：方法区大小</span><br><span class="line">MU：方法区使用大小</span><br><span class="line"><span class="symbol">CCSC:</span>压缩类空间大小</span><br><span class="line"><span class="symbol">CCSU:</span>压缩类空间使用大小</span><br><span class="line">YGC：年轻代垃圾回收次数+</span><br><span class="line">YGCT：年轻代垃圾回收消耗时间</span><br><span class="line">FGC：老年代垃圾回收次数</span><br><span class="line">FGCT：老年代垃圾回收消耗时间</span><br><span class="line">GCT：垃圾回收消耗总时间</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022151454107.png" alt="image-20201022151454107"></p>
+<h2 id="gccapacity堆内存统计"><a href="#gccapacity堆内存统计" class="headerlink" title="gccapacity堆内存统计"></a><strong>gccapacity堆内存统计</strong></h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022151728763.png" alt="image-20201022151728763"></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">NGCMN：新生代最小容量</span><br><span class="line">NGCMX：新生代最大容量</span><br><span class="line">NGC：当前新生代容量</span><br><span class="line">S0C：第一个幸存区大小</span><br><span class="line">S1C：第二个幸存区的大小</span><br><span class="line">EC：伊甸区的大小</span><br><span class="line">OGCMN：老年代最小容量</span><br><span class="line">OGCMX：老年代最大容量</span><br><span class="line">OGC：当前老年代大小</span><br><span class="line"><span class="symbol">OC:</span>当前老年代大小</span><br><span class="line"><span class="symbol">MCMN:</span>最小元数据容量</span><br><span class="line">MCMX：最大元数据容量</span><br><span class="line">MC：当前元数据空间大小</span><br><span class="line">CCSMN：最小压缩类空间大小</span><br><span class="line">CCSMX：最大压缩类空间大小</span><br><span class="line">CCSC：当前压缩类空间大小</span><br><span class="line">YGC：年轻代gc次数</span><br><span class="line">FGC：老年代GC次数</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcnew新生代垃圾回收统计"><a href="#gcnew新生代垃圾回收统计" class="headerlink" title="gcnew新生代垃圾回收统计"></a><strong>gcnew新生代垃圾回收统计</strong></h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152045329.png" alt="image-20201022152045329"></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">S0C：第一个幸存区大小</span><br><span class="line">S1C：第二个幸存区的大小</span><br><span class="line">S0U：第一个幸存区的使用大小</span><br><span class="line">S1U：第二个幸存区的使用大小</span><br><span class="line"><span class="symbol">TT:</span>对象在新生代存活的次数</span><br><span class="line"><span class="symbol">MTT:</span>对象在新生代存活的最大次数</span><br><span class="line"><span class="symbol">DSS:</span>期望的幸存区大小</span><br><span class="line">EC：伊甸园区的大小</span><br><span class="line">EU：伊甸园区的使用大小</span><br><span class="line">YGC：年轻代垃圾回收次数</span><br><span class="line">YGCT：年轻代垃圾回收消耗时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcnewcapacity新生代内存统计"><a href="#gcnewcapacity新生代内存统计" class="headerlink" title="gcnewcapacity新生代内存统计"></a><strong>gcnewcapacity新生代内存统计</strong></h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152219560.png" alt="image-20201022152219560"></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">NGCMN</span>：新生代最小容量</span><br><span class="line"><span class="attribute">NGCMX</span>：新生代最大容量</span><br><span class="line"><span class="attribute">NGC</span>：当前新生代容量</span><br><span class="line"><span class="attribute">S0CMX</span>：最大幸存<span class="number">1</span>区大小</span><br><span class="line"><span class="attribute">S0C</span>：当前幸存<span class="number">1</span>区大小</span><br><span class="line"><span class="attribute">S1CMX</span>：最大幸存<span class="number">2</span>区大小</span><br><span class="line"><span class="attribute">S1C</span>：当前幸存<span class="number">2</span>区大小</span><br><span class="line"><span class="attribute">ECMX</span>：最大伊甸园区大小</span><br><span class="line"><span class="attribute">EC</span>：当前伊甸园区大小</span><br><span class="line"><span class="attribute">YGC</span>：年轻代垃圾回收次数</span><br><span class="line"><span class="attribute">FGC</span>：老年代回收次数</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcold老年代垃圾回收统计"><a href="#gcold老年代垃圾回收统计" class="headerlink" title="gcold老年代垃圾回收统计"></a><strong>gcold老年代垃圾回收统计</strong></h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152336027.png" alt="image-20201022152336027"></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MC：方法区大小</span><br><span class="line">MU：方法区使用大小</span><br><span class="line"><span class="symbol">CCSC:</span>压缩类空间大小</span><br><span class="line"><span class="symbol">CCSU:</span>压缩类空间使用大小</span><br><span class="line">OC：老年代大小</span><br><span class="line">OU：老年代使用大小</span><br><span class="line">YGC：年轻代垃圾回收次数</span><br><span class="line">FGC：老年代垃圾回收次数</span><br><span class="line">FGCT：老年代垃圾回收消耗时间</span><br><span class="line">GCT：垃圾回收消耗总时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcoldcapacity老年代内存统计"><a href="#gcoldcapacity老年代内存统计" class="headerlink" title="gcoldcapacity老年代内存统计"></a><strong>gcoldcapacity老年代内存统计</strong></h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022152412129.png" alt="image-20201022152412129"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">OGCMN：老年代最小容量</span><br><span class="line">OGCMX：老年代最大容量</span><br><span class="line">OGC：当前老年代大小</span><br><span class="line">OC：老年代大小</span><br><span class="line">YGC：年轻代垃圾回收次数</span><br><span class="line">FGC：老年代垃圾回收次数</span><br><span class="line">FGCT：老年代垃圾回收消耗时间</span><br><span class="line">GCT：垃圾回收消耗总时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcutil垃圾收集信息"><a href="#gcutil垃圾收集信息" class="headerlink" title="gcutil垃圾收集信息"></a>gcutil垃圾收集信息</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcutil 1 2s 3  <span class="comment"># 查看pid为1 每2秒更新显示一次 共显示3次 垃圾收集信息</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">统计列含义</span><br><span class="line"><span class="variable">S0</span>：幸存<span class="number">1</span>区当前使用比例</span><br><span class="line"><span class="variable">S1</span>：幸存<span class="number">2</span>区当前使用比例</span><br><span class="line"><span class="built_in">E</span>：伊甸园区使用比例</span><br><span class="line"><span class="built_in">O</span>：老年代使用比例</span><br><span class="line"><span class="variable">M</span>：元数据区使用比例</span><br><span class="line"><span class="variable">CCS</span>：压缩使用比例</span><br><span class="line"><span class="variable">YGC</span>：年轻代垃圾回收次数</span><br><span class="line"><span class="variable">FGC</span>：老年代垃圾回收次数</span><br><span class="line"><span class="variable">FGCT</span>：老年代垃圾回收消耗时间</span><br><span class="line"><span class="variable">GCT</span>：垃圾回收消耗总时间</span><br></pre></td></tr></table></figure>
+
+<h1 id="jconsole-jvisualvm"><a href="#jconsole-jvisualvm" class="headerlink" title="jconsole, jvisualvm"></a><strong>jconsole, jvisualvm</strong></h1><p>除了以上所述的常用命令行工具之外还有图形化工具，使用上比较简单。在命令行下执行jconsole和jvisualvm即可。具体的用法，自己去点一点就了解了。</p>
+<p>jconsole：</p>
+<p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022155114797.png" alt="image-20201022155114797"></p>
+<h2 id="jvisualvm："><a href="#jvisualvm：" class="headerlink" title="jvisualvm："></a><strong>jvisualvm</strong>：</h2><p><img src="/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/image-20201022155138061.png" alt="image-20201022155138061"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/10/22/JVM%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/" title="JVM命令总结">https://horus-k.github.io/2020/10/22/JVM命令总结/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/jvm/" rel="tag"># jvm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/23/ingress/ingress%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81/" rel="prev" title="ingress密码验证">
+                  <i class="fa fa-chevron-left"></i> ingress密码验证
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/03/grafana-%E5%9B%BE%E8%A1%A8%E6%89%B9%E9%87%8F%E5%AF%BC%E5%87%BA/" rel="next" title="grafana 图表批量导出导入">
+                  grafana 图表批量导出导入 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

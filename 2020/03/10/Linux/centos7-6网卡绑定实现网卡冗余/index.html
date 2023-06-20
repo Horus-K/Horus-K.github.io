@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="常用的绑定驱动模式有:mode&#x3D;0平衡负载模式:平时两块网卡均工作，且自动备援，采用Switch支援。mode&#x3D;1自动备援模式:平时只有一块网卡工作，故障后自动替换为另外的网卡。mode&#x3D;2平衡策略模式:此模式提供负载平衡和容错能力mode&#x3D;6:平衡负载模式:平时两块网卡均工作，且自动备援，无须设置Switch支援。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="centos7.6网卡绑定实现网卡冗余">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="常用的绑定驱动模式有:mode&#x3D;0平衡负载模式:平时两块网卡均工作，且自动备援，采用Switch支援。mode&#x3D;1自动备援模式:平时只有一块网卡工作，故障后自动替换为另外的网卡。mode&#x3D;2平衡策略模式:此模式提供负载平衡和容错能力mode&#x3D;6:平衡负载模式:平时两块网卡均工作，且自动备援，无须设置Switch支援。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/a76550e49899eacebce22fd49f129bbb.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/666eec6f73791d7b347a902d368ebc66.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/e3f132847ffc2f48066b94bd0ee5ecad.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/172f4b6504a72c5e0b70d99eae95e3ad.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/cd360c0412847ed5fbbc9aafbc511cad.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/7f4162ecb00ea9a2a636eab215f2b104.png">
+<meta property="article:published_time" content="2020-03-10T08:57:49.000Z">
+<meta property="article:modified_time" content="2020-03-10T09:36:10.228Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/a76550e49899eacebce22fd49f129bbb.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/","path":"2020/03/10/Linux/centos7-6网卡绑定实现网卡冗余/","title":"centos7.6网卡绑定实现网卡冗余"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>centos7.6网卡绑定实现网卡冗余 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="centos7.6网卡绑定实现网卡冗余 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          centos7.6网卡绑定实现网卡冗余
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-10 16:57:49 / 修改时间：17:36:10" itemprop="dateCreated datePublished" datetime="2020-03-10T16:57:49+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>843</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>常用的绑定驱动模式有:<br>mode&#x3D;0平衡负载模式:平时两块网卡均工作，且自动备援，采用Switch支援。<br>mode&#x3D;1自动备援模式:平时只有一块网卡工作，故障后自动替换为另外的网卡。<br>mode&#x3D;2平衡策略模式:此模式提供负载平衡和容错能力<br>mode&#x3D;6:平衡负载模式:平时两块网卡均工作，且自动备援，无须设置Switch支援。</p>
+<span id="more"></span>
+
+<h3 id="1-添加2块网卡"><a href="#1-添加2块网卡" class="headerlink" title="1.添加2块网卡"></a>1.添加2块网卡</h3><p><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/a76550e49899eacebce22fd49f129bbb.png" alt="img"></p>
+<h3 id="2-确认网卡正常工作"><a href="#2-确认网卡正常工作" class="headerlink" title="2.确认网卡正常工作"></a>2.确认网卡正常工作</h3><p><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/666eec6f73791d7b347a902d368ebc66.png" alt="img"></p>
+<h3 id="3-添加新网卡配置文件"><a href="#3-添加新网卡配置文件" class="headerlink" title="3.添加新网卡配置文件"></a>3.添加新网卡配置文件</h3><h4 id="现在新添加的两块网卡均无配置文件需手动添加"><a href="#现在新添加的两块网卡均无配置文件需手动添加" class="headerlink" title="现在新添加的两块网卡均无配置文件需手动添加"></a>现在新添加的两块网卡均无配置文件需手动添加</h4><p><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/e3f132847ffc2f48066b94bd0ee5ecad.png" alt="img"></p>
+<h3 id="ifcfg-eth1"><a href="#ifcfg-eth1" class="headerlink" title="ifcfg-eth1"></a>ifcfg-eth1</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">TYPE</span>=Ethernet</span><br><span class="line"><span class="attr">DEVICE</span>=eth1</span><br><span class="line"><span class="attr">ONBOOT</span>=<span class="literal">yes</span></span><br><span class="line"><span class="attr">BOOTPROTO</span>=none</span><br><span class="line"><span class="attr">USERCTL</span>=<span class="literal">no</span></span><br><span class="line"><span class="attr">MASTER</span>=bond0</span><br><span class="line"><span class="attr">SLAVE</span>=<span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ifcfg-eth2"><a href="#ifcfg-eth2" class="headerlink" title="ifcfg-eth2"></a>ifcfg-eth2</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">TYPE</span>=Ethernet</span><br><span class="line"><span class="attr">DEVICE</span>=eth2</span><br><span class="line"><span class="attr">ONBOOT</span>=<span class="literal">yes</span></span><br><span class="line"><span class="attr">BOOTPROTO</span>=none</span><br><span class="line"><span class="attr">USERCTL</span>=<span class="literal">no</span></span><br><span class="line"><span class="attr">MASTER</span>=bond0</span><br><span class="line"><span class="attr">SLAVE</span>=<span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ifcfg-bond0"><a href="#ifcfg-bond0" class="headerlink" title="ifcfg-bond0"></a>ifcfg-bond0</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">TYPE</span>=Bond</span><br><span class="line"><span class="attr">BOOTPROTO</span>=none</span><br><span class="line"><span class="attr">ONBOOT</span>=<span class="literal">yes</span></span><br><span class="line"><span class="attr">USERCTL</span>=<span class="literal">no</span></span><br><span class="line"><span class="attr">DEVICE</span>=bond0</span><br><span class="line"><span class="attr">IPADDR</span>=<span class="number">192.168</span>.<span class="number">153.130</span></span><br><span class="line"><span class="attr">NETMASK</span>=<span class="number">255.255</span>.<span class="number">255.0</span></span><br><span class="line"><span class="attr">BONDING_OPTS</span>= “miimon=<span class="number">100</span> mode=<span class="number">0</span>”   //模式<span class="number">0</span>，miimon是用来进行链路监测</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-bond配置-修改modprobe相关设定文件"><a href="#4-bond配置-修改modprobe相关设定文件" class="headerlink" title="4.bond配置,修改modprobe相关设定文件"></a>4.bond配置,修改modprobe相关设定文件</h3><p>需要关闭NetworkManager服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">systemctl stop NetworkManager</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">systemctl <span class="built_in">disable</span> NetworkManager</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-查看内核是否加载bonding"><a href="#5-查看内核是否加载bonding" class="headerlink" title="5.查看内核是否加载bonding"></a>5.查看内核是否加载bonding</h3><p>重启网络服务</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl restart network</span></span><br></pre></td></tr></table></figure>
+
+<p>查看内核是否加载</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># lsmod |grep bonding</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/172f4b6504a72c5e0b70d99eae95e3ad.png" alt="img"></p>
+<h3 id="6-查看是否成功-eth1与eth2-MAC地址已同步说明绑定成功"><a href="#6-查看是否成功-eth1与eth2-MAC地址已同步说明绑定成功" class="headerlink" title="6.查看是否成功(eth1与eth2 MAC地址已同步说明绑定成功)"></a>6.查看是否成功(eth1与eth2 MAC地址已同步说明绑定成功)</h3><p><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/cd360c0412847ed5fbbc9aafbc511cad.png" alt="img"><br>在另一台同网段虚拟机也可以ping通<br><img src="/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/7f4162ecb00ea9a2a636eab215f2b104.png" alt="img"></p>
+<h3 id="7-多网卡也只需添加一块网卡写入配置文件即可"><a href="#7-多网卡也只需添加一块网卡写入配置文件即可" class="headerlink" title="7.多网卡也只需添加一块网卡写入配置文件即可"></a>7.多网卡也只需添加一块网卡写入配置文件即可</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/10/Linux/centos7-6%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E7%BD%91%E5%8D%A1%E5%86%97%E4%BD%99/" title="centos7.6网卡绑定实现网卡冗余">https://horus-k.github.io/2020/03/10/Linux/centos7-6网卡绑定实现网卡冗余/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/Linux/nmcli%E5%AE%9E%E7%8E%B0Network-Teaming/" rel="prev" title="nmcli实现Network-Teaming">
+                  <i class="fa fa-chevron-left"></i> nmcli实现Network-Teaming
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/10/Linux/centos6-7grub%E9%98%B2%E6%AD%A2%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E9%80%9A%E8%BF%87%E5%8D%95%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E7%A0%B4%E8%A7%A3root%E5%AF%86%E7%A0%81/" rel="next" title="centos6,7grub防止其他用户通过单用户系统破解root密码">
+                  centos6,7grub防止其他用户通过单用户系统破解root密码 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

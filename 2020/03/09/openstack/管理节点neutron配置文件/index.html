@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="&#x2F;etc&#x2F;neutron&#x2F;neutron.conf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="管理节点neutron配置文件">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="&#x2F;etc&#x2F;neutron&#x2F;neutron.conf">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-09T07:50:35.000Z">
+<meta property="article:modified_time" content="2020-03-10T10:56:44.721Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="openstack">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/","path":"2020/03/09/openstack/管理节点neutron配置文件/","title":"管理节点neutron配置文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>管理节点neutron配置文件 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="管理节点neutron配置文件 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          管理节点neutron配置文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 15:50:35" itemprop="dateCreated datePublished" datetime="2020-03-09T15:50:35+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 18:56:44" itemprop="dateModified" datetime="2020-03-10T18:56:44+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="x2F-etc-x2F-neutron-x2F-neutron-conf"><a href="#x2F-etc-x2F-neutron-x2F-neutron-conf" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;neutron.conf"></a>&#x2F;etc&#x2F;neutron&#x2F;neutron.conf</h2><span id="more"></span>
+
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="attr">core_plugin</span> = ml2</span><br><span class="line"><span class="attr">service_plugins</span> =</span><br><span class="line"><span class="attr">transport_url</span> = rabbit://openstack:openstack123@rabbitmq-server2</span><br><span class="line"><span class="attr">auth_strategy</span> = keystone</span><br><span class="line"><span class="attr">notify_nova_on_port_status_changes</span> = <span class="literal">true</span></span><br><span class="line"><span class="attr">notify_nova_on_port_data_changes</span> = <span class="literal">true</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="section">[cors]</span></span><br><span class="line"><span class="section">[cors.subdomain]</span></span><br><span class="line"><span class="section">[database]</span></span><br><span class="line"><span class="attr">connection</span> = mysql+pymysql://neutron:neutron123@openstack-vip.qh.net/neutron</span><br><span class="line"><span class="section">[keystone_authtoken]</span></span><br><span class="line"><span class="attr">auth_uri</span> = http://openstack-vip.qh.net:<span class="number">5000</span></span><br><span class="line"><span class="attr">auth_url</span> = http://openstack-vip.qh.net:<span class="number">35357</span></span><br><span class="line"><span class="attr">memcached_servers</span> = openstack-vip.qh.net:<span class="number">11211</span></span><br><span class="line"><span class="attr">auth_type</span> = password</span><br><span class="line"><span class="attr">project_domain_name</span> = default</span><br><span class="line"><span class="attr">user_domain_name</span> = default</span><br><span class="line"><span class="attr">project_name</span> = service</span><br><span class="line"><span class="attr">username</span> = neutron</span><br><span class="line"><span class="attr">password</span> = neutron</span><br><span class="line"><span class="section">[matchmaker_redis]</span></span><br><span class="line"><span class="section">[nova]</span></span><br><span class="line"><span class="attr">auth_url</span> = http://openstack-vip.qh.net:<span class="number">35357</span></span><br><span class="line"><span class="attr">auth_type</span> = password</span><br><span class="line"><span class="attr">project_domain_name</span> = default</span><br><span class="line"><span class="attr">user_domain_name</span> = default</span><br><span class="line"><span class="attr">region_name</span> = RegionOne</span><br><span class="line"><span class="attr">project_name</span> = service</span><br><span class="line"><span class="attr">username</span> = nova</span><br><span class="line"><span class="attr">password</span> = nova</span><br><span class="line"><span class="section">[oslo_concurrency]</span></span><br><span class="line"><span class="attr">lock_path</span> = /var/lib/neutron/tmp</span><br><span class="line"><span class="section">[oslo_messaging_amqp]</span></span><br><span class="line"><span class="section">[oslo_messaging_kafka]</span></span><br><span class="line"><span class="section">[oslo_messaging_notifications]</span></span><br><span class="line"><span class="section">[oslo_messaging_rabbit]</span></span><br><span class="line"><span class="section">[oslo_messaging_zmq]</span></span><br><span class="line"><span class="section">[oslo_middleware]</span></span><br><span class="line"><span class="section">[oslo_policy]</span></span><br><span class="line"><span class="section">[qos]</span></span><br><span class="line"><span class="section">[quotas]</span></span><br><span class="line"><span class="section">[ssl]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-etc-x2F-neutron-x2F-dhcp-agent-ini"><a href="#x2F-etc-x2F-neutron-x2F-dhcp-agent-ini" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;dhcp_agent.ini"></a>&#x2F;etc&#x2F;neutron&#x2F;dhcp_agent.ini</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="attr">interface_driver</span> = linuxbridge</span><br><span class="line"><span class="attr">dhcp_driver</span> = neutron.agent.linux.dhcp.Dnsmasq</span><br><span class="line"><span class="attr">enable_isolated_metadata</span> = <span class="literal">true</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="section">[ovs]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-etc-x2F-neutron-x2F-metadata-agent-ini"><a href="#x2F-etc-x2F-neutron-x2F-metadata-agent-ini" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;metadata_agent.ini"></a>&#x2F;etc&#x2F;neutron&#x2F;metadata_agent.ini</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="attr">nova_metadata_ip</span> = openstack-vip.qh.net</span><br><span class="line"><span class="attr">metadata_proxy_shared_secret</span> = <span class="number">20190621</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="section">[cache]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-etc-x2F-neutron-x2F-plugin-ini"><a href="#x2F-etc-x2F-neutron-x2F-plugin-ini" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;plugin.ini"></a>&#x2F;etc&#x2F;neutron&#x2F;plugin.ini</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="section">[ml2]</span></span><br><span class="line"><span class="attr">type_drivers</span> = flat,vlan</span><br><span class="line"><span class="attr">tenant_network_types</span> = </span><br><span class="line"><span class="attr">mechanism_drivers</span> = linuxbridge</span><br><span class="line"><span class="attr">extension_drivers</span> = port_security</span><br><span class="line"><span class="section">[ml2_type_flat]</span></span><br><span class="line"><span class="attr">flat_networks</span> = linux36,linux37</span><br><span class="line"><span class="section">[ml2_type_geneve]</span></span><br><span class="line"><span class="section">[ml2_type_gre]</span></span><br><span class="line"><span class="section">[ml2_type_vlan]</span></span><br><span class="line"><span class="section">[ml2_type_vxlan]</span></span><br><span class="line"><span class="section">[securitygroup]</span></span><br><span class="line"><span class="attr">enable_security_group</span> = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-etc-x2F-neutron-x2F-plugins-x2F-ml2-x2F-linuxbridge-agent-ini"><a href="#x2F-etc-x2F-neutron-x2F-plugins-x2F-ml2-x2F-linuxbridge-agent-ini" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;ml2&#x2F;linuxbridge_agent.ini"></a>&#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;ml2&#x2F;linuxbridge_agent.ini</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="section">[linux_bridge]</span></span><br><span class="line"><span class="attr">physical_interface_mappings</span> = linux36:bond0,linux37:bond1</span><br><span class="line"><span class="section">[securitygroup]</span></span><br><span class="line"><span class="attr">enable_security_group</span> = <span class="literal">true</span></span><br><span class="line"><span class="attr">firewall_driver</span> = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver</span><br><span class="line"><span class="section">[vxlan]</span></span><br><span class="line"><span class="attr">enable_vxlan</span> = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="x2F-etc-x2F-neutron-x2F-plugins-x2F-ml2-x2F-ml2-conf-ini"><a href="#x2F-etc-x2F-neutron-x2F-plugins-x2F-ml2-x2F-ml2-conf-ini" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;ml2&#x2F;ml2_conf.ini"></a>&#x2F;etc&#x2F;neutron&#x2F;plugins&#x2F;ml2&#x2F;ml2_conf.ini</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[DEFAULT]</span></span><br><span class="line"><span class="section">[ml2]</span></span><br><span class="line"><span class="attr">type_drivers</span> = flat,vlan</span><br><span class="line"><span class="attr">tenant_network_types</span> = </span><br><span class="line"><span class="attr">mechanism_drivers</span> = linuxbridge</span><br><span class="line"><span class="attr">extension_drivers</span> = port_security</span><br><span class="line"><span class="section">[ml2_type_flat]</span></span><br><span class="line"><span class="attr">flat_networks</span> = linux36,linux37</span><br><span class="line"><span class="section">[ml2_type_geneve]</span></span><br><span class="line"><span class="section">[ml2_type_gre]</span></span><br><span class="line"><span class="section">[ml2_type_vlan]</span></span><br><span class="line"><span class="section">[ml2_type_vxlan]</span></span><br><span class="line"><span class="section">[securitygroup]</span></span><br><span class="line"><span class="attr">enable_security_group</span> = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" title="管理节点neutron配置文件">https://horus-k.github.io/2020/03/09/openstack/管理节点neutron配置文件/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/openstack/" rel="tag"># openstack</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="prev" title="管理节点nova配置文件">
+                  <i class="fa fa-chevron-left"></i> 管理节点nova配置文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/09/openstack/haproxy%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="next" title="haproxy配置文件">
+                  haproxy配置文件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

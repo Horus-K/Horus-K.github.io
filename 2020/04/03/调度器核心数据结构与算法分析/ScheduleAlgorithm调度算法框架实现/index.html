@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ScheduleAlgorithm调度算法框架实现ScheduleAlgorithm是一个接口负责为pod选择一个合适的node节点,本节主要解析如何实现一个可扩展、可配置的通用算法框架来实现通用调度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ScheduleAlgorithm调度算法框架实现">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="ScheduleAlgorithm调度算法框架实现ScheduleAlgorithm是一个接口负责为pod选择一个合适的node节点,本节主要解析如何实现一个可扩展、可配置的通用算法框架来实现通用调度">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579050867763-96ce4dec-0a56-4ad2-8ce9-b7a509a3f1cf.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579050996260-722c646f-5c3f-45b0-a3f5-2d094095b2db.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579051159248-7d1ae0d4-ea60-4a37-bfa7-34ebe1d7850b.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579051889014-1c89750c-175f-4099-a3cc-f8375ac79c8a.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579052779698-8076236d-0cd8-47df-b66a-347492e56fab.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579053311148-167d93fb-f164-450f-9468-cc01ae041df2.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579054336428-9a47f3de-a83b-41a3-942d-9a098034c8a2.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579054691858-6177fe13-ff84-4b9f-b51b-de952a3f8def.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579056086419-83fe0bbd-8ef3-40fc-a7f6-85a6d502ee8f.png">
+<meta property="article:published_time" content="2020-04-03T06:58:59.000Z">
+<meta property="article:modified_time" content="2020-04-09T06:54:47.324Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579050867763-96ce4dec-0a56-4ad2-8ce9-b7a509a3f1cf.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/","path":"2020/04/03/调度器核心数据结构与算法分析/ScheduleAlgorithm调度算法框架实现/","title":"ScheduleAlgorithm调度算法框架实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ScheduleAlgorithm调度算法框架实现 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ScheduleAlgorithm调度算法框架实现 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ScheduleAlgorithm调度算法框架实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-03 14:58:59" itemprop="dateCreated datePublished" datetime="2020-04-03T14:58:59+08:00">2020-04-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-09 14:54:47" itemprop="dateModified" datetime="2020-04-09T14:54:47+08:00">2020-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">调度器核心数据结构与算法分析</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="ScheduleAlgorithm调度算法框架实现"><a href="#ScheduleAlgorithm调度算法框架实现" class="headerlink" title="ScheduleAlgorithm调度算法框架实现"></a>ScheduleAlgorithm调度算法框架实现</h1><p>ScheduleAlgorithm是一个接口负责为pod选择一个合适的node节点,本节主要解析如何实现一个可扩展、可配置的通用算法框架来实现通用调度</p>
+<span id="more"></span>
+
+<h1 id="1-设计思考"><a href="#1-设计思考" class="headerlink" title="1. 设计思考"></a>1. 设计思考</h1><h2 id="1-1-调度设计"><a href="#1-1-调度设计" class="headerlink" title="1.1 调度设计"></a>1.1 调度设计</h2><h3 id="1-1-1-调度与抢占"><a href="#1-1-1-调度与抢占" class="headerlink" title="1.1.1 调度与抢占"></a>1.1.1 调度与抢占</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579050867763-96ce4dec-0a56-4ad2-8ce9-b7a509a3f1cf.png" alt="image.png"></p>
+<p>当接收到pod需要被调度后，默认首先调用schedule来进行正常的业务调度尝试从当前集群中选择一个合适的node</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579050996260-722c646f-5c3f-45b0-a3f5-2d094095b2db.png" alt="image.png"></p>
+<p>如果调度失败则尝试抢占调度,根据优先级抢占低优先级的pod运行高优先级pod</p>
+<!--more-->
+
+<h3 id="1-1-2-调度阶段"><a href="#1-1-2-调度阶段" class="headerlink" title="1.1.2 调度阶段"></a>1.1.2 调度阶段</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579051159248-7d1ae0d4-ea60-4a37-bfa7-34ebe1d7850b.png" alt="image.png"></p>
+<p>在k8s的调度算法运行流程中，主要分为两个阶段：预选和优选，即从当前集群中选择符合要求的node，再从这些node中选择最合适的节点</p>
+<h3 id="1-1-3-节点选择"><a href="#1-1-3-节点选择" class="headerlink" title="1.1.3 节点选择"></a>1.1.3 节点选择</h3><p>随着集群的增加集群中的node数量越来越多，k8s并不是遍历所有集群资源，而是只选取部分节点，同时借助之前说的 schedulerCache来实现pod节点的分散</p>
+<h2 id="1-2-框架设计"><a href="#1-2-框架设计" class="headerlink" title="1.2 框架设计"></a>1.2 框架设计</h2><h3 id="1-2-1-注册表与算法工厂"><a href="#1-2-1-注册表与算法工厂" class="headerlink" title="1.2.1 注册表与算法工厂"></a>1.2.1 注册表与算法工厂</h3><p>针对不同的算法，声明不同的注册表，负责集群中当前所有算法的注册，从而提供给调度配置决策加载那些插件，实现算法的可扩展性</p>
+<p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579051889014-1c89750c-175f-4099-a3cc-f8375ac79c8a.png" alt="image.png"></p>
+<p>并通过工厂模式来进行统一管理，解耦算法的注册与具体调度流程中的使用，由每个算法的工厂方法来接受参数进行具体算法的创建</p>
+<h3 id="1-2-3-metadata与PluginContext"><a href="#1-2-3-metadata与PluginContext" class="headerlink" title="1.2.3 metadata与PluginContext"></a>1.2.3 metadata与PluginContext</h3><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579052779698-8076236d-0cd8-47df-b66a-347492e56fab.png" alt="image.png"></p>
+<p>在调度实际运行的过程中，需要集合当前集群中的元数据信息(node和pod)来进行具体算法的决策，scheduler采用PredicateMetadataProducer和PriorityMetadataProducer来进行元数据的构建, 其次针对一些可能被多个算法都使用的数据，也会在这里完成构建，比如亲和性的pod、拓扑等</p>
+<p>并通过PluginContext进行本次调度上下文数据的存储，用于在多个调度算法之间存储数据进行交互</p>
+<h3 id="1-2-4-Provider"><a href="#1-2-4-Provider" class="headerlink" title="1.2.4  Provider"></a>1.2.4  Provider</h3><p>Provider主要是封装一组具体的预选和优选算法，并通过注册来实现统一管理, 其中系统内置了DefaultProvider</p>
+<h3 id="1-2-5-framework"><a href="#1-2-5-framework" class="headerlink" title="1.2.5 framework"></a>1.2.5 framework</h3><p>framework是一种内部的扩展机制，通过定制给定的阶段函数，进行调度流程的影响，本节先不介绍</p>
+<h3 id="1-2-6-extender"><a href="#1-2-6-extender" class="headerlink" title="1.2.6 extender"></a>1.2.6 extender</h3><p>一种外部的扩展机制，可以根据需要进行动态的配置，其实就是外部的一个service，但是相比framework可以使用自己独立的数据存储，实现对调度器的扩展</p>
+<h1 id="2-源码分析"><a href="#2-源码分析" class="headerlink" title="2. 源码分析"></a>2. 源码分析</h1><h2 id="2-1-数据结构"><a href="#2-1-数据结构" class="headerlink" title="2.1 数据结构"></a>2.1 数据结构</h2><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> genericScheduler struct &#123;</span><br><span class="line">    cache                    internalcache.<span class="type">Cache</span></span><br><span class="line">    schedulingQueue          internalqueue.<span class="type">SchedulingQueue</span></span><br><span class="line">    predicates               map[string]predicates.<span class="type">FitPredicate</span></span><br><span class="line">    priorityMetaProducer     priorities.<span class="type">PriorityMetadataProducer</span></span><br><span class="line">    predicateMetaProducer    predicates.<span class="type">PredicateMetadataProducer</span></span><br><span class="line">    prioritizers             []priorities.<span class="type">PriorityConfig</span></span><br><span class="line">    framework                framework.<span class="type">Framework</span></span><br><span class="line">    extenders                []algorithm.<span class="type">SchedulerExtender</span></span><br><span class="line">    alwaysCheckAllPredicates bool</span><br><span class="line">    nodeInfoSnapshot         *schedulernodeinfo.<span class="type">Snapshot</span></span><br><span class="line">    volumeBinder             *volumebinder.<span class="type">VolumeBinder</span></span><br><span class="line">    pvcLister                corelisters.<span class="type">PersistentVolumeClaimLister</span></span><br><span class="line">    pdbLister                algorithm.<span class="type">PDBLister</span></span><br><span class="line">    disablePreemption        bool</span><br><span class="line">    percentageOfNodesToScore int32</span><br><span class="line">    enableNonPreempting      bool</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-1-集群数据"><a href="#2-1-1-集群数据" class="headerlink" title="2.1.1 集群数据"></a>2.1.1 集群数据</h3><p>集群元数据主要分为三部分:</p>
+<p>Cache: 存储从apiserver获取的数据 </p>
+<p>SchedulingQueue: 存储当前队列中等待调度和经过调度但是未真正运行的pod</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cache </span>                   internalcache.<span class="keyword">Cache</span></span><br><span class="line"><span class="keyword"></span><span class="keyword">schedulingQueue </span>         internalqueue.<span class="keyword">SchedulingQueue</span></span><br><span class="line"><span class="keyword"></span>nodeInfoSnapshot         *<span class="keyword">schedulernodeinfo.Snapshot</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-1-预选算法相关"><a href="#2-1-1-预选算法相关" class="headerlink" title="2.1.1 预选算法相关"></a>2.1.1 预选算法相关</h3><p>预选算法主要包含两部分：当前使用的预选调度算法结合和元数据构建器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">predicates               <span class="keyword">map</span>[<span class="type">string</span>]predicates.FitPredicate</span><br><span class="line">predicateMetaProducer    predicates.PredicateMetadataProducer</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-3-优先级算法相关"><a href="#2-1-3-优先级算法相关" class="headerlink" title="2.1.3 优先级算法相关"></a>2.1.3 优先级算法相关</h3><p>优选算法与预选算法不太相同，在后续文章中会进行介绍</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">priorityMetaProducer     priorities<span class="selector-class">.PriorityMetadataProducer</span></span><br><span class="line">prioritizers             <span class="selector-attr">[]</span>priorities.PriorityConfig</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-4-扩展相关"><a href="#2-1-4-扩展相关" class="headerlink" title="2.1.4 扩展相关"></a>2.1.4 扩展相关</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">framework                framework<span class="selector-class">.Framework</span></span><br><span class="line">extenders                <span class="selector-attr">[]</span>algorithm.SchedulerExtender</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-2-调度算法注册表"><a href="#2-2-调度算法注册表" class="headerlink" title="2.2 调度算法注册表"></a>2.2 调度算法注册表</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579053311148-167d93fb-f164-450f-9468-cc01ae041df2.png" alt="image.png"></p>
+<p>Priority会复杂一点,这里就不介绍了，其核心设计都是一样的</p>
+<h3 id="2-2-1-工厂注册表"><a href="#2-2-1-工厂注册表" class="headerlink" title="2.2.1 工厂注册表"></a>2.2.1 工厂注册表</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fitPredicateMap        = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]FitPredicateFactory)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-注册表注册"><a href="#2-2-2-注册表注册" class="headerlink" title="2.2.2 注册表注册"></a>2.2.2 注册表注册</h3><p>注册主要分两类：如果后续算法不会使用当前Args里面的数据，只需要使用metadata里面的，就直接返回注册算法，下面的函数就是返回一个工厂方法，但是不会使用Args参数</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func <span class="constructor">RegisterFitPredicate(<span class="params">name</span> <span class="params">string</span>, <span class="params">predicate</span> <span class="params">predicates</span>.FitPredicate)</span> <span class="built_in">string</span> &#123;</span><br><span class="line">    return <span class="constructor">RegisterFitPredicateFactory(<span class="params">name</span>, <span class="params">func</span>(PluginFactoryArgs)</span> predicates.FitPredicate &#123; return predicate &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终注册都是通过下面的工厂注册函数实现，通过mutex和map实现</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func <span class="constructor">RegisterFitPredicateFactory(<span class="params">name</span> <span class="params">string</span>, <span class="params">predicateFactory</span> FitPredicateFactory)</span> <span class="built_in">string</span> &#123;</span><br><span class="line">    schedulerFactoryMutex.<span class="constructor">Lock()</span></span><br><span class="line">    defer schedulerFactoryMutex.<span class="constructor">Unlock()</span></span><br><span class="line">    validate<span class="constructor">AlgorithmNameOrDie(<span class="params">name</span>)</span></span><br><span class="line">    fitPredicateMap<span class="literal">[<span class="identifier">name</span>]</span> = predicateFactory</span><br><span class="line">    return name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-3-生成预选算法"><a href="#2-2-3-生成预选算法" class="headerlink" title="2.2.3 生成预选算法"></a>2.2.3 生成预选算法</h3><p>通过插件工厂参数影响和Factory构建具体的预选算法，上面构建的工厂方法，下面则给定参数，通过工厂方法利用闭包的方式来进行真正算法的生成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getFitPredicateFunctions</span><span class="params">(names sets.String, args PluginFactoryArgs)</span></span> (<span class="keyword">map</span>[<span class="type">string</span>]predicates.FitPredicate, <span class="type">error</span>) &#123;</span><br><span class="line">    schedulerFactoryMutex.RLock()</span><br><span class="line">    <span class="keyword">defer</span> schedulerFactoryMutex.RUnlock()</span><br><span class="line"></span><br><span class="line">    fitPredicates := <span class="keyword">map</span>[<span class="type">string</span>]predicates.FitPredicate&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> _, name := <span class="keyword">range</span> names.List() &#123;</span><br><span class="line">        factory, ok := fitPredicateMap[name]</span><br><span class="line">        <span class="keyword">if</span> !ok &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;invalid predicate name %q specified - no corresponding function found&quot;</span>, name)</span><br><span class="line">        &#125;</span><br><span class="line">        fitPredicates[name] = factory(args)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// k8s中默认包含一些强制性的策略，不允许用户自己进行删除，这里是加载这些参数</span></span><br><span class="line">    <span class="keyword">for</span> name := <span class="keyword">range</span> mandatoryFitPredicates &#123;</span><br><span class="line">        <span class="keyword">if</span> factory, found := fitPredicateMap[name]; found &#123;</span><br><span class="line">            fitPredicates[name] = factory(args)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> fitPredicates, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-2-4-根据当前feature进行算法删除"><a href="#2-2-4-根据当前feature进行算法删除" class="headerlink" title="2.2.4 根据当前feature进行算法删除"></a>2.2.4 根据当前feature进行算法删除</h3><p>当我们在系统演进的时候，也可以借鉴这种思想，来避免用户使用那些当前或者未来版本中可能逐渐被放弃的设计</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> utilfeature.DefaultFeatureGate.Enabled(features.TaintNodesByCondition) &#123;</span><br><span class="line">        <span class="regexp">//</span> Remove <span class="string">&quot;CheckNodeCondition&quot;</span>, <span class="string">&quot;CheckNodeMemoryPressure&quot;</span>, <span class="string">&quot;CheckNodePIDPressure&quot;</span></span><br><span class="line">        <span class="regexp">//</span> and <span class="string">&quot;CheckNodeDiskPressure&quot;</span> predicates</span><br><span class="line">        factory.RemoveFitPredicate(predicates.CheckNodeConditionPred)</span><br><span class="line">        factory.RemoveFitPredicate(predicates.CheckNodeMemoryPressurePred)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-predicateMetadataProducer"><a href="#2-3-predicateMetadataProducer" class="headerlink" title="2.3 predicateMetadataProducer"></a>2.3 predicateMetadataProducer</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579054336428-9a47f3de-a83b-41a3-942d-9a098034c8a2.png" alt="image.png"></p>
+<h3 id="2-3-1-PredicateMetadata"><a href="#2-3-1-PredicateMetadata" class="headerlink" title="2.3.1 PredicateMetadata"></a>2.3.1 PredicateMetadata</h3><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PredicateMetadata interface represents anything that can access a predicate metadata.</span></span><br><span class="line"><span class="keyword">type</span> PredicateMetadata interface &#123;</span><br><span class="line">    <span class="constructor">ShallowCopy()</span> PredicateMetadata</span><br><span class="line">    <span class="constructor">AddPod(<span class="params">addedPod</span> <span class="operator">*</span><span class="params">v1</span>.Pod, <span class="params">nodeInfo</span> <span class="operator">*</span><span class="params">schedulernodeinfo</span>.NodeInfo)</span> error</span><br><span class="line">    <span class="constructor">RemovePod(<span class="params">deletedPod</span> <span class="operator">*</span><span class="params">v1</span>.Pod, <span class="params">node</span> <span class="operator">*</span><span class="params">v1</span>.Node)</span> error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-3-2-声明"><a href="#2-3-2-声明" class="headerlink" title="2.3.2 声明"></a>2.3.2 声明</h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">predicateMetadataProducer PredicateMetadataProducerFactory</span></span><br></pre></td></tr></table></figure>
+
+<p>工厂函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PredicateMetadataProducerFactory produces PredicateMetadataProducer from the given args.</span></span><br><span class="line"><span class="keyword">type</span> PredicateMetadataProducerFactory <span class="function"><span class="keyword">func</span><span class="params">(PluginFactoryArgs)</span></span> predicates.PredicateMetadataProducer</span><br></pre></td></tr></table></figure>
+
+<p>PredicateMetadataProducer通过上面的工厂函数创建而来，其接受当前需要调度的pod和snapshot里面的node信息，从而构建当前的PredicateMetadata</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PredicateMetadataProducer is a function that computes predicate metadata for a given pod.</span></span><br><span class="line"><span class="keyword">type</span> PredicateMetadataProducer <span class="function"><span class="keyword">func</span><span class="params">(pod *v1.Pod, nodeNameToInfo <span class="keyword">map</span>[<span class="type">string</span>]*schedulernodeinfo.NodeInfo)</span></span> PredicateMetadata</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-3-2-注册"><a href="#2-3-2-注册" class="headerlink" title="2.3.2 注册"></a>2.3.2 注册</h3><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RegisterPredicateMetadataProducerFactory registers a PredicateMetadataProducerFactory.</span></span><br><span class="line">func <span class="constructor">RegisterPredicateMetadataProducerFactory(<span class="params">factory</span> PredicateMetadataProducerFactory)</span> &#123;</span><br><span class="line">    schedulerFactoryMutex.<span class="constructor">Lock()</span></span><br><span class="line">    defer schedulerFactoryMutex.<span class="constructor">Unlock()</span></span><br><span class="line">    predicateMetadataProducer = factory</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-4-意义"><a href="#2-3-4-意义" class="headerlink" title="2.3.4 意义"></a>2.3.4 意义</h3><p>PredicateMetadata其本质上就是当前系统中的元数据，其设计的主要目标是为了当前的调度流程中后续多个调度算法中都可能需要计算的数据，进行统一的计算，比如节点的亲和性、反亲和、拓扑分布等，都在此进行统一的控制， 当前版本的实现时PredicateMetadataFactory,这里不进行展开</p>
+<h2 id="2-4-Provider"><a href="#2-4-Provider" class="headerlink" title="2.4 Provider"></a>2.4 Provider</h2><h3 id="2-4-1-AlgorithmProviderConfig"><a href="#2-4-1-AlgorithmProviderConfig" class="headerlink" title="2.4.1 AlgorithmProviderConfig"></a>2.4.1 AlgorithmProviderConfig</h3><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// <span class="type">AlgorithmProviderConfig</span> is used to store the configuration <span class="keyword">of</span> algorithm providers.</span><br><span class="line"><span class="keyword">type</span> <span class="type">AlgorithmProviderConfig</span> struct &#123;</span><br><span class="line">    <span class="type">FitPredicateKeys</span>     sets.<span class="type">String</span></span><br><span class="line">    <span class="type">PriorityFunctionKeys</span> sets.<span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-2-注册中心"><a href="#2-4-2-注册中心" class="headerlink" title="2.4.2 注册中心"></a>2.4.2 注册中心</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">algorithmProviderMap   = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]AlgorithmProviderConfig)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-4-3-注册"><a href="#2-4-3-注册" class="headerlink" title="2.4.3 注册"></a>2.4.3 注册</h3><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func <span class="constructor">RegisterAlgorithmProvider(<span class="params">name</span> <span class="params">string</span>, <span class="params">predicateKeys</span>, <span class="params">priorityKeys</span> <span class="params">sets</span>.String)</span> <span class="built_in">string</span> &#123;</span><br><span class="line">    schedulerFactoryMutex.<span class="constructor">Lock()</span></span><br><span class="line">    defer schedulerFactoryMutex.<span class="constructor">Unlock()</span></span><br><span class="line">    validate<span class="constructor">AlgorithmNameOrDie(<span class="params">name</span>)</span></span><br><span class="line">    algorithmProviderMap<span class="literal">[<span class="identifier">name</span>]</span> = AlgorithmProviderConfig&#123;</span><br><span class="line">        FitPredicateKeys:     predicateKeys,</span><br><span class="line">        PriorityFunctionKeys: priorityKeys,</span><br><span class="line">    &#125;</span><br><span class="line">    return name</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-4-4-默认Provider注册"><a href="#2-4-4-默认Provider注册" class="headerlink" title="2.4.4 默认Provider注册"></a>2.4.4 默认Provider注册</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func <span class="built_in">init</span>() &#123;</span><br><span class="line">    <span class="comment">// 注册算法DefaulrProvider 的算法provider</span></span><br><span class="line">    <span class="built_in">registerAlgorithmProvider</span>(defaultPredicates(), <span class="built_in">defaultPriorities</span>())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-核心调度流程"><a href="#2-5-核心调度流程" class="headerlink" title="2.5 核心调度流程"></a>2.5 核心调度流程</h2><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579054691858-6177fe13-ff84-4b9f-b51b-de952a3f8def.png" alt="image.png"></p>
+<p>核心调度流程，这里面只介绍主线的流程，至于怎么预选和优选则在下一篇文章进行更新，因为稍微有点复杂，而framework和extender则在后续介绍完这两部分在进行介绍, 其中extender的调用则是在PrioritizeNodes进行优先级算中进行调用</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Schedule tries to schedule the given pod to one of the nodes in the node list.</span></span><br><span class="line"><span class="comment">// If it succeeds, it will return the name of the node.</span></span><br><span class="line"><span class="comment">// If it fails, it will return a FitError error with reasons.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *genericScheduler)</span></span> Schedule(pod *v1.Pod, pluginContext *framework.PluginContext) (result ScheduleResult, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">// 省略非核心代码</span></span><br><span class="line">    <span class="comment">// 调用framework的RunPreFilterPlugins</span></span><br><span class="line">    preFilterStatus := g.framework.RunPreFilterPlugins(pluginContext, pod)</span><br><span class="line">    <span class="keyword">if</span> !preFilterStatus.IsSuccess() &#123;</span><br><span class="line">        <span class="keyword">return</span> result, preFilterStatus.AsError()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前的node数量</span></span><br><span class="line">    numNodes := g.cache.NodeTree().NumNodes()</span><br><span class="line">    <span class="keyword">if</span> numNodes == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> result, ErrNoNodesAvailable</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新snapshot</span></span><br><span class="line">    <span class="keyword">if</span> err := g.snapshot(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> result, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 预选阶段</span></span><br><span class="line">    filteredNodes, failedPredicateMap, filteredNodesStatuses, err := g.findNodesThatFit(pluginContext, pod)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> result, err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将预选结果调用framework的postfilter</span></span><br><span class="line">    postfilterStatus := g.framework.RunPostFilterPlugins(pluginContext, pod, filteredNodes, filteredNodesStatuses)</span><br><span class="line">    <span class="keyword">if</span> !postfilterStatus.IsSuccess() &#123;</span><br><span class="line">        <span class="keyword">return</span> result, postfilterStatus.AsError()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(filteredNodes) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> result, &amp;FitError&#123;</span><br><span class="line">            Pod:                   pod,</span><br><span class="line">            NumAllNodes:           numNodes,e</span><br><span class="line">            FailedPredicates:      failedPredicateMap,</span><br><span class="line">            FilteredNodesStatuses: filteredNodesStatuses,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    startPriorityEvalTime := time.Now()</span><br><span class="line">    <span class="comment">// 如果只有一个节点则直接返回</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(filteredNodes) == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ScheduleResult&#123;</span><br><span class="line">            SuggestedHost:  filteredNodes[<span class="number">0</span>].Name,</span><br><span class="line">            EvaluatedNodes: <span class="number">1</span> + <span class="built_in">len</span>(failedPredicateMap),</span><br><span class="line">            FeasibleNodes:  <span class="number">1</span>,</span><br><span class="line">        &#125;, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有的调度策略</span></span><br><span class="line">    metaPrioritiesInterface := g.priorityMetaProducer(pod, g.nodeInfoSnapshot.NodeInfoMap)</span><br><span class="line">    <span class="comment">// 获取所有node的优先级,此处会将extenders进行传入，实现扩展接口的调用</span></span><br><span class="line">    priorityList, err := PrioritizeNodes(pod, g.nodeInfoSnapshot.NodeInfoMap, metaPrioritiesInterface, g.prioritizers, filteredNodes, g.extenders, g.framework, pluginContext)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> result, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 从优先级中选择出合适的node</span></span><br><span class="line">    host, err := g.selectHost(priorityList)</span><br><span class="line">    trace.Step(<span class="string">&quot;Selecting host done&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> ScheduleResult&#123;</span><br><span class="line">        SuggestedHost:  host,</span><br><span class="line">        EvaluatedNodes: <span class="built_in">len</span>(filteredNodes) + <span class="built_in">len</span>(failedPredicateMap),</span><br><span class="line">        FeasibleNodes:  <span class="built_in">len</span>(filteredNodes),</span><br><span class="line">    &#125;, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="3-设计总结"><a href="#3-设计总结" class="headerlink" title="3. 设计总结"></a>3. 设计总结</h1><p><img src="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/1579056086419-83fe0bbd-8ef3-40fc-a7f6-85a6d502ee8f.png" alt="image.png"></p>
+<p>在调度算法框架中大量使用了工厂方法来进行算法、元数据等的构建,并通过封装MetadataProducer来进行公共业务逻辑接口的封装，通过PluginContext进行调度流程中上下文数据的传递，并且用户可以通过定制Provider来进行具体调度算法的选择</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/ScheduleAlgorithm%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0/" title="ScheduleAlgorithm调度算法框架实现">https://horus-k.github.io/2020/04/03/调度器核心数据结构与算法分析/ScheduleAlgorithm调度算法框架实现/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/SchedulingQueue%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0/" rel="prev" title="SchedulingQueue三级调度队列实现">
+                  <i class="fa fa-chevron-left"></i> SchedulingQueue三级调度队列实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/03/%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90/%E5%9F%BA%E4%BA%8E%E5%B9%B6%E8%A1%8C%E7%AD%9B%E9%80%89%E7%9A%84%E9%A2%84%E9%80%89%E8%AE%BE%E8%AE%A1%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0/" rel="next" title="基于并行筛选的预选设计设计实现">
+                  基于并行筛选的预选设计设计实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

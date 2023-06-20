@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="注意：版本变化 xtrabackup版本升级到2.4后，相比之前的2.1有了比较大的变化：innobackupex 功能全部集成到 xtrabackup 里面，只有一个 binary程序，另外为了兼容考虑，innobackupex作为 xtrabackup 的软链接，即xtrabacku现在支持非Innodb表备份，并且 Innobackupex 在下一版本中移除，建议通过xtrabackup替换">
+<meta property="og:type" content="article">
+<meta property="og:title" content="percona-xtrabackup实现数据库完全，增量的备份和还原">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="注意：版本变化 xtrabackup版本升级到2.4后，相比之前的2.1有了比较大的变化：innobackupex 功能全部集成到 xtrabackup 里面，只有一个 binary程序，另外为了兼容考虑，innobackupex作为 xtrabackup 的软链接，即xtrabacku现在支持非Innodb表备份，并且 Innobackupex 在下一版本中移除，建议通过xtrabackup替换">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/9301bcb34ffe7d473755c1d74d46a959.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/7df9ff685e79bb8f1446378d0723a9d4.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/771aa409a2a53f7570ef7ff1e7dc1ff6.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/0af1f261c75e713247fb39e0c2e4f9f4.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/5dc32207232859a6f24b32a6bf032a39.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/790999190d5dc02a3ac48eb0e99dbba4.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/6d45b8a48ed776254c0c63eae601c8c1.png">
+<meta property="article:published_time" content="2020-03-10T07:02:33.000Z">
+<meta property="article:modified_time" content="2020-03-10T09:43:14.877Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="xtrabackup">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/9301bcb34ffe7d473755c1d74d46a959.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/","path":"2020/03/10/Mysql/percona-xtrabackup实现数据库完全，增量的备份和还原/","title":"percona-xtrabackup实现数据库完全，增量的备份和还原"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>percona-xtrabackup实现数据库完全，增量的备份和还原 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="percona-xtrabackup实现数据库完全，增量的备份和还原 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          percona-xtrabackup实现数据库完全，增量的备份和还原
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-10 15:02:33 / 修改时间：17:43:14" itemprop="dateCreated datePublished" datetime="2020-03-10T15:02:33+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="注意：版本变化"><a href="#注意：版本变化" class="headerlink" title="注意：版本变化"></a>注意：版本变化</h3><blockquote>
+<p>xtrabackup版本升级到2.4后，相比之前的2.1有了比较大的变化：<br>innobackupex 功能全部集成到 xtrabackup 里面，只有一个 binary程序，另外为了兼容考虑，innobackupex作为 xtrabackup 的软链接，即xtrabacku现在支持非Innodb表备份，并且 Innobackupex 在下一版本中移除，建议通过xtrabackup替换innobackupex</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="这里mariadb5-5，为centos7默认版本，更高版有很多版本问题很严重"><a href="#这里mariadb5-5，为centos7默认版本，更高版有很多版本问题很严重" class="headerlink" title="这里mariadb5.5，为centos7默认版本，更高版有很多版本问题很严重"></a>这里mariadb5.5，为centos7默认版本，更高版有很多版本问题很严重</h2><h2 id="个人测试数据库版本10以上均无法使用xtrabackup"><a href="#个人测试数据库版本10以上均无法使用xtrabackup" class="headerlink" title="个人测试数据库版本10以上均无法使用xtrabackup"></a>个人测试数据库版本10以上均无法使用xtrabackup</h2><h2 id="本次使用数据库5-5版本恢复主机10-4版本可行"><a href="#本次使用数据库5-5版本恢复主机10-4版本可行" class="headerlink" title="本次使用数据库5.5版本恢复主机10.4版本可行"></a>本次使用数据库5.5版本恢复主机10.4版本可行</h2><h2 id="首先安装xtrabackup"><a href="#首先安装xtrabackup" class="headerlink" title="首先安装xtrabackup"></a>首先安装xtrabackup</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> percona-xtrabackup 在EPEL源中</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><blockquote>
+<p>最新版本下载安装：<br><a target="_blank" rel="noopener" href="https://www.percona.com/downloads/XtraBackup/LATEST/">https://www.percona.com/downloads/XtraBackup/LATEST/</a></p>
+</blockquote>
+</li>
+<li><blockquote>
+<p>本次实验使用<strong>2.4</strong>版本<br>下载地址：<a target="_blank" rel="noopener" href="https://www.percona.com/downloads/Percona-XtraBackup-2.4/LATEST/">https://www.percona.com/downloads/Percona-XtraBackup-2.4/LATEST/</a></p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/9301bcb34ffe7d473755c1d74d46a959.png" alt="img"></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">yum</span> install /root/percona-xtrabackup-<span class="number">24</span>-<span class="number">2</span>.<span class="number">4</span>.<span class="number">13</span>-<span class="number">1</span>.el7.x86_64.rpm #用yum解决依赖性</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/7df9ff685e79bb8f1446378d0723a9d4.png" alt="img"></p>
+<h2 id="使用方法-备份"><a href="#使用方法-备份" class="headerlink" title="使用方法 :备份"></a>使用方法 :备份</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">备份：innobackupex [<span class="keyword">option</span>] BACKUP-ROOT-DIR</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>选项说明：<br>–user：该选项表示备份账号<br>–password：该选项表示备份的密码<br>–host：该选项表示备份数据库的地址<br>–databases：该选项接受的参数为数据库名，如果要指定多个数据库，彼此间需要以空格隔开；如：”xtra_test dba_test”，同时，在指定某数据库时，也可以只指定其中的某张表。如：”mydatabase.mytable”。该选项对innodb引擎表无效，还是会备份所有innodb表<br>–defaults-file：该选项指定从哪个文件读取MySQL配置，必须放在命令行第一个选项位置<br>–incremental：该选项表示创建一个增量备份，需要指定–incremental-basedir<br>–incremental-basedir：该选项指定为前一次全备份或增量备份的目录，与–incremental同时使用<br>–incremental-dir：该选项表示还原时增量备份的目录<br>–include&#x3D;name：指定表名，格式：databasename.tablename<br><strong>–apply-log：一般情况下,在备份完成后，数据尚且不能用于恢复操作，因为备份的数据中可能会包含尚未提交的事务或已经提交但尚未同步至数据文件中的事务。因此，此时数据文件仍处理不一致状态。此选项作用是通过回滚未提交的事务及同步已经提交的事务至数据文件使数据文件处于一致性状态–use-memory：和–apply-log选项一起使用prepare 备份时，做crashrecovery分配的内存大小，单位字节，也可1MB,1M,1G,1GB等，推荐1G</strong><br>–export：表示开启可导出单独的表之后再导入其他Mysql中<br>–redo-only：此选项在prepare base full backup，往其中合并增量备份时候使<br>用，但不包括对最后一个增量备份的合并</p>
+</blockquote>
+<h2 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">还原：innobackupex <span class="attr">--copy-back</span> <span class="selector-attr">[选项]</span> BACKUP-DIR</span><br></pre></td></tr></table></figure>
+
+<p>选项</p>
+<blockquote>
+<p>innobackupex –move-back [选项] [–defaults-group&#x3D;GROUP-NAME] BACKUP-DIR<br><strong>选项说明：</strong><br>–copy-back：做数据恢复时将备份数据文件拷贝到MySQL服务器的datadir<br>–move-back：这个选项与–copy-back相似，唯一的区别是它不拷贝文件，<br>而是移动文件到目的地。这个选项移除backup文件，用时候必须小心。使用场<br>景：没有足够的磁盘空间同事保留数据文件和Backup副本</p>
+</blockquote>
+<ul>
+<li><p>还原注意事项：</p>
+<blockquote>
+<p>1.<strong>datadir 目录必须为空</strong>。除非指定innobackupex –force-non-emptydirectorires选项指定，否则–copy-backup选不会覆盖<br>2.在restore之前,<strong>必须shutdown MySQL实例</strong>，不能将一个运行中的实例restore到datadir目录中<br>3.由于文件属性会被保留，大部分情况下需要在启动实例之前将文件的属主改为mysql，这些文件将属于创建备份的用户chown -R mysql:mysql &#x2F;data&#x2F;mysql以上需要在用户调用innobackupex之前完成<br>4–force-non-empty-directories：指定该参数时候，使得innobackupex –copy-back或–move-back选项转移文件到非空目录，已存在的文件不会被覆盖。如果–copy-back和–move-back文件需要从备份目录拷贝一个在datadir已经存在的文件，会报错失败</p>
+</blockquote>
+</li>
+<li><p>备份生成的相关文件</p>
+</li>
+</ul>
+<blockquote>
+<p>使用innobackupex备份时，其会调用xtrabackup备份所有的InnoDB表，复制所有关于表结构定义的相关文件(.frm)、以及MyISAM、MERGE、CSV和ARCHIVE表的相关文件，同时还会备份触发器和数据库配置信息相关的文件。这些文件会被保存至一个以时间命名的目录中,在备份时，innobackupex还会在备份目录中创建如下文件：</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>(1)xtrabackup_info：innobackupex工具执行时的相关信息，包括版本，备份选项，<br>备份时长，备份LSN(log sequence number日志序列号)，BINLOG的位置</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>(2)xtrabackup_checkpoints：备份类型（如完全或增量）、备份状态（如是否已经为<br>prepared状态）和LSN范围信息,每个InnoDB页(通常为16k大小)都会包含一个日志序<br>列号LSN。LSN是整个数据库系统的系统版本号，每个页面相关的LSN能够表明此页面<br>最近是如何发生改变的</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>(3)xtrabackup_binlog_info：MySQL服务器当前正在使用的二进制日志文件及至备份<br>这一刻为止二进制日志事件的位置，可利用实现基于binlog的恢复</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>(4)backup-my.cnf：备份命令用到的配置选项信息</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>(5)xtrabackup_logfile：备份生成的日志文件</p>
+</blockquote>
+<h2 id="1完全备份还原"><a href="#1完全备份还原" class="headerlink" title="1完全备份还原"></a>1完全备份还原</h2><ul>
+<li>1查看当前数据库列表</li>
+</ul>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">root:~ # mysqlshow </span></span><br><span class="line"><span class="section">+--------------------+</span></span><br><span class="line"><span class="section">|     Databases      |</span></span><br><span class="line"><span class="section">+--------------------+</span></span><br><span class="line">| hellodb            |</span><br><span class="line">| information<span class="emphasis">_schema |</span></span><br><span class="line"><span class="emphasis">| mysql              |</span></span><br><span class="line"><span class="emphasis">| performance_</span>schema |</span><br><span class="line"><span class="section">| test               |</span></span><br><span class="line"><span class="section">+--------------------+</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2创建备份文件夹</li>
+</ul>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># mkdir /xbackup</span></span><br><span class="line"><span class="meta">#备份时确保xbackup文件夹空</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>3备份</li>
+</ul>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup --backup --target-dir=/xbackup</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> Executing UNLOCK TABLES</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> All tables unlocked</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> Backup created in directory &#x27;/xbackup/&#x27;</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> [<span class="number">00</span>] Writing /xbackup/backup-my.cnf</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> [<span class="number">00</span>]        ...done</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> [<span class="number">00</span>] Writing /xbackup/xtrabackup_info</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> [<span class="number">00</span>]        ...done</span><br><span class="line">xtrabackup: Transaction log of lsn (<span class="number">1628321</span>) to (<span class="number">1628321</span>) was copied.</span><br><span class="line"><span class="number">190506 12:38</span>:<span class="number">27</span> completed OK!</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/771aa409a2a53f7570ef7ff1e7dc1ff6.png" alt="img"><br>* 二进制日志位置<br><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/0af1f261c75e713247fb39e0c2e4f9f4.png" alt="img"></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">root:~ # mysql -e &#x27;show master logs;&#x27;</span></span><br><span class="line"><span class="section">+------------------+-----------+</span></span><br><span class="line"><span class="section">| Log_name         | File_size |</span></span><br><span class="line"><span class="section">+------------------+-----------+</span></span><br><span class="line"><span class="section">| mysql-bin.000001 |       245 |</span></span><br><span class="line"><span class="section">+------------------+-----------+</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开始结束的lsn号<br><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/5dc32207232859a6f24b32a6bf032a39.png" alt="img"></li>
+<li>版本信息</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">root</span>:~ # cat /xbackup/xtrabackup_info </span><br><span class="line"><span class="attribute">uuid</span> = c991e905-<span class="number">6</span>fb9-<span class="number">11</span>e9-<span class="number">83</span>d3-<span class="number">000</span>c29f89546</span><br><span class="line"><span class="attribute">name</span> = </span><br><span class="line"><span class="attribute">tool_name</span> = xtrabackup</span><br><span class="line"><span class="attribute">tool_command</span> = --backup --target-dir=/xbackup</span><br><span class="line"><span class="attribute">tool_version</span> = <span class="number">2</span>.<span class="number">4</span>.<span class="number">13</span></span><br><span class="line"><span class="attribute">ibbackup_version</span> = <span class="number">2</span>.<span class="number">4</span>.<span class="number">13</span></span><br><span class="line"><span class="attribute">server_version</span> = <span class="number">5</span>.<span class="number">5</span>.<span class="number">60</span>-MariaDB</span><br><span class="line"><span class="attribute">start_time</span> = <span class="number">2019</span>-<span class="number">05</span>-<span class="number">06</span> <span class="number">12</span>:<span class="number">45</span>:<span class="number">33</span></span><br><span class="line"><span class="attribute">end_time</span> = <span class="number">2019</span>-<span class="number">05</span>-<span class="number">06</span> <span class="number">12</span>:<span class="number">45</span>:<span class="number">35</span></span><br><span class="line"><span class="attribute">lock_time</span> = <span class="number">0</span></span><br><span class="line"><span class="attribute">binlog_pos</span> = filename &#x27;mysql-bin.<span class="number">000001</span>&#x27;, position &#x27;<span class="number">245</span>&#x27;</span><br><span class="line"><span class="attribute">innodb_from_lsn</span> = <span class="number">0</span></span><br><span class="line"><span class="attribute">innodb_to_lsn</span> = <span class="number">1628321</span></span><br><span class="line"><span class="attribute">partial</span> = N</span><br><span class="line"><span class="attribute">incremental</span> = N</span><br><span class="line"><span class="attribute">format</span> = file</span><br><span class="line"><span class="attribute">compact</span> = N</span><br><span class="line"><span class="attribute">compressed</span> = N</span><br><span class="line"><span class="attribute">encrypted</span> = N</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>4还原</li>
+</ul>
+<p>注意：还原时必须停止服务<br>在另一台主机上</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># systemctl stop  mariadb.service </span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># rm -rf /var/lib/mysql/*            </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>5把文件拷至目标主机</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root:~ <span class="comment"># scp -rp /xbackup/ 192.168.64.141:/data/backup/</span></span><br><span class="line">​```</span><br><span class="line">* <span class="number">6</span>还原</span><br><span class="line"><span class="number">1</span>）预准备：确保数据一致，提交完成的事务，回滚未完成的事务</span><br><span class="line">​```</span><br><span class="line">root:~ <span class="comment"># xtrabackup --prepare --target-dir=/data/backup/xbackup</span></span><br><span class="line">​```</span><br><span class="line">![](https:<span class="regexp">//</span>s1.<span class="number">51</span>cto.com<span class="regexp">/images/</span>blog<span class="regexp">/201905/</span><span class="number">06</span><span class="regexp">/14266a3c199bcd3504e076ddc8dc2a94.png?x-oss-process=image/</span>watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=)</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）复制到数据库目录</span><br><span class="line"> 注意：数据库目录必须为空，MySQL服务不能启动</span><br></pre></td></tr></table></figure>
+
+<p>root:~ # xtrabackup –copy-back –target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;xbackup –datadir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql<br>““</p>
+<ul>
+<li>7改权限</li>
+</ul>
+<p><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/790999190d5dc02a3ac48eb0e99dbba4.png" alt="img"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql:mysql <span class="regexp">/var/</span>lib<span class="regexp">/mysql/</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/6d45b8a48ed776254c0c63eae601c8c1.png" alt="img"></p>
+<ul>
+<li>8启动服务</li>
+</ul>
+<h3 id="一些高版本备份出现的问题"><a href="#一些高版本备份出现的问题" class="headerlink" title="一些高版本备份出现的问题"></a>一些高版本备份出现的问题</h3><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">root</span>:~ # xtrabackup --backup --target-dir=/data/backup/</span><br><span class="line"><span class="attribute">xtrabackup</span>: recognized server arguments: </span><br><span class="line"><span class="attribute">xtrabackup</span>: recognized client arguments: --backup=<span class="number">1</span> --target-dir=/data/backup/ </span><br><span class="line"><span class="attribute">190506</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">38</span>  version_check Connecting to MySQL server with DSN &#x27;dbi:mysql:;mysql_read_default_group=xtrabackup&#x27; (using password: NO).</span><br><span class="line"><span class="attribute">190506</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">38</span>  version_check Connected to MySQL server</span><br><span class="line"><span class="attribute">190506</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">38</span>  version_check Executing a version check against the server...</span><br><span class="line"><span class="attribute">190506</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">38</span>  version_check Done.</span><br><span class="line"><span class="attribute">190506</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">38</span> Connecting to MySQL server host: localhost, user: not set, password: not set, port: not set, socket: not set</span><br><span class="line"><span class="attribute">Using</span> server version <span class="number">10</span>.<span class="number">4</span>.<span class="number">4</span>-MariaDB</span><br><span class="line"><span class="attribute">xtrabackup</span> version <span class="number">2</span>.<span class="number">4</span>.<span class="number">13</span> based <span class="literal">on</span> MySQL server <span class="number">5</span>.<span class="number">7</span>.<span class="number">19</span> Linux (x86_64) (revision id: <span class="number">3</span>e7ca7c)</span><br><span class="line"><span class="attribute">xtrabackup</span>: uses posix_fadvise().</span><br><span class="line"><span class="attribute">xtrabackup</span>: cd to /var/lib/mysql/</span><br><span class="line"><span class="attribute">xtrabackup</span>: open files limit requested <span class="number">0</span>, set to <span class="number">1024</span></span><br><span class="line"><span class="attribute">xtrabackup</span>: using the following InnoDB configuration:</span><br><span class="line"><span class="attribute">xtrabackup</span>:   innodb_data_home_dir = .</span><br><span class="line"><span class="attribute">xtrabackup</span>:   innodb_data_file_path = ibdata1:<span class="number">12</span>M:autoextend</span><br><span class="line"><span class="attribute">xtrabackup</span>:   innodb_log_group_home_dir = ./</span><br><span class="line"><span class="attribute">xtrabackup</span>:   innodb_log_files_in_group = <span class="number">2</span></span><br><span class="line"><span class="attribute">xtrabackup</span>:   innodb_log_file_size = <span class="number">50331648</span></span><br><span class="line"><span class="attribute">InnoDB</span>: Number of pools: <span class="number">1</span></span><br><span class="line"><span class="attribute">InnoDB</span>: Unsupported redo log format. The redo log was created with MariaDB <span class="number">10</span>.<span class="number">4</span>.<span class="number">4</span>. Please follow the instructions at http://dev.mysql.com/doc/refman/<span class="number">5</span>.<span class="number">7</span>/en/upgrading-downgrading.html</span><br></pre></td></tr></table></figure>
+
+<h2 id="2增量备份与完全备份组合"><a href="#2增量备份与完全备份组合" class="headerlink" title="2增量备份与完全备份组合"></a>2增量备份与完全备份组合</h2><p>准备：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># mkdir /xbackup/&#123;base,inc1,inc2&#125;</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># tree /xbackup/</span></span><br><span class="line"><span class="keyword">/xbackup/</span></span><br><span class="line">├── base  <span class="meta">#完全备份</span></span><br><span class="line">├── inc1  <span class="meta">#第一次增量备份</span></span><br><span class="line">└── inc2   <span class="meta">#第二次增量备份</span></span><br><span class="line"></span><br><span class="line"><span class="number">3</span> directories, <span class="number">0</span> files</span><br></pre></td></tr></table></figure>
+
+<h3 id="1完全备份"><a href="#1完全备份" class="headerlink" title="1完全备份"></a>1完全备份</h3><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># xtrabackup --backup --target-dir=/xbackup/base</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2第一次修改数据，添加两条记录"><a href="#2第一次修改数据，添加两条记录" class="headerlink" title="2第一次修改数据，添加两条记录"></a>2第一次修改数据，添加两条记录</h3><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">insert teachers (<span class="name">name</span>,age)value(&#x27;xiaoming&#x27;,<span class="number">30</span>)<span class="comment">;</span></span><br><span class="line">insert teachers (<span class="name">name</span>,age)value(&#x27;xiaoqiang&#x27;,<span class="number">40</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3第一次增量备份"><a href="#3第一次增量备份" class="headerlink" title="3第一次增量备份"></a>3第一次增量备份</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup <span class="comment">--backup --target-dir=/xbackup/inc1 --incremental-basedir=/xbackup/base</span></span><br><span class="line"></span><br><span class="line"><span class="comment">----------------------------</span></span><br><span class="line">xtrabackup: <span class="keyword">Transaction</span> <span class="keyword">log</span> <span class="keyword">of</span> lsn (<span class="number">1628972</span>) <span class="keyword">to</span> (<span class="number">1628972</span>) was copied.</span><br><span class="line"><span class="number">190506</span> <span class="number">13</span>:<span class="number">34</span>:<span class="number">40</span> completed OK!</span><br></pre></td></tr></table></figure>
+
+<h3 id="4第二次修改数据，添加两条记录"><a href="#4第二次修改数据，添加两条记录" class="headerlink" title="4第二次修改数据，添加两条记录"></a>4第二次修改数据，添加两条记录</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">insert teachers (name,age)value(&#x27;xiaohong&#x27;,20);</span><br><span class="line">insert teachers (name,age)value(&#x27;xiaowang&#x27;,30);</span><br><span class="line">MariaDB [hellodb]&gt; select <span class="symbol">*</span> from teachers;</span><br><span class="line">+-----+---------------+-----+--------+</span><br><span class="line">|<span class="string"> TID </span>|<span class="string"> Name          </span>|<span class="string"> Age </span>|<span class="string"> Gender </span>|</span><br><span class="line">+-----+---------------+-----+--------+</span><br><span class="line">|<span class="string">   1 </span>|<span class="string"> Song Jiang    </span>|<span class="string">  45 </span>|<span class="string"> M      </span>|</span><br><span class="line">|<span class="string">   2 </span>|<span class="string"> Zhang Sanfeng </span>|<span class="string">  94 </span>|<span class="string"> M      </span>|</span><br><span class="line">|<span class="string">   3 </span>|<span class="string"> Miejue Shitai </span>|<span class="string">  77 </span>|<span class="string"> F      </span>|</span><br><span class="line">|<span class="string">   4 </span>|<span class="string"> Lin Chaoying  </span>|<span class="string">  93 </span>|<span class="string"> F      </span>|</span><br><span class="line">|<span class="string">   5 </span>|<span class="string"> xiaoming      </span>|<span class="string">  30 </span>|<span class="string"> NULL   </span>|</span><br><span class="line">|<span class="string">   6 </span>|<span class="string"> xiaoqiang     </span>|<span class="string">  40 </span>|<span class="string"> NULL   </span>|</span><br><span class="line">|<span class="string">   7 </span>|<span class="string"> xiaohong      </span>|<span class="string">  20 </span>|<span class="string"> NULL   </span>|</span><br><span class="line">|<span class="string">   8 </span>|<span class="string"> xiaowang      </span>|<span class="string">  30 </span>|<span class="string"> NULL   </span>|</span><br><span class="line">+-----+---------------+-----+--------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="5第二次增量备份"><a href="#5第二次增量备份" class="headerlink" title="5第二次增量备份"></a>5第二次增量备份</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup --backup --target-dir=<span class="regexp">/xbackup/i</span>nc2 --incremental-basedir=<span class="regexp">/xbackup/i</span>nc1</span><br></pre></td></tr></table></figure>
+
+<h3 id="6拷贝文件"><a href="#6拷贝文件" class="headerlink" title="6拷贝文件"></a>6拷贝文件</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ # scp -r <span class="regexp">/xbackup/</span>* <span class="number">192.168</span>.<span class="number">64.141</span>:<span class="regexp">/data/</span>backup</span><br></pre></td></tr></table></figure>
+
+<h3 id="7在目标主机整理文件"><a href="#7在目标主机整理文件" class="headerlink" title="7在目标主机整理文件"></a>7在目标主机整理文件</h3><ul>
+<li>关闭mariadb<br>1）预准备完全备份，此选项–apply-log-only 阻止回滚未完成的事务</li>
+</ul>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup --prepare --apply-<span class="built_in">log</span>-<span class="keyword">only</span> --<span class="keyword">target</span>-dir=/<span class="keyword">data</span>/backup/base</span><br></pre></td></tr></table></figure>
+
+<p>2）合并第1次增量备份到完全备份</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup --prepare --apply-log-only --target-dir=<span class="regexp">/data/</span>backup<span class="regexp">/base --incremental-dir=/</span>data<span class="regexp">/backup/i</span>nc1</span><br></pre></td></tr></table></figure>
+
+<p>3）合并第2次增量备份到完全备份：最后一次还原不需要加选项–apply-log-only</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ # xtrabackup --prepare --target-dir=<span class="regexp">/data/</span>backup<span class="regexp">/base --incremental-dir=/</span>data<span class="regexp">/backup/i</span>nc2</span><br></pre></td></tr></table></figure>
+
+<p>4）将整理好的文件复制到mariadb目录</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root:~ # rm -rf <span class="regexp">/var/</span>lib<span class="regexp">/mysql/</span>* </span><br><span class="line">root:~ # xtrabackup --<span class="keyword">copy</span>-back --target-dir=<span class="regexp">/data/</span>backup<span class="regexp">/base --datadir=/</span>var<span class="regexp">/lib/my</span>sql</span><br></pre></td></tr></table></figure>
+
+<p>5）还原属性：chown -R mysql:mysql &#x2F;var&#x2F;lib&#x2F;mysql<br>6）启动服务：systemctl start mariadb</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E5%85%A8%EF%BC%8C%E5%A2%9E%E9%87%8F%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F/" title="percona-xtrabackup实现数据库完全，增量的备份和还原">https://horus-k.github.io/2020/03/10/Mysql/percona-xtrabackup实现数据库完全，增量的备份和还原/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/xtrabackup/" rel="tag"># xtrabackup</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/Mysql/Mysql%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%BA%94%E7%94%A8%E4%B9%8B%E4%BD%BF%E7%94%A8ProxySQL%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/" rel="prev" title="Mysql中间件应用之使用ProxySQL进行数据库读写分离">
+                  <i class="fa fa-chevron-left"></i> Mysql中间件应用之使用ProxySQL进行数据库读写分离
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/10/Mysql/%E5%9F%BA%E4%BA%8EYUM%E5%AE%89%E8%A3%85%E4%B8%8E%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%88%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E5%AE%89%E8%A3%85Mariadb-mysql/" rel="next" title="基于YUM安装与源码编译或二进制多实例安装Mariadb.mysql">
+                  基于YUM安装与源码编译或二进制多实例安装Mariadb.mysql <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

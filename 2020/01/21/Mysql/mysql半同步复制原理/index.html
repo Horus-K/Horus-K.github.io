@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="从MySQL5.5开始，MySQL以插件的形式支持半同步复制。如何理解半同步呢？首先我们来看看异步，全同步的概念 异步复制（Asynchronous replication） MySQL默认的复制即是异步的，主库在执行完客户端提交的事务后会立即将结果返给给客户端，并不关心从库是否已经接收并处理，这样就会有一个问题，主如果crash掉了，此时主上已经提交的事务可能并没有传到从上，如果此时，强行将从提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql半同步复制原理">
+<meta property="og:url" content="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="从MySQL5.5开始，MySQL以插件的形式支持半同步复制。如何理解半同步呢？首先我们来看看异步，全同步的概念 异步复制（Asynchronous replication） MySQL默认的复制即是异步的，主库在执行完客户端提交的事务后会立即将结果返给给客户端，并不关心从库是否已经接收并处理，这样就会有一个问题，主如果crash掉了，此时主上已经提交的事务可能并没有传到从上，如果此时，强行将从提">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/576154/201608/576154-20160804163916122-156935432.jpg">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/576154/201608/576154-20160805151130434-530685964.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:image" content="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="article:published_time" content="2020-01-21T01:39:34.000Z">
+<meta property="article:modified_time" content="2020-04-21T01:59:04.565Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images2015.cnblogs.com/blog/576154/201608/576154-20160804163916122-156935432.jpg">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/","path":"2020/01/21/Mysql/mysql半同步复制原理/","title":"mysql半同步复制原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mysql半同步复制原理 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mysql半同步复制原理 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql半同步复制原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-21 09:39:34" itemprop="dateCreated datePublished" datetime="2020-01-21T09:39:34+08:00">2020-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-21 09:59:04" itemprop="dateModified" datetime="2020-04-21T09:59:04+08:00">2020-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>从MySQL5.5开始，MySQL以插件的形式支持半同步复制。如何理解半同步呢？首先我们来看看异步，全同步的概念</p>
+<p><strong>异步复制（Asynchronous replication）</strong></p>
+<p>MySQL默认的复制即是异步的，主库在执行完客户端提交的事务后会立即将结果返给给客户端，并不关心从库是否已经接收并处理，这样就会有一个问题，主如果crash掉了，此时主上已经提交的事务可能并没有传到从上，如果此时，强行将从提升为主，可能导致新主上的数据不完整。</p>
+ <span id="more"></span>
+
+<p><strong>全同步复制（Fully synchronous replication）</strong></p>
+<p>指当主库执行完一个事务，所有的从库都执行了该事务才返回给客户端。因为需要等待所有从库执行完该事务才能返回，所以全同步复制的性能必然会收到严重的影响。</p>
+<p><strong>半同步复制（Semisynchronous replication）</strong></p>
+<p>介于异步复制和全同步复制之间，主库在执行完客户端提交的事务后不是立刻返回给客户端，而是等待至少一个从库接收到并写到relay log中才返回给客户端。相对于异步复制，半同步复制提高了数据的安全性，同时它也造成了一定程度的延迟，这个延迟最少是一个TCP&#x2F;IP往返的时间。所以，半同步复制最好在低延时的网络中使用。</p>
+<p>下面来看看半同步复制的原理图：</p>
+<p> <img src="https://images2015.cnblogs.com/blog/576154/201608/576154-20160804163916122-156935432.jpg" alt="img"></p>
+<p><strong>半同步复制的潜在问题</strong></p>
+<p>客户端事务在存储引擎层提交后，在得到从库确认的过程中，主库宕机了，此时，可能的情况有两种</p>
+<p><strong>事务还没发送到从库上</strong></p>
+<p>此时，客户端会收到事务提交失败的信息，客户端会重新提交该事务到新的主上，当宕机的主库重新启动后，以从库的身份重新加入到该主从结构中，会发现，该事务在从库中被提交了两次，一次是之前作为主的时候，一次是被新主同步过来的。</p>
+<p><strong>事务已经发送到从库上</strong></p>
+<p>此时，从库已经收到并应用了该事务，但是客户端仍然会收到事务提交失败的信息，重新提交该事务到新的主上。</p>
+<p><strong>无数据丢失的半同步复制</strong></p>
+<p>针对上述潜在问题，MySQL 5.7引入了一种新的半同步方案：Loss-Less半同步复制。</p>
+<p>针对上面这个图，“Waiting Slave dump”被调整到“Storage Commit”之前。</p>
+<p>当然，之前的半同步方案同样支持，MySQL 5.7.2引入了一个新的参数进行控制-rpl_semi_sync_master_wait_point</p>
+<p>rpl_semi_sync_master_wait_point有两种取值</p>
+<p><strong>AFTER_SYNC</strong></p>
+<p>这个即新的半同步方案，Waiting Slave dump在Storage Commit之前。</p>
+<p><strong>AFTER_COMMIT</strong></p>
+<p>老的半同步方案，如图所示。</p>
+<p><strong>半同步复制的安装部署</strong></p>
+<p>要想使用半同步复制，必须满足以下几个条件：</p>
+<ol>
+<li><p>MySQL 5.5及以上版本</p>
+</li>
+<li><p>变量have_dynamic_loading为YES</p>
+</li>
+<li><p>异步复制已经存在</p>
+</li>
+</ol>
+<p><strong>首先加载插件</strong></p>
+<p>因用户需执行INSTALL PLUGIN, SET GLOBAL, STOP SLAVE和START SLAVE操作，所以用户需有SUPER权限。</p>
+<p>主：</p>
+<p>mysql&gt; INSTALL PLUGIN rpl_semi_sync_master SONAME ‘semisync_master.so’;</p>
+<p>从：</p>
+<p>mysql&gt; INSTALL PLUGIN rpl_semi_sync_slave SONAME ‘semisync_slave.so’;</p>
+<p><strong>查看插件是否加载成功</strong></p>
+<p>有两种方式</p>
+<p>\1. </p>
+<p>mysql&gt; show plugins;</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpl_semi_sync_master       | <span class="type">ACTIVE</span>   | <span class="type">REPLICATION</span>        | <span class="type">semisync_master</span>.so | <span class="type">GPL</span>  </span><br></pre></td></tr></table></figure>
+
+<p>\2. </p>
+<p>mysql&gt; SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS  WHERE PLUGIN_NAME LIKE ‘%semi%’;</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+----------------------+</span>---------------+</span><br><span class="line"><span class="section">| PLUGIN_NAME          | PLUGIN_STATUS |</span></span><br><span class="line"><span class="section">+----------------------+---------------+</span></span><br><span class="line"><span class="section">| rpl_semi_sync_master | ACTIVE        |</span></span><br><span class="line"><span class="section">+----------------------+---------------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动半同步复制</strong></p>
+<p>在安装完插件后，半同步复制默认是关闭的，这时需设置参数来开启半同步</p>
+<p>主：</p>
+<p>mysql&gt; SET GLOBAL rpl_semi_sync_master_enabled &#x3D; 1;</p>
+<p>从：</p>
+<p>mysql&gt; SET GLOBAL rpl_semi_sync_slave_enabled &#x3D; 1;</p>
+<p>以上的启动方式是在命令行操作，也可写在配置文件中。</p>
+<p>主：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">plugin-load</span><span class="operator">=</span>rpl_semi_sync_master<span class="operator">=</span>semisync_master.so</span><br><span class="line">rpl_semi_sync_master_enabled<span class="operator">=</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>从：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">plugin-load</span><span class="operator">=</span>rpl_semi_sync_slave<span class="operator">=</span>semisync_slave.so</span><br><span class="line">rpl_semi_sync_slave_enabled<span class="operator">=</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>在有的高可用架构下，master和slave需同时启动，以便在切换后能继续使用半同步复制</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">plugin-load</span> <span class="operator">=</span> <span class="string">&quot;rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so&quot;</span></span><br><span class="line"><span class="attribute">rpl-semi-sync-master-enabled</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"><span class="attribute">rpl-semi-sync-slave-enabled</span> <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重启从上的IO线程</strong></p>
+<p>mysql&gt; STOP SLAVE IO_THREAD;</p>
+<p>mysql&gt; START SLAVE IO_THREAD;</p>
+<p>如果没有重启，则默认还是异步复制，重启后，slave会在master上注册为半同步复制的slave角色。</p>
+<p>这时候，主的error.log中会打印如下信息：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T10:<span class="number">03</span>:<span class="number">40.104327</span>Z <span class="number">5</span> [Note] <span class="keyword">While</span> initializing dump thread <span class="keyword">for</span> slave <span class="keyword">with</span> <span class="type">UUID</span> &lt;ce9aaf22<span class="number">-5</span>af6<span class="number">-11e6</span><span class="number">-850</span>b<span class="number">-000</span>c2988bad2&gt;, <span class="built_in">found</span> a zombie dump thread <span class="keyword">with</span> the same <span class="type">UUID</span>. Master <span class="keyword">is</span> killing the zombie dump thread(<span class="number">4</span>).</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T10:<span class="number">03</span>:<span class="number">40.111175</span>Z <span class="number">4</span> [Note] Stop asynchronous binlog_dump <span class="keyword">to</span> slave (server_id: <span class="number">2</span>)</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T10:<span class="number">03</span>:<span class="number">40.119037</span>Z <span class="number">5</span> [Note] <span class="keyword">Start</span> binlog_dump <span class="keyword">to</span> master_thread_id(<span class="number">5</span>) slave_server(<span class="number">2</span>), pos(mysql-bin<span class="number">.000003</span>, <span class="number">621</span>)</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T10:<span class="number">03</span>:<span class="number">40.119099</span>Z <span class="number">5</span> [Note] <span class="keyword">Start</span> semi-sync binlog_dump <span class="keyword">to</span> slave (server_id: <span class="number">2</span>), pos(mysql-bin<span class="number">.000003</span>, <span class="number">621</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看半同步是否在运行</strong></p>
+<p>主：</p>
+<p>mysql&gt; show status like ‘Rpl_semi_sync_master_status’;</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-----------------------------+</span>-------+</span><br><span class="line"><span class="section">| Variable_name               | Value |</span></span><br><span class="line"><span class="section">+-----------------------------+-------+</span></span><br><span class="line"><span class="section">| Rpl_semi_sync_master_status | ON    |</span></span><br><span class="line"><span class="section">+-----------------------------+-------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>从：</p>
+<p>mysql&gt; show status like ‘Rpl_semi_sync_slave_status’;</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+----------------------------+</span>-------+</span><br><span class="line"><span class="section">| Variable_name              | Value |</span></span><br><span class="line"><span class="section">+----------------------------+-------+</span></span><br><span class="line"><span class="section">| Rpl_semi_sync_slave_status | ON    |</span></span><br><span class="line"><span class="section">+----------------------------+-------+</span></span><br><span class="line">1 row in set (0.20 sec)</span><br></pre></td></tr></table></figure>
+
+<p>这两个变量常用来监控主从是否运行在半同步复制模式下。</p>
+<p>至此，MySQL半同步复制搭建完毕~</p>
+<p><strong>事实上，半同步复制并不是严格意义上的半同步复制</strong></p>
+<p>当半同步复制发生超时时（由rpl_semi_sync_master_timeout参数控制，单位是毫秒，默认为10000，即10s），会暂时关闭半同步复制，转而使用异步复制。当master dump线程发送完一个事务的所有事件之后，如果在rpl_semi_sync_master_timeout内，收到了从库的响应，则主从又重新恢复为半同步复制。</p>
+<p>下面来测试一下</p>
+<p><img src="https://images2015.cnblogs.com/blog/576154/201608/576154-20160805151130434-530685964.png" alt="img"></p>
+<p>该验证分为三个阶段</p>
+<ol>
+<li><p>在Slave执行stop slave之前，主的insert操作很快就能返回。</p>
+</li>
+<li><p>在Slave执行stop slave后，主的insert操作需要10.01s才返回，而这与rpl_semi_sync_master_timeout参数的时间相吻合。</p>
+</li>
+</ol>
+<p>这时，查看两个状态的值，均为“OFF”了。</p>
+<p>同时，主的error.log中打印如下信息：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T11:<span class="number">51</span>:<span class="number">49</span>.<span class="number">855452</span>Z <span class="number">6</span> [Warning] Timeout <span class="keyword">waiting </span>for reply of <span class="keyword">binlog </span>(file: mysql-<span class="keyword">bin.000003, </span>pos: <span class="number">1447</span>), semi-<span class="keyword">sync </span>up to file mysql-<span class="keyword">bin.000003, </span>position <span class="number">1196</span>.</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T11:<span class="number">51</span>:<span class="number">49</span>.<span class="number">855742</span>Z <span class="number">6</span> [Note] Semi-<span class="keyword">sync </span>replication <span class="keyword">switched </span>OFF.</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>在Slave执行start slave后，主的insert操作很快就能返回，此时，两个状态的值也变为“ON”了。</li>
+</ol>
+<p>同时，主的error.log中会打印如下信息：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T11:<span class="number">52</span>:<span class="number">40</span>.<span class="number">477098</span>Z <span class="number">7</span> [Note] Start <span class="keyword">binlog_dump </span>to master_thread_id(<span class="number">7</span>) slave_server(<span class="number">2</span>), pos(mysql-<span class="keyword">bin.000003, </span><span class="number">1196</span>)</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T11:<span class="number">52</span>:<span class="number">40</span>.<span class="number">477168</span>Z <span class="number">7</span> [Note] Start semi-<span class="keyword">sync </span><span class="keyword">binlog_dump </span>to slave (server_id: <span class="number">2</span>), pos(mysql-<span class="keyword">bin.000003, </span><span class="number">1196</span>)</span><br><span class="line"><span class="number">2016</span><span class="number">-08</span><span class="number">-05</span>T11:<span class="number">52</span>:<span class="number">40</span>.<span class="number">523475</span>Z <span class="number">0</span> [Note] Semi-<span class="keyword">sync </span>replication <span class="keyword">switched </span>ON <span class="built_in">at</span> (mysql-<span class="keyword">bin.000003, </span><span class="number">1447</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>其它变量</strong></p>
+<p><strong>环境变量</strong></p>
+<p><a href="javascript:void(0);"><img src="/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;%Rpl%&#x27;;</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">|<span class="string"> Variable_name                             </span>|<span class="string"> Value      </span>|</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_enabled              </span>|<span class="string"> ON         </span>|</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_timeout              </span>|<span class="string"> 10000      </span>|</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_trace_level          </span>|<span class="string"> 32         </span>|</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_wait_for_slave_count </span>|<span class="string"> 1          </span>|</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_wait_no_slave        </span>|<span class="string"> ON         </span>|</span><br><span class="line">|<span class="string"> rpl_semi_sync_master_wait_point           </span>|<span class="string"> AFTER_SYNC </span>|</span><br><span class="line">|<span class="string"> rpl_stop_slave_timeout                    </span>|<span class="string"> 31536000   </span>|</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">7 rows in set (0.30 sec)</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>rpl_semi_sync_master_wait_for_slave_count</p>
+<p>MySQL 5.7.3引入的，该变量设置主需要等待多少个slave应答，才能返回给客户端，默认为1。</p>
+<p>rpl_semi_sync_master_wait_no_slave</p>
+<p><strong>ON</strong></p>
+<p>默认值，当状态变量Rpl_semi_sync_master_clients中的值小于rpl_semi_sync_master_wait_for_slave_count时，Rpl_semi_sync_master_status依旧显示为ON。</p>
+<p><strong>OFF</strong></p>
+<p>当状态变量Rpl_semi_sync_master_clients中的值于rpl_semi_sync_master_wait_for_slave_count时，Rpl_semi_sync_master_status立即显示为OFF，即异步复制。</p>
+<p>说得直白一点，如果我的架构是1主2从，2个从都采用了半同步复制，且设置的是rpl_semi_sync_master_wait_for_slave_count&#x3D;2，如果其中一个挂掉了，对于rpl_semi_sync_master_wait_no_slave设置为ON的情况，此时显示的仍然是半同步复制，如果rpl_semi_sync_master_wait_no_slave设置为OFF，则会立刻变成异步复制。</p>
+<p><strong>状态变量</strong></p>
+<p><a href="javascript:void(0);"><img src="/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show status like &#x27;%Rpl_semi%&#x27;;</span><br><span class="line">+--------------------------------------------+-------+</span><br><span class="line">|<span class="string"> Variable_name                              </span>|<span class="string"> Value </span>|</span><br><span class="line">+--------------------------------------------+-------+</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_clients               </span>|<span class="string"> 1     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_net_avg_wait_time     </span>|<span class="string"> 0     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_net_wait_time         </span>|<span class="string"> 0     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_net_waits             </span>|<span class="string"> 6     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_no_times              </span>|<span class="string"> 1     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_no_tx                 </span>|<span class="string"> 1     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_status                </span>|<span class="string"> ON    </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_timefunc_failures     </span>|<span class="string"> 0     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_tx_avg_wait_time      </span>|<span class="string"> 1120  </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_tx_wait_time          </span>|<span class="string"> 4483  </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_tx_waits              </span>|<span class="string"> 4     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_wait_pos_backtraverse </span>|<span class="string"> 0     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_wait_sessions         </span>|<span class="string"> 0     </span>|</span><br><span class="line">|<span class="string"> Rpl_semi_sync_master_yes_tx                </span>|<span class="string"> 4     </span>|</span><br><span class="line">+--------------------------------------------+-------+</span><br><span class="line">14 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>上述状态变量中，比较重要的有以下几个</p>
+<p>Rpl_semi_sync_master_clients</p>
+<p>当前半同步复制从的个数，如果是一主多从的架构，并不包含异步复制从的个数。</p>
+<p>Rpl_semi_sync_master_no_tx</p>
+<p>The number of commits that were not acknowledged successfully by a slave.</p>
+<p>具体到上面的测试中，指的是insert into test.test values(2)这个事务。</p>
+<p>Rpl_semi_sync_master_yes_tx</p>
+<p>The number of commits that were acknowledged successfully by a slave.</p>
+<p>具体到上面的测试中，指的是以下四个事务</p>
+<p>create database test;</p>
+<p>create table test.test(id int);</p>
+<p>insert into test.test values(1);</p>
+<p>insert into test.test values(3);</p>
+<p><strong>总结</strong></p>
+<ol>
+<li><p>在一主多从的架构中，如果要开启半同步复制，并不要求所有的从都是半同步复制。</p>
+</li>
+<li><p>MySQL 5.7极大的提升了半同步复制的性能。</p>
+</li>
+</ol>
+<p>​    5.6版本的半同步复制，dump thread 承担了两份不同且又十分频繁的任务：传送binlog 给slave ，还需要等待slave反馈信息，而且这两个任务是串行的，dump thread 必须等待 slave 返回之后才会传送下一个 events 事务。dump thread 已然成为整个半同步提高性能的瓶颈。在高并发业务场景下，这样的机制会影响数据库整体的TPS 。</p>
+<p>​    5.7版本的半同步复制中，独立出一个 ack collector thread ，专门用于接收slave 的反馈信息。这样master 上有两个线程独立工作，可以同时发送binlog 到slave ，和接收slave的反馈。</p>
+<p><strong>参考</strong></p>
+<ol>
+<li><p>MariaDB原理与实现</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.7/en/replication-semisync.html">http://dev.mysql.com/doc/refman/5.7/en/replication-semisync.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://sanwen8.cn/p/105GRDe.html">http://sanwen8.cn/p/105GRDe.html</a></p>
+</li>
+<li><p>知数堂《MySQL 5.7 Replication新特性》分享</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86/" title="mysql半同步复制原理">https://horus-k.github.io/2020/01/21/Mysql/mysql半同步复制原理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6/" rel="prev" title="mysql半同步复制">
+                  <i class="fa fa-chevron-left"></i> mysql半同步复制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/02/21/Mysql/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="mysql主从复制">
+                  mysql主从复制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

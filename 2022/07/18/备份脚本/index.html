@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="cronjob备份脚本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="备份脚本">
+<meta property="og:url" content="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="cronjob备份脚本">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-18T05:00:43.000Z">
+<meta property="article:modified_time" content="2022-07-18T05:24:36.582Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="备份">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/","path":"2022/07/18/备份脚本/","title":"备份脚本"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>备份脚本 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="备份脚本 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          备份脚本
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-07-18 13:00:43 / 修改时间：13:24:36" itemprop="dateCreated datePublished" datetime="2022-07-18T13:00:43+08:00">2022-07-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="cronjob备份脚本"><a href="#cronjob备份脚本" class="headerlink" title="cronjob备份脚本"></a>cronjob备份脚本</h1><span id="more"></span>
+
+<h2 id="mongo"><a href="#mongo" class="headerlink" title="mongo:"></a>mongo:</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">backup-mongo</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">schedule:</span> <span class="number">0</span> <span class="number">1</span> <span class="string">*</span> <span class="string">*</span> <span class="string">*</span></span><br><span class="line">  <span class="attr">startingDeadlineSeconds:</span> <span class="number">600</span></span><br><span class="line">  <span class="attr">concurrencyPolicy:</span> <span class="string">Replace</span></span><br><span class="line">  <span class="attr">suspend:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">jobTemplate:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">shell</span></span><br><span class="line">              <span class="attr">configMap:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">backup-mongo</span></span><br><span class="line">                <span class="attr">defaultMode:</span> <span class="number">420</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">              <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">                <span class="attr">claimName:</span> <span class="string">dbbackup</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod</span></span><br><span class="line">              <span class="attr">image:</span> <span class="string">bitnami/mongodb:4.4.13-debian-10-r52</span></span><br><span class="line">              <span class="attr">command:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">sh</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">              <span class="attr">args:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;start backup&quot;</span><span class="string">;bash</span> <span class="string">/root/backup-mongo.sh</span></span><br><span class="line">              <span class="attr">resources:</span></span><br><span class="line">                <span class="attr">limits:</span></span><br><span class="line">                  <span class="attr">cpu:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line">                  <span class="attr">memory:</span> <span class="string">300Mi</span></span><br><span class="line">                <span class="attr">requests:</span></span><br><span class="line">                  <span class="attr">cpu:</span> <span class="string">50m</span></span><br><span class="line">                  <span class="attr">memory:</span> <span class="string">300Mi</span></span><br><span class="line">              <span class="attr">volumeMounts:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">shell</span></span><br><span class="line">                  <span class="attr">mountPath:</span> <span class="string">/root</span></span><br><span class="line">                <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">                  <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">              <span class="attr">terminationMessagePath:</span> <span class="string">/dev/termination-log</span></span><br><span class="line">              <span class="attr">terminationMessagePolicy:</span> <span class="string">File</span></span><br><span class="line">              <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">successfulJobsHistoryLimit:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">failedJobsHistoryLimit:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">backup-mongo</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">backup-mongo.sh:</span> <span class="string">&gt;</span></span><br><span class="line"><span class="string">    #!/bin/bash</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="string">DB_HOST=&#x27;xxxxx:27017&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">DB_USER=&#x27;xxxx&#x27;</span>     <span class="comment">#数据库账号 </span></span><br><span class="line"></span><br><span class="line">    <span class="string">DB_PASS=&#x27;xxxxxxxxx&#x27;</span>    <span class="comment">#数据库密码</span></span><br><span class="line"></span><br><span class="line">    <span class="string">DAYS=20</span>    <span class="comment">#DAYS=20代表删除20天前的备份，即只保留近20天的备份</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="string">OUT_DIR=/data/mongodb_bak/mongodb_bak_now</span>    <span class="comment">#临时备份目录</span></span><br><span class="line"></span><br><span class="line">    <span class="string">TAR_DIR=/data/mongodb_bak/mongodb_bak_list</span>    <span class="comment">#备份存放路径</span></span><br><span class="line"></span><br><span class="line">    <span class="string">DATE=`date</span> <span class="string">+%Y_%m_%d`</span>   <span class="comment">#获取当前系统时间</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="string">TAR_BAK=&quot;mongodb_bak_$DATE.tar.gz&quot;</span>    <span class="comment">#最终保存的数据库备份文件</span></span><br><span class="line"></span><br><span class="line">    <span class="string">cd</span> <span class="string">$OUT_DIR</span></span><br><span class="line"></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;删除临时备份目录&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">rm</span> <span class="string">-rf</span> <span class="string">$OUT_DIR/*</span></span><br><span class="line"></span><br><span class="line">    <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">$OUT_DIR/$DATE</span></span><br><span class="line"></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;删除失败文件&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">rm</span> <span class="string">-rf</span> <span class="string">$TAR_DIR/$TAR_BAK</span></span><br><span class="line"></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;开始备份&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">mongodump</span> <span class="string">-h</span> <span class="string">$DB_HOST</span> <span class="string">-u</span> <span class="string">$DB_USER</span> <span class="string">-p</span> <span class="string">$DB_PASS</span> <span class="string">--authenticationDatabase</span></span><br><span class="line">    <span class="string">&quot;admin&quot;</span> <span class="string">-o</span> <span class="string">$OUT_DIR/$DATE</span>   <span class="comment">#备份全部数据库</span></span><br><span class="line"></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;开始压缩&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">tar</span> <span class="string">-zcvf</span> <span class="string">$TAR_DIR/$TAR_BAK</span> <span class="string">$OUT_DIR/$DATE</span>    <span class="comment">#压缩为.tar.gz格式</span></span><br><span class="line"></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;删除之前的备份文件&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">find</span> <span class="string">$TAR_DIR/</span> <span class="string">-mtime</span> <span class="string">+$DAYS</span> <span class="string">-delete</span>   <span class="comment">#删除20天前的备份文件</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Postgres"><a href="#Postgres" class="headerlink" title="Postgres:"></a>Postgres:</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">backup-postgres</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">schedule:</span> <span class="number">0</span> <span class="number">1</span> <span class="string">*</span> <span class="string">*</span> <span class="string">*</span></span><br><span class="line">  <span class="attr">startingDeadlineSeconds:</span> <span class="number">600</span></span><br><span class="line">  <span class="attr">concurrencyPolicy:</span> <span class="string">Replace</span></span><br><span class="line">  <span class="attr">suspend:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">jobTemplate:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">shell</span></span><br><span class="line">              <span class="attr">configMap:</span></span><br><span class="line">                <span class="attr">name:</span> <span class="string">backup-postgres</span></span><br><span class="line">                <span class="attr">defaultMode:</span> <span class="number">420</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">              <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">                <span class="attr">claimName:</span> <span class="string">dbbackup</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod</span></span><br><span class="line">              <span class="attr">image:</span> <span class="string">nbugs.tencentcloudcr.com/nbugs-middleware/postgresql:10</span></span><br><span class="line">              <span class="attr">command:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">sh</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">              <span class="attr">args:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;start backup&quot;</span><span class="string">;bash</span> <span class="string">/root/backup-postgres.sh</span></span><br><span class="line">              <span class="attr">resources:</span></span><br><span class="line">                <span class="attr">limits:</span></span><br><span class="line">                  <span class="attr">cpu:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line">                  <span class="attr">memory:</span> <span class="string">300Mi</span></span><br><span class="line">                <span class="attr">requests:</span></span><br><span class="line">                  <span class="attr">cpu:</span> <span class="string">50m</span></span><br><span class="line">                  <span class="attr">memory:</span> <span class="string">300Mi</span></span><br><span class="line">              <span class="attr">volumeMounts:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">shell</span></span><br><span class="line">                  <span class="attr">mountPath:</span> <span class="string">/root</span></span><br><span class="line">                <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data</span></span><br><span class="line">                  <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">              <span class="attr">terminationMessagePath:</span> <span class="string">/dev/termination-log</span></span><br><span class="line">              <span class="attr">terminationMessagePolicy:</span> <span class="string">File</span></span><br><span class="line">              <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br><span class="line">          <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">30</span></span><br><span class="line">          <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirst</span></span><br><span class="line">          <span class="attr">securityContext:</span> &#123;&#125;</span><br><span class="line">          <span class="attr">schedulerName:</span> <span class="string">default-scheduler</span></span><br><span class="line">  <span class="attr">successfulJobsHistoryLimit:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">failedJobsHistoryLimit:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">backup-postgres</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">backup-postgres.sh:</span> <span class="string">&gt;-</span></span><br><span class="line"><span class="string">    postgreSQL_user=&quot;postgres&quot; #postgreSQL备份用户</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="string">postgreSQL_host=&quot;xxxxxxxx&quot;</span> <span class="comment">#数据库地址</span></span><br><span class="line"></span><br><span class="line">    <span class="string">postgreSQL_port=&quot;5432&quot;</span> <span class="comment">#端口号</span></span><br><span class="line"></span><br><span class="line">    <span class="string">postgreSQL_pw=&quot;xxxxxxx&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">postgreSQL_charset=&quot;utf8&quot;</span>  <span class="comment">#postgreSQL编码</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_location=&#x27;/data/pg_back&#x27;</span>  <span class="comment">#备份数据存放位置，末尾请不要带&quot;/&quot;,此项可以保持默认，程序会自动创建文件夹</span></span><br><span class="line"></span><br><span class="line">    <span class="string">expire_backup_delete=&quot;ON&quot;</span> <span class="comment">#是否开启过期备份删除 ON为开启 OFF为关闭</span></span><br><span class="line"></span><br><span class="line">    <span class="string">expire_days=3</span> <span class="comment">#过期时间天数 默认为三天,此项只有在expire_backup_delete开启时有效</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_time=`date</span> <span class="string">+%Y%m%d%H%M`</span>  <span class="comment">#定义备份详细时间</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_Ymd=`date</span> <span class="string">+%Y-%m-%d`</span> <span class="comment">#定义备份目录中的年月日时间</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_3ago=`date</span> <span class="string">-d</span> <span class="string">&#x27;3 days ago&#x27;</span> <span class="string">+%Y-%m-%d`</span> <span class="comment">#3天之前的日期</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_dir=$backup_location/$backup_Ymd</span>  <span class="comment">#备份文件夹全路径</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># backup_db_arr=(&quot;konga&quot;)  #要备份的数据库名称，多个用空格分开隔开 如(&quot;db1&quot; &quot;db2&quot; &quot;db3&quot;)</span></span><br><span class="line"></span><br><span class="line">    <span class="string">backup_db_arr=`echo</span> <span class="string">&quot;SELECT datname FROM pg_database;&quot;</span> <span class="string">|</span></span><br><span class="line"><span class="string">    PGPASSWORD=admin123Nbugs psql -h$postgreSQL_host -p$postgreSQL_port</span></span><br><span class="line"><span class="string">    -U$postgreSQL_user | egrep -v &quot;rows|datname|-----&quot;`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="string">rm</span> <span class="string">-rf</span> <span class="string">$backup_dir/*</span></span><br><span class="line"></span><br><span class="line">    <span class="string">welcome_msg=&quot;Welcome</span> <span class="string">to</span> <span class="string">use</span> <span class="string">PostgreSQL</span> <span class="string">backup</span> <span class="string">tools!&quot;</span> <span class="comment">#欢迎语</span></span><br><span class="line"></span><br><span class="line">    <span class="string">PGPASSWORD=$postgreSQL_pw</span> <span class="string">psql</span> <span class="string">-h$postgreSQL_host</span> <span class="string">-p$postgreSQL_port</span></span><br><span class="line">    <span class="string">-U$postgreSQL_user</span> <span class="string">&lt;&lt;end</span></span><br><span class="line"></span><br><span class="line">    <span class="string">end</span></span><br><span class="line"></span><br><span class="line">    <span class="string">flag=`echo</span> <span class="string">$?`</span></span><br><span class="line"></span><br><span class="line">    <span class="string">if</span> [ <span class="string">$flag</span> <span class="type">!=</span> <span class="string">&quot;0&quot;</span> ]<span class="string">;</span> <span class="string">then</span></span><br><span class="line">            <span class="string">echo</span> <span class="string">&quot;ERROR:Can&#x27;t connect postgreSQL server! backup stop!&quot;</span></span><br><span class="line">            <span class="string">exit</span> <span class="number">1</span></span><br><span class="line">    <span class="string">else</span></span><br><span class="line">            <span class="string">echo</span> <span class="string">&quot;postgreSQL connect ok! 开始备份 Please wait......&quot;</span></span><br><span class="line">            <span class="comment"># 判断有没有定义备份的数据库，如果定义则开始备份，否则退出备份</span></span><br><span class="line">            <span class="string">if</span> [ <span class="string">&quot;$backup_db_arr&quot;</span> <span class="type">!=</span> <span class="string">&quot;&quot;</span> ]<span class="string">;then</span></span><br><span class="line">                    <span class="comment">#dbnames=$(cut -d &#x27;,&#x27; -f1-5 $backup_database)</span></span><br><span class="line">                    <span class="comment">#echo &quot;arr is ($&#123;backup_db_arr[@]&#125;)&quot;</span></span><br><span class="line">                    <span class="string">for</span> <span class="string">dbname</span> <span class="string">in</span> <span class="string">$&#123;backup_db_arr[@]&#125;</span></span><br><span class="line">                    <span class="string">do</span></span><br><span class="line">                            <span class="string">echo</span> <span class="string">&quot;database $dbname backup start...&quot;</span></span><br><span class="line">                            <span class="string">`mkdir</span> <span class="string">-p</span> <span class="string">$backup_dir`</span></span><br><span class="line">                            <span class="string">`PGPASSWORD=$postgreSQL_pw</span> <span class="string">pg_dump</span> <span class="string">-h$postgreSQL_host</span> <span class="string">-p$postgreSQL_port</span> <span class="string">-U$postgreSQL_user</span> <span class="string">-d$dbname</span> <span class="string">|</span> <span class="string">gzip</span> <span class="string">&gt;</span> <span class="string">$backup_dir/$dbname-$backup_time.sql.gz`</span></span><br><span class="line">                            <span class="string">flag=`echo</span> <span class="string">$?`</span></span><br><span class="line">                            <span class="string">if</span> [ <span class="string">$flag</span> <span class="string">==</span> <span class="string">&quot;0&quot;</span> ]<span class="string">;then</span></span><br><span class="line">                                    <span class="string">echo</span> <span class="string">&quot;database $dbname success backup to $backup_dir/$dbname-$backup_time.sql.gz&quot;</span></span><br><span class="line">                            <span class="string">else</span></span><br><span class="line">                                    <span class="string">echo</span> <span class="string">&quot;database $dbname backup fail!&quot;</span></span><br><span class="line">                                    <span class="string">exit</span> <span class="number">1</span></span><br><span class="line">                            <span class="string">fi</span></span><br><span class="line">                    <span class="string">done</span></span><br><span class="line">            <span class="string">else</span></span><br><span class="line">                    <span class="string">echo</span> <span class="string">&quot;ERROR:No database to backup! backup stop&quot;</span></span><br><span class="line">                    <span class="string">exit</span> <span class="number">1</span></span><br><span class="line">            <span class="string">fi</span></span><br><span class="line">            <span class="comment"># 如果开启了删除过期备份，则进行删除操作</span></span><br><span class="line">            <span class="string">if</span> [ <span class="string">&quot;$expire_backup_delete&quot;</span> <span class="string">==</span> <span class="string">&quot;ON&quot;</span> <span class="string">-a</span>  <span class="string">&quot;$backup_location&quot;</span> <span class="type">!=</span> <span class="string">&quot;&quot;</span> ]<span class="string">;then</span></span><br><span class="line">                     <span class="string">`find</span> <span class="string">$backup_location/</span> <span class="string">-type</span> <span class="string">d</span> <span class="string">-mtime</span> <span class="string">+$expire_days</span> <span class="string">|</span> <span class="string">xargs</span> <span class="string">rm</span> <span class="string">-rf`</span></span><br><span class="line">                     <span class="string">echo</span> <span class="string">&quot;Expired backup data delete complete!&quot;</span></span><br><span class="line">            <span class="string">fi</span></span><br><span class="line">            <span class="string">echo</span> <span class="string">&quot;All database backup success! Thank you! 数据库备份完成!!!!!&quot;</span></span><br><span class="line">            <span class="string">exit</span></span><br><span class="line">    <span class="string">fi</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/" title="备份脚本">https://horus-k.github.io/2022/07/18/备份脚本/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%87%E4%BB%BD/" rel="tag"># 备份</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/" rel="prev" title="apisix生产应用">
+                  <i class="fa fa-chevron-left"></i> apisix生产应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/" rel="next" title="openvpn打通云">
+                  openvpn打通云 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

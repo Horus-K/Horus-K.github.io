@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="该命令用于获取容器镜像的元数据,其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker-Inspect">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="该命令用于获取容器镜像的元数据,其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/screenshot_20200309_143021.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/1583735467571.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/1583735483370.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/1583735649672.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/1583735663307.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/1583735681685.png">
+<meta property="article:published_time" content="2020-03-09T05:35:26.000Z">
+<meta property="article:modified_time" content="2020-03-10T11:00:44.240Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/screenshot_20200309_143021.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/","path":"2020/03/09/docker/Docker-Inspect/","title":"Docker-Inspect"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Docker-Inspect | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Docker-Inspect | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker-Inspect
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 13:35:26" itemprop="dateCreated datePublished" datetime="2020-03-09T13:35:26+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 19:00:44" itemprop="dateModified" datetime="2020-03-10T19:00:44+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="该命令用于获取容器镜像的元数据-其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。"><a href="#该命令用于获取容器镜像的元数据-其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。" class="headerlink" title="该命令用于获取容器镜像的元数据,其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。"></a>该命令用于获取容器镜像的元数据,其中-f参数可以用于获取指定的数据，例如使用来获取容器的IP地址。</h4><span id="more"></span>
+
+<p>简单地说，*-f* 的实参是个Go模版，并在容器&#x2F;镜像的元数据上以该 Go 模版作为输入，最终返回模版指定的数据。</p>
+<p><img src="/2020/03/09/docker/Docker-Inspect/screenshot_20200309_143021.png" alt="screenshot_20200309_143021"></p>
+<p>获取PID</p>
+<p><img src="/2020/03/09/docker/Docker-Inspect/1583735467571.png" alt="1583735467571"></p>
+<h3 id="模版指令"><a href="#模版指令" class="headerlink" title="模版指令"></a>模版指令</h3><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-variable">&#123;&#123; &#125;&#125;</span> 语法用于处理模版指令，大括号外的任何字符都将直接输出。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h3><p>“.” 表示“当前上下文”。大多数情况下表示了容器元数据的整个<a target="_blank" rel="noopener" href="http://lib.csdn.net/base/datastructure">数据结构</a>，但在某些情况下可以重新规定上下文，比如使用 <em>with</em> 函数：</p>
+<p><img src="/2020/03/09/docker/Docker-Inspect/1583735483370.png" alt="1583735483370"></p>
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><p>inspect 数据可以由浮点数、字符串和布尔组成，可以使用 Go 模版内置函数进行比较判断。虽然 Go 模版支持整数，但目前 inspect 数据中的数值类型都是浮点数，而整数应该对于大多数场景更方便（详见该<a target="_blank" rel="noopener" href="https://github.com/docker/docker/issues/11641">Issue</a>）。使用字符串时可以使用双引号。</p>
+<p>数据中不存在的值是不可以用来比较的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@yapi ~]# docker inspect -f &quot;&#123;&#123;.State.ExitCode&#125;&#125; is &#123;&#123;eq .ExecIDs 1&#125;&#125;&quot; $(docker ps -qa)</span><br><span class="line"></span><br><span class="line">Template parsing error: template: :1:25: executing &quot;&quot; at : error calling eq: invalid type for comparison</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>inspect 数据使用 map 以及数组保存。Map 结构非常简单，前面我们曾经展示过，可以通过 . 的链式来访问 map 内部数据：</p>
+<p><img src="/2020/03/09/docker/Docker-Inspect/1583735649672.png" alt="1583735649672"></p>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>除了 <em>index</em>  函数，其他很多函数也很常用。比如逻辑函数 <em>and</em>、<em>or</em> 可以返回布尔结果。注意，函数是不能放在中间：</p>
+<p><img src="/2020/03/09/docker/Docker-Inspect/1583735663307.png" alt="1583735663307"></p>
+<p>下面是一些常用的比较函数：</p>
+<ul>
+<li>eq (等于)</li>
+<li>ne (不等于)</li>
+<li>lt (小于)</li>
+<li>le (小于等于)</li>
+<li>gt (大于)</li>
+<li>ge (大于等于)</li>
+</ul>
+<p><img src="/2020/03/09/docker/Docker-Inspect/1583735681685.png" alt="1583735681685"></p>
+<h3 id="If-语句"><a href="#If-语句" class="headerlink" title="If 语句"></a>If 语句</h3><p>条件语句 <em>if</em> 可以和前面的比较函数一起使用：</p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">$ docker inspect -f &#x27;</span><span class="template-variable">&#123;&#123;<span class="name"><span class="built_in">if</span></span> eq .State.ExitCode <span class="number">0.0</span>&#125;&#125;</span><span class="language-xml"> </span></span><br><span class="line"><span class="language-xml">Normal Exit</span></span><br><span class="line"><span class="language-xml"></span><span class="template-tag">&#123;&#123;<span class="keyword">else</span> <span class="keyword">if</span> eq .State.ExitCode 1.0&#125;&#125;</span><span class="language-xml"> </span></span><br><span class="line"><span class="language-xml">Not a Normal Exit </span></span><br><span class="line"><span class="language-xml"></span><span class="template-tag">&#123;&#123;<span class="keyword">else</span>&#125;&#125;</span><span class="language-xml"> </span></span><br><span class="line"><span class="language-xml">Still Not a Normal Exit </span></span><br><span class="line"><span class="language-xml"></span><span class="template-variable">&#123;&#123;<span class="name">end</span>&#125;&#125;</span><span class="language-xml">&#x27; jenkins</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">Normal Exit</span></span><br><span class="line"><span class="language-xml">注意，</span><span class="template-variable">&#123;&#123;<span class="name">end</span>&#125;&#125;</span><span class="language-xml"> 语句必须有，else if 和 else 按需使用。</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/" title="Docker-Inspect">https://horus-k.github.io/2020/03/09/docker/Docker-Inspect/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/09/docker/Dockerfile%E7%BC%96%E5%86%99%E5%91%BD%E4%BB%A4/" rel="prev" title="Dockerfile编写命令">
+                  <i class="fa fa-chevron-left"></i> Dockerfile编写命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/09/MQ/Kafka%E5%92%8CRabbitmq%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="next" title="Kafka和Rabbitmq的区别">
+                  Kafka和Rabbitmq的区别 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="EFK由ElasticSearch、Fluentd和Kiabana三个开源工具组成。其中Elasticsearch是一款分布式搜索引擎，能够用于日志的检索，Fluentd是一个实时开源的数据收集器,而Kibana 是一款能够为Elasticsearch 提供分析和可视化的 Web 平台。这三款开源工具的组合为日志数据提供了分布式的实时搜集与分析的监控系统。 而在此之前，业界是采用ELK(Elast">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fluentd-简单使用">
+<meta property="og:url" content="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="EFK由ElasticSearch、Fluentd和Kiabana三个开源工具组成。其中Elasticsearch是一款分布式搜索引擎，能够用于日志的检索，Fluentd是一个实时开源的数据收集器,而Kibana 是一款能够为Elasticsearch 提供分析和可视化的 Web 平台。这三款开源工具的组合为日志数据提供了分布式的实时搜集与分析的监控系统。 而在此之前，业界是采用ELK(Elast">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/7982144-229c6bba4b89cb0a.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/7982144-f32d3f8ef05eca8c.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/9644303-473ea2b50ceab1f1?imageMogr2/auto-orient/strip%7CimageView2/2/w/790/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/9644303-3651dc5bbcaa8a44?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/9644303-fa62d035c442126b?imageMogr2/auto-orient/strip%7CimageView2/2/w/868/format/webp">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/20130604161830500">
+<meta property="article:published_time" content="2020-06-04T13:12:32.000Z">
+<meta property="article:modified_time" content="2020-06-06T11:17:04.280Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="Fluentd">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/7982144-229c6bba4b89cb0a.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/","path":"2020/06/04/k8s/Fluentd-简单使用/","title":"Fluentd-简单使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Fluentd-简单使用 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Fluentd-简单使用 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Fluentd-简单使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-04 21:12:32" itemprop="dateCreated datePublished" datetime="2020-06-04T21:12:32+08:00">2020-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-06-06 19:17:04" itemprop="dateModified" datetime="2020-06-06T19:17:04+08:00">2020-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>EFK由ElasticSearch、Fluentd和Kiabana三个开源工具组成。其中Elasticsearch是一款分布式搜索引擎，能够用于日志的检索，Fluentd是一个实时开源的数据收集器,而Kibana 是一款能够为Elasticsearch 提供分析和可视化的 Web 平台。这三款开源工具的组合为日志数据提供了分布式的实时搜集与分析的监控系统。</p>
+<p>而在此之前，业界是采用ELK(Elasticsearch + Logstash + Kibana)来管理日志。Logstash是一个具有实时渠道能力的数据收集引擎,但和fluentd相比，它在效能上表现略逊一筹，故而逐渐被fluentd取代，ELK也随之变成EFK。</p>
+<span id="more"></span>
+
+<h3 id="ELK架构"><a href="#ELK架构" class="headerlink" title="ELK架构"></a>ELK架构</h3><p>为了更好的了解EFK的架构，首先，我们先理解下ELK架构。在此之前，<br> 我们需要清楚如下几个概念：</p>
+<ul>
+<li>Log Source：日志来源。在微服务中，我们的日志主要来源于日志文件和Docker容器，日志文件包括服务器log，例如Nginx access log（记录了哪些用户，哪些页面以及用户浏览器、ip和其他的访问信息）, error log(记录服务器错误日志)等。</li>
+<li>Logstash：数据收集处理引擎，可用于传输docker各个容器中的日志给EK。支持动态的从各种数据源搜集数据，并对数据进行过滤、分析、丰富、统一格式等操作，然后存储以供后续使用。</li>
+<li>Filebeat：和Logstash一样属于日志收集处理工具，基于原先 Logstash-fowarder 的源码改造出来的。与Logstash相比，filebeat更加轻量，占用资源更少</li>
+<li>ElasticSearch:日志搜索引擎</li>
+<li>Kibana:用于日志展示的可视化工具</li>
+<li>Grafana:类似Kibana，可对后端的数据进行实时展示</li>
+</ul>
+<p>下图是ELK架构，采用ElasticSearch、Kibana、Grafana、Filebeat来管理Docker容器日志。</p>
+<p><img src="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/7982144-229c6bba4b89cb0a.png" alt="img"></p>
+<p>由图可知，当我们在Docker中运行应用（application）时，filebeat收集容器中的日志。ElasticSearch收到日志对日志进行实时存储、搜索与分析。我们可在Kibana和Grafana这两个可视化工具中查看日志的操作结果。</p>
+<h3 id="EFK架构"><a href="#EFK架构" class="headerlink" title="EFK架构"></a>EFK架构</h3><p>Fluentd是一个开源的数据收集器，专为处理数据流设计，使用JSON作为数据格式。它采用了插件式的架构，具有高可扩展性高可用性，同时还实现了高可靠的信息转发。</p>
+<p>因此，我们加入Fluentd来收集日志。加入后的EFK架构如图所示。</p>
+<p><img src="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/7982144-f32d3f8ef05eca8c.png" alt="img"></p>
+<h1 id="架构选型"><a href="#架构选型" class="headerlink" title="架构选型"></a>架构选型</h1><ol>
+<li>存储层： Elasticsearch 是一个实时的、分布式的可扩展的搜索引擎，允许进行全文、结构化搜索，它通常用于索引和搜索大量日志数据，也可用于搜索许多不同类型的文档。</li>
+<li>展示层：Kibana   是 Elasticsearch 的一个功能强大的数据可视化 Dashboard，Kibana 允许你通过 web 界面来浏览 Elasticsearch 日志数据。</li>
+<li>缓存层：  需要收集大数据量的日志一般使用Redis、kafka做为中间缓存层来缓冲数据。</li>
+<li>采集层：</li>
+</ol>
+<ul>
+<li><p>Fluentd：是一个流行的开源数据收集器， 具有众多插件，通过获取容器日志文件、过滤和转换日志数据，然后将数据传递到 Elasticsearch 集群，在该集群中对其进行索引和存储。</p>
+</li>
+<li><p>Fluentd-bit： 更适用于嵌入设备等资源受限的场景。占用系统资源较少，在插件可以满足需求的同时，无疑是更好的选择。另外Fluent Bit 提供了输出插件，可以把数据发给 Fluentd，因此他们可以在系统中作为独立服务互相协作。对比如下</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/9644303-473ea2b50ceab1f1?imageMogr2/auto-orient/strip%7CimageView2/2/w/790/format/webp" alt="img"></p>
+<p>在这里插入图片描述</p>
+</li>
+<li><p>Logstash：ES官方推荐，使用它有很多插件，灵活性很高，但由于是java语言编写，占用资源较高，一般作为过滤格式使用，当然也可以单独使用。</p>
+</li>
+<li><p>Filebeat： ES官方新一代采集工具，是一个轻量级的日志传输工具，使用Golang语言编写，占用资源低，一般作为采集日志使用，当然也可以单独使用，同样它和Logstash可以互相协作。</p>
+</li>
+</ul>
+<p>详见：<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://developer.51cto.com/art/201904/595529.htm">详解日志采集工具–Logstash、Filebeat、Fluentd、Logagent对比</a></p>
+<p>相关架构图如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/9644303-3651dc5bbcaa8a44?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/9644303-fa62d035c442126b?imageMogr2/auto-orient/strip%7CimageView2/2/w/868/format/webp" alt="img"></p>
+<p>本文所使用架构<br> Fluentd（采集），Elasticsearch （存储），kibana（展示）</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h3 id="安装前配置"><a href="#安装前配置" class="headerlink" title="安装前配置"></a>安装前配置</h3><h5 id="ntp时间同步-重要"><a href="#ntp时间同步-重要" class="headerlink" title="ntp时间同步(重要)"></a>ntp时间同步(重要)</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install ntp</span><br><span class="line">vim <span class="regexp">/etc/</span>ntp.conf  <span class="regexp">//</span>添加要同步的时间服务器</span><br><span class="line"><span class="regexp">/etc/i</span>nit.d/ntpd start </span><br></pre></td></tr></table></figure>
+
+<h5 id="文件打开数"><a href="#文件打开数" class="headerlink" title="文件打开数"></a>文件打开数</h5><p>查看当前设置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -n</span><br></pre></td></tr></table></figure>
+
+<p>增加最大文件打开数，修改<code>/etc/security/limits.conf</code></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root soft nofile 65536</span><br><span class="line">root hard nofile 65536</span><br><span class="line"><span class="bullet">* </span>soft nofile 65536</span><br><span class="line"><span class="bullet">* </span>hard nofile 65536</span><br></pre></td></tr></table></figure>
+
+<h5 id="修改-etc-sysctl-conf，添加如下内容"><a href="#修改-etc-sysctl-conf，添加如下内容" class="headerlink" title="修改/etc/sysctl.conf，添加如下内容"></a>修改<code>/etc/sysctl.conf</code>，添加如下内容</h5><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">net.core.somaxconn</span> = <span class="number">1024</span></span><br><span class="line"><span class="attr">net.core.netdev_max_backlog</span> = <span class="number">5000</span></span><br><span class="line"><span class="attr">net.core.rmem_max</span> = <span class="number">16777216</span></span><br><span class="line"><span class="attr">net.core.wmem_max</span> = <span class="number">16777216</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_wmem</span> = <span class="number">4096</span> <span class="number">12582912</span> <span class="number">16777216</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_rmem</span> = <span class="number">4096</span> <span class="number">12582912</span> <span class="number">16777216</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_max_syn_backlog</span> = <span class="number">8096</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_slow_start_after_idle</span> = <span class="number">0</span></span><br><span class="line"><span class="attr">net.ipv4.tcp_tw_reuse</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">net.ipv4.ip_local_port_range</span> = <span class="number">10240</span> <span class="number">65535</span></span><br></pre></td></tr></table></figure>
+
+<p>配置生效</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -<span class="selector-tag">p</span> </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">yum安装</span><br><span class="line"></span><br><span class="line">curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh | sh</span><br><span class="line"></span><br><span class="line">命令</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始、停止、重启、查看状态</span></span><br><span class="line">/etc/init.d/td-agent start</span><br><span class="line">/etc/init.d/td-agent stop</span><br><span class="line">/etc/init.d/td-agent restart</span><br><span class="line">/etc/init.d/td-agent status</span><br><span class="line"><span class="comment"># 配置文件</span></span><br><span class="line">/etc/td-agent/td-agent.conf</span><br><span class="line"><span class="comment"># 日志文件</span></span><br><span class="line">/var/log/td-agent/td-agent.log</span><br><span class="line"><span class="comment"># 查询进程</span></span><br><span class="line">ps -ef | grep td-agent</span><br><span class="line">对应配置文件路径</span><br><span class="line">| 项目                       路径   </span><br><span class="line">| 主配置文件        /etc/td-agent/td-agent.conf  </span><br><span class="line">| 主程序           /usr/sbin/td-agent  </span><br><span class="line">| 程序日志         /var/log/td-agent/td-agent.log  </span><br><span class="line">| ruby程序位置     /opt/td-agent/embedded/bin/ruby  </span><br><span class="line">| pid位置         /var/run/td-atent/td-agent.pid </span><br><span class="line">查看默认主配置文件的配置</span><br><span class="line"><span class="comment"># egrep -v &quot;^#|^$&quot; /etc/td-agent/td-agent.conf</span></span><br><span class="line">&lt;match td.*.*&gt;</span><br><span class="line">  @<span class="built_in">type</span> tdlog</span><br><span class="line">  apikey YOUR_API_KEY</span><br><span class="line">  auto_create_table</span><br><span class="line">  buffer_type file</span><br><span class="line">  buffer_path /var/log/td-agent/buffer/td</span><br><span class="line">  &lt;secondary&gt;</span><br><span class="line">    @<span class="built_in">type</span> file</span><br><span class="line">    path /var/log/td-agent/failed_records</span><br><span class="line">  &lt;/secondary&gt;</span><br><span class="line">&lt;/match&gt;</span><br><span class="line">&lt;match debug.**&gt;</span><br><span class="line">  @<span class="built_in">type</span> stdout</span><br><span class="line">&lt;/match&gt;</span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">  @<span class="built_in">type</span> forward</span><br><span class="line">&lt;/source&gt;</span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">  @<span class="built_in">type</span> http</span><br><span class="line">  port 8888</span><br><span class="line">&lt;/source&gt;</span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">  @<span class="built_in">type</span> debug_agent</span><br><span class="line">  <span class="built_in">bind</span> 127.0.0.1</span><br><span class="line">  port 24230</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line">默认配置下的监听状态</span><br><span class="line"></span><br><span class="line"><span class="comment"># netstat -utpln |grep ruby </span></span><br><span class="line">tcp        0      0 0.0.0.0:8888                0.0.0.0:*                   LISTEN      818/ruby            </span><br><span class="line">tcp        0      0 0.0.0.0:24224               0.0.0.0:*                   LISTEN      823/ruby            </span><br><span class="line">tcp        0      0 127.0.0.1:24230             0.0.0.0:*                   LISTEN      823/ruby            </span><br><span class="line">udp        0      0 0.0.0.0:24224               0.0.0.0:*                               823/ruby</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">Ruby安装</span><br><span class="line"></span><br><span class="line">卸载自带的ruby</span><br><span class="line"></span><br><span class="line">yum remove ruby -y</span><br><span class="line"></span><br><span class="line">安装ruby2.<span class="number">5</span></span><br><span class="line"></span><br><span class="line">下载地址: http:<span class="regexp">//</span>www.ruby-lang.org<span class="regexp">/en/</span>downloads/</span><br><span class="line">tar zxvf ruby-<span class="number">2.5</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">mv .<span class="regexp">/ruby-2.5.1 /u</span>sr<span class="regexp">/local/</span>ruby-<span class="number">2.5</span>.<span class="number">1</span></span><br><span class="line">cd <span class="regexp">/usr/</span>local/ruby-<span class="number">2.5</span>.<span class="number">1</span></span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line">​```</span><br><span class="line"></span><br><span class="line">gem换源</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出默认源</span></span><br><span class="line">gem sources</span><br><span class="line"><span class="comment"># 移除默认源</span></span><br><span class="line">gem sources --remove https:<span class="regexp">//</span>rubygems.org/</span><br><span class="line"><span class="comment"># 添加ruby-china源</span></span><br><span class="line">gem sources -a https:<span class="regexp">//g</span>ems.ruby-china.com/</span><br><span class="line"></span><br><span class="line">安装编译环境和软件包依赖</span><br><span class="line"></span><br><span class="line">yum install gcc gcc-c++ make automake autoconf libtool openssl-devel jemalloc-devel gmp-devel -y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">安装fluentd</span><br><span class="line"></span><br><span class="line">gem install fluentd --no-ri --no-rdoc</span><br><span class="line">安装fluentd插件</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查询插件</span></span><br><span class="line">gem search fluent-plugin -rd <span class="comment"># 列出github地址</span></span><br><span class="line"><span class="comment"># 安装mongo插件</span></span><br><span class="line">gem install fluent-plugin-mongo --no-ri --no-rdoc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">初始化fluentd</span><br><span class="line"></span><br><span class="line">fluentd --setup <span class="regexp">/etc/</span>fluentd</span><br><span class="line"></span><br><span class="line">我没成功过     。。。。</span><br></pre></td></tr></table></figure>
+
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>通过8888端口提交一条日志</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d <span class="symbol">&#x27;json</span>=&#123;<span class="string">&quot;json&quot;</span>:<span class="string">&quot;message&quot;</span>&#125;&#x27; http:<span class="comment">//localhost:8888/debug.test</span></span><br></pre></td></tr></table></figure>
+
+<p>查看输出的日志</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tail -n 1 /var/log/td-agent/td-agent.log</span></span><br><span class="line"><span class="attribute">2018</span>-<span class="number">02</span>-<span class="number">09</span> <span class="number">00</span>:<span class="number">09</span>:<span class="number">06</span>.<span class="number">719633187</span> +<span class="number">0800</span> debug.test: &#123;<span class="string">&quot;json&quot;</span>:<span class="string">&quot;message&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以上就是官方给出的最简化的demo，作用不大，但可以初步理解fluentd的工作方式</p>
+</blockquote>
+<h2 id="CS结构"><a href="#CS结构" class="headerlink" title="CS结构"></a>CS结构</h2><p><img src="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/20130604161830500" alt="schema"></p>
+<p>数据流的处理都是双向的，既有Input方向也有Output方向。<br>角色：</p>
+<ul>
+<li>日志转发 &#x2F;&#x2F;client承担此角色</li>
+<li>日志聚合 &#x2F;&#x2F;server扮演此角色</li>
+</ul>
+<blockquote>
+<p><code>日志转发</code> 通常安装在每个节点上以接收本地日志，一旦接收到数据，通过网络将其转发到server端。</p>
+<p><code>日志聚合</code> 接收转发而来的数据，缓冲，过滤并定期通过插件将数据上传到其他存储程序、本地文件等媒介中。</p>
+</blockquote>
+<p>&#x3D;&#x3D;client、server使用同一样部署方式，区别在于配置文件的不同。&#x3D;&#x3D;</p>
+<h1 id="配置讲解"><a href="#配置讲解" class="headerlink" title="配置讲解"></a>配置讲解</h1><h3 id="td-agent-conf配置的组成部分"><a href="#td-agent-conf配置的组成部分" class="headerlink" title="td-agent.conf配置的组成部分"></a><code>td-agent.conf</code>配置的组成部分</h3><ul>
+<li><code>source</code> directives determine the input sources.</li>
+<li><code>match</code> directives determine the output destinations.</li>
+<li><code>filter</code> directives determine the event processing pipelines.</li>
+<li><code>system</code> directives set system wide configuration.</li>
+<li><code>label</code> directives group the output and filter for internal routing</li>
+<li><code>@include</code> directives include other files.</li>
+</ul>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">source</span>： 定义输入，数据的来源,<span class="built_in">input</span>方向</span><br><span class="line"><span class="keyword">match</span>：定义输出，下一步的去向，如写入文件，或者发送到指定软件存储。output方向</span><br><span class="line"><span class="built_in">filter</span>：定义过滤，也即事件处理流水线，一般在输入和输出之间运行，可减少字段，也可丰富信息。</span><br><span class="line"><span class="built_in">system</span>：系统级别的设置，如日志级别、进程名称。</span><br><span class="line">label：定义一组操作，从而实现复用和内部路由。</span><br><span class="line">@include：引入其他文件，和Java、<span class="keyword">python</span>的import类似。</span><br><span class="line">//使用最多的就是<span class="keyword">source</span>、<span class="keyword">match</span>、<span class="built_in">filter</span></span><br></pre></td></tr></table></figure>
+
+<p>例如一个source部分：</p>
+<h5 id="安装指定版本插件"><a href="#安装指定版本插件" class="headerlink" title="安装指定版本插件"></a>安装指定版本插件</h5><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">td-agent-gem  install fluent-plugin-woothee <span class="comment">--version=0.2.1</span></span><br><span class="line">td-agent-gem  install woothee <span class="comment">--version=1.4.0</span></span><br><span class="line"></span><br><span class="line">//<span class="string">&#x27;fluent-plugin-woothee&#x27;</span> <span class="keyword">is</span> a Fluentd <span class="keyword">filter</span> plugin <span class="keyword">to</span> parse UserAgent strings <span class="keyword">and</span> <span class="keyword">to</span> <span class="keyword">filter</span>/<span class="keyword">drop</span> specified categories <span class="keyword">of</span> <span class="keyword">user</span> terminals (<span class="keyword">like</span> <span class="string">&#x27;pc&#x27;</span>, <span class="string">&#x27;smartphone&#x27;</span> <span class="keyword">and</span> so <span class="keyword">on</span>).</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>yum安装的fluentd程序，<code>td-agent-gem</code>等价于<code>/opt/td-agent/embedded/bin/gem</code></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从 24224/tcp 接收数据</span></span><br><span class="line"><span class="comment"># This is used by log forwarding and the fluent-cat command</span></span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">  @<span class="built_in">type</span> forward</span><br><span class="line">  port 24224</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从9880/http协议接收数据</span></span><br><span class="line"><span class="comment"># http://this.host:9880/myapp.access?json=&#123;&quot;event&quot;:&quot;data&quot;&#125;</span></span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">  @<span class="built_in">type</span> http</span><br><span class="line">  port 9880</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line">//@<span class="built_in">type</span> 是必须有的参数，指定类型就是指定使用的插件</span><br><span class="line">//http：使 fluentd 转变为一个 httpd 端点，以接受进入的 http 报文。</span><br><span class="line">//forward：使 fluentd 转变为一个 TCP 端点，以接受 TCP 报文。</span><br></pre></td></tr></table></figure>
+
+<h2 id="插件介绍及安装"><a href="#插件介绍及安装" class="headerlink" title="插件介绍及安装"></a>插件介绍及安装</h2><h5 id="Fluentd有6种类型的插件-或者叫方法-，分别是："><a href="#Fluentd有6种类型的插件-或者叫方法-，分别是：" class="headerlink" title="Fluentd有6种类型的插件(或者叫方法)，分别是："></a>Fluentd有6种类型的插件(或者叫方法)，分别是：</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Input输入：完成输入数据的读取，由<span class="built_in">source</span>部分配置</span><br><span class="line">//常用类型：<span class="built_in">tail</span>、http、forward、tcp、udp、<span class="built_in">exec</span></span><br><span class="line"></span><br><span class="line">Parser分析：解析插件，常与输入、输处配合使用，多见于`format`字段后面</span><br><span class="line">//常用类型：ltsv、json、自定义等</span><br><span class="line"></span><br><span class="line">Output输出：完成输出数据的操作，由match部分配置</span><br><span class="line">//常用配置：file、forward、copy、stdout、<span class="built_in">exec</span></span><br><span class="line"></span><br><span class="line">filter过滤：过滤插件</span><br><span class="line">//常用配置：grep、ignore、record_transformer</span><br><span class="line"></span><br><span class="line">Buffer缓存：缓存插件，用于缓存数据</span><br><span class="line">//常用配置：file、mem</span><br><span class="line"></span><br><span class="line">Formatter格式化：消息格式化的插件，用于输出，允许用户扩展和重新使用自定义输出格式</span><br><span class="line">//常用类型：ltsv、json等</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：out_forward 转发输出插件将事件转发到其他fluentd节点。 此插件支持负载平衡和自动故障切换，由<code>&lt;server&gt;&lt;/server&gt;</code>标记。 对于复制，请使用 out_copy 插件，</p>
+</blockquote>
+<p>copy 输出插件将事件复制到多个输出。由<code>&lt;store&gt;&lt;/store&gt;</code>标记</p>
+<h5 id="安装一些需要的插件的命令"><a href="#安装一些需要的插件的命令" class="headerlink" title="安装一些需要的插件的命令"></a>安装一些需要的插件的命令</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/td-agent/embedded/bin/gem install woothee fluent-plugin-woothee  fluent-plugin-elasticsearch</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装指定版本插件-1"><a href="#安装指定版本插件-1" class="headerlink" title="安装指定版本插件"></a>安装指定版本插件</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">td-agent-gem  install fluent-plugin-woothee --version=0.2.1</span><br><span class="line">td-agent-gem  install woothee --version=1.4.0</span><br><span class="line"></span><br><span class="line">//<span class="string">&#x27;fluent-plugin-woothee&#x27;</span> is a Fluentd filter plugin to parse UserAgent strings and to filter/drop specified categories of user terminals (like <span class="string">&#x27;pc&#x27;</span>, <span class="string">&#x27;smartphone&#x27;</span> and so on).</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>yum安装的fluentd程序，<code>td-agent-gem</code>等价于<code>/opt/td-agent/embedded/bin/gem</code></p>
+</blockquote>
+<h1 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h1><h2 id="http输入，stdout输出"><a href="#http输入，stdout输出" class="headerlink" title="http输入，stdout输出"></a>http输入，stdout输出</h2><p>例子</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">    @<span class="built_in">type</span> http</span><br><span class="line">    port 8888</span><br><span class="line">    <span class="built_in">bind</span> 0.0.0.0</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line">&lt;match td3.**&gt;</span><br><span class="line">    <span class="built_in">type</span> stdout</span><br><span class="line">&lt;/match&gt;</span><br></pre></td></tr></table></figure>
+
+<p>请求</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8888</span>/td3 -d <span class="symbol">&#x27;json</span>=&#123;<span class="string">&quot;hi&quot;</span>:<span class="string">&quot;abc&quot;</span>&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>结果（&#x2F;var&#x2F;log&#x2F;td-agent&#x2F;td-agent.log）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> -n1 /var/log/td-agent/td-agent.log</span><br><span class="line">2020-06-04 22:13:52.811039879 +0800 td3: &#123;<span class="string">&quot;hi&quot;</span>:<span class="string">&quot;abc&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>格式：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;match td2.**&gt;</span><br><span class="line">    @type mongo</span><br><span class="line">    host <span class="number">10.218</span>.<span class="number">139.216</span></span><br><span class="line">    port <span class="number">27017</span></span><br><span class="line">    database db_log</span><br><span class="line">    collection db_col</span><br><span class="line">    time_format %H-%M-%S:%s  <span class="comment">#时-分-秒.毫秒</span></span><br><span class="line">    <span class="keyword">localtime</span>                                  <span class="comment">#本地时间</span></span><br><span class="line">    flush_interval <span class="number">10</span>s</span><br><span class="line">&lt;/match&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="http输入，文件输出"><a href="#http输入，文件输出" class="headerlink" title="http输入，文件输出"></a>http输入，文件输出</h2><p>例子</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /Data</span><br><span class="line"><span class="built_in">chown</span> td-agent:td-agent /Data -R</span><br><span class="line"><span class="comment">## Source descriptions</span></span><br><span class="line"><span class="comment"># HTTP input</span></span><br><span class="line"><span class="comment"># POST http://localhost:8888/&lt;tag&gt;?json=&lt;json&gt;</span></span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">    @<span class="built_in">type</span> http</span><br><span class="line">    port 8888</span><br><span class="line">    <span class="built_in">bind</span> 0.0.0.0</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">## Output</span></span><br><span class="line"><span class="comment"># File output</span></span><br><span class="line"><span class="comment"># match tag=td.*.* and output to file</span></span><br><span class="line">&lt;match td.**&gt;</span><br><span class="line">    @<span class="built_in">type</span> file</span><br><span class="line">    path /Data/test.log</span><br><span class="line">    flush_interval 10s</span><br><span class="line">&lt;/match&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">## match tag=td2.*.* and output to file</span></span><br><span class="line">&lt;match td2.**&gt;</span><br><span class="line">    @<span class="built_in">type</span> file</span><br><span class="line">    path /Data/test_2.<span class="built_in">log</span></span><br><span class="line">    flush_interval 10s</span><br><span class="line">&lt;/match&gt;</span><br></pre></td></tr></table></figure>
+
+<p>http请求：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">curl</span> http://<span class="number">127.0.0.1:8888</span>/td2 -d &#x27;json=&#123;<span class="string">&quot;hi&quot;</span>:<span class="number">1</span>&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>linux命令：</p>
+<p>发POST请求工具：</p>
+<p>结果查看：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> test_2.log.20200604_0.log </span><br><span class="line">2020-06-04T22:27:10+08:00	td3	&#123;<span class="string">&quot;hi&quot;</span>:1&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="http输入，mongoDB输出"><a href="#http输入，mongoDB输出" class="headerlink" title="http输入，mongoDB输出"></a>http输入，mongoDB输出</h2><p>例子</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## Source descriptions</span></span><br><span class="line"><span class="comment"># HTTP input</span></span><br><span class="line"><span class="comment"># POST http://localhost:8888/&lt;tag&gt;?json=&lt;json&gt;</span></span><br><span class="line">&lt;<span class="built_in">source</span>&gt;</span><br><span class="line">    @<span class="built_in">type</span> http</span><br><span class="line">    port 8888</span><br><span class="line">    <span class="built_in">bind</span> 0.0.0.0</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">## Output</span></span><br><span class="line"><span class="comment"># MongoDB output</span></span><br><span class="line"><span class="comment"># match tag=td2.*.* and output to file</span></span><br><span class="line">&lt;match td2.**&gt;</span><br><span class="line">    @<span class="built_in">type</span> mongo</span><br><span class="line">    host 10.218.139.216</span><br><span class="line">    port 27017</span><br><span class="line">    database db_log</span><br><span class="line">    collection db_col</span><br><span class="line">    time_key time</span><br><span class="line">    flush_interval 10s</span><br><span class="line">&lt;/match&gt;</span><br></pre></td></tr></table></figure>
+
+<p>请求</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8888</span>/td2 -d <span class="symbol">&#x27;json</span>=&#123;<span class="string">&quot;hi&quot;</span>:<span class="string">&quot;123&quot;</span>&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>结果查询：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">show</span> dbs</span><br><span class="line">db_log  <span class="number">0.078</span>GB</span><br><span class="line"><span class="keyword">local</span>   <span class="number">0.078</span>GB</span><br><span class="line"></span><br><span class="line">&gt; use db_log</span><br><span class="line">switched <span class="keyword">to</span> db db_log</span><br><span class="line"></span><br><span class="line">&gt; <span class="keyword">show</span> collections</span><br><span class="line">db_col</span><br><span class="line"><span class="keyword">system</span>.indexes</span><br><span class="line"></span><br><span class="line">&gt; db.db_col.find()</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;56af19dbdfb99f0f50000001&quot;), &quot;hi&quot; : <span class="number">2</span>, &quot;time&quot; : ISODate(&quot;2016-02-01T08:39:47Z&quot;) &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件输入，文件输出-json格式化"><a href="#文件输入，文件输出-json格式化" class="headerlink" title="文件输入，文件输出+json格式化"></a>文件输入，文件输出+json格式化</h2><p>format部分可以位于<match>或<filter>部分中。</filter></match></p>
+<h3 id="插件类型"><a href="#插件类型" class="headerlink" title="插件类型"></a>插件类型</h3><p>format部分需要@type参数来指定格式化程序插件的类型。 fluentd内置了一些有用的格式化程序插件。安装第三方插件时也可以使用</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">format</span>&gt;</span></span><br><span class="line">  @type json</span><br><span class="line"><span class="tag">&lt;/<span class="name">format</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>下面是一些内置的格式化插件：</p>
+<ul>
+<li>out_file</li>
+<li>json</li>
+<li>ltsv</li>
+<li>csv</li>
+<li>msgpack</li>
+<li>hash</li>
+<li>single_value</li>
+</ul>
+<h3 id="参数："><a href="#参数：" class="headerlink" title="参数："></a>参数：</h3><ul>
+<li>@type：指定插件类型</li>
+</ul>
+<h3 id="时间参数"><a href="#时间参数" class="headerlink" title="时间参数"></a>时间参数</h3><ul>
+<li>time_type：时间类型<ul>
+<li>默认值：float</li>
+<li>可选值：float, unixtime, string<ul>
+<li>float: 纪元+纳秒(例如:1510544836.154709804)</li>
+<li>unixtime: 纪元(例如:1510544815)</li>
+<li>string: 使用由<code>time_format</code>、本地时间或时区指定的格式</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>time_format：时间格式<ul>
+<li>默认值：nil</li>
+</ul>
+</li>
+<li>localtime：如果为真，使用本地时间。否则，使用 UTC<ul>
+<li>默认值：true</li>
+</ul>
+</li>
+<li>utc：如果为真，使用UTC。否则，使用本地时间<ul>
+<li>默认值：false</li>
+</ul>
+</li>
+<li>timezone：指定时区<ul>
+<li>默认值：nil</li>
+<li>可用的时区格式：<ol>
+<li>[+-]HH:MM(例如:+09:00)</li>
+<li>[+-]HHMM(例如:+0900)</li>
+<li>[+-]HH(例如:+09)</li>
+<li>Region&#x2F;Zone(例如:Asia&#x2F;Tokyo)</li>
+<li>Region&#x2F;Zone&#x2F;Zone(例如:America&#x2F;Argentina&#x2F;Buenos_Aires)</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="json插件举例："><a href="#json插件举例：" class="headerlink" title="json插件举例："></a>json插件举例：</h3><p>json格式化插件将事件转换为json。默认情况下，json格式化程序结果不包含标签和时间字段。</p>
+<p>可用参数：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://soulchild.cn/1717.html">通用参数</a></li>
+<li><a target="_blank" rel="noopener" href="https://soulchild.cn/1752.html#">format参数</a></li>
+<li>add_newline: 在结果中添加\n<ul>
+<li>默认值：true</li>
+</ul>
+</li>
+</ul>
+<p>下面的配置是从&#x2F;Data&#x2F;test.log文件中读取内容，并写入文件</p>
+<p>我们先来看一下不使用format的显示结果</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;source&gt;</span><br><span class="line">    @<span class="keyword">type</span> tail</span><br><span class="line">    tag   <span class="keyword">test</span>.aa</span><br><span class="line">    path  /Data/<span class="keyword">test</span>.<span class="keyword">log</span></span><br><span class="line">    pos_file /Data/<span class="keyword">test</span>.<span class="keyword">log</span>.pos</span><br><span class="line">    &lt;<span class="keyword">parse</span> **&gt;</span><br><span class="line">      @<span class="keyword">type</span> none</span><br><span class="line">    &lt;/<span class="keyword">parse</span>&gt;</span><br><span class="line">&lt;/source&gt;</span><br><span class="line"></span><br><span class="line">&lt;match <span class="keyword">test</span>.aa&gt;</span><br><span class="line">  @<span class="keyword">type</span> <span class="keyword">file</span></span><br><span class="line">  path /Data/<span class="keyword">test</span>-<span class="keyword">out</span>.<span class="keyword">log</span></span><br><span class="line">  flush_interval 10s</span><br><span class="line">&lt;/match&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>模拟生成日志：<code>echo &#39;test line 1&#39; &gt;&gt; /Data/test.log</code></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="Fluentd-简单使用">https://horus-k.github.io/2020/06/04/k8s/Fluentd-简单使用/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Fluentd/" rel="tag"># Fluentd</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/02/k8s/Ingress-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" rel="prev" title="Ingress-简单使用">
+                  <i class="fa fa-chevron-left"></i> Ingress-简单使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/06/k8s/k8s%E5%AE%89%E8%A3%85apollo/" rel="next" title="k8s安装apollo">
+                  k8s安装apollo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

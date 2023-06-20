@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介单元测试是保证代码质量的重要一环，而如何衡量单元测试写得好不好呢？覆盖率（Coverage）是一个重要指标。而JaCoCo则是专门为Java提供的用于检测测试覆盖率的工具，英文全称为Java Code Coverage。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sanor通过jacoco插件收集代码覆盖率">
+<meta property="og:url" content="https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="简介单元测试是保证代码质量的重要一环，而如何衡量单元测试写得好不好呢？覆盖率（Coverage）是一个重要指标。而JaCoCo则是专门为Java提供的用于检测测试覆盖率的工具，英文全称为Java Code Coverage。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-06T05:45:21.000Z">
+<meta property="article:modified_time" content="2021-07-06T07:54:10.493Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/","path":"2021/07/06/sanor通过jacoco插件收集代码覆盖率/","title":"sanor通过jacoco插件收集代码覆盖率"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>sanor通过jacoco插件收集代码覆盖率 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="sanor通过jacoco插件收集代码覆盖率 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sanor通过jacoco插件收集代码覆盖率
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-07-06 13:45:21 / 修改时间：15:54:10" itemprop="dateCreated datePublished" datetime="2021-07-06T13:45:21+08:00">2021-07-06</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>单元测试是保证代码质量的重要一环，而如何衡量单元测试写得好不好呢？<code>覆盖率（Coverage）</code>是一个重要指标。而<code>JaCoCo</code>则是专门为<code>Java</code>提供的用于检测测试覆盖率的工具，英文全称为<code>Java Code Coverage</code>。</p>
+<span id="more"></span>
+
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>这里所讲的<code>覆盖率</code>是指测试代码的覆盖率，这个指标有多种计算方式，如下是比较常用的有：</p>
+<ul>
+<li>行覆盖率：执行代码行数 &#x2F; 总代码行数，判断有多少行代码被测试执行；</li>
+<li>类覆盖率：执行的类 &#x2F; 代码中类总个数；</li>
+<li>分支覆盖率：执行的逻辑分支数 &#x2F; 总的分支数，一般用于检测是不是<code>lf/else</code>都有测试覆盖；</li>
+<li>方法覆盖率：执行的方法数 &#x2F; 代码总方法数，检测是否有方法被遗漏，构造方法也看作为方法。</li>
+<li>圈复杂度：用于判断代码结构的复杂程序，<code>JaCoCo</code>不考虑异常处理的分支；一般认为圈复杂度大于10，就存在比较大的风险，严格要求不可大于15。</li>
+</ul>
+<p>颜色标识：</p>
+<p><code>JaCoCo</code>会通过颜色来标识代码覆盖情况，使其一目了然。红色表示没有覆盖，绿色表示已经覆盖，黄色表示部分覆盖。</p>
+<p>执行方式：</p>
+<p>执行<code>JaCoCo</code>有多种方式：</p>
+<p>（1）直接通过命令执行：<a target="_blank" rel="noopener" href="https://www.eclemma.org/jacoco/trunk/doc/agent.html">https://www.eclemma.org/jacoc...</a></p>
+<p>（2）Ant执行：<a target="_blank" rel="noopener" href="https://www.eclemma.org/jacoco/trunk/doc/ant.html">https://www.eclemma.org/jacoc...</a></p>
+<p>（3）Maven执行：<a target="_blank" rel="noopener" href="https://www.eclemma.org/jacoco/trunk/doc/maven.html">https://www.eclemma.org/jacoc...</a></p>
+<p>（4）集成IDE执行：<a target="_blank" rel="noopener" href="https://www.eclemma.org/">https://www.eclemma.org/</a></p>
+<p>我们接下来主要讲解<code>maven</code>的方式。</p>
+<h1 id="maven整合"><a href="#maven整合" class="headerlink" title="maven整合"></a>maven整合</h1><h2 id="基础整合"><a href="#基础整合" class="headerlink" title="基础整合"></a>基础整合</h2><p><code>Maven</code>整合<code>JaCoCo</code>也容易，配置如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--maven测试为 default 生命周期中的test阶段。--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--test阶段与 maven-surefire-plugin 的test目标相绑定了， 这是一个内置的绑定。--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Maven通过插件来执行 JUnit 和 TestNG 的测试用例。--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--执行单元测试命令：mvn test--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--结果在target目录下生产jacoco-unit.exec文件，表明jacoco正确执行--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.jacoco<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jacoco-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.8.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--指定生成 .exec 文件的存放位置--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">destFile</span>&gt;</span>target/coverage/jacoco-unit.exec<span class="tag">&lt;/<span class="name">destFile</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--Jacoco 是根据 .exec 文件生成最终的报告，所以需指定 .exec 的存放路径--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dataFile</span>&gt;</span>target/coverage/jacoco-unit.exec<span class="tag">&lt;/<span class="name">dataFile</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--指定某些类不执行检测：--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--&lt;excludes&gt; </span></span><br><span class="line"><span class="comment">          &lt;exclude&gt;com/pkslow/basic/containsperformance/**&lt;/exclude&gt;</span></span><br><span class="line"><span class="comment">          &lt;exclude&gt;com/pkslow/basic/ReadPropertiesFile&lt;/exclude&gt;</span></span><br><span class="line"><span class="comment">        &lt;/excludes&gt;--&gt;</span></span><br><span class="line">        </span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- 执行的单测内容 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>jacoco-initialize<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>prepare-agent<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>jacoco-site<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>report<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="规则与阈值"><a href="#规则与阈值" class="headerlink" title="规则与阈值"></a>规则与阈值</h2><p><code>Rules</code>标签可以指定检查阈值，比如类覆盖率必须为<code>100%</code>。在<code>configuration</code>里面配置如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">rules</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rule</span> <span class="attr">implementation</span>=<span class="string">&quot;org.jacoco.maven.RuleConfiguration&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">element</span>&gt;</span>BUNDLE<span class="tag">&lt;/<span class="name">element</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">limits</span>&gt;</span>　　</span><br><span class="line">      <span class="tag">&lt;<span class="name">limit</span> <span class="attr">implementation</span>=<span class="string">&quot;org.jacoco.report.check.Limit&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">counter</span>&gt;</span>METHOD<span class="tag">&lt;/<span class="name">counter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>COVEREDRATIO<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">minimum</span>&gt;</span>0.50<span class="tag">&lt;/<span class="name">minimum</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">limit</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">limit</span> <span class="attr">implementation</span>=<span class="string">&quot;org.jacoco.report.check.Limit&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">counter</span>&gt;</span>BRANCH<span class="tag">&lt;/<span class="name">counter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>COVEREDRATIO<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">minimum</span>&gt;</span>0.50<span class="tag">&lt;/<span class="name">minimum</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">limit</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">limit</span> <span class="attr">implementation</span>=<span class="string">&quot;org.jacoco.report.check.Limit&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">counter</span>&gt;</span>CLASS<span class="tag">&lt;/<span class="name">counter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>MISSEDCOUNT<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maximum</span>&gt;</span>0<span class="tag">&lt;/<span class="name">maximum</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">limit</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">limits</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">rules</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时需要有下面的<code>check</code>才会执行这个规则校验：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">id</span>&gt;</span>check<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">goal</span>&gt;</span>check<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果不满足条件，<code>maven build</code>就会失败。不过，如果我们集成了<code>SonarQube</code>，我们则会通过<code>SonarQube</code>来设置这个规则和阈值。</p>
+<h1 id="提交到Sonar"><a href="#提交到Sonar" class="headerlink" title="提交到Sonar"></a>提交到Sonar</h1><p>添加<code>SonarQube</code>配置信息如下，有三种配置方式：</p>
+<p>（1）配置数据库信息</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>sonar<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activation</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.jdbc.url</span>&gt;</span>jdbc:postgresql://localhost/sonar<span class="tag">&lt;/<span class="name">sonar.jdbc.url</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.jdbc.driver</span>&gt;</span>org.postgresql.Driver<span class="tag">&lt;/<span class="name">sonar.jdbc.driver</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.jdbc.username</span>&gt;</span>user<span class="tag">&lt;/<span class="name">sonar.jdbc.username</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.jdbc.password</span>&gt;</span>password<span class="tag">&lt;/<span class="name">sonar.jdbc.password</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.host.url</span>&gt;</span>http://localhost:9000<span class="tag">&lt;/<span class="name">sonar.host.url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）配置用户名密码</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>sonar<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activation</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.host.url</span>&gt;</span>http://localhost:9000<span class="tag">&lt;/<span class="name">sonar.host.url</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.login</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">sonar.login</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.password</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">sonar.password</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）配置令牌</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>sonar<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activation</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.host.url</span>&gt;</span>http://localhost:9000<span class="tag">&lt;/<span class="name">sonar.host.url</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">sonar.login</span>&gt;</span>9656c84090b2481db6ea97b6d14d87d546bff619<span class="tag">&lt;/<span class="name">sonar.login</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上三种都可以，配置完成后，执行命令如下：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mvn</span> clean verify sonar:sonar</span><br></pre></td></tr></table></figure>
+
+<p>如果不想添加配置，可以直接通过命令来指定，命令如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean verify sonar:sonar -Dsonar.host.<span class="attribute">url</span>=http://localhost:9000 -Dsonar.<span class="attribute">login</span>=9656c84090b2481db6ea97b6d14d87d546bff619</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/" title="sanor通过jacoco插件收集代码覆盖率">https://horus-k.github.io/2021/07/06/sanor通过jacoco插件收集代码覆盖率/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/06/24/k8s%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8kerw/" rel="prev" title="k8s插件管理器kerw">
+                  <i class="fa fa-chevron-left"></i> k8s插件管理器kerw
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/" rel="next" title="容器内核优化..">
+                  容器内核优化.. <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

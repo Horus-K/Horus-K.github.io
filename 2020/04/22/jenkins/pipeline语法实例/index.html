@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一些pipeline语法实例">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pipeline语法实例">
+<meta property="og:url" content="https://horus-k.github.io/2020/04/22/jenkins/pipeline%E8%AF%AD%E6%B3%95%E5%AE%9E%E4%BE%8B/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="一些pipeline语法实例">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-22T09:38:51.000Z">
+<meta property="article:modified_time" content="2020-04-29T08:17:08.914Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="jenkins">
+<meta property="article:tag" content="pipeline">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/04/22/jenkins/pipeline%E8%AF%AD%E6%B3%95%E5%AE%9E%E4%BE%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/04/22/jenkins/pipeline%E8%AF%AD%E6%B3%95%E5%AE%9E%E4%BE%8B/","path":"2020/04/22/jenkins/pipeline语法实例/","title":"pipeline语法实例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>pipeline语法实例 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/04/22/jenkins/pipeline%E8%AF%AD%E6%B3%95%E5%AE%9E%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="pipeline语法实例 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pipeline语法实例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-22 17:38:51" itemprop="dateCreated datePublished" datetime="2020-04-22T17:38:51+08:00">2020-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-29 16:17:08" itemprop="dateModified" datetime="2020-04-29T16:17:08+08:00">2020-04-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>一些pipeline语法实例</p>
+<span id="more"></span>
+
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">node &#123;</span><br><span class="line">    stage(<span class="string">&#x27;目录&#x27;</span>) &#123;</span><br><span class="line">        sh <span class="string">&#x27;pwd&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    stage(<span class="string">&#x27;克隆代码&#x27;</span>) &#123;</span><br><span class="line">       <span class="comment">// git url: &quot;ssh://git@172.81.248.104:19999/root/xqtv-management.git&quot;</span></span><br><span class="line">        script &#123;</span><br><span class="line">            build_tag = sh(<span class="attr">returnStdout:</span> <span class="literal">true</span>,<span class="attr">script:</span> <span class="string">&#x27;git log -1 --pretty=format:%h&#x27;</span>).trim()</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    stage(<span class="string">&#x27;目录&#x27;</span>) &#123;</span><br><span class="line">        sh <span class="string">&#x27;pwd&#x27;</span></span><br><span class="line">        sh <span class="string">&#x27;date&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    stage(<span class="string">&#x27;代码打包&#x27;</span>) &#123;</span><br><span class="line">        script &#123;</span><br><span class="line">            app = input <span class="attr">message:</span> <span class="string">&#x27;选择端口号&#x27;</span>, <span class="attr">ok:</span> <span class="string">&#x27;确认&#x27;</span>, <span class="attr">parameters:</span> [choice(<span class="attr">choices:</span> [<span class="string">&#x27;9871&#x27;</span>, <span class="string">&#x27;9872&#x27;</span>], <span class="attr">description:</span> <span class="string">&#x27;sfs端口号&#x27;</span>, <span class="attr">name:</span> <span class="string">&#x27;sfs_port&#x27;</span>)]  <span class="comment">//参数化构建</span></span><br><span class="line">        &#125;</span><br><span class="line">        sh <span class="string">&#x27;# /var/jenkins_home/MVN/mvn/bin/mvn clean install&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">     stage(<span class="string">&#x27;部署jar包&#x27;</span>) &#123;</span><br><span class="line">        sh <span class="string">&quot;echo $app&quot;</span></span><br><span class="line">        sh <span class="string">&quot;echo $&#123;build_tag&#125;&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">node(<span class="string">&#x27;haimaxy-jnlp&#x27;</span>) &#123;</span><br><span class="line">    stage(<span class="string">&#x27;pull&#x27;</span>) &#123;</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;1.Prepare Stage&quot;</span></span><br><span class="line">        checkout scm</span><br><span class="line">        <span class="built_in">echo</span> env.BRANCH_NAME</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;workspace&#125;</span>&quot;</span></span><br><span class="line">        sh <span class="string">&quot;env&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&#x27;Build&#x27;</span>) &#123;</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;3.Build Docker Image Stage&quot;</span></span><br><span class="line">        <span class="built_in">dir</span>(<span class="string">&#x27;util&#x27;</span>)&#123;</span><br><span class="line">        //git branch: <span class="string">&#x27;master&#x27;</span>, url: <span class="string">&#x27;ssh://git@172.81.248.104:19999/maimai/youli-util.git&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">dir</span>(<span class="string">&#x27;Service&#x27;</span>)&#123;</span><br><span class="line">        //git branch: <span class="string">&#x27;master&#x27;</span>, url: <span class="string">&#x27;ssh://git@172.81.248.104:19999/maimai/youli-Service.git&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">dir</span>(<span class="string">&#x27;api&#x27;</span>)&#123;</span><br><span class="line">        //git branch: <span class="string">&#x27;master&#x27;</span>, url: <span class="string">&#x27;ssh://git@172.81.248.104:19999/maimai/youli-Client.git&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        sh <span class="string">&quot;ls&quot;</span></span><br><span class="line">        /*sh <span class="string">&quot;&quot;</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">            cd <span class="variable">$&#123;workspace&#125;</span>/util</span></span><br><span class="line"><span class="string">            /home/jenkins/maven/bin/mvn clean install -Dmaven.test.skip=true</span></span><br><span class="line"><span class="string">            cd <span class="variable">$&#123;workspace&#125;</span>/Service</span></span><br><span class="line"><span class="string">            /home/jenkins/maven/bin/mvn clean install -Dmaven.test.skip=true</span></span><br><span class="line"><span class="string">            cd <span class="variable">$&#123;workspace&#125;</span>/api</span></span><br><span class="line"><span class="string">            sed -i &quot;</span>/dubbo.registry.address/s/127.0.0.1:2181/zookeeper1?backup=zookeeper2,zookeeper3/<span class="string">&quot; src/main/resources/application.properties</span></span><br><span class="line"><span class="string">            /home/jenkins/maven/bin/mvn clean install -Dmaven.test.skip=true</span></span><br><span class="line"><span class="string">            ls -l &amp;&amp; pwd</span></span><br><span class="line"><span class="string">        &quot;</span><span class="string">&quot;&quot;</span>*/</span><br><span class="line">        /*script &#123;</span><br><span class="line">            sh <span class="string">&#x27;ls&#x27;</span></span><br><span class="line">            build_tag = sh(returnStdout: <span class="literal">true</span>, script: <span class="string">&#x27;cd api &amp;&amp; git rev-parse --short HEAD&#x27;</span>).trim()</span><br><span class="line">            //echo env.GIT_COMMIT </span><br><span class="line">            //echo env.GIT_BRANCH </span><br><span class="line">            //echo env.GIT_REVISION </span><br><span class="line">            <span class="built_in">echo</span>  <span class="string">&quot;<span class="variable">$&#123;build_tag&#125;</span>&quot;</span></span><br><span class="line">            <span class="keyword">if</span> (env.BRANCH_NAME != <span class="string">&#x27;master&#x27;</span>) &#123;</span><br><span class="line">                build_tag = <span class="string">&quot;<span class="variable">$&#123;env.BRANCH_NAME&#125;</span>-<span class="variable">$&#123;build_tag&#125;</span>&quot;</span> </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;*/</span><br><span class="line">        //sh <span class="string">&quot;docker build -t 192.168.220.101/library/api:<span class="variable">$&#123;build_tag&#125;</span> .&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&#x27;Push&#x27;</span>) &#123;</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;4.Push Docker Image Stage&quot;</span></span><br><span class="line">        /*withCredentials([usernamePassword(credentialsId: <span class="string">&#x27;dockerHub&#x27;</span>, passwordVariable: <span class="string">&#x27;dockerHubPassword&#x27;</span>, usernameVariable: <span class="string">&#x27;dockerHubUser&#x27;</span>)]) &#123;</span><br><span class="line">            sh <span class="string">&quot;docker login -u <span class="variable">$&#123;dockerHubUser&#125;</span> -p <span class="variable">$&#123;dockerHubPassword&#125;</span> https://192.168.220.101&quot;</span></span><br><span class="line">            //sh <span class="string">&quot;docker push 192.168.220.101/library/api:<span class="variable">$&#123;build_tag&#125;</span>&quot;</span></span><br><span class="line">            sh <span class="string">&#x27;ls&#x27;</span></span><br><span class="line">        &#125;*/</span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123;</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;5. Deploy Stage&quot;</span></span><br><span class="line">        /*<span class="keyword">if</span> (env.BRANCH_NAME == <span class="string">&#x27;master&#x27;</span>) &#123;</span><br><span class="line">            input <span class="string">&quot;确认要部署线上环境吗？&quot;</span></span><br><span class="line">        &#125;*/</span><br><span class="line">        sh <span class="string">&quot;pwd &amp;&amp; ls -l&quot;</span></span><br><span class="line">        //sh <span class="string">&quot;sed -i &#x27;s/&lt;BUILD_TAG&gt;/<span class="variable">$&#123;build_tag&#125;</span>/&#x27; k8s.yaml&quot;</span></span><br><span class="line">        //sh <span class="string">&quot;sed -i &#x27;s/&lt;BRANCH_NAME&gt;/<span class="variable">$&#123;env.BRANCH_NAME&#125;</span>/&#x27; k8s.yaml&quot;</span></span><br><span class="line">        //sh <span class="string">&quot;mv k8s.yaml api-<span class="variable">$&#123;build_tag&#125;</span>.yaml&quot;</span></span><br><span class="line">        //sh <span class="string">&quot;kubectl apply -f api-<span class="variable">$&#123;build_tag&#125;</span>.yaml --record&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/04/22/jenkins/pipeline%E8%AF%AD%E6%B3%95%E5%AE%9E%E4%BE%8B/" title="pipeline语法实例">https://horus-k.github.io/2020/04/22/jenkins/pipeline语法实例/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
+              <a href="/tags/pipeline/" rel="tag"># pipeline</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/21/Nginx/nginx-location%E9%85%8D%E7%BD%AE%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/" rel="prev" title="nginx location配置详细解释">
+                  <i class="fa fa-chevron-left"></i> nginx location配置详细解释
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/29/k8s/StorageClass%E5%88%9B%E5%BB%BA/" rel="next" title="StorageClass创建">
+                  StorageClass创建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

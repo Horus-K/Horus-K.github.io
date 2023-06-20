@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="什么是 Kubernetes RBAC基于角色的访问控制（Role-Based Access Control, 即 &quot;RBAC&quot;）：使用 “rbac.authorization.k8s.io” API Group 实现授权决策，允许管理员通过 Kubernetes API 动态配置策略。 RBAC 从 Kubernetes v1.6 处于beta版本，从 v1.8 开始，RBA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s-RBAC">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="什么是 Kubernetes RBAC基于角色的访问控制（Role-Based Access Control, 即 &quot;RBAC&quot;）：使用 “rbac.authorization.k8s.io” API Group 实现授权决策，允许管理员通过 Kubernetes API 动态配置策略。 RBAC 从 Kubernetes v1.6 处于beta版本，从 v1.8 开始，RBA">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/640.jfif">
+<meta property="article:published_time" content="2020-03-08T05:32:59.000Z">
+<meta property="article:modified_time" content="2020-03-08T08:31:24.473Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="RBAC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/640.jfif">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/","path":"2020/03/08/k8s/k8s-RBAC/","title":"k8s-RBAC"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s-RBAC | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s-RBAC | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s-RBAC
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-08 13:32:59 / 修改时间：16:31:24" itemprop="dateCreated datePublished" datetime="2020-03-08T13:32:59+08:00">2020-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="什么是-Kubernetes-RBAC"><a href="#什么是-Kubernetes-RBAC" class="headerlink" title="什么是 Kubernetes RBAC"></a>什么是 Kubernetes RBAC</h2><p><code>基于角色的访问控制（Role-Based Access Control, 即 &quot;RBAC&quot;）</code>：使用 “rbac.authorization.k8s.io” API Group 实现授权决策，允许管理员通过 Kubernetes API 动态配置策略。</p>
+<p>RBAC 从 <code>Kubernetes v1.6 处于beta版本</code>，从 <code>v1.8 开始</code>，RBAC已作为 <code>稳定的功能</code>。启用 RBAC，请使用 <code>--authorization-mode=RBAC</code> 启动 API Server。[1]</p>
+<span id="more"></span>
+
+<h2 id="API-概述"><a href="#API-概述" class="headerlink" title="API 概述"></a>API 概述</h2><p>本节将介绍<code>RBAC API</code>所定义的<code>四种顶级类型</code>。用户可以像使用其他Kubernetes API资源一样 （例如通过kubectl、API调用等）与这些资源进行交互。例如，命令 <code>kubectl create -f (resource).yml</code> 可以被用于以下所有的例子，当然，读者在尝试前可能需要先阅读以下相关章节的内容。[1]</p>
+<h2 id="RBAC-简易概览图"><a href="#RBAC-简易概览图" class="headerlink" title="RBAC 简易概览图"></a>RBAC 简易概览图</h2><p><img src="/2020/03/08/k8s/k8s-RBAC/640.jfif" alt="img"></p>
+<h2 id="ClusterRole-与-Role"><a href="#ClusterRole-与-Role" class="headerlink" title="ClusterRole 与 Role"></a>ClusterRole 与 Role</h2><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Role（角色）`：是一系列权限的集合，例如一个角色可以包含读取 Pod 的权限和列出 Pod 的权限。Role `只能用来给某个特定 <span class="keyword">namespace</span> 中的资源作鉴权`。对 <span class="symbol">namespace</span> 、集群级资源 和 非资源类的 <span class="symbol">API</span>（如 /<span class="symbol">healthz</span>）使用 `<span class="symbol">ClusterRole</span></span><br></pre></td></tr></table></figure>
+
+<p><code>ClusterRole</code>：对象可以授予与 Role 对象相同的权限，但由于它们属于集群范围对象，也可以使用它们授予对以下几种资源的访问权限：</p>
+<ul>
+<li>集群范围资源（例如节点，即 node）</li>
+<li>非资源类型 endpoint（例如 &#x2F;healthz）</li>
+<li>授权多个 Namespace</li>
+</ul>
+<p>下面例子描述了 default namespace 中的一个 Role 对象的定义，用于授予对 pod 的读访问权限</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">kind:</span> Role</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  namespace:</span> default</span><br><span class="line"><span class="symbol">  name:</span> demo-role</span><br><span class="line"><span class="symbol">rules:</span></span><br><span class="line">- apiGroups: [<span class="string">&quot;&quot;</span>] <span class="meta"># 空字符串<span class="string">&quot;&quot;</span>表明使用 core API group</span></span><br><span class="line"><span class="symbol">  resources:</span> [<span class="string">&quot;pods&quot;</span>]</span><br><span class="line"><span class="symbol">  verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;watch&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;create&quot;</span>, <span class="string">&quot;delete&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>下面例子中 ClusterRole 定义可用于授予用户对<code>某一个 namespace</code>，或者 <code>所有 namespace</code>的 secret（取决于其绑定方式）的读访问权限</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">kind:</span> ClusterRole</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line">  <span class="meta"># ClusterRole 是集群范围对象，没有 <span class="string">&quot;namespace&quot;</span> 区分</span></span><br><span class="line"><span class="symbol">  name:</span> demo-clusterrole</span><br><span class="line"><span class="symbol">rules:</span></span><br><span class="line">- apiGroups: [<span class="string">&quot;&quot;</span>]</span><br><span class="line"><span class="symbol">  resources:</span> [<span class="string">&quot;secrets&quot;</span>]</span><br><span class="line"><span class="symbol">  verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;watch&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;create&quot;</span>, <span class="string">&quot;delete&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="ClusterRoleBinding-与-RoleBinding"><a href="#ClusterRoleBinding-与-RoleBinding" class="headerlink" title="ClusterRoleBinding 与 RoleBinding"></a>ClusterRoleBinding 与 RoleBinding</h2><p><code>RoleBinding</code>：把 Role 或 ClusterRole 中定义的各种权限映射到 User，Service Account 或者 Group，从而让这些用户继承角色在 namespace 中的权限。</p>
+<p><code>ClusterRoleBinding</code>：让用户继承 ClusterRole 在整个集群中的权限。</p>
+<p><code>RoleBinding</code> 可以引用在同一命名空间内定义的Role对象。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 以下角色绑定定义将允许用户 <span class="string">&quot;jane&quot;</span> 从 <span class="string">&quot;default&quot;</span> 命名空间中读取pod</span></span><br><span class="line"><span class="symbol">kind:</span> RoleBinding</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span> read-pods</span><br><span class="line"><span class="symbol">  namespace:</span> default</span><br><span class="line"><span class="symbol">subjects:</span></span><br><span class="line">- kind: User</span><br><span class="line"><span class="symbol">  name:</span> jane</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br><span class="line"><span class="symbol">roleRef:</span></span><br><span class="line"><span class="symbol">  kind:</span> Role</span><br><span class="line"><span class="symbol">  name:</span> pod-reader</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+
+<p><code>RoleBinding</code> 对象也可以引用一个 <code>ClusterRole</code> 对象用于在 <code>RoleBinding</code> 所在的命名空间内授予用户对所引用的<code>ClusterRole</code> 中定义的命名空间资源的访问权限。这一点允许管理员在整个集群范围内首先定义一组通用的角色，然后再在不同的命名空间中复用这些角色。</p>
+<p>例如，尽管下面示例中的 RoleBinding 引用的是一个 ClusterRole 对象，但是用户”dave”（即角色绑定主体）还是只能读取”development” 命名空间中的 secret（即RoleBinding所在的命名空间）</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 以下角色绑定允许用户<span class="string">&quot;dave&quot;</span>读取<span class="string">&quot;development&quot;</span>命名空间中的secret。</span></span><br><span class="line"><span class="symbol">kind:</span> RoleBinding</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span> read-secrets</span><br><span class="line"><span class="symbol">  namespace:</span> development <span class="meta"># 这里表明仅授权读取<span class="string">&quot;development&quot;</span>命名空间中的资源。</span></span><br><span class="line"><span class="symbol">subjects:</span></span><br><span class="line">- kind: User</span><br><span class="line"><span class="symbol">  name:</span> dave</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br><span class="line"><span class="symbol">roleRef:</span></span><br><span class="line"><span class="symbol">  kind:</span> ClusterRole</span><br><span class="line"><span class="symbol">  name:</span> secret-reader</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+
+<p>最后，可以使用 <code>ClusterRoleBinding</code> 在集群级别和所有命名空间中授予权限。下面示例中所定义的 <code>ClusterRoleBinding</code> 允许在用户组 ”manager” 中的任何用户都可以读取集群中任何命名空间中的 secret 。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 以下`ClusterRoleBinding`对象允许在用户组<span class="string">&quot;manager&quot;</span>中的任何用户都可以读取集群中任何命名空间中的secret。</span></span><br><span class="line"><span class="symbol">kind:</span> ClusterRoleBinding</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span> read-secrets-global</span><br><span class="line"><span class="symbol">subjects:</span></span><br><span class="line">- kind: Group</span><br><span class="line"><span class="symbol">  name:</span> manager</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br><span class="line"><span class="symbol">roleRef:</span></span><br><span class="line"><span class="symbol">  kind:</span> ClusterRole</span><br><span class="line"><span class="symbol">  name:</span> secret-reader</span><br><span class="line"><span class="symbol">  apiGroup:</span> rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+
+<h2 id="对资源的引用"><a href="#对资源的引用" class="headerlink" title="对资源的引用"></a>对资源的引用</h2><p>大多数资源由代表其名字的字符串表示，例如 ”pods”，就像它们出现在相关API endpoint 的URL中一样。然而，有一些Kubernetes API还 包含了”子资源”，比如 <code>pod</code> 的 <code>logs</code>。在Kubernetes中，pod logs endpoint的URL格式为：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET <span class="regexp">/api/</span>v1<span class="regexp">/namespaces/</span>&#123;namespace&#125;<span class="regexp">/pods/</span>&#123;name&#125;/log</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，”pods”是命名空间资源，而”log”是pods的子资源。为了在RBAC角色中表示出这一点，我们需要使用斜线来划分资源 与子资源。如果需要角色绑定主体读取pods以及pod log，您需要定义以下角色：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">kind:</span> Role</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  namespace:</span> default</span><br><span class="line"><span class="symbol">  name:</span> pod-and-pod-logs-reader</span><br><span class="line"><span class="symbol">rules:</span></span><br><span class="line">- apiGroups: [<span class="string">&quot;&quot;</span>]</span><br><span class="line"><span class="symbol">  resources:</span> [<span class="string">&quot;pods&quot;</span>, <span class="string">&quot;pods/log&quot;</span>]</span><br><span class="line"><span class="symbol">  verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;list&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>resourceNames</code> 列表，角色可以针对不同种类的请求根据资源名引用资源实例。当指定了 <code>resourceNames</code> 列表时，不同动作 种类的请求的权限，如使用 ”get”、”delete”、”update”以及”patch”等动词的请求，将被限定到资源列表中所包含的资源实例上。例如，如果需要限定一个角色绑定主体只能 ”get” 或者 ”update” 一个 <code>configmap</code> 时，您可以定义以下角色：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">kind:</span> Role</span><br><span class="line"><span class="symbol">apiVersion:</span> rbac.authorization.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  namespace:</span> default</span><br><span class="line"><span class="symbol">  name:</span> configmap-updater</span><br><span class="line"><span class="symbol">rules:</span></span><br><span class="line">- apiGroups: [<span class="string">&quot;&quot;</span>]</span><br><span class="line"><span class="symbol">  resources:</span> [<span class="string">&quot;configmap&quot;</span>]</span><br><span class="line"><span class="symbol">  resourceNames:</span> [<span class="string">&quot;my-configmap&quot;</span>]</span><br><span class="line"><span class="symbol">  verbs:</span> [<span class="string">&quot;update&quot;</span>, <span class="string">&quot;get&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是，如果设置了 <code>resourceNames</code>，则请求所使用的动词不能是 <code>list、watch、create或者deletecollection</code>。由于资源名不会出现在 <code>create、list、watch和deletecollection</code> 等API请求的URL中，所以这些请求动词不会被设置了<code>resourceNames</code> 的规则所允许，因为规则中的 <code>resourceNames</code> 部分不会匹配这些请求。[1]</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><ul>
+<li><p>绑定用户能查看所有 namespace</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="comment"># 鉴于ClusterRole是集群范围对象，所以这里不需要定 义&quot;namespace&quot;字段</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">view-namespace-clusterrole</span></span><br><span class="line"><span class="attribute">rules</span><span class="punctuation">:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">namespaces</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">namespaces/status</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义 <code>develop-role</code> 用户对 <code>default</code> 命名空间详细权限</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Role</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">develop-role</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">default</span></span><br><span class="line"><span class="attribute">rules</span><span class="punctuation">:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">endpoints</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">serviceaccounts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">configmaps</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">persistentvolumeclaims</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">persistentvolumes</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">services</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicationcontrollers</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicationcontrollers/scale</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">pods</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">pods/log</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">pods/status</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">pods/exec</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">create</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">delete</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deletecollection</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">patch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">bindings</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">events</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">limitranges</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">namespaces/status</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicationcontrollers/status</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">resourcequotas</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">resourcequotas/status</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">namespaces</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apps</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">daemonsets</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">statefulsets</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apps</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deployments</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deployments/scale</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicasets</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicasets/scale</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">autoscaling</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">horizontalpodautoscalers</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">batch</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">cronjobs</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">jobs</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">extensions</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">daemonsets</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">statefulsets</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ingresses</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">networkpolicies</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">extensions</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deployments</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deployments/scale</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicasets</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicasets/scale</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">replicationcontrollers/scale</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">update</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">policy</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">poddisruptionbudgets</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">networking.k8s.io</span></span><br><span class="line">  <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">networkpolicies</span></span><br><span class="line">  <span class="attribute">verbs</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">get</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">watch</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="默认角色-与-默认角色绑定"><a href="#默认角色-与-默认角色绑定" class="headerlink" title="默认角色 与 默认角色绑定"></a>默认角色 与 默认角色绑定</h2><p><code>API Server</code> 会创建一组默认的 <code>ClusterRole</code> 和 <code>ClusterRoleBinding</code> 对象。这些默认对象中有许多包含 <code>system:</code> 前缀，表明这些资源由 <code>Kubernetes基础组件”拥有”</code>。对这些资源的修改可能<code>导致非功能性集群</code>（non-functional cluster）。一个例子是 <code>system:node ClusterRole</code> 对象。这个角色定义了 <code>kubelet</code> 的权限。如果这个角色被修改，可能会导致<code>kubelet</code> 无法正常工作。</p>
+<p>所有默认的 <code>ClusterRole</code> 和 <code>ClusterRoleBinding</code> 对象都会被标记为 <code>kubernetes.io/bootstrapping=rbac-defaults</code>。[1]</p>
+<h2 id="面向用户的角色"><a href="#面向用户的角色" class="headerlink" title="面向用户的角色"></a>面向用户的角色</h2><p>通过命令 <code>kubectl get clusterrole</code> 查看到并不是所有都是以 <code>system:前缀</code>，它们是<code>面向用户的角色</code>。这些角色包含<code>超级用户角色（cluster-admin</code>），即旨在利用 <code>ClusterRoleBinding（cluster-status）</code>在集群范围内授权的角色， 以及那些使用 <code>RoleBinding（admin、edit和view）</code>在特定命名空间中授权的角色。</p>
+<ul>
+<li><code>cluster-admin</code>：<code>超级用户权限</code>，允许对任何资源执行任何操作。在 ClusterRoleBinding 中使用时，可以完全控制集群和所有命名空间中的所有资源。在 RoleBinding 中使用时，可以完全控制 RoleBinding 所在命名空间中的所有资源，包括命名空间自己。</li>
+<li><code>admin</code>：<code>管理员权限</code>，利用 RoleBinding 在某一命名空间内部授予。在 RoleBinding 中使用时，允许针对命名空间内大部分资源的读写访问， 包括在命名空间内创建角色与角色绑定的能力。但<code>不允许对资源配额（resource quota）</code>或者<code>命名空间本身</code>的<code>写访问</code>。</li>
+<li><code>edit</code>：允许对某一个命名空间内大部分对象的读写访问，但不允许查看或者修改角色或者角色绑定。</li>
+<li><code>view</code>：允许对某一个命名空间内大部分对象的只读访问。不允许查看角色或者角色绑定。由于可扩散性等原因，<code>不允许查看 secret 资源</code>。</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">核心组件角色、其它组件角色 和 控制器（Controller）角色 这里不在一一列出。具体见参考链接中<span class="selector-attr">[1]</span>。</span><br></pre></td></tr></table></figure>
+
+<h2 id="Permissive-RBAC"><a href="#Permissive-RBAC" class="headerlink" title="Permissive RBAC"></a>Permissive RBAC</h2><p>所谓 <code>Permissive RBAC</code> 是指授权给所有的 <code>Service Accounts</code> 管理员权限。<code>不推荐的配置</code></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create clusterrolebinding permissive-binding \</span><br><span class="line"><span class="attribute">--clusterrole</span>=cluster-admin \</span><br><span class="line"><span class="attribute">--user</span>=admin \</span><br><span class="line"><span class="attribute">--user</span>=kubelet \</span><br><span class="line"><span class="attribute">--group</span>=system:serviceaccounts</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建用户-shell脚本"><a href="#创建用户-shell脚本" class="headerlink" title="创建用户 shell脚本"></a>创建用户 shell脚本</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env bash</span></span><br><span class="line"><span class="comment"># 注意修改KUBE_APISERVER为你的API Server的地址</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">KUBE_APISERVER</span>=<span class="variable">$1</span></span><br><span class="line"><span class="attribute">USER</span>=<span class="variable">$2</span></span><br><span class="line"><span class="attribute">USER_SA</span>=system:serviceaccount:default:$&#123;USER&#125;</span><br><span class="line"><span class="attribute">Authorization</span>=<span class="variable">$3</span></span><br><span class="line"><span class="attribute">USAGE</span>=<span class="string">&quot;USAGE: create-user.sh &lt;api_server&gt; &lt;username&gt; &lt;clusterrole authorization&gt;\n</span></span><br><span class="line"><span class="string">Example: https://192.168.1.2:6443 brand&quot;</span></span><br><span class="line"><span class="attribute">CSR</span>=`pwd`/user-csr.json</span><br><span class="line"><span class="attribute">SSL_PATH</span>=<span class="string">&quot;/opt/kubernetes/ssl&quot;</span></span><br><span class="line"><span class="attribute">USER_SSL_PATH</span>=<span class="string">&quot;/opt/kubernetes/create-user&quot;</span></span><br><span class="line">SSL_FILES=(ca-key.pem ca.pem ca-config.json)</span><br><span class="line">CERT_FILES=(<span class="variable">$&#123;USER&#125;</span>.csr <span class="variable">$USER</span>-key.pem <span class="variable">$&#123;USER&#125;</span>.pem)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$KUBE_APISERVER</span> == <span class="string">&quot;&quot;</span> ]]; then</span><br><span class="line">   echo -e <span class="variable">$USAGE</span></span><br><span class="line">   exit 1</span><br><span class="line">fi</span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$USER</span> == <span class="string">&quot;&quot;</span> ]];then</span><br><span class="line">    echo -e <span class="variable">$USAGE</span></span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$Authorization</span> == <span class="string">&quot;&quot;</span> ]];then</span><br><span class="line">    echo -e <span class="variable">$USAGE</span></span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建用户的csr文件</span></span><br><span class="line">function createCSR()&#123;</span><br><span class="line">cat&gt;<span class="variable">$CSR</span>&lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;CN&quot;</span>: <span class="string">&quot;USER&quot;</span>,</span><br><span class="line">  <span class="string">&quot;hosts&quot;</span>: [],</span><br><span class="line">  <span class="string">&quot;key&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;algo&quot;</span>: <span class="string">&quot;rsa&quot;</span>,</span><br><span class="line">    <span class="string">&quot;size&quot;</span>: 2048</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;names&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;C&quot;</span>: <span class="string">&quot;CN&quot;</span>,</span><br><span class="line">      <span class="string">&quot;ST&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">      <span class="string">&quot;L&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">      <span class="string">&quot;O&quot;</span>: <span class="string">&quot;k8s&quot;</span>,</span><br><span class="line">      <span class="string">&quot;OU&quot;</span>: <span class="string">&quot;System&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换csr文件中的用户名</span></span><br><span class="line">sed -i <span class="string">&quot;s/USER/<span class="variable">$USER_SA</span>/g&quot;</span> <span class="variable">$CSR</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function ifExist()&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$SSL_PATH</span>/<span class="variable">$1</span>&quot;</span> ]; then</span><br><span class="line">    echo <span class="string">&quot;<span class="variable">$SSL_PATH</span>/<span class="variable">$1</span> not found.&quot;</span></span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function ifClusterrole()&#123;</span><br><span class="line">kubectl <span class="built_in">get</span> clusterrole <span class="variable">$&#123;Authorization&#125;</span> &amp;&gt; /dev/<span class="literal">null</span></span><br><span class="line"><span class="keyword">if</span> (( $? !=0 ));then</span><br><span class="line">   echo <span class="string">&quot;<span class="variable">$&#123;Authorization&#125;</span> clusterrole there is no&quot;</span></span><br><span class="line">   exit 1</span><br><span class="line">fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断clusterrole授权是否存在</span></span><br><span class="line">ifClusterrole</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断证书文件是否存在</span></span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> <span class="variable">$&#123;SSL_FILES[@]&#125;</span>;</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    echo <span class="string">&quot;Check if ssl file <span class="variable">$f</span> exist...&quot;</span></span><br><span class="line">    ifExist <span class="variable">$f</span></span><br><span class="line">    echo <span class="string">&quot;OK&quot;</span></span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">echo <span class="string">&quot;Create CSR file...&quot;</span></span><br><span class="line">createCSR</span><br><span class="line">echo <span class="string">&quot;<span class="variable">$CSR</span> created&quot;</span></span><br><span class="line">echo <span class="string">&quot;Create user&#x27;s certificates and keys...&quot;</span></span><br><span class="line">cd <span class="variable">$USER_SSL_PATH</span></span><br><span class="line">cfssl gencert <span class="attribute">-ca</span>=<span class="variable">$&#123;SSL_PATH&#125;</span>/ca.pem <span class="attribute">-ca-key</span>=<span class="variable">$&#123;SSL_PATH&#125;</span>/ca-key.pem <span class="attribute">-config</span>=<span class="variable">$&#123;SSL_PATH&#125;</span>/ca-config.json <span class="attribute">-profile</span>=kubernetes <span class="variable">$CSR</span>| cfssljson -bare <span class="variable">$USER_SA</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 sa</span></span><br><span class="line">kubectl create sa <span class="variable">$&#123;USER&#125;</span> -n<span class="built_in"> default</span></span><br><span class="line"><span class="built_in"></span></span><br><span class="line"><span class="comment"># 设置集群参数</span></span><br><span class="line">kubectl<span class="built_in"> config </span>set-cluster kubernetes \</span><br><span class="line"><span class="attribute">--certificate-authority</span>=<span class="variable">$&#123;SSL_PATH&#125;</span>/ca.pem \</span><br><span class="line"><span class="attribute">--embed-certs</span>=<span class="literal">true</span> \</span><br><span class="line"><span class="attribute">--server</span>=<span class="variable">$&#123;KUBE_APISERVER&#125;</span> \</span><br><span class="line"><span class="attribute">--kubeconfig</span>=<span class="variable">$&#123;USER&#125;</span>.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置客户端认证参数</span></span><br><span class="line">kubectl<span class="built_in"> config </span>set-credentials <span class="variable">$&#123;USER_SA&#125;</span> \</span><br><span class="line"><span class="attribute">--client-certificate</span>=<span class="variable">$&#123;USER_SSL_PATH&#125;</span>/$&#123;USER_SA&#125;.pem \</span><br><span class="line"><span class="attribute">--client-key</span>=<span class="variable">$&#123;USER_SSL_PATH&#125;</span>/$&#123;USER_SA&#125;-key.pem \</span><br><span class="line"><span class="attribute">--embed-certs</span>=<span class="literal">true</span> \</span><br><span class="line"><span class="attribute">--kubeconfig</span>=<span class="variable">$&#123;USER&#125;</span>.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置上下文参数</span></span><br><span class="line">kubectl<span class="built_in"> config </span>set-context kubernetes \</span><br><span class="line"><span class="attribute">--cluster</span>=kubernetes \</span><br><span class="line"><span class="attribute">--user</span>=<span class="variable">$&#123;USER_SA&#125;</span> \</span><br><span class="line"><span class="attribute">--namespace</span>=development \</span><br><span class="line"><span class="attribute">--kubeconfig</span>=<span class="variable">$&#123;USER&#125;</span>.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置默认上下文</span></span><br><span class="line">kubectl<span class="built_in"> config </span>use-context kubernetes <span class="attribute">--kubeconfig</span>=<span class="variable">$&#123;USER&#125;</span>.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 namespace</span></span><br><span class="line"><span class="comment"># kubectl create ns $USER</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 绑定角色</span></span><br><span class="line"><span class="comment"># kubectl create rolebinding $&#123;USER&#125;-admin-binding --clusterrole=admin --user=$USER --namespace=$USER --serviceaccount=$USER:default</span></span><br><span class="line">kubectl create clusterrolebinding <span class="variable">$&#123;USER&#125;</span>-binding <span class="attribute">--clusterrole</span>=<span class="variable">$&#123;Authorization&#125;</span> <span class="attribute">--user</span>=<span class="variable">$&#123;USER_SA&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># kubectl config get-contexts</span></span><br><span class="line"></span><br><span class="line">echo <span class="string">&quot;Congratulations!&quot;</span></span><br><span class="line">echo <span class="string">&quot;Your kubeconfig file is <span class="variable">$&#123;USER&#125;</span>.kubeconfig&quot;</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/" title="k8s-RBAC">https://horus-k.github.io/2020/03/08/k8s/k8s-RBAC/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/RBAC/" rel="tag"># RBAC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/08/k8s/k8s-service%E6%A8%A1%E6%9D%BF/" rel="prev" title="k8s-service模板">
+                  <i class="fa fa-chevron-left"></i> k8s-service模板
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/08/k8s/k8s-RBAC%E9%85%8D%E7%BD%AE%E5%B7%A5%E5%85%B7/" rel="next" title="k8s-RBAC配置工具">
+                  k8s-RBAC配置工具 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

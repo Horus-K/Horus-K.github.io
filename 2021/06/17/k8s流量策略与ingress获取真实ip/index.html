@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="获取真实ip方法1 X-Forwarded-For配置这种是百度中大多数的方法： 适用于7层http转发 业务架构：Client-&gt;WAF-&gt;LB-&gt;ECS-&gt;容器问题：在容器中获取不到真实的客户端公网IP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s流量策略与ingress获取真实ip">
+<meta property="og:url" content="https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="获取真实ip方法1 X-Forwarded-For配置这种是百度中大多数的方法： 适用于7层http转发 业务架构：Client-&gt;WAF-&gt;LB-&gt;ECS-&gt;容器问题：在容器中获取不到真实的客户端公网IP">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-17T13:35:08.000Z">
+<meta property="article:modified_time" content="2021-08-23T08:23:22.349Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="ingress">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/","path":"2021/06/17/k8s流量策略与ingress获取真实ip/","title":"k8s流量策略与ingress获取真实ip"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s流量策略与ingress获取真实ip | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s流量策略与ingress获取真实ip | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s流量策略与ingress获取真实ip
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-17 21:35:08" itemprop="dateCreated datePublished" datetime="2021-06-17T21:35:08+08:00">2021-06-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-23 16:23:22" itemprop="dateModified" datetime="2021-08-23T16:23:22+08:00">2021-08-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="获取真实ip"><a href="#获取真实ip" class="headerlink" title="获取真实ip"></a>获取真实ip</h1><h2 id="方法1-X-Forwarded-For配置"><a href="#方法1-X-Forwarded-For配置" class="headerlink" title="方法1 X-Forwarded-For配置"></a>方法1 X-Forwarded-For配置</h2><p>这种是百度中大多数的方法：</p>
+<p>适用于7层http转发</p>
+<p><strong>业务架构：</strong><br>Client-&gt;WAF-&gt;LB-&gt;ECS-&gt;容器<br>问题：在容器中获取不到真实的客户端公网IP</p>
+<span id="more"></span>
+
+<p><strong>分析</strong>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">容器里面抓包验证</span><br><span class="line">tcpdump -i eth0 -s 0 -w /tmp/http.cap port 端口</span><br></pre></td></tr></table></figure>
+
+<p>WAF已经将 真实客户端地址放到了 x-Forwarded-For 的字段中传给了ECS</p>
+<p>在容器中抓包，看到一个x-Forwarded-For的字段是错误的,对应的IP为WAF的回源地址</p>
+<p>ingress将真实的客户端IP，放到了x-Original-Forwarded-For。而将WAF的回源地址放到了 x-Forwarded-For了。造成ingress获取ip为WAF回源地址.</p>
+<p><strong>处理方法:</strong></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-<span class="built_in">system</span> <span class="keyword">edit</span> <span class="keyword">cm</span> nginx-configuration</span><br><span class="line">data:</span><br><span class="line">    compute-full-forwarded-<span class="keyword">for</span>: <span class="string">&quot;true&quot;</span></span><br><span class="line">    forwarded-<span class="keyword">for</span>-header: <span class="string">&quot;X-Forwarded-For&quot;</span></span><br><span class="line">    use-forwarded-headers: <span class="string">&quot;true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong>use-forwarded-headers</strong></p>
+<p>查看<strong>NGINX Ingress Controller的ConfigMaps配置文档</strong>，可以找到以下配置项<strong>use-forwarded-headers</strong>如果为true，NGINX会将传入的 <strong>X-Forwarded-</strong>* 头传递给<strong>upstreams</strong>。当NGINX位于另一个正在设置这些标头的 L7 proxy &#x2F; load balancer 之后时，请使用此选项。<br>如果为false，NGINX会忽略传入的 X-Forwarded-* 头，用它看到的请求信息填充它们。如果NGINX直接暴露在互联网上，或者它在基于 L3&#x2F;packet-based load balancer 后面，并且不改变数据包中的源IP，请使用此选项。</p>
+<p>ps： NGINX Ingress Controller直接暴露互联网也就是Edge模式不能开启为true，否则会有<strong>伪造ip</strong>的安全问题。也就是k8s有公网ip，直接让客户端访问，本配置不要设为true！</p>
+</li>
+<li><p><strong>forwarded-for-header</strong></p>
+<p>设置标头字段以标识客户端的原始IP地址。 默认: X-Forwarded-For</p>
+<p>ps：如果 NGINX Ingress Controller 在CDN，WAF，LB等后面，设置从头的哪个字段获取IP，默认是X-Forwarded-For</p>
+<p>这个配置应该和use-forwarded-headers配合使用</p>
+</li>
+<li><p><strong>compute-full-forwarded-for</strong></p>
+<p>将远程地址附加到 X-Forwarded-For 标头，而不是替换它。 启用此选项后，upstreams应用程序将根据其自己的受信任代理列表提取客户端IP</p>
+</li>
+</ol>
+<p><strong>作为Edge需要重写remote_addr，保证了客户端IP不会被伪造</strong><br>必须：X-Forwarded-For 重写为 $remote_addr<br>非必须扩展：X-Real-IP 重写为 $remote_addr</p>
+<p><strong>ingress默认会重写 proxy_set_header X-Forwarded-For        $remote_addr;</strong></p>
+<h2 id="方法二-方式二-Proxy-Protocol-配置实例"><a href="#方法二-方式二-Proxy-Protocol-配置实例" class="headerlink" title="方法二 方式二 Proxy Protocol 配置实例"></a>方法二 方式二 Proxy Protocol 配置实例</h2><h2 id="方法三-ingress-svc-流量策略设置成Local"><a href="#方法三-ingress-svc-流量策略设置成Local" class="headerlink" title="方法三 ingress svc 流量策略设置成Local"></a>方法三 ingress svc 流量策略设置成Local</h2><p>如果使用ingress NodePort方式，并以DaemonSet方式安装nginx-ingress-controller,可以实现客户端从任何节点都可以访问，并可获取到客户端的真实IP：</p>
+<p>externalTrafficPolicy的好处是，Pod内应用的确可以拿到真实的客户端地址了，但坏处是： <strong>客户端只能使用pod所在的node的IP访问，无法使用其他node的ip访问以及使用vrrp之类的virtual IP来实现ha</strong>，对客户端来说会麻烦一点。 </p>
+<p>设置 <code>service.spec.externalTrafficPolicy</code> 的值为 <code>Local</code>，请求就只会被代理到本地 endpoints 而不会被转发到其它节点。这样就保留了最初的源 IP 地址。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将 Deployment 改为 DaemonSet</span><br><span class="line">删掉 replicas: 1</span><br><span class="line">将ingress svc 改为 externalTrafficPolicy: Local</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                client  </span><br><span class="line">           ^ /          ^ <span class="string">\</span> </span><br><span class="line">          / /            <span class="string">\</span> <span class="string">\</span> </span><br><span class="line">         / v              <span class="string">\</span> v    </span><br><span class="line">node <span class="number">1</span> service-NodePort     node <span class="number">2</span> serviceNodePort  </span><br><span class="line">     ^ |                    ^ |</span><br><span class="line">     | |                    | |</span><br><span class="line">     | v                    | v</span><br><span class="line">node1 ingress-controller  node2 ingress-controller </span><br><span class="line">    ^  <span class="string">\</span>                  /  ^    </span><br><span class="line">     <span class="string">\</span>  <span class="string">\</span>                /  /   </span><br><span class="line">      <span class="string">\</span>  <span class="string">\</span>              /  /  </span><br><span class="line">       <span class="string">\</span>  v            v  /          </span><br><span class="line">             endpoint</span><br></pre></td></tr></table></figure>
+
+<p>nginx日志<code>$http_x_forwarded_for</code>已经记录了客户端的真实IP</p>
+<h3 id="踩坑："><a href="#踩坑：" class="headerlink" title="踩坑："></a>踩坑：</h3><p>在部署apollo时，一共部署3个环境，线上为内网，测试开发为公网(同一个集群中)，在portal组件的检查后端服务中存在无法访问后端服务状况</p>
+<h4 id="流量路径"><a href="#流量路径" class="headerlink" title="流量路径"></a>流量路径</h4><p>portal组件(pod)–&gt;ingress–&gt;configservice(pod)</p>
+<p>因为ingress svc流量策略已经改为Local，但是ingress Deployment并没有改为DaemonSet，所以外端访问时如果ingress pod没有和apollo在一台主机时，处出现pod访问ingress后端被拒绝</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>7层转发链路 Client(客户端) &gt; Nginx &gt; K8s Ingress(Nginx ingress)<br>4层转发链路 Client(客户端) &gt; 公有云LB &gt; K8s Ingress(Nginx ingress) (阿里云默认为此)<br>ps: 实际业务会串联更多层级的转发。DDOS、WAF、CDN、Api Gateway一般是http 7层转发，LB一般是4层tcp转发</p>
+<h2 id="whoami探针"><a href="#whoami探针" class="headerlink" title="whoami探针"></a><strong>whoami探针</strong></h2><p>whomai是一个go编写的调试探针工具，回显http头信息<br>在k8s中部署一个containous&#x2F;whoami用来作为探针，配置好ingress公网和访问，这样客户端web访问可以看到基本的http头信息，方便调试</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">whoami</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">whoami</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">containous/whoami</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">80tcp02</span></span><br><span class="line">          <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirst</span></span><br><span class="line">      <span class="attr">restartPolicy:</span> <span class="string">Always</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">whoami</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">k8s-ingress-xxx.xxx.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/whoami/(.+)</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">ImplementationSpecific</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">whoami</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>客户端web访问，回显http头示例</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Hostname</span><span class="punctuation">: </span>whoami-65b8cc4b-6vwns</span><br><span class="line"><span class="attribute">IP</span><span class="punctuation">: </span>127.0.0.1</span><br><span class="line"><span class="attribute">IP</span><span class="punctuation">: </span>10.42.2.12</span><br><span class="line"><span class="attribute">RemoteAddr</span><span class="punctuation">: </span>10.42.1.0:47850</span><br><span class="line"><span class="keyword">GET</span> <span class="string">/</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>whoami.iamle.com</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate, br</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6,la;q=0.5</span><br><span class="line"><span class="attribute">Cookie</span><span class="punctuation">: </span>_ga=GA1.2.30707523.1570429261;</span><br><span class="line"><span class="attribute">Dnt</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">Sec-Fetch-Dest</span><span class="punctuation">: </span>document</span><br><span class="line"><span class="attribute">Sec-Fetch-Mode</span><span class="punctuation">: </span>navigate</span><br><span class="line"><span class="attribute">Sec-Fetch-Site</span><span class="punctuation">: </span>cross-site</span><br><span class="line"><span class="attribute">Sec-Fetch-User</span><span class="punctuation">: </span>?1</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">X-Forwarded-For</span><span class="punctuation">: </span>8.8.8.8, 10.0.0.1</span><br><span class="line"><span class="attribute">X-Forwarded-Host</span><span class="punctuation">: </span>whoami.iamle.com</span><br><span class="line"><span class="attribute">X-Forwarded-Port</span><span class="punctuation">: </span>443</span><br><span class="line"><span class="attribute">X-Forwarded-Proto</span><span class="punctuation">: </span>https</span><br><span class="line"><span class="attribute">X-Original-Forwarded-For</span><span class="punctuation">: </span>8.8.8.8</span><br><span class="line"><span class="attribute">X-Original-Uri</span><span class="punctuation">: </span>/</span><br><span class="line"><span class="attribute">X-Real-Ip</span><span class="punctuation">: </span>8.8.8.8</span><br><span class="line"><span class="attribute">X-Request-Id</span><span class="punctuation">: </span>3852c9780589ffba4c1f9f2785691d5f</span><br><span class="line"><span class="attribute">X-Scheme</span><span class="punctuation">: </span>https</span><br></pre></td></tr></table></figure>
+
+<h2 id="两种方式"><a href="#两种方式" class="headerlink" title="两种方式"></a>两种方式</h2><ul>
+<li><p>7层http头X-Forwarded-For透传</p>
+<p>http工作在网络第7层,http中有个X-Forwarded-For字段</p>
+<p>大部分CDN、WAF、LB用X-Forwarded-For字段来存客户端IP，也有用X-Real-Ip字段，cloudflare、百度云加速还扩展了CF-Connecting-IP字段<br>标准数据为</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X-Forwareded-For：<span class="built_in">Client</span>，proxy1，proxy2，proxy3……</span><br></pre></td></tr></table></figure>
+
+<p>第一个ip是客户端ip，后面的proxy为路过一层就加一层的ip<br>这里的proxy可以是WAF、CDN、LB、Api Gateway等</p>
+</li>
+<li><p>4层Proxy Protocol透传</p>
+<p>tcp工作在网络第4层,Proxy Protocol就是在tcp中增加一个小的报头，用来存储额外的信息</p>
+<p>代理协议即 Proxy Protocol,是haproxy的作者Willy Tarreau于2010年开发和设计的一个Internet协议，通过为tcp添加一个很小的头信息，来方便的传递客户</p>
+<p>端信息（协议栈、源IP、目的IP、源端口、目的端口等)，在网络情况复杂又需要获取客户IP时非常有用。</p>
+<p>其本质是在三次握手结束后由代理在连接中插入了一个携带了原始连接四元组信息的数据包。</p>
+<p>目前 proxy protocol有两个版本，v1仅支持human-readable报头格式（ASCIII码），v2需同时支持human-readable和二进制格式，即需要兼容v1格式<br>proxy protocol的接收端必须在接收到完整有效的 proxy protocol 头部后才能开始处理连接数据。因此对于服务器的同一个监听端口，不存在兼容带proxy protocol包的连接和不带proxy protocol包的连接。如果服务器接收到的第一个数据包不符合proxy protocol的格式，那么服务器会直接终止连接。</p>
+<p>Proxy protocol是比较新的协议，但目前已经有很多软件支持，如haproxy、nginx、apache、squid、mysql等等，要使用proxy protocol需要两个角色sender和receiver,sender在与receiver之间建立连接后，会先发送一个带有客户信息的tcp header,因为更改了tcp协议头，需receiver也支持proxy protocol，否则不能识别tcp包头，导致无法成功建立连接。<br>nginx是从1.5.12起开始支持的</p>
+</li>
+</ul>
+<p>参考:</p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022272897">https://segmentfault.com/a/1190000022272897</a></p>
+<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tutorials/services/source-ip/">https://kubernetes.io/zh/docs/tutorials/services/source-ip/</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/" title="k8s流量策略与ingress获取真实ip">https://horus-k.github.io/2021/06/17/k8s流量策略与ingress获取真实ip/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/ingress/" rel="tag"># ingress</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/05/21/cronjob%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" rel="prev" title="cronjob简单使用">
+                  <i class="fa fa-chevron-left"></i> cronjob简单使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/24/k8s%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8kerw/" rel="next" title="k8s插件管理器kerw">
+                  k8s插件管理器kerw <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

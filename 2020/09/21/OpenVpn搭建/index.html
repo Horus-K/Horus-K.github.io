@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、openvpn原理 openvpn通过使用公开密钥（非对称密钥，加密解密使用不同的key，一个称为Publice key，另外一个是Private key）对数据进行加密的。这种方式称为TLS加密。 openvpn使用TLS加密的工作过程是，首先VPN Sevrver端和VPN Client端要有相同的CA证书，双方通过交换证书验证双方的合法性，用于决定是否建立VPN连接。然后使用对方的CA证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenVpn搭建">
+<meta property="og:url" content="https://horus-k.github.io/2020/09/21/OpenVpn%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="一、openvpn原理 openvpn通过使用公开密钥（非对称密钥，加密解密使用不同的key，一个称为Publice key，另外一个是Private key）对数据进行加密的。这种方式称为TLS加密。 openvpn使用TLS加密的工作过程是，首先VPN Sevrver端和VPN Client端要有相同的CA证书，双方通过交换证书验证双方的合法性，用于决定是否建立VPN连接。然后使用对方的CA证">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-21T02:55:30.000Z">
+<meta property="article:modified_time" content="2020-10-26T10:02:20.871Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/09/21/OpenVpn%E6%90%AD%E5%BB%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/09/21/OpenVpn%E6%90%AD%E5%BB%BA/","path":"2020/09/21/OpenVpn搭建/","title":"OpenVpn搭建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenVpn搭建 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/21/OpenVpn%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenVpn搭建 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenVpn搭建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-21 10:55:30" itemprop="dateCreated datePublished" datetime="2020-09-21T10:55:30+08:00">2020-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-10-26 18:02:20" itemprop="dateModified" datetime="2020-10-26T18:02:20+08:00">2020-10-26</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>一、openvpn原理</p>
+<p>openvpn通过使用公开密钥（非对称密钥，加密解密使用不同的key，一个称为Publice key，另外一个是Private key）对数据进行加密的。这种方式称为TLS加密。</p>
+<p>openvpn使用TLS加密的工作过程是，首先VPN Sevrver端和VPN Client端要有相同的CA证书，双方通过交换证书验证双方的合法性，用于决定是否建立VPN连接。然后使用对方的CA证书，把自己目前使用的数据加密方法加密后发送给对方，由于使用的是对方CA证书加密，所以只有对方CA证书对应的Private key才能解密该数据，这样就保证了此密钥的安全性，并且此密钥是定期改变的，对于窃听者来说，可能还没有破解出此密钥，VPN通信双方可能就已经更换密钥了。</p>
+<span id="more"></span>
+
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/17a56994b74f">https://www.jianshu.com/p/17a56994b74f</a></p>
+<p>二、安装openvpn和easy-rsa</p>
+<h4 id="1-yum安装"><a href="#1-yum安装" class="headerlink" title="1.yum安装"></a>1.yum安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">1、安装openvpn</span><br><span class="line">yum -y install openvpn libssl-dev openssl easy-rsa</span><br><span class="line">rpm -ql easy-rsa</span><br><span class="line">rpm -ql openvpn</span><br><span class="line"><span class="comment"># copy配置文件</span></span><br><span class="line"><span class="built_in">cp</span> /usr/share/doc/openvpn-2.4.9/sample/sample-config-files/server.conf /etc/openvpn/</span><br><span class="line"><span class="built_in">cp</span> -r /usr/share/easy-rsa/ /etc/openvpn/</span><br><span class="line"><span class="built_in">cp</span> /usr/share/doc/easy-rsa-3.0.7/vars.example /etc/openvpn/easy-rsa/3.0.7/vars</span><br><span class="line">/etc/openvpn/</span><br><span class="line">├── easy-rsa</span><br><span class="line">│   ├── 3 -&gt; 3.0.7</span><br><span class="line">│   ├── 3.0 -&gt; 3.0.7</span><br><span class="line">│   └── 3.0.7</span><br><span class="line">│       ├── easyrsa</span><br><span class="line">│       ├── openssl-easyrsa.cnf</span><br><span class="line">│       ├── vars</span><br><span class="line">│       └── x509-types</span><br><span class="line">│           ├── ca</span><br><span class="line">│           ├── client</span><br><span class="line">│           ├── code-signing</span><br><span class="line">│           ├── COMMON</span><br><span class="line">│           ├── email</span><br><span class="line">│           ├── kdc</span><br><span class="line">│           ├── server</span><br><span class="line">│           └── serverClient</span><br><span class="line">└── server.conf</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、创建PKI和CA签发机构"><a href="#2、创建PKI和CA签发机构" class="headerlink" title="2、创建PKI和CA签发机构"></a>2、创建PKI和CA签发机构</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/easy-rsa/3.0.7/</span><br><span class="line">./easyrsa init-pki</span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll pki/</span></span><br><span class="line">total 24</span><br><span class="line">-rw------- 1 root root 4616 Sep 21 11:32 openssl-easyrsa.cnf</span><br><span class="line">drwx------ 2 root root 4096 Sep 21 11:32 private          <span class="comment">#私钥目录</span></span><br><span class="line">drwx------ 2 root root 4096 Sep 21 11:32 reqs</span><br><span class="line">-rw------- 1 root root 4700 Sep 21 11:32 safessl-easyrsa.cnf </span><br></pre></td></tr></table></figure>
+
+<h5 id="3、创建CA机构"><a href="#3、创建CA机构" class="headerlink" title="3、创建CA机构"></a>3、创建CA机构</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa build-ca nopass</span></span><br><span class="line"></span><br><span class="line">Note: using Easy-RSA configuration from: /etc/openvpn/easy-rsa/3.0.7/vars</span><br><span class="line">Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">..........................................+++</span><br><span class="line">........................................................................................................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter <span class="string">&#x27;.&#x27;</span>, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Common Name (eg: your user, host, or server name) [Easy-RSA CA]:  <span class="comment">#直接回车</span></span><br><span class="line"></span><br><span class="line">CA creation complete and you may now import and sign cert requests.</span><br><span class="line">Your new CA certificate file <span class="keyword">for</span> publishing is at:</span><br><span class="line">/etc/openvpn/easy-rsa/3.0.7/pki/ca.crt</span><br><span class="line"></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll pki/ca.crt</span></span><br><span class="line"><span class="comment"># 验证CA的私钥</span></span><br><span class="line">ll /etc/openvpn/easy-rsa/3.0.7/pki/private/ca.key</span><br></pre></td></tr></table></figure>
+
+<h5 id="4、创建服务端证书（私钥）"><a href="#4、创建服务端证书（私钥）" class="headerlink" title="4、创建服务端证书（私钥）"></a>4、创建服务端证书（私钥）</h5><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa gen-req server nopass #直接回车</span></span><br><span class="line"><span class="comment"># 验证CA证书</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll ./pki/private/</span></span><br><span class="line">total 8</span><br><span class="line">-rw-------<span class="number"> 1 </span>root root<span class="number"> 1679 </span>Sep<span class="number"> 21 </span>11:34 ca.key</span><br><span class="line">-rw-------<span class="number"> 1 </span>root root<span class="number"> 1704 </span>Sep<span class="number"> 21 </span>11:37 server.key  <span class="comment"># serverd的私钥，保密</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll ./pki/reqs/</span></span><br><span class="line">total 4</span><br><span class="line">-rw-------<span class="number"> 1 </span>root root<span class="number"> 887 </span>Sep<span class="number"> 21 </span>11:37 server.req   <span class="comment"># 用于签发证书</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="5、签发服务端证书"><a href="#5、签发服务端证书" class="headerlink" title="5、签发服务端证书"></a>5、签发服务端证书</h5><p>生成服务端crt公钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa sign server server</span></span><br><span class="line"><span class="comment"># 输入yes</span></span><br></pre></td></tr></table></figure>
+
+<p>验证服务端公钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn 3.0.7]<span class="comment"># ll /etc/openvpn/easy-rsa/3.0.7/pki/issued/server.crt</span></span><br><span class="line"><span class="comment"># 验证生成的秘钥文件</span></span><br><span class="line">-rw------- 1 root root 4547 Sep 21 11:40 /etc/openvpn/easy-rsa/3.0.7/pki/issued/server.crt</span><br></pre></td></tr></table></figure>
+
+<h5 id="6、创建Diffie-Hellman"><a href="#6、创建Diffie-Hellman" class="headerlink" title="6、创建Diffie-Hellman"></a>6、创建Diffie-Hellman</h5><p>密钥交换方法，由惠特菲尔德·迪菲（Bailey Whitfield Diffie）、马丁·赫尔曼（Martin Edward Hellman）于1976年发表。它是一种安全协议，让双方在完全没有对方任何预先信息的条件下通过不安全信道建立起一个密钥，这个密钥一般作为“对称加密”的密钥而被双方在后续数据传输中使用。DH数学原理是base离散对数问题。做类似事情的还有非对称加密类算法，如：RSA。其应用非常广泛，在SSH、VPN、Https…都有应用，勘称现代密码基石。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn <span class="number">3.0</span>.<span class="number">7</span>]# ./easyrsa gen-dh</span><br><span class="line">[root@vpn <span class="number">3.0</span>.<span class="number">7</span>]# ll <span class="regexp">/etc/</span>openvpn<span class="regexp">/easy-rsa/</span><span class="number">3.0</span>.<span class="number">7</span><span class="regexp">/pki/</span>dh.pem </span><br><span class="line">-rw------- <span class="number">1</span> root root <span class="number">424</span> Sep <span class="number">21</span> <span class="number">11</span>:<span class="number">44</span> <span class="regexp">/etc/</span>openvpn<span class="regexp">/easy-rsa/</span><span class="number">3.0</span>.<span class="number">7</span><span class="regexp">/pki/</span>dh.pem</span><br></pre></td></tr></table></figure>
+
+<h5 id="7、创建客户端证书"><a href="#7、创建客户端证书" class="headerlink" title="7、创建客户端证书"></a>7、创建客户端证书</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">[root@vpn 3.0.7]<span class="comment"># mkdir /etc/openvpn/client</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># cp -r /usr/share/easy-rsa/ /etc/openvpn/client/easy-rsa</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll /etc/openvpn/client</span></span><br><span class="line">total 4</span><br><span class="line">drwxr-xr-x 3 root root 4096 Sep 21 11:49 easy-rsa</span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># cp /usr/share/doc/easy-rsa-3.0.7/vars.example /etc/openvpn/client/easy-rsa/vars</span></span><br><span class="line"><span class="comment"># 生成PKI目录</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># cd /etc/openvpn/client/easy-rsa/3.0.7/</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa init-pki</span></span><br><span class="line"></span><br><span class="line">init-pki complete; you may now create a CA or requests.</span><br><span class="line">Your newly created PKI <span class="built_in">dir</span> is: /etc/openvpn/client/easy-rsa/3.0.7/pki</span><br><span class="line"><span class="comment"># 验证PKI目录</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll ./pki/</span></span><br><span class="line">total 24</span><br><span class="line">-rw------- 1 root root 4616 Sep 21 11:50 openssl-easyrsa.cnf</span><br><span class="line">drwx------ 2 root root 4096 Sep 21 11:50 private</span><br><span class="line">drwx------ 2 root root 4096 Sep 21 11:50 reqs</span><br><span class="line">-rw------- 1 root root 4770 Sep 21 11:50 safessl-easyrsa.cnf</span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ll ./pki/private/</span></span><br><span class="line">total 0</span><br><span class="line"><span class="comment"># 生成客户端证书</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># pwd</span></span><br><span class="line">/etc/openvpn/client/easy-rsa/3.0.7</span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa gen-req quhui nopass #用户名quhui，不设置密码</span></span><br><span class="line">Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line">Generating a 2048 bit RSA private key</span><br><span class="line">................................................................+++</span><br><span class="line">....................................................................................+++</span><br><span class="line">writing new private key to <span class="string">&#x27;/etc/openvpn/client/easy-rsa/3.0.7/pki/easy-rsa-26662.y3oE1K/tmp.Od73e6&#x27;</span></span><br><span class="line">-----</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter <span class="string">&#x27;.&#x27;</span>, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Common Name (eg: your user, host, or server name) [quhui]:</span><br><span class="line"></span><br><span class="line">Keypair and certificate request completed. Your files are:</span><br><span class="line">req: /etc/openvpn/client/easy-rsa/3.0.7/pki/reqs/quhui.req <span class="comment">#用户的申请</span></span><br><span class="line">key: /etc/openvpn/client/easy-rsa/3.0.7/pki/private/quhui.key <span class="comment">#用户的私钥</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># tree /etc/openvpn/client/easy-rsa/3.0.7/pki/</span></span><br><span class="line">/etc/openvpn/client/easy-rsa/3.0.7/pki/</span><br><span class="line">├── openssl-easyrsa.cnf</span><br><span class="line">├── private</span><br><span class="line">│   └── quhui.key</span><br><span class="line">├── reqs</span><br><span class="line">│   └── quhui.req</span><br><span class="line">└── safessl-easyrsa.cnf</span><br><span class="line"></span><br><span class="line">2 directories, 4 files</span><br></pre></td></tr></table></figure>
+
+<h5 id="8、签发客户端证书"><a href="#8、签发客户端证书" class="headerlink" title="8、签发客户端证书"></a>8、签发客户端证书</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意切换目录</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># pwd</span></span><br><span class="line">/etc/openvpn/easy-rsa/3.0.7</span><br><span class="line"><span class="comment"># 导入req文件</span></span><br><span class="line">[root@vpn 3.0.7]<span class="comment"># ./easyrsa import-req /etc/openvpn/client/easy-rsa/3.0.7/pki/reqs/quhui.req quhui</span></span><br><span class="line"></span><br><span class="line">Note: using Easy-RSA configuration from: /etc/openvpn/easy-rsa/3.0.7/vars</span><br><span class="line">Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017</span><br><span class="line"></span><br><span class="line">The request has been successfully imported with a short name of: quhui</span><br><span class="line">You may now use this name to perform signing operations on this request.</span><br><span class="line"><span class="comment"># 签发</span></span><br><span class="line">./easyrsa sign client quhui</span><br></pre></td></tr></table></figure>
+
+<h5 id="9、复制证书到server目录"><a href="#9、复制证书到server目录" class="headerlink" title="9、复制证书到server目录"></a>9、复制证书到server目录</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">mkdir</span> /etc/openvpn/certs    <span class="comment">#服务端</span></span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/dh.pem .</span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/ca.crt .</span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/issued/server.crt .</span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/private/server.key .</span><br><span class="line">$ tree</span><br><span class="line">.</span><br><span class="line">├── ca.crt</span><br><span class="line">├── dh.pem</span><br><span class="line">├── server.crt</span><br><span class="line">└── server.key</span><br><span class="line"></span><br><span class="line">0 directories, 4 files</span><br></pre></td></tr></table></figure>
+
+<h5 id="10、整理客户端公钥和私钥"><a href="#10、整理客户端公钥和私钥" class="headerlink" title="10、整理客户端公钥和私钥"></a>10、整理客户端公钥和私钥</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /etc/openvpn/client/  </span><br><span class="line">$ <span class="built_in">cd</span> /etc/openvpn/client/quhui/</span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/ca.crt . <span class="comment"># ca证书</span></span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/easy-rsa/3.0.7/pki/issued/quhui.crt . <span class="comment">#用户证书</span></span><br><span class="line">$ <span class="built_in">cp</span> /etc/openvpn/client/easy-rsa/3.0.7/pki/private/quhui.key . <span class="comment">#用户私钥</span></span><br><span class="line">$ tree</span><br><span class="line">.</span><br><span class="line">├── ca.crt</span><br><span class="line">├── quhui.crt</span><br><span class="line">└── quhui.key</span><br><span class="line"></span><br><span class="line">0 directories, 3 files</span><br></pre></td></tr></table></figure>
+
+<h5 id="11、server端配置文件"><a href="#11、server端配置文件" class="headerlink" title="11、server端配置文件"></a>11、server端配置文件</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/openvpn/server.conf </span><br><span class="line"><span class="built_in">local</span> 0.0.0.0         <span class="comment">#本机监听IP</span></span><br><span class="line">port 1194                 <span class="comment">#端口</span></span><br><span class="line">proto tcp                 <span class="comment">#协议，指定VPN创建的通信隧道类型</span></span><br><span class="line"><span class="comment">#proto udp</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#dev tap                  #创建一个以太网隧道，以太网使用tap</span></span><br><span class="line">dev tun                   <span class="comment">#创建一个路由IP隧道，互联网使用tun一个TUN设备大多时候，</span></span><br><span class="line"><span class="comment">#被用于基于IP协议的通讯。一个TAP设备允许完整的以太网帧通过Openvp隧道，</span></span><br><span class="line"><span class="comment">#因此提供非ip协议的支持，比如IPX协议和AppleTalk协议</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#dev-node MyTap           #非windows不需要</span></span><br><span class="line"></span><br><span class="line">ca /etc/openvpn/certs/ca.crt             <span class="comment">#证书路径</span></span><br><span class="line">cert /etc/openvpn/certs/server.crt     </span><br><span class="line">key /etc/openvpn/certs/server.key   </span><br><span class="line">dh /etc/openvpn/certs/dh.pem</span><br><span class="line"></span><br><span class="line"><span class="comment">#topology subnet          #网络拓扑，不需要配置</span></span><br><span class="line"></span><br><span class="line">server 10.8.0.0 255.255.255.0    <span class="comment">#OpenVPN生成的网络，分配给客户端，服务器默认会占用第一个IP 10.8.0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#ifconfig-pool-persist ipp.txt   #为客户端分配固定IP，不需要配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#server-bridge 10.8.0.4 255.255.255.0 10.8.0.50 10.8.0.100    #配置网桥模式，不需要</span></span><br><span class="line"><span class="comment">#server-bridge</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">push <span class="string">&quot;route 192.168.0.0 255.255.248.0&quot;</span> <span class="comment">#给客户端生成的静态路由表，下一跳为openvpn服务器的10.8.0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#client-config-dir ccd     #为指定的客户端添加路由，改路由通常是客户端后面的内网网段而不是服务端的，也不需要设置</span></span><br><span class="line"><span class="comment">#route 192.168.40.128 255.255.255.248</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#learn-address ./script   #运行外部脚本，创建不同组的iptables 规则，不配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#push &quot;redirect-gateway def1 bypass-dhcp&quot;     #启用后，客户端所有流量都将通过VPN服务器，因此不需要配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#push &quot;dhcp-option DNS 208.67.222.222&quot;       #推送DNS服务器，不需要配置</span></span><br><span class="line"></span><br><span class="line">client-to-client          <span class="comment">#运行不同的client直接通信</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#duplicate-cn            #多个用户共用一个账户，一般用于测试环境，生产环境都是一个用户一个证书</span></span><br><span class="line"></span><br><span class="line">keepalive 10 120         <span class="comment">#设置服务端检测的间隔和超时时间，默认为每10秒ping一次如果120秒没有回应则认为对方已经 down</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#tls-auth ta.key 0       </span></span><br><span class="line"></span><br><span class="line">cipher AES-256-CBC       <span class="comment">#加密算法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#compress lz4-v2         #压缩</span></span><br><span class="line"><span class="comment">#push &quot;compress lz4-v2&quot;</span></span><br><span class="line"><span class="comment">#comp-lzo                #旧版本兼容的压缩，</span></span><br><span class="line"></span><br><span class="line">max-clients 100          <span class="comment">#最大客户端并发连接数</span></span><br><span class="line"></span><br><span class="line">user nobody</span><br><span class="line">group nobody</span><br><span class="line"></span><br><span class="line">persist-key              <span class="comment">#重启VPN服务，你重新读取keys文件，保留使用第一次的keys文件</span></span><br><span class="line">persist-tun              <span class="comment">#重启vpn服务，一直保持tun或者tap设备是up的，否则会先down然后再up</span></span><br><span class="line"></span><br><span class="line">status status /var/log/openvpn/openvpn-status.log  <span class="comment">#openVPN状态记录文件，每分钟会记录一次，</span></span><br><span class="line">                                              <span class="comment">#/var/log/openvpn/ 手动建立并赋予nobody</span></span><br><span class="line"><span class="comment">#log         openvpn.log                      #log会在openvpn启动的时候清空日志文件</span></span><br><span class="line">log-append /var/log/openvpn/openvpn.log      <span class="comment">#重启openvpn后在之前的日志后面追加新的日志</span></span><br><span class="line"></span><br><span class="line">verb 3                   <span class="comment">#日志级别</span></span><br><span class="line">mute 50                  <span class="comment">#相同类别的信息只有前50条会输出到日志文件中</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#explicit-exit-notify 1   #通知客户端，在服务端重启后可以自动重新连接，仅能用于udp模式，tcp模式不需要配置即可实现断开重连接</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="12、客户端配置"><a href="#12、客户端配置" class="headerlink" title="12、客户端配置"></a>12、客户端配置</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">ca /etc/openvpn/certs/ca.crt</span><br><span class="line">cert /etc/openvpn/certs/server.crt</span><br><span class="line">key /etc/openvpn/certs/server.key</span><br><span class="line">dh /etc/openvpn/certs/dh.pem</span><br><span class="line"><span class="comment"># OpenVPN Server Certificate - CA, server key and certificate</span></span><br><span class="line"><span class="comment">#注意本文没有跳过了丢消证书的检测</span></span><br><span class="line"><span class="comment">#crl-verify /etc/openvpn/server/crl.pem</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Redirect all Connection through OpenVPN Server</span></span><br><span class="line">server 10.8.0.0 255.255.255.0</span><br><span class="line">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span><br><span class="line"></span><br><span class="line">route 192.168.220.0 255.255.255.0 net_gateway <span class="comment"># 220网段不使用vpn</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Using the DNS from https://dns.watch</span></span><br><span class="line">push <span class="string">&quot;dhcp-option DNS 8.8.8.8&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Enable multiple client to connect with same Certificate key</span></span><br><span class="line"><span class="comment">#duplicate-cn</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># TLS Security</span></span><br><span class="line">cipher AES-128-GCM</span><br><span class="line"><span class="comment">#tls-version-min 1.2</span></span><br><span class="line"><span class="comment">#tls-cipher TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-256-CBC-SHA256:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-#RSA-WITH-AES-128-CBC-SHA256</span></span><br><span class="line"><span class="comment">#auth SHA512</span></span><br><span class="line"><span class="comment">#auth-nocache</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Other Configuration</span></span><br><span class="line"><span class="comment">#keepalive 20 60</span></span><br><span class="line"><span class="comment">#persist-key</span></span><br><span class="line"><span class="comment">#persist-tun</span></span><br><span class="line">comp-lzo <span class="built_in">yes</span></span><br><span class="line">daemon</span><br><span class="line">user nobody</span><br><span class="line">group nobody</span><br><span class="line"></span><br><span class="line">client-to-client</span><br><span class="line">log-append /var/log/openvpn.log</span><br><span class="line">verb 3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用户密码验证</span></span><br><span class="line">script-security 3 </span><br><span class="line">auth-user-pass-verify /etc/openvpn/checkpsw.sh via-env</span><br><span class="line">username-as-common-name</span><br><span class="line">client-cert-not-required</span><br></pre></td></tr></table></figure>
+
+<h5 id="13、启动openvpn服务"><a href="#13、启动openvpn服务" class="headerlink" title="13、启动openvpn服务"></a>13、启动openvpn服务</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl stop firewalld</span><br><span class="line">$ systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line">$ yum -y install iptables-service iptables   <span class="comment">#openvpn使用iptables</span></span><br><span class="line"></span><br><span class="line">$ systemctl <span class="built_in">enable</span> iptables.service</span><br><span class="line">$ systemctl start iptables.service</span><br><span class="line"></span><br><span class="line">$ iptables -F</span><br><span class="line">$ iptables -X</span><br><span class="line">$ iptables -Z</span><br><span class="line">$ iptables -t nat -F</span><br><span class="line">$ iptables -t nat -X</span><br><span class="line">$ iptables -t nat -Z</span><br><span class="line">$ vim /etc/sysctl.conf    <span class="comment">#开启路由转发</span></span><br><span class="line">net.ipv4.ip_forward = 1</span><br><span class="line">$ sysctl -p</span><br><span class="line"></span><br><span class="line">$ service iptables save   <span class="comment">#保存当前操作</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ systemctl start openvpn@server</span><br><span class="line">$ systemctl <span class="built_in">enable</span> openvpn@server</span><br></pre></td></tr></table></figure>
+
+<h6 id="tcp流量"><a href="#tcp流量" class="headerlink" title="tcp流量"></a>tcp流量</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">创建iptables规则</span><br><span class="line">$ iptables -t nat -A POSTROUTING -s 10.8.0.0/16 -j MASQUERADE</span><br><span class="line">$ iptables -A INPUT -p TCP --dport 1194 -j ACCEPT</span><br><span class="line">$ iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</span><br><span class="line">$ service iptables save</span><br><span class="line">iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]</span><br></pre></td></tr></table></figure>
+
+<h6 id="udp流量"><a href="#udp流量" class="headerlink" title="udp流量"></a>udp流量</h6><p>如果你的网关是使用iptable,并且iptable默认情况下阻止该服务，那么请使用以下配置使openvpn正常运行。 首先，让我们在openvpn端口上进行tcp连接。 如果您使用的是udp或其他端口号，请相应地更改此行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A INPUT -i eth0 -m state --state NEW -p udp --dport 1194 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>允许TUN接口连接到OpenVPN服务器</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A INPUT -i tun+ -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>允许通过其他接口转发TUN接口连接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i tun+ -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i tun+ -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i eth0 -o tun+ -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>NAT VPN客户端流量到Internet。 运行“ ifconfig”命令时，根据您的tun0结果信息更改IP地址掩码。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<p>如果您的默认iptables OUTPUT的值不是ACCEPT的话，则还需要以下行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A OUTPUT -o tun+ -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>最后记得保存iptables的防火墙配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+
+<h5 id="14、windows-PC安装openvpn客户端"><a href="#14、windows-PC安装openvpn客户端" class="headerlink" title="14、windows PC安装openvpn客户端"></a>14、windows PC安装openvpn客户端</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">官方客户端下载地址： https:<span class="regexp">//</span>openvpn.net<span class="regexp">/community-downloads/</span></span><br><span class="line">非官方地址：https:<span class="regexp">//</span>sourceforge.net<span class="regexp">/projects/</span>securepoint<span class="regexp">/files/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="15、OpenVPN-使用账号-密码方式登陆"><a href="#15、OpenVPN-使用账号-密码方式登陆" class="headerlink" title="15、OpenVPN 使用账号+密码方式登陆"></a>15、OpenVPN 使用账号+密码方式登陆</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端配置</span></span><br><span class="line"><span class="comment"># 修改服务端配置文件，文件最后追加几行</span></span><br><span class="line">vim /etc/openvpn/server.conf</span><br><span class="line"></span><br><span class="line">script-security 3</span><br><span class="line">auth-user-pass-verify /etc/openvpn/checkpsw.sh via-env</span><br><span class="line">username-as-common-name</span><br><span class="line">client-cert-not-required</span><br><span class="line"><span class="comment"># 如果加上client-cert-not-required则代表只使用用户名密码方式验证登录，如果不加，则代表需要证书和用户名密码双重验证登录！</span></span><br><span class="line"><span class="comment"># /etc/openvpn/checkpsw.sh 文件内容：</span></span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="comment">###########################################################</span></span><br><span class="line"><span class="comment"># checkpsw.sh (C) 2004 Mathias Sundman &lt;mathias@openvpn.se&gt;</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># This script will authenticate OpenVPN users against</span></span><br><span class="line"><span class="comment"># a plain text file. The passfile should simply contain</span></span><br><span class="line"><span class="comment"># one row per user with the username first followed by</span></span><br><span class="line"><span class="comment"># one or more space(s) or tab(s) and then the password.</span></span><br><span class="line"></span><br><span class="line">PASSFILE=<span class="string">&quot;/etc/openvpn/psw-file&quot;</span></span><br><span class="line">LOG_FILE=<span class="string">&quot;/etc/openvpn/openvpn-password.log&quot;</span></span><br><span class="line">TIME_STAMP=`<span class="built_in">date</span> <span class="string">&quot;+%Y-%m-%d %T&quot;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment">###########################################################</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -r <span class="string">&quot;<span class="variable">$&#123;PASSFILE&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;TIME_STAMP&#125;</span>: Could not open password file \&quot;<span class="variable">$&#123;PASSFILE&#125;</span>\&quot; for reading.&quot;</span> &gt;&gt; <span class="variable">$&#123;LOG_FILE&#125;</span></span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">CORRECT_PASSWORD=`awk <span class="string">&#x27;!/^;/&amp;&amp;!/^#/&amp;&amp;$1==&quot;&#x27;</span><span class="variable">$&#123;username&#125;</span><span class="string">&#x27;&quot;&#123;print $2;exit&#125;&#x27;</span> <span class="variable">$&#123;PASSFILE&#125;</span>`</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$&#123;CORRECT_PASSWORD&#125;</span>&quot;</span> = <span class="string">&quot;&quot;</span> ]; <span class="keyword">then</span> </span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;TIME_STAMP&#125;</span>: User does not exist: username=\&quot;<span class="variable">$&#123;username&#125;</span>\&quot;, password=\&quot;<span class="variable">$&#123;password&#125;</span>\&quot;.&quot;</span> &gt;&gt; <span class="variable">$&#123;LOG_FILE&#125;</span></span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$&#123;password&#125;</span>&quot;</span> = <span class="string">&quot;<span class="variable">$&#123;CORRECT_PASSWORD&#125;</span>&quot;</span> ]; <span class="keyword">then</span> </span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;TIME_STAMP&#125;</span>: Successful authentication: username=\&quot;<span class="variable">$&#123;username&#125;</span>\&quot;.&quot;</span> &gt;&gt; <span class="variable">$&#123;LOG_FILE&#125;</span></span><br><span class="line">  <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;TIME_STAMP&#125;</span>: Incorrect password: username=\&quot;<span class="variable">$&#123;username&#125;</span>\&quot;, password=\&quot;<span class="variable">$&#123;password&#125;</span>\&quot;.&quot;</span> &gt;&gt; <span class="variable">$&#123;LOG_FILE&#125;</span></span><br><span class="line"><span class="built_in">exit</span> 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 账号/密码，新增账号/密码增加到这里即可，一行一个账号，密码用空格隔开：</span></span><br><span class="line">$ <span class="built_in">cat</span> psw-file</span><br><span class="line">quhui 123456</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重置权限，安全着想吧</span></span><br><span class="line">$ <span class="built_in">chmod</span> 400 psw-file</span><br><span class="line">$ <span class="built_in">chown</span> nobody.nobody psw-file </span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务openvpn</span></span><br><span class="line">systemctl restart openvpn@server.service</span><br><span class="line"><span class="comment"># 客户端配置</span></span><br><span class="line"><span class="comment"># 注释掉这两行即可</span></span><br><span class="line">;cert laptop.crt</span><br><span class="line">;key laptop.key</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新增验证方式</span></span><br><span class="line">auth-user-pass</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-源码安装"><a href="#2-源码安装" class="headerlink" title="2.源码安装"></a>2.源码安装</h4><p>下载 OpenVPN 的源码包：<code>https://www.techspot.com/downloads</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">yum -y install rpm-build openssl easy-rsa libssl-dev gcc openssl-devel pam-devel camke</span><br><span class="line"><span class="comment"># configure: error: lzo enabled but missing</span></span><br><span class="line"><span class="comment"># 注意：yum安装的无效，需要手动下载源码安装。</span></span><br><span class="line">wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.06.tar.gz </span><br><span class="line">tar zxvf lzo-2.06.tar.gz </span><br><span class="line"><span class="built_in">cd</span> lzo-2.06 </span><br><span class="line">./configure --prefix=/usr/local/ </span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> openvpn</span><br><span class="line">./configure --prefix=/usr/local/vpn</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"><span class="built_in">mkdir</span> /etc/openvpn</span><br><span class="line"><span class="built_in">cp</span> -r /root/openvpn/openvpn-2.4.9/sample/ /etc/openvpn/\</span><br><span class="line"><span class="built_in">cp</span> /etc/openvpn/sample/sample-config-files/server.conf /etc/openvpn/</span><br><span class="line"><span class="built_in">cd</span> /etc/openvpn/ &amp;&amp; git <span class="built_in">clone</span> git://github.com/OpenVPN/easy-rsa</span><br><span class="line"><span class="built_in">cp</span> vars.example vars</span><br><span class="line"></span><br><span class="line">vim vars  根据实际情况，修改以下字段：</span><br><span class="line"></span><br><span class="line">set_var EASYRSA_REQ_COUNTRY     <span class="string">&quot;cn&quot;</span></span><br><span class="line">set_var EASYRSA_REQ_PROVINCE    <span class="string">&quot;beijing&quot;</span></span><br><span class="line">set_var EASYRSA_REQ_CITY        <span class="string">&quot;quhui&quot;</span></span><br><span class="line">set_var EASYRSA_REQ_ORG         <span class="string">&quot;none&quot;</span></span><br><span class="line">set_var EASYRSA_REQ_EMAIL       <span class="string">&quot;xxxxxx&quot;</span></span><br><span class="line">set_var EASYRSA_REQ_OU          <span class="string">&quot;openvpn&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">client</span><br><span class="line">dev tun</span><br><span class="line">proto udp</span><br><span class="line"><span class="comment">#真实的ip地址自己填写</span></span><br><span class="line">remote 47.242.136.192 1194</span><br><span class="line"></span><br><span class="line">ca /root/ca.crt</span><br><span class="line"><span class="comment">#cert quhui.crt</span></span><br><span class="line"><span class="comment">#key quhui.key</span></span><br><span class="line"></span><br><span class="line">auth-user-pass</span><br><span class="line"></span><br><span class="line">cipher AES-256-GCM</span><br><span class="line"></span><br><span class="line">resolv-retry infinite</span><br><span class="line"><span class="comment">#compress lzo</span></span><br><span class="line">nobind</span><br><span class="line">persist-key</span><br><span class="line">persist-tun</span><br><span class="line">mute-replay-warnings</span><br><span class="line">verb 3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">ca /etc/openvpn/certs/ca.crt</span><br><span class="line">cert /etc/openvpn/certs/server.crt</span><br><span class="line">key /etc/openvpn/certs/server.key</span><br><span class="line">dh /etc/openvpn/certs/dh.pem</span><br><span class="line"></span><br><span class="line">server 10.8.0.0 255.255.255.0</span><br><span class="line">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span><br><span class="line"></span><br><span class="line">route 10.128.0.0 255.255.254.0 net_gateway</span><br><span class="line">route 10.192.0.0 255.255.252.0 net_gateway</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Using the DNS from https://dns.watch</span></span><br><span class="line">push <span class="string">&quot;dhcp-option DNS 8.8.8.8&quot;</span></span><br><span class="line"></span><br><span class="line">cipher AES-256-GCM</span><br><span class="line"></span><br><span class="line">duplicate-cn</span><br><span class="line"></span><br><span class="line">daemon</span><br><span class="line">user nobody</span><br><span class="line">group nobody</span><br><span class="line"><span class="comment">#log-append /var/log/openvpn.log</span></span><br><span class="line"><span class="comment">#verb 3</span></span><br><span class="line"></span><br><span class="line">script-security 3</span><br><span class="line">auth-user-pass-verify /etc/openvpn/checkpsw.sh via-env</span><br><span class="line">username-as-common-name</span><br><span class="line">client-cert-not-required</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/09/21/OpenVpn%E6%90%AD%E5%BB%BA/" title="OpenVpn搭建">https://horus-k.github.io/2020/09/21/OpenVpn搭建/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/" rel="prev" title="kubeasz快速部署二进制k8s集群">
+                  <i class="fa fa-chevron-left"></i> kubeasz快速部署二进制k8s集群
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/09/22/%E5%88%86%E6%9E%90%E5%AE%B9%E5%99%A8%E9%80%80%E5%87%BA%E7%8A%B6%E6%80%81%E7%A0%81/" rel="next" title="分析容器退出状态码">
+                  分析容器退出状态码 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

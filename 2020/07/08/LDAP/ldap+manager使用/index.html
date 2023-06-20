@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="搭建服务器安装OpenLDAP的相关1234567891011121314151617181920212223242526272829303132333435363738394041$ yum -y install openldap compat-openldap openldap-clients openldap-servers openldap-servers-sql openldap-dev">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s和docker中搭建使用ldap+manager">
+<meta property="og:url" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="搭建服务器安装OpenLDAP的相关1234567891011121314151617181920212223242526272829303132333435363738394041$ yum -y install openldap compat-openldap openldap-clients openldap-servers openldap-servers-sql openldap-dev">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/Image_1367.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/Image_1368.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708162306736.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708162318019.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708161250239.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204163523032.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173658604.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173710999.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173224075.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204210517980.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204210540229.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205162921579.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210207205747269.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222200936.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222221560.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222221560.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210423162030572.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20221103170310413.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20221103170358278.png">
+<meta property="article:published_time" content="2020-07-08T07:59:07.000Z">
+<meta property="article:modified_time" content="2022-11-03T09:04:02.619Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="ldap">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/Image_1367.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/","path":"2020/07/08/LDAP/ldap+manager使用/","title":"k8s和docker中搭建使用ldap+manager"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s和docker中搭建使用ldap+manager | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s和docker中搭建使用ldap+manager | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s和docker中搭建使用ldap+manager
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-08 15:59:07" itemprop="dateCreated datePublished" datetime="2020-07-08T15:59:07+08:00">2020-07-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-03 17:04:02" itemprop="dateModified" datetime="2022-11-03T17:04:02+08:00">2022-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ldap/" itemprop="url" rel="index"><span itemprop="name">ldap</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="搭建"><a href="#搭建" class="headerlink" title="搭建"></a>搭建</h1><h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><h3 id="安装OpenLDAP的相关"><a href="#安装OpenLDAP的相关" class="headerlink" title="安装OpenLDAP的相关"></a>安装OpenLDAP的相关</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install openldap compat-openldap openldap-clients openldap-servers openldap-servers-sql openldap-devel migrationtools</span><br><span class="line"></span><br><span class="line"><span class="comment">#ldap用户</span></span><br><span class="line">$ <span class="built_in">tail</span> -n 1 /etc/passwd</span><br><span class="line">ldap:x:55:55:LDAP User:/var/lib/ldap:/sbin/nologin</span><br><span class="line"></span><br><span class="line"><span class="comment">#可以通过rpm -qa |grep openldap查看安装了哪些包：</span></span><br><span class="line">$ rpm -qa | grep openldap</span><br><span class="line">openldap-servers-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-servers-sql-2.4.44-22.el7.x86_64</span><br><span class="line">compat-openldap-2.3.43-5.el7.x86_64</span><br><span class="line">openldap-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-devel-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-clients-2.4.44-22.el7.x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看OpenLDAP版本，使用：slapd -VV</span></span><br><span class="line">$ slapd -VV</span><br><span class="line">@(<span class="comment">#) $OpenLDAP: slapd 2.4.44 (Sep 30 2020 17:16:39) $</span></span><br><span class="line">	mockbuild@x86-02.bsys.centos.org:/builddir/build/BUILD/openldap-2.4.44/openldap-2.4.44/servers/slapd</span><br><span class="line"></span><br><span class="line"><span class="comment">#penLDAP的相关配置文件信息</span></span><br><span class="line">/etc/openldap/slapd.conf                                    <span class="comment"># OpenLDAP的主配置文件，记录根域信息，管理员名称，密码，日志，权限等</span></span><br><span class="line">/etc/openldap/slapd.d/*                                     <span class="comment"># 这下面是slapd.conf配置信息生成的文件，每修改一次配置信息，这里的东西就要重新生成</span></span><br><span class="line">/etc/openldap/schema/*                                      <span class="comment"># OpenLDAP的schema存放的地方</span></span><br><span class="line">/var/lib/ldap/*                                             <span class="comment"># OpenLDAP的数据文件</span></span><br><span class="line">/usr/share/openldap-servers/slapd.conf.obsolete             <span class="comment"># 模板配置文件</span></span><br><span class="line">/usr/share/openldap-servers/DB_CONFIG.example               <span class="comment"># 模板数据库配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#penLDAP监听的端口：</span></span><br><span class="line">      默认监听端口：389（明文数据传输）</span><br><span class="line">      加密监听端口：636（密文数据传输）</span><br><span class="line"></span><br><span class="line"><span class="comment">#初始化OpenLDAP的配置</span></span><br><span class="line"><span class="built_in">chown</span> ldap:ldap /var/lib/ldap/DB_CONFIG</span><br><span class="line"></span><br><span class="line"><span class="comment">#改配置文件</span></span><br><span class="line">OpenLDAP 2.3之后的版本取消了/etc/openldap/slapd.conf的配置方式，使用ldif文件动态配置，目前网上的文档五花八门而且缺胳膊少腿，以下参考官方文档及slapd-config(5)</span><br><span class="line">http://www.openldap.org/doc/admin24/slapdconf2.html</span><br><span class="line">http://www.openldap.org/doc/admin24/quickstart.html</span><br><span class="line">$ slappasswd -s 123456</span><br><span class="line">&#123;SSHA&#125;cQb7UUcz2x6p6rB1gm9EmsVcM8Rrfp6h</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将所需模块注释去掉，olcSuffix和olcRootDN按照实际情况修改，如不需要TLS，将相应内容注释</span></span><br><span class="line"><span class="comment">#vim /usr/share/openldap-servers/slapd.ldif </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># See slapd-config(5) for details on configuration options.</span></span><br><span class="line"><span class="comment"># This file should NOT be world readable.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=config</span><br><span class="line">objectClass: olcGlobal</span><br><span class="line">cn: config</span><br><span class="line">olcArgsFile: /var/run/openldap/slapd.args</span><br><span class="line">olcPidFile: /var/run/openldap/slapd.pid</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># TLS settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcTLSCACertificatePath: /etc/openldap/certs</span></span><br><span class="line"><span class="comment">#olcTLSCertificateFile: &quot;OpenLDAP Server&quot;</span></span><br><span class="line"><span class="comment">#olcTLSCertificateKeyFile: /etc/openldap/certs/password</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Do not enable referrals until AFTER you have a working directory</span></span><br><span class="line"><span class="comment"># service AND an understanding of referrals.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcReferral: ldap://root.openldap.org</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample security restrictions</span></span><br><span class="line"><span class="comment">#	Require integrity protection (prevent hijacking)</span></span><br><span class="line"><span class="comment">#	Require 112-bit (3DES or better) encryption for updates</span></span><br><span class="line"><span class="comment">#	Require 64-bit encryption for simple bind</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcSecurity: ssf=1 update_ssf=112 simple_bind=64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Load dynamic backend modules:</span></span><br><span class="line"><span class="comment"># - modulepath is architecture dependent value (32/64-bit system)</span></span><br><span class="line"><span class="comment"># - back_sql.la backend requires openldap-servers-sql package</span></span><br><span class="line"><span class="comment"># - dyngroup.la and dynlist.la cannot be used at the same time</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=module,cn=config</span><br><span class="line">objectClass: olcModuleList</span><br><span class="line">cn: module</span><br><span class="line"><span class="comment"># olcModulepath:	/usr/lib/openldap</span></span><br><span class="line">olcModulepath:	/usr/lib64/openldap</span><br><span class="line">olcModuleload: accesslog.la</span><br><span class="line">olcModuleload: auditlog.la</span><br><span class="line">olcModuleload: back_dnssrv.la</span><br><span class="line">olcModuleload: back_ldap.la</span><br><span class="line">olcModuleload: back_mdb.la</span><br><span class="line">olcModuleload: back_meta.la</span><br><span class="line">olcModuleload: back_null.la</span><br><span class="line">olcModuleload: back_passwd.la</span><br><span class="line">olcModuleload: back_relay.la</span><br><span class="line">olcModuleload: back_shell.la</span><br><span class="line">olcModuleload: back_sock.la</span><br><span class="line">olcModuleload: collect.la</span><br><span class="line">olcModuleload: constraint.la</span><br><span class="line">olcModuleload: dds.la</span><br><span class="line">olcModuleload: deref.la</span><br><span class="line"><span class="comment"># olcModuleload: dyngroup.la</span></span><br><span class="line">olcModuleload: dynlist.la</span><br><span class="line">olcModuleload: memberof.la</span><br><span class="line">olcModuleload: pcache.la</span><br><span class="line">olcModuleload: ppolicy.la</span><br><span class="line">olcModuleload: refint.la</span><br><span class="line">olcModuleload: retcode.la</span><br><span class="line">olcModuleload: rwm.la</span><br><span class="line">olcModuleload: seqmod.la</span><br><span class="line">olcModuleload: smbk5pwd.la</span><br><span class="line">olcModuleload: sssvlv.la</span><br><span class="line">olcModuleload: syncprov.la</span><br><span class="line">olcModuleload: translucent.la</span><br><span class="line">olcModuleload: unique.la</span><br><span class="line">olcModuleload: valsort.la</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Schema settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=schema,cn=config</span><br><span class="line">objectClass: olcSchemaConfig</span><br><span class="line">cn: schema</span><br><span class="line"></span><br><span class="line">include: file:///etc/openldap/schema/core.ldif</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Frontend settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=frontend,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">objectClass: olcFrontendConfig</span><br><span class="line">olcDatabase: frontend</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample global access control policy:</span></span><br><span class="line"><span class="comment">#	Root DSE: allow anyone to read it</span></span><br><span class="line"><span class="comment">#	Subschema (sub)entry DSE: allow anyone to read it</span></span><br><span class="line"><span class="comment">#	Other DSEs:</span></span><br><span class="line"><span class="comment">#		Allow self write access</span></span><br><span class="line"><span class="comment">#		Allow authenticated users read access</span></span><br><span class="line"><span class="comment">#		Allow anonymous users to authenticate</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcAccess: to dn.base=&quot;&quot; by * read</span></span><br><span class="line"><span class="comment">#olcAccess: to dn.base=&quot;cn=Subschema&quot; by * read</span></span><br><span class="line"><span class="comment">#olcAccess: to *</span></span><br><span class="line"><span class="comment">#	by self write</span></span><br><span class="line"><span class="comment">#	by users read</span></span><br><span class="line"><span class="comment">#	by anonymous auth</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># if no access controls are present, the default policy</span></span><br><span class="line"><span class="comment"># allows anyone and everyone to read anything but restricts</span></span><br><span class="line"><span class="comment"># updates to rootdn.  (e.g., &quot;access to * by * read&quot;)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># rootdn can always read and write EVERYTHING!</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Configuration database</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=config,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">olcDatabase: config</span><br><span class="line">olcAccess: to * by dn.base=<span class="string">&quot;gidNumber=0+uidNumber=0,cn=peercred,cn=external,c</span></span><br><span class="line"><span class="string"> n=auth&quot;</span> manage by * none</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Server status monitoring</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=monitor,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">olcDatabase: monitor</span><br><span class="line">olcAccess: to * by dn.base=<span class="string">&quot;gidNumber=0+uidNumber=0,cn=peercred,cn=external,c</span></span><br><span class="line"><span class="string"> n=auth&quot;</span> <span class="built_in">read</span> by dn.base=<span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> <span class="built_in">read</span> by * none <span class="comment">#修改cn,dc</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Backend database definitions</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=hdb,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">objectClass: olcHdbConfig</span><br><span class="line">olcDatabase: hdb</span><br><span class="line">olcSuffix: dc=quhui,dc=com  <span class="comment">#修改dc</span></span><br><span class="line">olcRootDN: cn=root,dc=quhui,dc=com <span class="comment">#修改cn,dc</span></span><br><span class="line">olcRootPW: &#123;SSHA&#125;cQb7UUcz2x6p6rB1gm9EmsVcM8Rrfp6h <span class="comment">#初始化便更新密码，初始化后手动修改配置会报错，但没事</span></span><br><span class="line">olcDbDirectory:	/var/lib/ldap</span><br><span class="line">olcDbIndex: objectClass eq,pres</span><br><span class="line">olcDbIndex: ou,cn,mail,surname,givenname eq,pres,sub</span><br></pre></td></tr></table></figure>
+
+<h3 id="导入DB-CONFIG、重新生成配置、修改目录权限并启动服务"><a href="#导入DB-CONFIG、重新生成配置、修改目录权限并启动服务" class="headerlink" title="导入DB_CONFIG、重新生成配置、修改目录权限并启动服务"></a><strong>导入DB_CONFIG、重新生成配置、修改目录权限并启动服务</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /etc/openldap/slapd.d/* <span class="comment">#删除旧配置</span></span><br><span class="line"><span class="built_in">cp</span> /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG　　　　　<span class="comment"># copy数据库文件</span></span><br><span class="line">slapadd -n 0 -F /etc/openldap/slapd.d -l /usr/share/openldap-servers/slapd.ldif <span class="comment">#导入配置</span></span><br><span class="line"><span class="comment">#修改目录权限</span></span><br><span class="line"><span class="built_in">chown</span> -R ldap.ldap /etc/openldap/slapd.d/*</span><br><span class="line"><span class="built_in">chown</span> -R ldap.ldap /var/lib/ldap/*</span><br><span class="line"><span class="comment">#导入schema</span></span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a><strong>启动</strong></h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl restart slapd</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="执行ldapsearch-x检查是否有如下输出"><a href="#执行ldapsearch-x检查是否有如下输出" class="headerlink" title="执行ldapsearch -x检查是否有如下输出"></a><strong>执行ldapsearch -x检查是否有如下输出</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ ldapsearch -x -b <span class="string">&#x27;&#x27;</span> -s base<span class="string">&#x27;(objectclass=*)&#x27;</span></span><br><span class="line"><span class="comment"># extended LDIF</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># LDAPv3</span></span><br><span class="line"><span class="comment"># base &lt;&gt; with scope baseObject</span></span><br><span class="line"><span class="comment"># filter: (objectclass=*)</span></span><br><span class="line"><span class="comment"># requesting: ALL</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">dn:</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: OpenLDAProotDSE</span><br><span class="line"></span><br><span class="line"><span class="comment"># search result</span></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br><span class="line"></span><br><span class="line"><span class="comment"># numResponses: 2</span></span><br><span class="line"><span class="comment"># numEntries: 1</span></span><br><span class="line">$ ldapsearch -x -b <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="验证用户密码"><a href="#验证用户密码" class="headerlink" title="验证用户密码"></a><strong>验证用户密码</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ldapwhoami -D <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> -W -H ldap://127.0.0.1 -v</span><br><span class="line">ldap_initialize( ldap://127.0.0.1:389/??base )</span><br><span class="line">Enter LDAP Password: </span><br><span class="line">dn:cn=root,dc=quhui,dc=com</span><br><span class="line">Result: Success (0)</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h2><h3 id="server"><a href="#server" class="headerlink" title="server"></a>server</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart always \</span><br><span class="line">-p 389:389 -p 636:636 \</span><br><span class="line">--name ldap-server \</span><br><span class="line">--<span class="built_in">env</span> LDAP_TLS=<span class="literal">false</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_ORGANISATION=<span class="string">&quot;flashwhale&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_DOMAIN=<span class="string">&quot;flashwhale.com&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_ADMIN_PASSWORD=<span class="string">&quot;djadmin&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_CONFIG_PASSWORD=<span class="string">&quot;djadmin&quot;</span> \</span><br><span class="line">-v /data/ldap/ldap:/var/lib/ldap \</span><br><span class="line">-v /data/ldap/slapd.d:/etc/ldap/slapd.d \</span><br><span class="line">osixia/openldap:1.4.0</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认配置(不加变量)</span></span><br><span class="line">dn          dc=example,dc=org</span><br><span class="line">admin       admin,dc=example,dc=org</span><br><span class="line">password    admin</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="进入容器，验证一下是否可用"><a href="#进入容器，验证一下是否可用" class="headerlink" title="进入容器，验证一下是否可用"></a>进入容器，验证一下是否可用</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it ldap-server /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行查询</span></span><br><span class="line">ldapsearch -x -H ldap://localhost:389 -b dc=flashwhale,dc=com -D <span class="string">&quot;cn=admin,dc=flashwhale,dc=com&quot;</span> -w djadmin</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭建ldapaccountmanager"><a href="#搭建ldapaccountmanager" class="headerlink" title="搭建ldapaccountmanager"></a>搭建ldapaccountmanager</h2><p>注意：搭建ldapaccountmanager如果使用数据卷挂载要加环境变量，还要下载数据包Tar.bz2,将其config文件夹的内容用于存储卷</p>
+<p><a target="_blank" rel="noopener" href="https://www.ldap-account-manager.org/lamcms/releases">https://www.ldap-account-manager.org/lamcms/releases</a></p>
+<p>官方又给了两个配置文件存储地方：</p>
+<ul>
+<li>&#x2F;etc&#x2F;ldap-account-manager</li>
+<li>&#x2F;var&#x2F;lib&#x2F;ldap-account-manager</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#初始化数据</span></span><br><span class="line">docker run -itd --<span class="built_in">rm</span> --name lam ldapaccountmanager/lam:7.4</span><br><span class="line"><span class="built_in">mkdir</span> /data/lam -p</span><br><span class="line">docker <span class="built_in">cp</span> lam:/var/lib/ldap-account-manager  /data/lam</span><br><span class="line"><span class="built_in">mv</span> /data/lam/ldap-account-manager /data/lam/data</span><br><span class="line">docker <span class="built_in">cp</span> lam:/etc/ldap-account-manager  /data/lam</span><br><span class="line"><span class="built_in">mv</span> /data/lam/ldap-account-manager /data/lam/config</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line"><span class="built_in">chown</span> 33:0 /data/lam/data -R</span><br><span class="line"><span class="built_in">chown</span> 33:0 /data/lam/config -R</span><br><span class="line"><span class="comment">#启动</span></span><br><span class="line">docker run -d \</span><br><span class="line">-p 80:80 \</span><br><span class="line">--name lam \</span><br><span class="line">--<span class="built_in">env</span> LAM_SKIP_PRECONFIGURE=<span class="literal">true</span> \</span><br><span class="line">--volume /data/lam/config:/etc/ldap-account-managerg \</span><br><span class="line">--volume /data/lam/data:/var/lib/ldap-account-manager \</span><br><span class="line">ldapaccountmanager/lam:7.4</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置</strong></p>
+<p>默认密码: lam</p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/Image_1367.png" alt="img"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/Image_1368.png" alt="img"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708162306736.png" alt="image-20200708162306736"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708162318019.png" alt="image-20200708162318019"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20200708161250239.png" alt="image-20200708161250239"></p>
+<h2 id="k8s"><a href="#k8s" class="headerlink" title="k8s"></a>k8s</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldap</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">ldap</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldap</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">389</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">389</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">ldap</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldap</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="comment">#serviceName: ldap</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">ldap</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">ldap</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldap</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">osixia/openldap:1.4.0</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">389</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">tcp-389</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapdata</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib/ldap</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapconf</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/etc/ldap</span></span><br><span class="line">          <span class="comment"># resources:</span></span><br><span class="line">          <span class="comment">#   &#123;&#125;</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SLAPD_PASSWORD</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;djadmin&quot;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SLAPD_DOMAIN</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;ldap.flashwhale.com&quot;</span></span><br><span class="line"></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapdata</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">ldapdata</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapconf</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">ldapconf</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldapdata</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">volume.beta.kubernetes.io/storage-class:</span> <span class="string">&quot;alicloud-nas-fast&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteMany</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldapconf</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">volume.beta.kubernetes.io/storage-class:</span> <span class="string">&quot;alicloud-nas-fast&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteMany</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldap</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapaccountmanager</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">ldapaccountmanager/lam:7.2</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapaccountmanagerconf</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/lib/ldap-account-manager/config</span></span><br><span class="line">          <span class="attr">resources:</span></span><br><span class="line">            &#123;&#125;</span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">LAM_SKIP_PRECONFIGURE</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line"></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ldapaccountmanagerconf</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">ldapaccountmanagerconf</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ldapaccountmanagerconf</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">volume.beta.kubernetes.io/storage-class:</span> <span class="string">&quot;alicloud-nas-fast&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteMany</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204163523032.png" alt="image-20210204163523032" style="zoom:50%;">
+
+<h2 id="目录树"><a href="#目录树" class="headerlink" title="目录树"></a>目录树</h2><p>在一个目录服务系统中，整个目录信息集可以表示为一个目录信息树，树中的每个节点是一个条目。</p>
+<h2 id="Entry条目"><a href="#Entry条目" class="headerlink" title="Entry条目"></a>Entry条目</h2><p>也叫记录项，是LDAP中最基本的颗粒，就像字典中的词条，或者是数据库中的记录。通常对LDAP的添加、删除、更改、检索都是以条目为基本对象的。每个条目有自己的唯一可区别的名称（DN）。</p>
+<table>
+<thead>
+<tr>
+<th><strong>关键字</strong></th>
+<th><strong>英文全称</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>dn</strong></td>
+<td>Distinguished Name</td>
+<td>“uid&#x3D;songtao.xu,ou&#x3D;oa,dc&#x3D;example,dc&#x3D;com”，一条记录的位置（唯一）</td>
+</tr>
+<tr>
+<td><strong>Base DN</strong></td>
+<td></td>
+<td>LDAP目录树的最顶部就是根，也就是所谓的“Base DN”，如”dc&#x3D;mydomain,dc&#x3D;org”。</td>
+</tr>
+<tr>
+<td><strong>rdn</strong></td>
+<td>Relative dn</td>
+<td>一般指dn逗号最左边的部分,，如cn&#x3D;baby。它与RootDN不同，RootDN通常与RootPW同时出现，特指管理LDAP中信息的最高权限用户。</td>
+</tr>
+<tr>
+<td><strong>dc</strong></td>
+<td>Domain Component</td>
+<td>domain component，常用来指一个域名的一部分，如域名为example.com变成dc&#x3D;example,dc&#x3D;com（一条记录的所属位置）</td>
+</tr>
+</tbody></table>
+<h2 id="Attribute属性："><a href="#Attribute属性：" class="headerlink" title="Attribute属性："></a>Attribute属性：</h2><p>描述条目的某个方面的信息，一个属性由一个属性类型和一个或多个属性值组成，属性有必须属性和非必须属性。</p>
+<table>
+<thead>
+<tr>
+<th><strong>关键字</strong></th>
+<th><strong>英文全称</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>uid</strong></td>
+<td>User Id</td>
+<td>用户ID songtao.xu（一条记录的ID）</td>
+</tr>
+<tr>
+<td><strong>ou</strong></td>
+<td>Organization Unit</td>
+<td>一个组织单元的名字，如“oa组”（一条记录的所属组织）</td>
+</tr>
+<tr>
+<td><strong>cn</strong></td>
+<td>Common Name</td>
+<td>common name,一个对象的名字，如果指人，使用全名</td>
+</tr>
+<tr>
+<td><strong>sn</strong></td>
+<td>Surname</td>
+<td>姓，如“许”</td>
+</tr>
+</tbody></table>
+<h2 id="ObjectClass对象类"><a href="#ObjectClass对象类" class="headerlink" title="ObjectClass对象类"></a>ObjectClass对象类</h2><p>与某个实体类型对应的一组属性，对象类是可以继承的，这样父类的必须属性也会被继承下来。</p>
+<p>在LDAP中，一个条目必须包含一个Oject class属性，且需要赋予至少一个值。</p>
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173658604.png" alt="image-20210204173658604" style="zoom:50%;">
+
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173710999.png" alt="image-20210204173710999" style="zoom:50%;">
+
+<h2 id="Schema"><a href="#Schema" class="headerlink" title="Schema"></a>Schema</h2><p>对象类（ObjectClass）、属性类型（AttributeType）、语法（Syntax）分别约定了条目、属性、值，他们之间的关系如下 图所示。所以这些构成了模式(Schema)——对象类的集合。条目数据在导入时通常需要接受模式检查，它确保了目录中所有的条目数据结构都是一致的。</p>
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204173224075.png" alt="image-20210204173224075" style="zoom:50%;">
+
+<p>schema（一般在&#x2F;etc&#x2F;ldap&#x2F;schema&#x2F;目录）在导入时要注意前后顺序。</p>
+<h2 id="TLS-amp-SASL"><a href="#TLS-amp-SASL" class="headerlink" title="TLS &amp; SASL"></a>TLS &amp; SASL</h2><p>分布式LDAP 是以明文的格式通过网络来发送信息的，包括client访问ldap的密码（当然一般密码已然是二进制的），SSL&#x2F;TLS 的加密协议就是来保证数据传送的保密性和完整性。</p>
+<p>SASL （Simple Authenticaion and Security Layer）简单身份验证安全框架，它能够实现openldap客户端到服务端的用户验证，也是ldapsearch、ldapmodify这些标准客户端工具默认尝试与LDAP服务端认证用户的方式（前提是已经安装好 <a target="_blank" rel="noopener" href="http://www.openldap.org/doc/admin24/sasl.html">Cyrus SASL</a>）。SASL有几大工业实现标准：Kerberos V5、DIGEST-MD5、EXTERNAL、PLAIN、LOGIN。</p>
+<p>Kerberos V5是里面最复杂的一种，使用GSSAPI机制，必须配置完整的Kerberos V5安全系统，密码不再存放在目录服务器中，每一个dn与Kerberos数据库的主体对应。DIGEST-MD5稍微简单一点，密码通过 saslpasswd2生成放在sasldb数据库中，或者将明文hash存到LDAP dn的userPassword中，每一个authid映射成目录服务器的dn，常和SSL配合使用。参考<a target="_blank" rel="noopener" href="http://docs.oracle.com/cd/E19957-01/820-0293/6nc1tbp0h/index.html">将 LDAP 客户端配置为使用安全性</a></p>
+<p>EXTERNAL一般用于初始化添加schema时使用，如ldapadd -Y EXTERNAL -H ldapi:&#x2F;&#x2F;&#x2F; -f &#x2F;etc&#x2F;openldap&#x2F;schema&#x2F;core.ldif。</p>
+<h2 id="LDIF"><a href="#LDIF" class="headerlink" title="LDIF"></a>LDIF</h2><p>LDIF（LDAP Data Interchange Format，数据交换格式）是LDAP数据库信息的一种文本格式，用于数据的导入导出，每行都是“属性: 值”对，见 <a target="_blank" rel="noopener" href="http://seanlook.com/2015/01/22/openldap_ldif_example/">openldap ldif格式示例</a></p>
+<p>OpenLDAP(2.4.3x)服务器安装配置方法见<a target="_blank" rel="noopener" href="http://seanlook.com/2015/01/21/openldap-install-guide-ssl/">这里</a>。</p>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="修改根DN与添加密码"><a href="#修改根DN与添加密码" class="headerlink" title="修改根DN与添加密码"></a>修改根DN与添加密码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/openldap/slapd.d/cn\=config/olcDatabase\=\&#123;2\&#125;hdb.ldif</span><br><span class="line"><span class="comment">#修改内容：</span></span><br><span class="line">olcSuffix: dc=quhui,dc=com</span><br><span class="line">olcRootDN: cn=root,dc=quhui,dc=com</span><br><span class="line"><span class="comment">#添加内容：</span></span><br><span class="line">olcRootPW: &#123;SSHA&#125;cQb7UUcz2x6p6rB1gm9EmsVcM8Rrfp6h</span><br><span class="line"><span class="comment">#修改验证</span></span><br><span class="line">$ vim /etc/openldap/slapd.d/cn\=config/olcDatabase\=\&#123;1\&#125;monitor.ldif</span><br><span class="line">dn.base=<span class="string">&quot;cn=Manager,dc=my-domain,dc=com&quot;</span></span><br><span class="line"><span class="comment">#重启</span></span><br><span class="line">$ systemctl start slapd</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决无法操作根节点数据This-base-cannot-be-created-with-PLA问题"><a href="#解决无法操作根节点数据This-base-cannot-be-created-with-PLA问题" class="headerlink" title="解决无法操作根节点数据This base cannot be created with PLA问题"></a>解决无法操作根节点数据This base cannot be created with PLA问题</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> &gt; base.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: dc=quhui,dc=com</span></span><br><span class="line"><span class="string">o: ldap</span></span><br><span class="line"><span class="string">objectclass: dcObject</span></span><br><span class="line"><span class="string">objectclass: organization</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">$ ldapadd -f base.ldif -x -D cn=root,dc=quhui,dc=com -W</span><br></pre></td></tr></table></figure>
+
+<h2 id="导入管理员帐号信息"><a href="#导入管理员帐号信息" class="headerlink" title="导入管理员帐号信息"></a>导入管理员帐号信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; root.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: dc=quhui,dc=com</span></span><br><span class="line"><span class="string">o: quhui com</span></span><br><span class="line"><span class="string">dc: quhui</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">objectClass: dcObject</span></span><br><span class="line"><span class="string">objectclass: organization</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">dn: cn=root,dc=quhui,dc=com</span></span><br><span class="line"><span class="string">cn: root</span></span><br><span class="line"><span class="string">objectClass: organizationalRole</span></span><br><span class="line"><span class="string">description: Directory Manager</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">dn: ou=People,dc=quhui,dc=com</span></span><br><span class="line"><span class="string">ou: People</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">objectClass: organizationalUnit</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">dn: ou=Group,dc=quhui,dc=com</span></span><br><span class="line"><span class="string">ou: Group</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">objectClass: organizationalUnit</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">$ ldapadd -x -D <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> -W -f /root/root.ldif</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="新建OU"><a href="#新建OU" class="headerlink" title="新建OU"></a>新建OU</h2><p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204210517980.png" alt="image-20210204210517980"></p>
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210204210540229.png" alt="image-20210204210540229" style="zoom:50%;">
+
+<p>新建OU后就可以用界面新建组与用户了</p>
+<h2 id="GroupOfUniqueNames用户组属性"><a href="#GroupOfUniqueNames用户组属性" class="headerlink" title="GroupOfUniqueNames用户组属性"></a>GroupOfUniqueNames用户组属性</h2><p><strong>添加配置</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; memberof_config.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: cn=module,cn=config</span></span><br><span class="line"><span class="string">cn: module</span></span><br><span class="line"><span class="string">objectClass: olcModuleList</span></span><br><span class="line"><span class="string">olcModuleLoad: memberof</span></span><br><span class="line"><span class="string">olcModulePath: /usr/lib64/openldap</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">dn: olcOverlay=memberof,olcDatabase=&#123;2&#125;hdb,cn=config</span></span><br><span class="line"><span class="string">objectClass: olcConfig</span></span><br><span class="line"><span class="string">objectClass: olcMemberOf</span></span><br><span class="line"><span class="string">objectClass: olcOverlayConfig</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">olcOverlay: memberof</span></span><br><span class="line"><span class="string">olcMemberOfDangling: ignore</span></span><br><span class="line"><span class="string">olcMemberOfRefInt: TRUE</span></span><br><span class="line"><span class="string">olcMemberOfGroupOC: groupOfUniqueNames</span></span><br><span class="line"><span class="string">olcMemberOfMemberAD: uniqueMember</span></span><br><span class="line"><span class="string">olcMemberOfMemberOfAD: memberOf</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; refint1.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: cn=module&#123;1&#125;,cn=config</span></span><br><span class="line"><span class="string">add: olcmoduleload</span></span><br><span class="line"><span class="string">olcmoduleload: refint</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; refint2.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: olcOverlay=refint,olcDatabase=&#123;2&#125;hdb,cn=config</span></span><br><span class="line"><span class="string">objectClass: olcConfig</span></span><br><span class="line"><span class="string">objectClass: olcOverlayConfig</span></span><br><span class="line"><span class="string">objectClass: olcRefintConfig</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">olcOverlay: refint</span></span><br><span class="line"><span class="string">olcRefintAttribute: memberof uniqueMember manager owner</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f memberof_config.ldif</span><br><span class="line">sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f refint1.ldif</span><br><span class="line">sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f refint2.ldif</span><br></pre></td></tr></table></figure>
+
+<p><strong>导入用户组</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; group1.ldif &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">dn: cn=yunweizu,ou=Group,dc=quhui,dc=com</span></span><br><span class="line"><span class="string">objectClass: groupOfUniqueNames</span></span><br><span class="line"><span class="string">objectClass: top</span></span><br><span class="line"><span class="string">cn: yunweizu</span></span><br><span class="line"><span class="string">description: 运维组</span></span><br><span class="line"><span class="string">uniqueMember: uid=test,ou=People,dc=quhui,dc=com</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">$ ldapadd -x -w <span class="string">&quot;123456&quot;</span> -D <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> -f /root/group1.ldif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ldapsearch -x -LLL -H ldap://127.0.0.1 -x -D <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> -w <span class="string">&quot;123456&quot;</span> -b uid=quhui,ou=People,dc=quhui,dc=com dn uniqueMember</span><br><span class="line">dn: uid=quhui,ou=People,dc=quhui,dc=com</span><br></pre></td></tr></table></figure>
+
+<h2 id="生成新配置文件"><a href="#生成新配置文件" class="headerlink" title="生成新配置文件"></a>生成新配置文件</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">rm -rf <span class="regexp">/etc/</span>openldap/slapd.d.bak</span><br><span class="line">cp -a <span class="regexp">/etc/</span>openldap<span class="regexp">/slapd.d /</span>etc<span class="regexp">/openldap/</span>slapd.d.bak</span><br><span class="line">rm -rf <span class="regexp">/etc/</span>openldap<span class="regexp">/slapd.d/</span>*</span><br><span class="line">slapadd -n <span class="number">0</span> -F <span class="regexp">/etc/</span>openldap<span class="regexp">/slapd.d -l /u</span>sr<span class="regexp">/share/</span>openldap-servers/slapd.ldif</span><br><span class="line"><span class="comment">#添加schema</span></span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:<span class="regexp">//</span><span class="regexp">/ -f /</span>etc<span class="regexp">/openldap/</span>schema/cosine.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:<span class="regexp">//</span><span class="regexp">/ -f /</span>etc<span class="regexp">/openldap/</span>schema/nis.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:<span class="regexp">//</span><span class="regexp">/ -f /</span>etc<span class="regexp">/openldap/</span>schema/inetorgperson.ldif</span><br><span class="line">chown -R ldap.ldap <span class="regexp">/etc/</span>openldap/*</span><br><span class="line">chown -R ldap.ldap <span class="regexp">/var/</span>lib<span class="regexp">/ldap/</span>*</span><br><span class="line">systemctl restart slapd</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加用户及用户组"><a href="#添加用户及用户组" class="headerlink" title="添加用户及用户组"></a>添加用户及用户组</h2><p><strong>命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> &lt;&lt; <span class="string">EOF |  ldapadd -x -D cn=root,dc=quhui,dc=com -W  </span></span><br><span class="line"><span class="string">dn: dc=quhui, dc=com </span></span><br><span class="line"><span class="string">dc: quhui  </span></span><br><span class="line"><span class="string">objectClass: top  </span></span><br><span class="line"><span class="string">objectClass: domain  </span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">dn: ou=people, dc=quhui, dc=com </span></span><br><span class="line"><span class="string">ou: people  </span></span><br><span class="line"><span class="string">objectClass: top  </span></span><br><span class="line"><span class="string">objectClass: organizationalUnit  </span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">dn: ou=group, dc=quhui, dc=com </span></span><br><span class="line"><span class="string">ou: group  </span></span><br><span class="line"><span class="string">objectClass: top  </span></span><br><span class="line"><span class="string">objectClass: organizationalUnit  </span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">Enter LDAP Password:  </span><br><span class="line">adding new entry <span class="string">&quot;dc=quhui, dc=com&quot;</span>  </span><br><span class="line"> </span><br><span class="line">adding new entry <span class="string">&quot;ou=people, dc=quhui, dc=com         &quot;</span>  </span><br><span class="line"> </span><br><span class="line">adding new entry <span class="string">&quot;ou=group, dc=quhui, dc=com&quot;</span> </span><br></pre></td></tr></table></figure>
+
+<p><strong>文件</strong></p>
+<p>新建test11.ldif 写入以下内容</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#cat test11.ldif</span></span><br><span class="line">dn: dc=flashwhale,dc=com</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: person</span><br><span class="line">objectClass: posixAccount</span><br><span class="line">objectClass: shadowAccount</span><br><span class="line">uid: test11</span><br><span class="line">cn: test11</span><br><span class="line">sn: test11</span><br><span class="line">uidNumber: 1034</span><br><span class="line">gidNumber: 1003</span><br><span class="line">loginShell: /bin/bash</span><br><span class="line">homeDirectory: /home/test11/</span><br></pre></td></tr></table></figure>
+
+<p>创建ldap用户</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldapadd -x -H ldap://127.0.0.1:389 -D <span class="string">&quot;cn=admin,dc=flashwhale,dc=com&quot;</span> -w djadmin  -f /root/test11.ldif</span><br></pre></td></tr></table></figure>
+
+<h2 id="ldapadmin"><a href="#ldapadmin" class="headerlink" title="ldapadmin"></a>ldapadmin</h2><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205162921579.png" alt="image-20210205162921579" style="zoom:80%;">
+
+<h1 id="对接"><a href="#对接" class="headerlink" title="对接"></a>对接</h1><h2 id="jumpserver"><a href="#jumpserver" class="headerlink" title="jumpserver"></a>jumpserver</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">run</span> -d --name jumpserver -h jumpserver <span class="attribute">--restart</span>=always  \</span><br><span class="line">    -v /data/jumpserver:/opt/jumpserver/data/media \</span><br><span class="line">    -p 8080:80 \</span><br><span class="line">    -p 2222:2222 \</span><br><span class="line">    -e <span class="attribute">SECRET_KEY</span>=123456 \</span><br><span class="line">    -e <span class="attribute">BOOTSTRAP_TOKEN</span>=123456 \</span><br><span class="line">    -e <span class="attribute">DB_HOST</span>=172.12.1.100 \</span><br><span class="line">    -e <span class="attribute">DB_PORT</span>=3306 \</span><br><span class="line">    -e <span class="attribute">DB_USER</span>=root \</span><br><span class="line">    -e <span class="attribute">DB_PASSWORD</span>=<span class="string">&quot;123456&quot;</span> \</span><br><span class="line">    -e <span class="attribute">DB_NAME</span>=jumpserver \</span><br><span class="line">    -e <span class="attribute">REDIS_HOST</span>=172.12.1.100 \</span><br><span class="line">    -e <span class="attribute">REDIS_PORT</span>=6379 \</span><br><span class="line">    -e <span class="attribute">REDIS_PASSWORD</span>=<span class="string">&quot;123456&quot;</span> \</span><br><span class="line">jumpserver/jms_all:v2.4.4</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210207205747269.png" alt="image-20210207205747269"></p>
+<ul>
+<li>测试连接–&gt; 提交–&gt;测试登录–&gt;一键导入</li>
+<li>jumpserver只导入用户，组管理在内部实现</li>
+</ul>
+<h2 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">-p <span class="number">8000</span>:<span class="number">8080</span> -p <span class="number">50000</span>:<span class="number">50000</span> \</span><br><span class="line">--net=host \</span><br><span class="line">--name jenkins \</span><br><span class="line">-v <span class="regexp">/data/</span>jenkins_home:<span class="regexp">/var/</span>jenkins_home \</span><br><span class="line">-v <span class="regexp">/var/</span>run<span class="regexp">/docker.sock:/</span>var<span class="regexp">/run/</span>docker.sock \</span><br><span class="line">-v <span class="regexp">/usr/</span>bin<span class="regexp">/docker:/u</span>sr<span class="regexp">/bin/</span>docker \</span><br><span class="line">-v <span class="regexp">/etc/</span>localtime:<span class="regexp">/etc/</span>localtime \</span><br><span class="line">-v <span class="regexp">/etc/</span>localtime:<span class="regexp">/etc/</span>localtime \</span><br><span class="line">--privileged=<span class="keyword">true</span> \</span><br><span class="line">-e JAVA_OPTS=<span class="string">&quot;-Duser.timezone=Asia/Shanghai -Dfile.encoding=utf-8&quot;</span> \</span><br><span class="line">registry.cn-hangzhou.aliyuncs.com<span class="regexp">/xqbl-share/</span>jenkins_root:<span class="number">2.235</span>.<span class="number">2</span>-lts-centos7</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222200936.png" alt="image-20210205222200936"></p>
+<figure class="highlight hy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">&amp;</span></span> (<span class="name">cn=</span>&#123;<span class="number">0</span>&#125;) (|(<span class="name">objectClass=groupOfNames</span>) (<span class="name">objectclass=groupOfUniqueNames</span>) (<span class="name">objectclass=posixGroup</span>)))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>多OU可以配置顶级DN实现</li>
+</ul>
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222221560.png" alt="image-20210205222221560" style="zoom:50%;">
+
+
+
+
+
+<img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210205222221560.png" alt="image-20210205222221560" style="zoom:50%;">
+
+<h2 id="rancher"><a href="#rancher" class="headerlink" title="rancher"></a>rancher</h2><p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20210423162030572.png" alt="image-20210423162030572"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20221103170310413.png" alt="image-20221103170310413"></p>
+<p><img src="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/image-20221103170358278.png" alt="image-20221103170358278"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/" title="k8s和docker中搭建使用ldap+manager">https://horus-k.github.io/2020/07/08/LDAP/ldap+manager使用/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/ldap/" rel="tag"># ldap</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/02/zk+dubbo/%E6%8E%A7%E5%88%B6dubbo%E6%B3%A8%E5%86%8C%E4%BD%BF%E7%94%A8%E5%86%85%E5%A4%96%E7%BD%91ip%E5%9C%B0%E5%9D%80/" rel="prev" title="控制dubbo注册使用内外网ip地址">
+                  <i class="fa fa-chevron-left"></i> 控制dubbo注册使用内外网ip地址
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/" rel="next" title="k8s流量策略-获取真实ip">
+                  k8s流量策略-获取真实ip <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

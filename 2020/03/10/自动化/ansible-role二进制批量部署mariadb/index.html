@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="总结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ansible-role二进制批量部署mariadb">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="总结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c1f0bf54f5e0cf4587331e22812f6d20.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/f2d69972ef2ba98f253737dadd951422.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/82595d709bf9d6ccba3546fdf364b00a.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/b23f26c6ce68d880fb6fdba3d7d82e8c.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c628193bbe252a6daeaf23347099f1c5.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/df696a950abc9f6f72466cf926456b09.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/842e1dec7fb2b08120ecbbdcde9c2477.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/0b547aad2e8b61bd5181477e52ab5a47.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/b8a7bd8b680b58e033c2f32280a1e279.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/ffd24e2bbcacaf1e2d7cbfe3491164d5.png">
+<meta property="article:published_time" content="2020-03-10T06:26:01.000Z">
+<meta property="article:modified_time" content="2020-03-10T10:20:49.019Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="ansible">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c1f0bf54f5e0cf4587331e22812f6d20.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/","path":"2020/03/10/自动化/ansible-role二进制批量部署mariadb/","title":"ansible-role二进制批量部署mariadb"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ansible-role二进制批量部署mariadb | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ansible-role二进制批量部署mariadb | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ansible-role二进制批量部署mariadb
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-10 14:26:01 / 修改时间：18:20:49" itemprop="dateCreated datePublished" datetime="2020-03-10T14:26:01+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ansible/" itemprop="url" rel="index"><span itemprop="name">ansible</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="总结构"><a href="#总结构" class="headerlink" title="总结构"></a>总结构</h2><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c1f0bf54f5e0cf4587331e22812f6d20.png" alt="img"></p>
+<span id="more"></span>
+
+<h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/f2d69972ef2ba98f253737dadd951422.png" alt="img"></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- <span class="keyword">include</span>: <span class="keyword">group</span>.yml</span><br><span class="line">- <span class="keyword">include</span>: <span class="keyword">user</span>.yml</span><br><span class="line">- <span class="keyword">include</span>: mkdir.yml</span><br><span class="line">- <span class="keyword">include</span>: data.yml</span><br><span class="line">- <span class="keyword">include</span>: link.yml</span><br><span class="line">- <span class="keyword">include</span>: linkstate.yml</span><br><span class="line">- <span class="keyword">include</span>: conf.yml</span><br><span class="line">- <span class="keyword">include</span>: <span class="keyword">server</span>.yml</span><br></pre></td></tr></table></figure>
+
+<h3 id="2"><a href="#2" class="headerlink" title="2"></a>2</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/82595d709bf9d6ccba3546fdf364b00a.png" alt="img"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: create<span class="built_in"> group</span></span><br><span class="line"><span class="built_in"></span>  group: <span class="attribute">name</span>=mysql <span class="attribute">system</span>=<span class="literal">yes</span> <span class="attribute">gid</span>=306</span><br></pre></td></tr></table></figure>
+
+<h3 id="3"><a href="#3" class="headerlink" title="3"></a>3</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/b23f26c6ce68d880fb6fdba3d7d82e8c.png" alt="img"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: create<span class="built_in"> user</span></span><br><span class="line"><span class="built_in"></span>  user: <span class="attribute">name</span>=mysql <span class="attribute">system</span>=<span class="literal">yes</span> <span class="attribute">uid</span>=306 <span class="attribute">group</span>=306 <span class="attribute">home</span>=/data/mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="4"><a href="#4" class="headerlink" title="4"></a>4</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/c628193bbe252a6daeaf23347099f1c5.png" alt="img"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: mkdir</span><br><span class="line">  file: <span class="attribute">name</span>=/data/mysql <span class="attribute">owner</span>=root <span class="attribute">group</span>=mysql <span class="attribute">state</span>=directory</span><br></pre></td></tr></table></figure>
+
+<h3 id="5"><a href="#5" class="headerlink" title="5"></a>5</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/df696a950abc9f6f72466cf926456b09.png" alt="img"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: copy data</span><br><span class="line">  unarchive: <span class="attribute">src</span>=mariadb-10.2.23-linux-x86_64.tar.gz  <span class="attribute">dest</span>=/usr/local</span><br></pre></td></tr></table></figure>
+
+<h3 id="6"><a href="#6" class="headerlink" title="6"></a>6</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/842e1dec7fb2b08120ecbbdcde9c2477.png" alt="img"></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: link</span><br><span class="line">  <span class="keyword">file</span>: src=<span class="regexp">/usr/</span>local<span class="regexp">/mariadb-10.2.23-linux-x86_64 dest=/u</span>sr<span class="regexp">/local/my</span>sql state=link</span><br></pre></td></tr></table></figure>
+
+<h3 id="7"><a href="#7" class="headerlink" title="7"></a>7</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/0b547aad2e8b61bd5181477e52ab5a47.png" alt="img"></p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- name: link <span class="keyword">state</span></span><br><span class="line">  file: name=/usr/local/mysql owner=root <span class="keyword">group</span>=mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="8"><a href="#8" class="headerlink" title="8"></a>8</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/b8a7bd8b680b58e033c2f32280a1e279.png" alt="img"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: mkdir conf </span><br><span class="line">  file: <span class="attribute">path</span>=/etc/mysql <span class="attribute">state</span>=directory</span><br><span class="line">- name: copy conf</span><br><span class="line">  template: <span class="attribute">src</span>=my-large.cnf.j2 <span class="attribute">dest</span>=/etc/mysql/my.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="9"><a href="#9" class="headerlink" title="9"></a>9</h3><p><img src="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/ffd24e2bbcacaf1e2d7cbfe3491164d5.png" alt="img"></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- name: install</span><br><span class="line">  shell: <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>scripts<span class="regexp">/mysql_install_db --datadir=/</span>data/mysql --user=mysql</span><br><span class="line">- name: <span class="keyword">copy</span> service conf</span><br><span class="line">  template: src=mysql.server.j2 dest=<span class="regexp">/etc/</span>rc.d<span class="regexp">/init.d/my</span>sqld</span><br><span class="line">- name: add service</span><br><span class="line">  shell: chkconfig --add mysqld</span><br><span class="line">- name: chmod</span><br><span class="line">  shell: chmod +x <span class="regexp">/etc/i</span>nit.d/mysqld</span><br><span class="line">- name: start server</span><br><span class="line">  shell: service mysqld start</span><br><span class="line">- name: PATH</span><br><span class="line">  shell: echo PATH=<span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>bin:$PATH &gt; <span class="regexp">/etc/</span>profile.d/mysql</span><br><span class="line">- name: <span class="keyword">source</span></span><br><span class="line">  shell: <span class="keyword">source</span> <span class="regexp">/etc/</span>profile.d/mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-安全初始化"><a href="#10-安全初始化" class="headerlink" title="10 安全初始化"></a>10 安全初始化</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#<span class="operator">!/</span>usr<span class="operator">/</span>bin<span class="operator">/</span>expect</span><br><span class="line"><span class="keyword">set</span> timeout <span class="number">60</span></span><br><span class="line">#set password [lindex <span class="variable">$argv</span> <span class="number">0</span>]</span><br><span class="line">spawn mysql_secure_installation</span><br><span class="line">expect &#123;</span><br><span class="line">        <span class="string">&quot;enter for none&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Change the root password&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;New password&quot;</span> &#123; send <span class="string">&quot;new passwd<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Re-enter new password&quot;</span> &#123; send <span class="string">&quot;newpasswd<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Remove anonymous users&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Disallow root login remotely&quot;</span> &#123; send <span class="string">&quot;n<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Remove test database and access to it&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Reload privilege tables now&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>; exp_continue&#125;</span><br><span class="line">        <span class="string">&quot;Cleaning up&quot;</span> &#123; send <span class="string">&quot;<span class="subst">\r</span>&quot;</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line">interact &#x27; <span class="operator">&gt;</span> mysql_secure_installation.exp</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible-role%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%B9%E9%87%8F%E9%83%A8%E7%BD%B2mariadb/" title="ansible-role二进制批量部署mariadb">https://horus-k.github.io/2020/03/10/自动化/ansible-role二进制批量部署mariadb/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/ansible/" rel="tag"># ansible</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/ha+kp/Keepalived-haproxy%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" rel="prev" title="Keepalived+haproxy简单实现">
+                  <i class="fa fa-chevron-left"></i> Keepalived+haproxy简单实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/ansible%E2%80%93playbook%E7%94%A8%E6%B3%95%E4%B8%8E%E8%87%AA%E5%B7%B1%E7%9A%84yml%E8%8C%83%E4%BE%8B%E6%80%BB%E7%BB%93/" rel="next" title="ansible–playbook用法与自己的yml范例总结">
+                  ansible–playbook用法与自己的yml范例总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

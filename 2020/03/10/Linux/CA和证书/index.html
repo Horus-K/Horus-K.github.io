@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CA和证书">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/6f6054985d77c3769bdd0f9bf5eded56.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/baa3c7a51804d36466401de16de35127.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/cc8d801577a6d65c3112b50e4995c631.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/eec64de7987a4543b45307dd944e0fb7.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/cfa4cc9097c6771909f8639add4be724.png">
+<meta property="article:published_time" content="2020-03-10T08:52:58.000Z">
+<meta property="article:modified_time" content="2020-03-10T09:37:26.439Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="ca">
+<meta property="article:tag" content="证书">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/6f6054985d77c3769bdd0f9bf5eded56.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/","path":"2020/03/10/Linux/CA和证书/","title":"CA和证书"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>CA和证书 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="CA和证书 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CA和证书
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-10 16:52:58 / 修改时间：17:37:26" itemprop="dateCreated datePublished" datetime="2020-03-10T16:52:58+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器"><a href="#企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器" class="headerlink" title="企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器"></a>企业内网搭建CA服务器生成自签名证书，CA签署，实现企业内网基于key验证访问服务器</h1><span id="more"></span>
+
+<h3 id="一些CA基础"><a href="#一些CA基础" class="headerlink" title="一些CA基础"></a>一些CA基础</h3><blockquote>
+<ul>
+<li>PKI：Public Key Infrastructure<br>签证机构：CA（Certificate Authority）<br>注册机构：RA<br>证书吊销列表：CRL</li>
+<li>X.509：定义了证书的结构以及认证协议标准<br>版本号 主体公钥<br>序列号 CRL分发点<br>签名算法 扩展信息<br>颁发者 发行者签名<br>有效期限<br>主体名称</li>
+<li>证书类型：<br>证书授权机构的证书<br>服务器<br>用户证书<br>获取证书两种方法：<br>1)使用证书授权机构<br>生成证书请求（csr）<br>2)将证书请求csr发送给CA<br>CA签名颁发证书<br>自签名的证书<br>自已签发自己的公钥</li>
+</ul>
+</blockquote>
+<h2 id="证书作用"><a href="#证书作用" class="headerlink" title="证书作用"></a>证书作用</h2><ul>
+<li><p>获取证书后，例如网站流量将基于HTTPS 协议<br>* HTTPS 协议：就是“HTTP 协议”和“SSL&#x2F;TLS 协议”的组合。HTTP over<br>* SSL”或“HTTP over TLS”，对http协议的文本数据进行加密处理后，成为二<br>进制形式传输<br>SSL：Secure Socket Layer，TLS: Transport Layer Security<br>1995：SSL 2.0 Netscape<br>1996：SSL 3.0<br>1999：TLS 1.0<br>2006：TLS 1.1 IETF(Internet工程任务组) RFC 4346<br>2008：TLS 1.2 当前使用<br>2015：TLS 1.3<br>功能：机密性，认证，完整性，重放保护</p>
+</li>
+<li><p>HTTPS结构</p>
+</li>
+<li><p>HTTPS工作过程</p>
+</li>
+<li><p>必要命令openssl了解</p>
+</li>
+</ul>
+<blockquote>
+<p>OpenSSL：开源项目<br>三个组件：<br>openssl：多用途的命令行工具，包openssl<br>libcrypto：加密算法库，包openssl-libs<br>libssl：加密模块应用库，实现了ssl及tls，包nss<br>* openssl命令：<br>两种运行模式：交互模式和批处理模式<br>openssl version：程序版本号<br>标准命令、消息摘要命令、加密命令<br>标准命令：enc, ca, req, …</p>
+</blockquote>
+<h2 id="1搭建CA服务器"><a href="#1搭建CA服务器" class="headerlink" title="1搭建CA服务器"></a>1搭建CA服务器</h2><h3 id="①在服务器端生成私钥"><a href="#①在服务器端生成私钥" class="headerlink" title="①在服务器端生成私钥"></a>①在服务器端生成私钥</h3><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cd /etc/pki/CA</span><br><span class="line">[root@localhost CA]# touch index.txt #生成证书索引数据库文件</span><br><span class="line">[root@localhost CA]# echo <span class="number">0</span>F &gt; serial #指定第一个颁发证书的序列号</span><br><span class="line">[root@localhost CA]# (umask <span class="number">066</span><span class="comment">;openssl genrsa -out private/cakey.pem 4096 )   #生成私钥</span></span><br><span class="line">Generating RSA private key, <span class="number">4096</span> bit long modulus</span><br><span class="line">.......++</span><br><span class="line">.........................................++</span><br><span class="line">e is <span class="number">65537</span> (<span class="number">0x10001</span>)</span><br><span class="line">[root@localhost CA]# openssl req -new -x509 -key private/cakey.pem  -out cacert.pem -days <span class="number">3650</span> #给自己颁发证书</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &#x27;.&#x27;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (<span class="number">2</span> letter code) [XX]:CN</span><br><span class="line">State or Province Name (full name) []:beijin</span><br><span class="line">Locality Name (eg, city) [Default City]:beijin</span><br><span class="line">Organization Name (eg, company) [Default Company Ltd]:ailibaba</span><br><span class="line">Organizational Unit Name (eg, section) []:taobao</span><br><span class="line">Common Name (eg, your name or your server&#x27;s hostname) []:www.taobao.com</span><br><span class="line">Email Address []</span><br><span class="line">[root@localhost CA]# tree</span><br><span class="line">.</span><br><span class="line">├── cacert.pem</span><br><span class="line">├── certs</span><br><span class="line">├── crl</span><br><span class="line">├── index.txt</span><br><span class="line">├── newcerts</span><br><span class="line">├── private</span><br><span class="line">│   └── cakey.pem</span><br><span class="line">└── serial</span><br><span class="line"><span class="number">4</span> directories, <span class="number">4</span> files</span><br><span class="line">[root@localhost CA]# openssl x509 -in cacert.pem -noout -text  # 以易读方式打开证书</span><br><span class="line">Certificate:</span><br><span class="line">    Data:</span><br><span class="line">        Version: <span class="number">3</span> (<span class="number">0</span>x2)</span><br><span class="line">        Serial Number:</span><br><span class="line">            <span class="number">f6:4f:6a:1f:a6:de:88:9a</span></span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption</span><br><span class="line">        Issuer: C=CN, ST=beijin, L=beijin, O=ailibaba, OU=taobao, CN=www.taobao.com</span><br><span class="line">        Validity</span><br><span class="line">            Not Before: Apr <span class="number">18 07:51:51</span> <span class="number">2019</span> GMT</span><br><span class="line">            Not After : Apr <span class="number">15 07:51:51</span> <span class="number">2029</span> GMT</span><br><span class="line">        Subject: C=CN, ST=beijin, L=beijin, O=ailibaba, OU=taobao, CN=www.taobao.com</span><br><span class="line">        Subject Public Key Info:</span><br><span class="line">            Public Key Algorithm: rsaEncryption</span><br><span class="line">                Public-Key: (<span class="number">4096</span> bit)</span><br><span class="line">                Modulus:</span><br><span class="line">                    <span class="number">00:ed:09:66:55:c8:65:18</span>:a7:aa:<span class="number">7d</span>:<span class="number">0</span>b:fe:d3:<span class="number">91</span>:</span><br><span class="line">                    <span class="number">b3:f2:a2:a2:4a:ca:02:34</span>:<span class="number">70</span>:<span class="number">37</span>:<span class="number">5d</span>:<span class="number">80</span>:<span class="number">8</span>c:<span class="number">21</span>:<span class="number">79</span>:</span><br><span class="line">                    <span class="number">e9:58:78:73:98:8c:c4:e5</span>:<span class="number">43</span>:ee:<span class="number">44</span>:ca:<span class="number">60</span>:<span class="number">72</span>:<span class="number">50</span>:</span><br><span class="line">                    <span class="number">05:43:d4:cc:4a:bc:b7:4a</span>:<span class="number">33</span>:<span class="number">53</span>:<span class="number">13</span>:b0:df:b0:<span class="number">5d</span>:</span><br><span class="line">                    <span class="number">ac:9d:a3:af:70:37:ca:09</span>:<span class="number">4</span>e:ce:<span class="number">69</span>:<span class="number">77</span>:<span class="number">2</span>a:<span class="number">1</span>a:ee:</span><br><span class="line">                    <span class="number">db:40:0c:d5:49:be:c0:a0</span>:f6:a4:<span class="number">8d</span>:<span class="number">33:20:57:54</span>:</span><br><span class="line">                    <span class="number">30:ce:74:fe:cd:30:3f:8d</span>:<span class="number">9</span>f:bc:f9:<span class="number">0</span>e:db:<span class="number">1</span>f:<span class="number">7</span>c:</span><br><span class="line">                    <span class="number">93:ab:ad:41:78:53:b5:f9</span>:a2:<span class="number">8</span>c:d<span class="number">4:48:80:82</span>:e0:</span><br><span class="line">                    <span class="number">aa:13:45:73:22:f0:41:16</span>:a1:<span class="number">1</span>f:<span class="number">59</span>:bb:c1:<span class="number">7</span>e:<span class="number">58</span>:</span><br><span class="line">                    <span class="number">16:3c:24:ac:1b:53:19:0b</span>:<span class="number">81</span>:<span class="number">87</span>:f7:<span class="number">9</span>b:b6:<span class="number">86</span>:<span class="number">4</span>e:</span><br><span class="line">                    <span class="number">82:c4:7a:29:d1:39:54:d9</span>:<span class="number">36</span>:b0:<span class="number">7</span>b:<span class="number">95</span>:<span class="number">79</span>:fc:<span class="number">13</span>:</span><br><span class="line">                    <span class="number">29:48:d2:cc:b0:ae:34:f0</span>:<span class="number">22</span>:<span class="number">8</span>f:df:b3:<span class="number">76</span>:<span class="number">8</span>a:<span class="number">84</span>:</span><br><span class="line">                    <span class="number">3a:ce:36:97:85:3d:10:50</span>:a<span class="number">7:12:24:17</span>:<span class="number">1d</span>:<span class="number">9d</span>:bf:</span><br><span class="line">                    <span class="number">f8:e9:7c:7b:b4:67:c9:1f</span>:<span class="number">41</span>:ee:<span class="number">19</span>:<span class="number">45</span>:<span class="number">9</span>b:<span class="number">39</span>:<span class="number">70</span>:</span><br><span class="line">                    <span class="number">d7:9e:7f:97:44:1e:f5:ee</span>:cb:<span class="number">70</span>:e6:<span class="number">6</span>a:f7:<span class="number">8</span>f:a6:</span><br><span class="line">                    <span class="number">44:da:00:18:c3:de:4b:66</span>:<span class="number">8</span>f:d7:<span class="number">45</span>:a7:<span class="number">09</span>:<span class="number">43</span>:f1:</span><br><span class="line">                    <span class="number">be:0c:68:1a:18:ae:05:61</span>:<span class="number">1</span>f:<span class="number">2</span>f:<span class="number">01</span>:c7:<span class="number">8d</span>:<span class="number">74</span>:<span class="number">3</span>f:</span><br><span class="line">                    <span class="number">7f:b5:5b:65:dd:6e:d9:47</span>:<span class="number">0</span>f:<span class="number">38</span>:b3:ff:<span class="number">7</span>c:<span class="number">92</span>:<span class="number">95</span>:</span><br><span class="line">                    <span class="number">48:de:d5:44:17:07:da:5e</span>:bd:<span class="number">00</span>:e8:<span class="number">03</span>:bd:ee:<span class="number">47</span>:</span><br><span class="line">                    <span class="number">3f:7a:14:a6:63:1c:29:d8</span>:<span class="number">16</span>:ce:<span class="number">26</span>:<span class="number">1</span>a:<span class="number">2</span>a:ee:bd:</span><br><span class="line">                    <span class="number">57:43:d0:4d:08:52:96:e4</span>:<span class="number">68</span>:<span class="number">0</span>a:b5:<span class="number">19</span>:c9:ea:<span class="number">4d</span>:</span><br><span class="line">                    <span class="number">42:53:ec:3a:45:a6:ca:68</span>:b9:e8:<span class="number">2</span>e:<span class="number">38</span>:f0:<span class="number">4</span>c:<span class="number">51</span>:</span><br><span class="line">                    <span class="number">4b:e9:20:5c:f4:b4:7b:20</span>:<span class="number">6</span>a:dd:<span class="number">21</span>:<span class="number">31</span>:<span class="number">49</span>:d6:b1:</span><br><span class="line">                    <span class="number">39:0f:dc:22:52:2c:cb:94</span>:<span class="number">21</span>:af:e6:<span class="number">82</span>:<span class="number">09</span>:a8:<span class="number">08</span>:</span><br><span class="line">                    <span class="number">ef:f1:21:61:da:fb:ba:ce</span>:<span class="number">8</span>f:<span class="number">70</span>:<span class="number">4d</span>:e0:d9:b0:d1:</span><br><span class="line">                    <span class="number">6e:42:37:33:f0:8d:57:14</span>:<span class="number">56</span>:<span class="number">6</span>a:<span class="number">5</span>e:<span class="number">2</span>c:<span class="number">60</span>:<span class="number">8</span>e:<span class="number">3</span>f:</span><br><span class="line">                    <span class="number">05:06:35:53:e0:0b:81:9a</span>:<span class="number">11</span>:<span class="number">38</span>:b1:<span class="number">95</span>:c6:f6:<span class="number">1d</span>:</span><br><span class="line">                    <span class="number">f6:85:61:99:b6:bc:d0:2e</span>:ab:d9:<span class="number">5</span>e:<span class="number">6</span>a:<span class="number">53</span>:<span class="number">4</span>e:<span class="number">95</span>:</span><br><span class="line">                    <span class="number">5e:a5:a5:4d:6a:45:3b:dd</span>:d5:c4:<span class="number">1</span>b:d1:<span class="number">95</span>:f0:<span class="number">24</span>:</span><br><span class="line">                    <span class="number">a0:7c:19:42:8b:2e:cd:df</span>:a7:<span class="number">2d</span>:e3:d6:a4:f7:<span class="number">22</span>:</span><br><span class="line">                    <span class="number">a4:52:bd:2c:0f:77:fc:b3</span>:<span class="number">27:89:55:31</span>:<span class="number">0</span>a:<span class="number">8</span>f:<span class="number">2</span>a:</span><br><span class="line">                    <span class="number">3a:ec:07:45:29:96:09:f5</span>:e6:<span class="number">95</span>:<span class="number">87</span>:e2:<span class="number">21</span>:c8:a1:</span><br><span class="line">                    <span class="number">be:6b:f8:95:9a:9c:08:52</span>:<span class="number">48</span>:<span class="number">19</span>:c0:<span class="number">0</span>c:a4:d8:<span class="number">37</span>:</span><br><span class="line">                    <span class="number">19:42:98:21:40:45:3c:6a</span>:ff:e7:<span class="number">33</span>:<span class="number">8d</span>:<span class="number">1</span>f:<span class="number">2</span>f:ef:</span><br><span class="line">                    <span class="number">73</span>:c5:<span class="number">5</span>f</span><br><span class="line">                Exponent: <span class="number">65537</span> (<span class="number">0x10001</span>)</span><br><span class="line">        X509v3 extensions:</span><br><span class="line">            X509v3 Subject Key Identifier: </span><br><span class="line">                <span class="number">D5:5D:21:99:D3:9A:BA:90</span>:<span class="number">16:F4:BF:2D:78:C7:27:DF</span>:F5:<span class="number">8</span>B:<span class="number">42</span>:F7</span><br><span class="line">            X509v3 Authority Key Identifier: </span><br><span class="line">                keyi<span class="number">d:D5:5D:21:99:D3:9A:BA</span>:<span class="number">90:16:F4:BF:2D:78:C7:27</span>:DF:F5:<span class="number">8</span>B:<span class="number">42</span>:F7</span><br><span class="line"></span><br><span class="line">            X509v3 Basic Constraints: </span><br><span class="line">                CA:TRUE</span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption</span><br><span class="line">         <span class="number">27:a5:73:06:6c:2f:c4:a4</span>:<span class="number">c0:24:29:3e:3f:5b:e8:e2</span>:d7:fe:</span><br><span class="line">         <span class="number">38:93:b5:c9:05:f5:45:9d</span>:<span class="number">78:5b:ae:cd:bb:26:c0:fc</span>:b6:e1:</span><br><span class="line">         <span class="number">82:ef:7d:f3:28:48:c4:e2</span>:<span class="number">c0:1a:ab:13:39:9f:95:98</span>:c6:<span class="number">47</span>:</span><br><span class="line">         <span class="number">d1:dd:8f:b4:3e:dd:c5:79</span>:<span class="number">38:94:01:9d:14:b9:f4:87</span>:bd:<span class="number">88</span>:</span><br><span class="line">         <span class="number">a2:5d:4a:16:ee:f9:0d:9f</span>:<span class="number">fa:d0:dc:c3:4b:a2:df:28</span>:<span class="number">57</span>:<span class="number">33</span>:</span><br><span class="line">         <span class="number">4e:31:c0:45:4f:d6:6e:ee</span>:<span class="number">43:e5:9b:8f:7b:d8:46:66</span>:<span class="number">83</span>:fa:</span><br><span class="line">         <span class="number">56:68:e6:30:19:0e:b4:41</span>:<span class="number">74:dd:72:ce:e7:83:f5:50</span>:f1:<span class="number">5d</span>:</span><br><span class="line">         <span class="number">46:29:fa:09:73:c5:e7:76</span>:<span class="number">99:78:2b:35:9d:7c:69:91</span>:<span class="number">47</span>:cd:</span><br><span class="line">         <span class="number">98:1d:28:b2:df:0b:a1:51</span>:<span class="number">3b:f9:09:32:64:41:f1:00</span>:d9:<span class="number">29</span>:</span><br><span class="line">         <span class="number">74:18:f9:98:bf:2c:b1:81</span>:<span class="number">95:bb:3d:d0:57:46:cc:78</span>:<span class="number">9</span>a:<span class="number">51</span>:</span><br><span class="line">         <span class="number">38:7e:6b:cb:ff:7d:84:98</span>:<span class="number">81:70:c2:49:79:f3:f0:5a</span>:<span class="number">7</span>a:<span class="number">47</span>:</span><br><span class="line">         <span class="number">db:4d:4d:6a:6a:14:97:02</span>:<span class="number">fa:80:91:39:b2:8c:b8:85</span>:ec:a6:</span><br><span class="line">         <span class="number">10:b5:aa:82:a3:7f:5a:f4</span>:<span class="number">75:09:11:47:91:64:f9:6c</span>:f0:<span class="number">87</span>:</span><br><span class="line">         <span class="number">11:9a:d8:26:71:be:45:dc</span>:<span class="number">9a:aa:57:2e:5b:78:45:5f</span>:<span class="number">72</span>:<span class="number">9</span>f:</span><br><span class="line">         <span class="number">ae:d8:d4:f1:e7:65:c7:fb</span>:<span class="number">69:b9:d7:04:03:3d:26:00</span>:<span class="number">74</span>:<span class="number">09</span>:</span><br><span class="line">         <span class="number">4d:97:4d:83:1f:d9:ec:52</span>:<span class="number">18:e0:45:ff:f6:2d:d7:2d</span>:<span class="number">6</span>a:<span class="number">76</span>:</span><br><span class="line">         <span class="number">e7:63:28:a5:24:97:73:46</span>:<span class="number">d5:2b:39:aa:25:7c:78:fb</span>:f7:<span class="number">13</span>:</span><br><span class="line">         <span class="number">65:f7:56:18:13:74:f0:f2</span>:<span class="number">a2:b2:a0:61:09:0c:a3:56</span>:aa:<span class="number">46</span>:</span><br><span class="line">         <span class="number">4f:34:3e:ca:85:30:ea:06</span>:<span class="number">7b:a3:ed:ce:a1:83:d2:c6</span>:<span class="number">63</span>:<span class="number">26</span>:</span><br><span class="line">         <span class="number">e8:02:f5:a7:78:fd:84:dd</span>:<span class="number">33:5d:b1:0c:af:fe:6b:30</span>:<span class="number">0</span>b:b2:</span><br><span class="line">         <span class="number">fe:eb:95:3c:dd:7e:37:ac</span>:<span class="number">4f:cf:19:64:45:4b:b8:05</span>:<span class="number">14</span>:<span class="number">91</span>:</span><br><span class="line">         <span class="number">97:68:39:39:08:d8:e2:4d</span>:<span class="number">d0:eb:64:0b:a1:38:68:ac</span>:c6:<span class="number">14</span>:</span><br><span class="line">         <span class="number">66:b1:d3:15:d2:5c:50:eb</span>:<span class="number">99:69:bf:ce:87:38:07:00</span>:af:<span class="number">14</span>:</span><br><span class="line">         <span class="number">4a:d1:0d:f8:e2:be:6f:46</span>:<span class="number">5f:5a:ad:0c:e3:42:d0:49</span>:<span class="number">37</span>:<span class="number">59</span>:</span><br><span class="line">         <span class="number">47:93:17:b7:ee:6f:0a:8f</span>:<span class="number">b1:13:ef:9d:dd:7f:c1:fc</span>:f5:<span class="number">80</span>:</span><br><span class="line">         <span class="number">73:42:cf:aa:57:62:96:99</span>:<span class="number">8e:eb:4c:6c:d3:fd:4a:82</span>:<span class="number">52</span>:e3:</span><br><span class="line">         <span class="number">03:e0:07:c9:33:44:e3:6e</span>:<span class="number">60:7e:5b:b6:fb:62:e1:55</span>:<span class="number">5</span>a:<span class="number">4</span>b:</span><br><span class="line">         <span class="number">fb:61:7e:87:e7:59:0b:4c</span>:<span class="number">bd:72:f1:4d:91:02:b4:39</span>:<span class="number">01</span>:ae:</span><br><span class="line">         <span class="number">45:0b:5b:e1:f7:1e:41:c3</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="②在客户端生成证书申请"><a href="#②在客户端生成证书申请" class="headerlink" title="②在客户端生成证书申请"></a>②在客户端生成证书申请</h2><figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>/data# (umask <span class="number">066</span>;openssl genrsa -out test.<span class="keyword">key</span> <span class="number">1024</span>)  # 生成私钥</span><br><span class="line">Generating RSA <span class="keyword">private</span> <span class="keyword">key</span>, <span class="number">1024</span> bit <span class="type">long</span> modulus</span><br><span class="line">................++++++</span><br><span class="line">.......................++++++</span><br><span class="line">e <span class="built_in">is</span> <span class="number">65537</span> (<span class="number">0</span>x10001)</span><br><span class="line"><span class="symbol">root:</span>/data# openssl req -<span class="built_in">new</span>  -<span class="keyword">key</span> test.<span class="keyword">key</span> -out test.csr # 生成csr证书申请文件</span><br><span class="line">You are about <span class="keyword">to</span> be asked <span class="keyword">to</span> enter information that will be incorporated</span><br><span class="line"><span class="keyword">into</span> your certificate request.</span><br><span class="line">What you are about <span class="keyword">to</span> enter <span class="built_in">is</span> what <span class="built_in">is</span> called a Distinguished Name <span class="built_in">or</span> a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line"><span class="keyword">For</span> some fields there will be a <span class="keyword">default</span> value,</span><br><span class="line"><span class="keyword">If</span> you enter <span class="comment">&#x27;.&#x27;, the field will be left blank.</span></span><br><span class="line">-----</span><br><span class="line">Country Name (<span class="number">2</span> letter code) [XX]:CN</span><br><span class="line">State <span class="built_in">or</span> Province Name (full name) []:beijin</span><br><span class="line">Locality Name (eg, city) [<span class="keyword">Default</span> City]:changping</span><br><span class="line">Organization Name (eg, company) [<span class="keyword">Default</span> Company Ltd]:jindong</span><br><span class="line">Organizational Unit Name (eg, section) []:wuliu</span><br><span class="line">Common Name (eg, your name <span class="built_in">or</span> your server<span class="comment">&#x27;s hostname) []:www.jd.com</span></span><br><span class="line">Email Address []:</span><br><span class="line"></span><br><span class="line">Please enter the following <span class="comment">&#x27;extra&#x27; attributes</span></span><br><span class="line"><span class="keyword">to</span> be sent <span class="keyword">with</span> your certificate request</span><br><span class="line">A challenge password []:</span><br><span class="line">An <span class="keyword">optional</span> company name []:</span><br><span class="line"><span class="symbol">root:</span>/data# scp test.csr <span class="number">172.22</span>.<span class="number">50.53</span>:/etc/pki/CA/certs/test.csr # 将证书传给客户端</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>注意：默认要求 国家，省，公司名称三项必须和CA一致</li>
+</ul>
+<h2 id="③在CA服务器端给客户端颁发证书"><a href="#③在CA服务器端给客户端颁发证书" class="headerlink" title="③在CA服务器端给客户端颁发证书"></a>③在CA服务器端给客户端颁发证书</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="variable">@localhost</span> <span class="variable constant_">CA</span>]<span class="comment"># openssl ca -in certs/test.csr  -out certs/test.crt -days 100</span></span><br><span class="line"><span class="title class_">Using</span> configuration from /etc/pki/tls/openssl.cnf</span><br><span class="line"><span class="title class_">Check</span> that the request matches the signature</span><br><span class="line"><span class="title class_">Signature</span> ok</span><br><span class="line"><span class="title class_">Certificate</span> <span class="title class_">Details</span>:</span><br><span class="line"><span class="title class_">Serial</span> <span class="title class_">Number</span>: <span class="number">15</span> (<span class="number">0xf</span>)</span><br><span class="line"><span class="title class_">Validity</span></span><br><span class="line"> <span class="title class_">Not</span> <span class="title class_">Before</span>: <span class="title class_">Apr</span> <span class="number">18</span> 08<span class="symbol">:</span><span class="number">15</span><span class="symbol">:</span><span class="number">24</span> <span class="number">2019</span> <span class="variable constant_">GMT</span></span><br><span class="line">    <span class="title class_">Not</span> <span class="title class_">After</span> : <span class="title class_">Jul</span> <span class="number">27</span> 08<span class="symbol">:</span><span class="number">15</span><span class="symbol">:</span><span class="number">24</span> <span class="number">2019</span> <span class="variable constant_">GMT</span></span><br><span class="line"><span class="title class_">Subject</span>:</span><br><span class="line">    countryName               = <span class="variable constant_">CN</span></span><br><span class="line">    stateOrProvinceName       = beijin</span><br><span class="line">    localityName              = changping</span><br><span class="line">    organizationName          = jindong</span><br><span class="line">    organizationalUnitName    = wuliu</span><br><span class="line">    commonName                = www.jd.com</span><br><span class="line"><span class="title class_">X509v3</span> <span class="symbol">extensions:</span></span><br><span class="line">    <span class="title class_">X509v3</span> <span class="title class_">Basic</span> <span class="title class_">Constraints</span>: </span><br><span class="line">        <span class="variable constant_">CA</span><span class="symbol">:FALSE</span></span><br><span class="line">    <span class="title class_">Netscape</span> <span class="title class_">Comment</span>: </span><br><span class="line">        <span class="title class_">Open</span>SSL <span class="title class_">Generated</span> <span class="title class_">Certificate</span></span><br><span class="line">    <span class="title class_">X509v3</span> <span class="title class_">Subject</span> <span class="title class_">Key</span> <span class="title class_">Identifier</span>: </span><br><span class="line">        <span class="variable constant_">FB</span><span class="symbol">:</span><span class="number">94</span><span class="symbol">:F3</span><span class="symbol">:F3</span><span class="symbol">:</span>2<span class="symbol">B:</span><span class="variable constant_">AB</span><span class="symbol">:</span><span class="number">12</span><span class="symbol">:</span>4<span class="symbol">A:</span><span class="number">93</span><span class="symbol">:B0</span><span class="symbol">:</span><span class="number">83</span><span class="symbol">:</span>8<span class="symbol">C:</span><span class="variable constant_">B3</span><span class="symbol">:CA</span><span class="symbol">:</span>0<span class="symbol">E:</span>0<span class="symbol">A:</span><span class="number">82</span><span class="symbol">:E8</span><span class="symbol">:EA</span><span class="symbol">:B9</span></span><br><span class="line">    <span class="title class_">X509v3</span> <span class="title class_">Authority</span> <span class="title class_">Key</span> <span class="title class_">Identifier</span>: </span><br><span class="line">        <span class="symbol">keyid:</span><span class="variable constant_">D5</span><span class="symbol">:</span>5<span class="symbol">D:</span><span class="number">21</span><span class="symbol">:</span><span class="number">99</span><span class="symbol">:D3</span><span class="symbol">:</span>9<span class="symbol">A:</span><span class="variable constant_">BA</span><span class="symbol">:</span><span class="number">90</span><span class="symbol">:</span><span class="number">16</span><span class="symbol">:F4</span><span class="symbol">:BF</span><span class="symbol">:</span>2<span class="symbol">D:</span><span class="number">78</span><span class="symbol">:C7</span><span class="symbol">:</span><span class="number">27</span><span class="symbol">:DF</span><span class="symbol">:F5</span><span class="symbol">:</span>8<span class="symbol">B:</span><span class="number">42</span><span class="symbol">:F7</span></span><br><span class="line">                        <span class="title class_">Certificate</span> is to be certified <span class="keyword">until</span> <span class="title class_">Jul</span> <span class="number">27</span> 08<span class="symbol">:</span><span class="number">15</span><span class="symbol">:</span><span class="number">24</span> <span class="number">2019</span> <span class="variable constant_">GMT</span> (<span class="number">100</span> days)</span><br><span class="line">                        <span class="title class_">Sign</span> the certificate? [y/n]<span class="symbol">:y</span></span><br><span class="line">                        <span class="number">1</span> out of <span class="number">1</span> certificate requests certified, commit? [y/n]y</span><br><span class="line">                        <span class="title class_">Write</span> out database with <span class="number">1</span> new entries</span><br><span class="line">                        <span class="title class_">Data</span> <span class="title class_">Base</span> <span class="title class_">Updated</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="实现可多次颁发证书"><a href="#实现可多次颁发证书" class="headerlink" title="实现可多次颁发证书"></a>实现可多次颁发证书</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">cat</span> index.txt.attr</span><br><span class="line">unique_subject = <span class="literal">yes</span></span><br><span class="line">改为<span class="literal">no</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="吊销证书"><a href="#吊销证书" class="headerlink" title="吊销证书"></a>吊销证书</h2><p>在客户端获取要吊销的证书的</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">serial</span> openssl x509 -<span class="keyword">in</span> /<span class="type">PATH</span>/<span class="keyword">FROM</span>/CERT_FILE -noout -<span class="type">serial</span> -subject </span><br></pre></td></tr></table></figure>
+
+<p>在CA上，根据客户提交的serial与subject信息，对比检验是否与index.txt文件中的信息一致， 吊销证书：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ca -revoke <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span>newcerts/SERIAL.pem </span><br></pre></td></tr></table></figure>
+
+<p>指定第一个吊销证书的编号,注意：第一次更新证书吊销列表前，才需要执行</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo <span class="number">01</span> &gt; <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span>crlnumber </span><br><span class="line">更新证书吊销列表 openssl ca -gencrl -out <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span>crl.pem </span><br><span class="line">查看crl文件： openssl crl -<span class="keyword">in</span> <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span>crl.pem -noout -text</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改默认配置"><a href="#修改默认配置" class="headerlink" title="修改默认配置"></a>修改默认配置</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">policy</span>          = policy_anything <span class="comment"># 可使国家，城市等信息不一样</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/6f6054985d77c3769bdd0f9bf5eded56.png" alt="img"></p>
+<h2 id="基于key验证远程登录主机"><a href="#基于key验证远程登录主机" class="headerlink" title="基于key验证远程登录主机"></a>基于key验证远程登录主机</h2><p>进入用户秘钥管理<br><img src="/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/baa3c7a51804d36466401de16de35127.png" alt="img"><br>点击生成<br><img src="/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/cc8d801577a6d65c3112b50e4995c631.png" alt="img"><br>点击保存为文件<br><img src="/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/eec64de7987a4543b45307dd944e0fb7.png" alt="img"><br>在客户端保存公钥</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="symbol">@localhost</span> CA]<span class="meta"># cd </span></span><br><span class="line">[root<span class="symbol">@localhost</span> ~]<span class="meta"># cd .ssh</span></span><br><span class="line">-bash: cd: .ssh: No such file <span class="literal">or</span> directory</span><br><span class="line">[root<span class="symbol">@localhost</span> ~]<span class="meta"># mkdir .ssh</span></span><br><span class="line">[root<span class="symbol">@localhost</span> ~]<span class="meta"># cd .ssh</span></span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># </span></span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># tree</span></span><br><span class="line">.</span><br><span class="line">└── known_hosts</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> directories, <span class="number">1</span> file</span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># rz -E</span></span><br><span class="line">rz waiting <span class="keyword">to</span> receive.</span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># &gt;authorized_keys</span></span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># ls</span></span><br><span class="line"><span class="number">7</span>key.pub  authorized_keys  known_hosts</span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># cat 7key.pub &gt;&gt;authorized_keys </span></span><br><span class="line">[root<span class="symbol">@localhost</span> .ssh]<span class="meta"># tree</span></span><br><span class="line">.</span><br><span class="line">├── <span class="number">7</span>key.pub</span><br><span class="line">├── authorized_keys</span><br><span class="line">└── known_hosts</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> directories, <span class="number">3</span> files</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/cfa4cc9097c6771909f8639add4be724.png" alt="img"><br>更改后即可基于key验证登录</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/10/Linux/CA%E5%92%8C%E8%AF%81%E4%B9%A6/" title="CA和证书">https://horus-k.github.io/2020/03/10/Linux/CA和证书/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ca/" rel="tag"># ca</a>
+              <a href="/tags/%E8%AF%81%E4%B9%A6/" rel="tag"># 证书</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E5%88%A9%E7%94%A8cobbler%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E5%8F%8Aweb%E7%AE%A1%E7%90%86/" rel="prev" title="利用cobbler实现系统自动化安装及web管理">
+                  <i class="fa fa-chevron-left"></i> 利用cobbler实现系统自动化安装及web管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/10/Linux/%E7%BD%91%E7%BB%9C%E6%97%B6%E9%97%B4%E6%9C%8D%E5%8A%A1ntp%E5%92%8Cchrony%E8%BF%9B%E8%A1%8C%E5%86%85%E5%A4%96%E7%BD%91%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5/" rel="next" title="网络时间服务ntp和chrony进行内外网时间同步">
+                  网络时间服务ntp和chrony进行内外网时间同步 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

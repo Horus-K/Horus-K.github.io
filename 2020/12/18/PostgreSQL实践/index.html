@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="安装12345yum install -y https:&#x2F;&#x2F;download.postgresql.org&#x2F;pub&#x2F;repos&#x2F;yum&#x2F;reporpms&#x2F;EL-7-x86_64&#x2F;pgdg-redhat-repo-latest.noarch.rpmyum install -y postgresql13-server&#x2F;usr&#x2F;pgsql-13&#x2F;bin&#x2F;postgresql-13-setup initd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PostgreSQL实践">
+<meta property="og:url" content="https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="安装12345yum install -y https:&#x2F;&#x2F;download.postgresql.org&#x2F;pub&#x2F;repos&#x2F;yum&#x2F;reporpms&#x2F;EL-7-x86_64&#x2F;pgdg-redhat-repo-latest.noarch.rpmyum install -y postgresql13-server&#x2F;usr&#x2F;pgsql-13&#x2F;bin&#x2F;postgresql-13-setup initd">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-18T09:01:31.000Z">
+<meta property="article:modified_time" content="2022-06-10T09:12:31.199Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/","path":"2020/12/18/PostgreSQL实践/","title":"PostgreSQL实践"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PostgreSQL实践 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PostgreSQL实践 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PostgreSQL实践
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-18 17:01:31" itemprop="dateCreated datePublished" datetime="2020-12-18T17:01:31+08:00">2020-12-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-10 17:12:31" itemprop="dateModified" datetime="2022-06-10T17:12:31+08:00">2022-06-10</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm</span><br><span class="line">yum install -y postgresql13-server</span><br><span class="line">/usr/pgsql-13/bin/postgresql-13-setup initdb</span><br><span class="line">sudo systemctl enable postgresql-13</span><br><span class="line">sudo systemctl start postgresql-13</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改监听地址</span></span><br><span class="line">vim /var/lib/pgsql/13/data/postgresql.conf</span><br><span class="line">listen_addresses = &#x27;*&#x27; </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改PostgreSQL数据库默认用户postgres的密码</span></span><br><span class="line">sudo -u postgres psql</span><br><span class="line">ALTER USER postgres WITH PASSWORD &#x27;postgres&#x27;;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改pg_hba.conf文件，放行所有用户</span></span><br><span class="line">host    all             all             0.0.0.0/0                  md5        </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">其中0.0.0.0/0表示运行任意ip地址访问。</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h3 id="控制台命令"><a href="#控制台命令" class="headerlink" title="控制台命令"></a><strong>控制台命令</strong></h3><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">\q:</span> 退出</span><br><span class="line"><span class="string">\h：查看SQL命令的解释，比如\h</span> select。</span><br><span class="line"><span class="string">\?：查看psql命令列表。</span></span><br><span class="line"><span class="string">\l：列出所有数据库。</span></span><br><span class="line"><span class="string">\c</span> [database_name]：连接其他数据库。</span><br><span class="line"><span class="string">\d：列出当前数据库的所有表格。</span></span><br><span class="line"><span class="string">\d</span> [table_name]：列出某一张表格的结构。</span><br><span class="line"><span class="string">\du：列出所有用户。</span></span><br><span class="line"><span class="string">\e：打开文本编辑器。</span></span><br><span class="line"><span class="string">\conninfo：列出当前数据库和连接的信息。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="创建用户-x2F-角色"><a href="#创建用户-x2F-角色" class="headerlink" title="创建用户&#x2F;角色"></a>创建用户&#x2F;角色</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">CREATE USER/ROLE name [ [ WITH ] option [ ... ] ]  : 关键词 USER,ROLE； name 用户或角色名； </span><br><span class="line"></span><br><span class="line">where option can be:</span><br><span class="line"></span><br><span class="line">      SUPERUSER | NOSUPERUSER      :超级权限，拥有所有权限，默认nosuperuser。</span><br><span class="line">    | CREATEDB | NOCREATEDB        :建库权限，默认nocreatedb。</span><br><span class="line">    | CREATEROLE | NOCREATEROLE    :建角色权限，拥有创建、修改、删除角色，默认nocreaterole。</span><br><span class="line">    | INHERIT | NOINHERIT          :继承权限，可以把除superuser权限继承给其他用户/角色，默认inherit。</span><br><span class="line">    | LOGIN | NOLOGIN              :登录权限，作为连接的用户，默认nologin，除非是create user（默认登录）。</span><br><span class="line">    | REPLICATION | NOREPLICATION  :复制权限，用于物理或则逻辑复制（复制和删除slots），默认是noreplication。</span><br><span class="line">    | BYPASSRLS | NOBYPASSRLS      :安全策略RLS权限，默认nobypassrls。</span><br><span class="line">    | CONNECTION LIMIT connlimit   :限制用户并发数，默认-1，不限制。正常连接会受限制，后台连接和prepared事务不受限制。</span><br><span class="line">    | [ ENCRYPTED ] PASSWORD &#x27;password&#x27; | PASSWORD NULL :设置密码，密码仅用于有login属性的用户，不使用密码身份验证，则可以省略此选项。可以选择将空密码显式写为PASSWORD NULL。</span><br><span class="line">                                                         加密方法由配置参数password_encryption确定，密码始终以加密方式存储在系统目录中。</span><br><span class="line">    | VALID UNTIL &#x27;timestamp&#x27;      :密码有效期时间，不设置则用不失效。</span><br><span class="line">    | IN ROLE role_name [, ...]    :新角色将立即添加为新成员。</span><br><span class="line">    | IN GROUP role_name [, ...]   :同上</span><br><span class="line">    | ROLE role_name [, ...]       :ROLE子句列出一个或多个现有角色，这些角色自动添加为新角色的成员。 （这实际上使新角色成为“组”）。</span><br><span class="line">    | ADMIN role_name [, ...]      :与ROLE类似，但命名角色将添加到新角色WITH ADMIN OPTION，使他们有权将此角色的成员资格授予其他人。</span><br><span class="line">    | USER role_name [, ...]       :同上</span><br><span class="line">    | SYSID uid                    :被忽略，但是为向后兼容性而存在。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例：</strong></p>
+<ul>
+<li>创建不需要密码登陆的用户qh</li>
+</ul>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">ROLE</span> qh <span class="keyword">LOGIN</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建需要密码登陆的用户qh1</li>
+</ul>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">USER</span> qh1 <span class="keyword">WITH</span> <span class="keyword">PASSWORD</span> <span class="string">&#x27;qh1&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：CREATE USER和CREATE ROLE的区别在于，CREATE USER指令创建的用户默认是有登录权限的，而CREATE ROLE没有。</p>
+<ul>
+<li>创建有时间限制的用户qh2</li>
+</ul>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">ROLE</span> qh2 <span class="keyword">WITH</span> <span class="keyword">LOGIN</span> <span class="keyword">PASSWORD</span> <span class="string">&#x27;qh2&#x27;</span> <span class="keyword">VALID</span> <span class="keyword">UNTIL</span> <span class="string">&#x27;2020-05-30&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建有创建数据库和管理角色权限的用户admin</li>
+</ul>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">ROLE</span> <span class="keyword">admin</span> <span class="keyword">WITH</span> <span class="keyword">CREATEDB</span> <span class="keyword">CREATEROLE</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：拥有创建数据库，角色的用户，也可以删除和修改这些对象。</p>
+<ul>
+<li>创建具有超级权限的用户：admin</li>
+</ul>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">ROLE</span> <span class="keyword">admin</span> <span class="keyword">WITH</span> <span class="keyword">SUPERUSER</span> <span class="keyword">LOGIN</span> <span class="keyword">PASSWORD</span> <span class="string">&#x27;admin&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建复制账号：repl</li>
+</ul>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">postgres=# <span class="keyword">CREATE</span> <span class="keyword">USER</span> repl <span class="keyword">REPLICATION</span> <span class="keyword">LOGIN</span> <span class="keyword">ENCRYPTED</span> <span class="keyword">PASSWORD</span> <span class="string">&#x27;repl&#x27;</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">ROLE</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>其他</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建scheme 角色</span></span><br><span class="line">CREATE ROLE abc;</span><br><span class="line">CREATE DATABASE abc WITH OWNER abc ENCODING UTF8 TEMPLATE template0;</span><br><span class="line">\c abc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建schema  <span class="comment">#相当于一组数据库</span></span></span><br><span class="line">CREATE SCHEMA abc;</span><br><span class="line">ALTER SCHEMA abc OWNER to abc;</span><br><span class="line">revoke create on schema public from public;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建用户</span></span><br><span class="line">create user abc with ENCRYPTED password &#x27;&#x27;;</span><br><span class="line">GRANT abc to abc;</span><br><span class="line">ALTER ROLE abc WITH abc;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#创建读写账号</span></span></span><br><span class="line">CREATE ROLE abc_rw;</span><br><span class="line">CREATE ROLE abc_rr;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#赋予访问数据库权限，schema权限</span></span></span><br><span class="line">grant connect ON DATABASE abc to abc_rw;</span><br><span class="line">GRANT USAGE ON SCHEMA abc TO abc_rw;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#赋予读写权限</span></span></span><br><span class="line">grant select,insert,update,delete ON  ALL TABLES IN SCHEMA abc to abc;</span><br><span class="line"></span><br><span class="line">赋予序列权限</span><br><span class="line">GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA abc to abc;</span><br><span class="line"></span><br><span class="line">赋予默认权限</span><br><span class="line">ALTER DEFAULT PRIVILEGES IN SCHEMA abc GRANT select,insert,update,delete ON TABLES TO abc;</span><br><span class="line"></span><br><span class="line">赋予序列权限</span><br><span class="line">ALTER DEFAULT PRIVILEGES IN SCHEMA abc GRANT ALL PRIVILEGES ON SEQUENCES TO abc;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用户对db要有连接权限</span></span><br><span class="line">grant connect ON DATABASE abc to abc;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用户要对schema usage 权限，不然要<span class="keyword">select</span> * from schema_name.table ,不能用搜索路径</span></span><br><span class="line">GRANT USAGE ON SCHEMA abc TO abc;</span><br><span class="line">grant select ON ALL TABLES IN SCHEMA abc to abc;</span><br><span class="line">ALTER DEFAULT PRIVILEGES IN SCHEMA abc GRANT select ON TABLES TO abc;</span><br><span class="line"></span><br><span class="line">create user abc_w with ENCRYPTED password &#x27;&#x27;;</span><br><span class="line">create user abc_r with ENCRYPTED password &#x27;&#x27;;</span><br><span class="line"></span><br><span class="line">GRANT abc_rw to abc_w；</span><br><span class="line"></span><br><span class="line">GRANT abc_rr to abc_r;</span><br></pre></td></tr></table></figure>
+
+<h2 id="授权，定义访问权限"><a href="#授权，定义访问权限" class="headerlink" title="授权，定义访问权限"></a>授权，定义访问权限</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">GRANT &#123; &#123; SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER &#125;</span><br><span class="line">    [, ...] | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON &#123; [ TABLE ] table_name [, ...]</span><br><span class="line">         | ALL TABLES IN SCHEMA schema_name [, ...] &#125;</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##单表授权：授权zjy账号可以访问schema为zjy的zjy表</span></span><br><span class="line">grant <span class="keyword">select</span>,insert,update,delete on zjy.zjy to zjy;</span><br><span class="line"><span class="comment">##所有表授权：</span></span><br><span class="line">grant <span class="keyword">select</span>,insert,update,delete on all tables <span class="keyword">in</span> schema zjy to zjy;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GRANT &#123; &#123; SELECT | INSERT | UPDATE | REFERENCES &#125; ( column_name [, ...] )</span><br><span class="line">    [, ...] | ALL [ PRIVILEGES ] ( column_name [, ...] ) &#125;</span><br><span class="line">    ON [ TABLE ] table_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##列授权，授权指定列(zjy schema下的zjy表的name列)的更新权限给zjy用户</span></span><br><span class="line">grant update (name) on zjy.zjy to zjy;</span><br><span class="line"><span class="comment">##指定列授不同权限，zjy schema下的zjy表，查看更新name、age字段，插入name字段</span></span><br><span class="line">grant <span class="keyword">select</span> (name,age),update (name,age),insert(name) on zjy.xxx to zjy;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GRANT &#123; &#123; USAGE | SELECT | UPDATE &#125;</span><br><span class="line">    [, ...] | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON &#123; SEQUENCE sequence_name [, ...]</span><br><span class="line">         | ALL SEQUENCES IN SCHEMA schema_name [, ...] &#125;</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##序列（自增键）属性授权，指定zjy schema下的seq_id_seq 给zjy用户</span></span><br><span class="line">grant <span class="keyword">select</span>,update on sequence zjy.seq_id_seq to zjy;</span><br><span class="line"><span class="comment">##序列（自增键）属性授权，给用户zjy授权zjy schema下的所有序列</span></span><br><span class="line">grant <span class="keyword">select</span>,update on all sequences <span class="keyword">in</span> schema zjy to zjy;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GRANT &#123; &#123; CREATE | CONNECT | TEMPORARY | TEMP &#125; [, ...] | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON DATABASE database_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##连接数据库权限，授权cc用户连接数据库zjy</span></span><br><span class="line">grant connect on database zjy to cc;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GRANT &#123; USAGE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON DOMAIN domain_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line">GRANT &#123; USAGE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON FOREIGN DATA WRAPPER fdw_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line">  <span class="comment">##</span></span><br><span class="line"></span><br><span class="line">GRANT &#123; USAGE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON FOREIGN SERVER server_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"><span class="comment">##</span></span><br><span class="line">GRANT &#123; EXECUTE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON &#123; &#123; FUNCTION | PROCEDURE | ROUTINE &#125; routine_name [ ( [ [ argmode ] [ arg_name ] arg_type [, ...] ] ) ] [, ...]</span><br><span class="line">         | ALL &#123; FUNCTIONS | PROCEDURES | ROUTINES &#125; IN SCHEMA schema_name [, ...] &#125;</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"><span class="comment">##</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GRANT &#123; USAGE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON LANGUAGE lang_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line">  <span class="comment">##</span></span><br><span class="line"></span><br><span class="line">GRANT &#123; &#123; SELECT | UPDATE &#125; [, ...] | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON LARGE OBJECT loid [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"><span class="comment">##</span></span><br><span class="line"></span><br><span class="line">GRANT &#123; &#123; CREATE | USAGE &#125; [, ...] | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON SCHEMA schema_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="comment">##连接schema权限，授权cc访问zjy schema权限</span></span><br><span class="line">grant usage on schema zjy to cc;</span><br><span class="line"></span><br><span class="line">GRANT &#123; CREATE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON TABLESPACE tablespace_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line">GRANT &#123; USAGE | ALL [ PRIVILEGES ] &#125;</span><br><span class="line">    ON TYPE type_name [, ...]</span><br><span class="line">    TO role_specification [, ...] [ WITH GRANT OPTION ]</span><br><span class="line"></span><br><span class="line"><span class="built_in">where</span> role_specification can be:</span><br><span class="line"></span><br><span class="line">    [ GROUP ] role_name</span><br><span class="line">  | PUBLIC</span><br><span class="line">  | CURRENT_USER</span><br><span class="line">  | SESSION_USER</span><br><span class="line"></span><br><span class="line">GRANT role_name [, ...] TO role_name [, ...] [ WITH ADMIN OPTION ]</span><br><span class="line"><span class="comment">##把zjy用户的权限授予用户cc。</span></span><br><span class="line">grant zjy to cc;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看权限-需在当前数据库内查询"><a href="#查看权限-需在当前数据库内查询" class="headerlink" title="查看权限(需在当前数据库内查询)"></a><strong>查看权限(需在当前数据库内查询)</strong></h2><p><a target="_blank" rel="noopener" href="https://www.wenjiangs.com/doc/0k5gdvlu">https://www.wenjiangs.com/doc/0k5gdvlu</a></p>
+<p>1、查看某用户的表权限</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> information_schema.table_privileges <span class="keyword">where</span> grantee=<span class="symbol">``</span><span class="string">&#x27;user_name&#x27;</span><span class="symbol">``</span>;</span><br></pre></td></tr></table></figure>
+
+<p>2、查看usage权限表</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> information_schema.usage_privileges <span class="keyword">where</span> grantee=<span class="symbol">``</span><span class="string">&#x27;user_name&#x27;</span><span class="symbol">``</span>;</span><br></pre></td></tr></table></figure>
+
+<p>3、查看存储过程函数相关权限表</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> information_schema.routine_privileges <span class="keyword">where</span> grantee=<span class="symbol">``</span><span class="string">&#x27;user_name&#x27;</span><span class="symbol">``</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>table_privileges：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">名字</th>
+<th align="left">数据类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>grantor</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">发出该权限授权的用户名</td>
+</tr>
+<tr>
+<td align="left"><code>grantee</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">得到该权限的用户或者组的名字</td>
+</tr>
+<tr>
+<td align="left"><code>table_catalog</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">包含该表的数据库的名字（总是当前数据库）</td>
+</tr>
+<tr>
+<td align="left"><code>table_schema</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">包含该表的模式名字</td>
+</tr>
+<tr>
+<td align="left"><code>table_name</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">表的名字</td>
+</tr>
+<tr>
+<td align="left"><code>privilege_type</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">权限类型： <code>SELECT</code>， <code>DELETE</code>， <code>INSERT</code>， <code>UPDATE</code>， <code>REFERENCES</code>， <code>RULE</code>， 或者 <code>TRIGGER</code></td>
+</tr>
+<tr>
+<td align="left"><code>is_grantable</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">如果权限可以赋与别人，则为 <code>YES</code>，否则为 <code>NO</code></td>
+</tr>
+<tr>
+<td align="left"><code>with_hierarchy</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">应用于一个PostgreSQL 里没有的特性</td>
+</tr>
+</tbody></table>
+<p>请注意 <code>grantee</code> 并不区分用户和组。 如果你有同名的用户和组，那么，很不行我们没办法区分它们。将来的 PostgreSQL 版本可能会禁止用户和组同名。</p>
+<p><strong>usage_privileges：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">名字</th>
+<th align="left">数据类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>grantor</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">目前设置为该对象的所有者的名字</td>
+</tr>
+<tr>
+<td align="left"><code>grantee</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">目前总是 <code>PUBLIC</code></td>
+</tr>
+<tr>
+<td align="left"><code>object_catalog</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">包含该对象的数据库的名字（总是当前数据库）</td>
+</tr>
+<tr>
+<td align="left"><code>object_schema</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">包含该对象的模式的名字</td>
+</tr>
+<tr>
+<td align="left"><code>object_name</code></td>
+<td align="left"><code>sql_identifier</code></td>
+<td align="left">对象的名字</td>
+</tr>
+<tr>
+<td align="left"><code>object_type</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">目前总是 <code>DOMAIN</code></td>
+</tr>
+<tr>
+<td align="left"><code>privilege_type</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">总是 <code>USAGE</code></td>
+</tr>
+<tr>
+<td align="left"><code>is_grantable</code></td>
+<td align="left"><code>character_data</code></td>
+<td align="left">目前总是 <code>NO</code></td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/" title="PostgreSQL实践">https://horus-k.github.io/2020/12/18/PostgreSQL实践/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/17/k8s%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5/" rel="prev" title="k8s生产实践">
+                  <i class="fa fa-chevron-left"></i> k8s生产实践
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/" rel="next" title="mysql主主+keeplived">
+                  mysql主主+keeplived <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

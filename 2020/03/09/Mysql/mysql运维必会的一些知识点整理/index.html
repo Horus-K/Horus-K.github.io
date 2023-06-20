@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="（1）基础1.开启MySQL服务 123&#x2F;etc&#x2F;init.d&#x2F;mysqld startservice mysqld startsystemctl  start mysqld  2.检测端口是否运行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql运维必会的一些知识点整理">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="（1）基础1.开启MySQL服务 123&#x2F;etc&#x2F;init.d&#x2F;mysqld startservice mysqld startsystemctl  start mysqld  2.检测端口是否运行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/copycode.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="article:published_time" content="2020-03-09T06:56:11.000Z">
+<meta property="article:modified_time" content="2020-03-10T10:59:15.181Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="理论">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/copycode.gif">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/","path":"2020/03/09/Mysql/mysql运维必会的一些知识点整理/","title":"mysql运维必会的一些知识点整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mysql运维必会的一些知识点整理 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mysql运维必会的一些知识点整理 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql运维必会的一些知识点整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 14:56:11" itemprop="dateCreated datePublished" datetime="2020-03-09T14:56:11+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 18:59:15" itemprop="dateModified" datetime="2020-03-10T18:59:15+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="（1）基础"><a href="#（1）基础" class="headerlink" title="（1）基础"></a>（1）基础</h2><p><strong>1.开启MySQL服务</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/mysqld <span class="literal">start</span></span><br><span class="line">service mysqld <span class="literal">start</span></span><br><span class="line">systemctl  <span class="literal">start</span> mysqld</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.检测端口是否运行</strong></p>
+<span id="more"></span>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">lsof</span> -i :<span class="number">3306</span></span><br><span class="line"><span class="attribute">netstat</span> -lntup |grep <span class="number">3306</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3.为MySQL设置密码或者修改密码</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">设置密码</span><br><span class="line"></span><br><span class="line">mysql -uroot -ppassword -e &quot;set passowrd for root = passowrd(&#x27;passowrd&#x27;)&quot;</span><br><span class="line">mysqladmin -uroot passowrd &quot;NEWPASSWORD&quot;</span><br><span class="line">更改密码</span><br><span class="line"></span><br><span class="line">mysqladmin -uroot passowrd oldpassowrd &quot;NEWPASSWORD&quot;</span><br><span class="line">use mysql;</span><br><span class="line"><span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> passowrd = <span class="keyword">PASSWORD</span>(<span class="string">&#x27;newpassword&#x27;</span>) <span class="keyword">where</span> <span class="keyword">user</span> = <span class="string">&#x27;root&#x27;</span>;flush <span class="keyword">privileges</span>;</span><br><span class="line">msyql <span class="number">5.7</span>以上版本修改默认密码命令</span><br><span class="line"></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">user</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;root&#x27;</span> </span><br></pre></td></tr></table></figure>
+
+<p><strong>4.登陆MySQL数据库</strong></p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysql -uroot -ppassword</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>5.查看当前数据库的字符集</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">database</span> DB_NAME;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6.查看当前数据库版本</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysql</span> -V</span><br><span class="line">mysql -uroot -ppassowrd -e <span class="string">&quot;use mysql;select version();&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>7.查看当前登录的用户</strong></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">select</span> <span class="title">user</span>()</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>8.创建GBK字符集的数据库mingongge，并查看已建库完整语句</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> mingongge <span class="keyword">DEFAULT</span> CHARSET GBK <span class="keyword">COLLATE</span> gbk_chinese_ci;</span><br><span class="line">#查看创建的库</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">database</span> mingongge;</span><br></pre></td></tr></table></figure>
+
+<p><strong>9.创建用户mingongge，使之可以管理数据库mingongge</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> mingongge.* <span class="keyword">to</span> <span class="string">&#x27;mingongge&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;mingongge&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>10.查看创建的用户mingongge拥有哪些权限</strong></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> grants <span class="keyword">for</span> mingongge<span class="meta">@localhost</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>11.查看当前数据库里有哪些用户</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> mysql.<span class="keyword">user</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>12.进入mingongge数据库</strong></p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> mingongge</span><br></pre></td></tr></table></figure>
+
+<p><strong>13.创建一innodb GBK表test，字段id int(4)和name varchar(16)</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test (</span><br><span class="line">     id <span class="type">int</span>(<span class="number">4</span>),</span><br><span class="line">     <span class="type">name</span> <span class="type">varchar</span>(<span class="number">16</span>)</span><br><span class="line">     )ENGINE=innodb <span class="keyword">DEFAULT</span> CHARSET=gbk;</span><br></pre></td></tr></table></figure>
+
+<p><strong>14.查看建表结构及表结构的SQL语句</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">desc</span> test;</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">table</span> test\G</span><br></pre></td></tr></table></figure>
+
+<p><strong>15.插入一条数据“1,mingongge”</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test <span class="keyword">values</span>(<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;mingongge&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>16.再批量插入2行数据 “2,民工哥”，“3,mingonggeedu”</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test <span class="keyword">values</span>(<span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;民工哥&#x27;</span>),(<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;mingonggeedu&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>17.查询名字为mingongge的记录</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> test <span class="keyword">where</span> <span class="type">name</span> = <span class="string">&#x27;mingongge&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>18.把数据id等于1的名字mingongge更改为mgg</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update <span class="built_in">test</span> <span class="built_in">set</span> name = <span class="string">&#x27;mgg&#x27;</span> <span class="built_in">where</span> <span class="built_in">id</span> = <span class="string">&#x27;1&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>19.在字段name前插入age字段，类型tinyint(2)</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test <span class="keyword">add</span> age tinyint(<span class="number">2</span>) <span class="keyword">after</span> id;</span><br></pre></td></tr></table></figure>
+
+<p><strong>20.不退出数据库,完成备份mingongge数据库</strong></p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system mysqldump -uroot -pMgg123<span class="number">.0</span>. -B mingongge &gt;<span class="regexp">/root/mi</span>ngongge_bak.sql</span><br></pre></td></tr></table></figure>
+
+<p><strong>21.删除test表中的所有数据，并查看</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> test;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> test;</span><br></pre></td></tr></table></figure>
+
+<p><strong>22.删除表test和mingongge数据库并查看</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> test;</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">tables</span>;</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> mingongge;</span><br><span class="line"><span class="keyword">show</span> databases;</span><br></pre></td></tr></table></figure>
+
+<p><strong>23.不退出数据库恢复以上删除的数据</strong></p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system mysql -uroot -pMgg123<span class="number">.0</span>. &lt;<span class="regexp">/root/mi</span>ngongge_bak.sql</span><br></pre></td></tr></table></figure>
+
+<p><strong>24.把库表的GBK字符集修改为UTF8</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">database</span> mingongge <span class="keyword">default</span> <span class="type">character</span> <span class="keyword">set</span> utf8;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test <span class="keyword">default</span> <span class="type">character</span> <span class="keyword">set</span> utf8;</span><br></pre></td></tr></table></figure>
+
+<p><strong>25.把id列设置为主键，在Name字段上创建普通索引</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test <span class="keyword">add</span> <span class="keyword">primary key</span>(id);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> mggindex <span class="keyword">on</span> test(<span class="type">name</span>(<span class="number">16</span>));</span><br></pre></td></tr></table></figure>
+
+<p><strong>26.在字段name后插入手机号字段(shouji)，类型char(11)</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test <span class="keyword">add</span> shouji <span class="type">char</span>(<span class="number">11</span>);</span><br><span class="line">#默认就是在最后一列后面插入新增列</span><br></pre></td></tr></table></figure>
+
+<p><strong>27.所有字段上插入2条记录（自行设定数据）</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test <span class="keyword">values</span>(<span class="string">&#x27;4&#x27;</span>,<span class="string">&#x27;23&#x27;</span>,<span class="string">&#x27;li&#x27;</span>,<span class="string">&#x27;13700000001&#x27;</span>),(<span class="string">&#x27;5&#x27;</span>,<span class="string">&#x27;26&#x27;</span>,<span class="string">&#x27;zhao&#x27;</span>,<span class="string">&#x27;13710000001&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>28.在手机字段上对前8个字符创建普通索引</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> SJ <span class="keyword">on</span> test(shouji(<span class="number">8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><strong>29.查看创建的索引及索引类型等信息</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">index</span> <span class="keyword">from</span> test;</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">table</span> test\G</span><br><span class="line">#下面的命令也可以查看索引类型  </span><br><span class="line"><span class="keyword">show</span> keys <span class="keyword">from</span> test\G   </span><br></pre></td></tr></table></figure>
+
+<p><strong>30.删除Name，shouji列的索引</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">index</span> SJ <span class="keyword">on</span> test;</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">index</span> mggindex <span class="keyword">on</span> test;</span><br></pre></td></tr></table></figure>
+
+<p><strong>31.对Name列的前6个字符以及手机列的前8个字符组建联合索引</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> lianhe <span class="keyword">on</span> test(<span class="type">name</span>(<span class="number">6</span>),shouji(<span class="number">8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><strong>32.查询手机号以137开头的，名字为zhao的记录（提前插入）</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> test <span class="keyword">where</span> shouji <span class="keyword">like</span> <span class="string">&#x27;137%&#x27;</span> <span class="keyword">and</span> <span class="type">name</span> = <span class="string">&#x27;zhao&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>33.查询上述语句的执行计划（是否使用联合索引等）</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> test <span class="keyword">where</span> <span class="type">name</span> = <span class="string">&#x27;zhao&#x27;</span> <span class="keyword">and</span> shouji <span class="keyword">like</span> <span class="string">&#x27;137%&#x27;</span>\G</span><br></pre></td></tr></table></figure>
+
+<p><strong>34.把test表的引擎改成MyISAM</strong></p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table test engine<span class="operator">=</span>MyISAM<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>35.收回mingongge用户的select权限</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">revoke</span> <span class="literal">select</span> <span class="literal">on</span> <span class="regexp">mingongge.*</span> from mingongge<span class="variable">@localhost</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>36.删除mingongge用户</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop <span class="keyword">user</span> <span class="title">migongge</span>@localhost;</span><br></pre></td></tr></table></figure>
+
+<p><strong>37.删除mingongge数据库</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> mingongge</span><br></pre></td></tr></table></figure>
+
+<p><strong>38.使用mysqladmin关闭数据库</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysqladmin</span> -uroot -pMgg123.<span class="number">0</span>. shutdown</span><br><span class="line"><span class="attribute">lsof</span> -i :<span class="number">3306</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>39.MySQL密码丢了，请找回？</strong></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqld_safe --skip-grant-tables &amp;   #启动数据库服务</span><br><span class="line">mysql -uroot -ppassowrd -e &quot;use mysql;<span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> passowrd = <span class="keyword">PASSWORD</span>(<span class="string">&#x27;newpassword&#x27;</span>) <span class="keyword">where</span> <span class="keyword">user</span> = <span class="string">&#x27;root&#x27;</span>;flush privileges;&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="（2）MySQL运维基础知识面试问答题"><a href="#（2）MySQL运维基础知识面试问答题" class="headerlink" title="（2）MySQL运维基础知识面试问答题"></a>（2）MySQL运维基础知识面试问答题</h2><p><strong>面试题001：请解释关系型数据库概念及主要特点？</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">关系型数据库模型是把复杂的数据结构归结为简单的二元关系，对数据的操作都是建立一个或多个关系表格上，最大的特点就是二维的表格，通过<span class="keyword">SQL</span>结构查询语句存取数据，保持数据一致性方面很强大</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题002：请说出关系型数据库的典型产品、特点及应用场景？</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">关系型数据库模型是把复杂的数据结构归结为简单的二元关系，对数据的操作都是建立一个或多个关系表格上，最大的特点就是二维的表格，通过<span class="keyword">SQL</span>结构查询语句存取数据，保持数据一致性方面很强大</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题003：请解释非关系型数据库概念及主要特点？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">非关系型数据库也被称为NoSQL数据库，数据存储不需有特有固定的表结构</span><br><span class="line">特点：高性能、高并发、简单易安装</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题004：请说出非关系型数据库的典型产品、特点及应用场景？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、memcaced 纯内存</span><br><span class="line">2、redis 持久化缓存</span><br><span class="line">3、mongodb 面向文档</span><br><span class="line">如果需要短时间响应的查询操作，没有良好模式定义的数据存储，或者模式更改频繁的数据存储还是用NoSQL</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题005：请详细描述SQL语句分类及对应代表性关键字。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>语句分类如下</span><br><span class="line">DDL 数据定义语言，用来定义数据库对象：库、表、列</span><br><span class="line">代表性关键字：<span class="keyword">create</span> <span class="keyword">alter</span> <span class="keyword">drop</span></span><br><span class="line">DML 数据操作语言，用来定义数据库记录</span><br><span class="line">代表性关键字:<span class="keyword">insert</span> <span class="keyword">delete</span> <span class="keyword">update</span></span><br><span class="line">DCL 数据控制语言，用来定义访问权限和安全级别</span><br><span class="line">代表性关键字:<span class="keyword">grant</span> deny <span class="keyword">revoke</span></span><br><span class="line">DQL 数据查询语言，用来查询记录数据</span><br><span class="line">代表性关键字:<span class="keyword">select</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题006：请详细描述char(4)和varchar(4)的差别</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span>长度是固定不可变的，<span class="type">varchar</span>长度是可变的（在设定内）比如同样写入cn字符，<span class="type">char</span>类型对应的长度是<span class="number">4</span>(cn<span class="operator">+</span>两个空格),但<span class="type">varchar</span>类型对应长度是<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题007：如何创建一个utf8字符集的数据库mingongge？</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> mingongge <span class="keyword">default</span> charset utf8 <span class="keyword">collate</span> utf8_general_ci;</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题008：如何授权mingongge用户从172.16.1.0&#x2F;24访问数据库。</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> mingongge@<span class="string">&#x27;172.16.1.0/24&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题009：什么是MySQL多实例，如何配置MySQL多实例？</strong></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql多实例就是在同一台服务器上启用多个mysql服务，它们监听不同的端口，运行多个服务进程，它们相互独立，互不影响的对外提供服务，便于节约服务器资源与后期架构扩展</span><br><span class="line">多实例的配置方法有两种：</span><br><span class="line"><span class="number">1</span>、一个实例一个配置文件，不同端口</span><br><span class="line"><span class="number">2</span>、同一配置文件(<span class="keyword">my</span>.cnf)下配置不同实例，基于mysqld_multi工具</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题010：如何加强MySQL安全，请给出可行的具体措施？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、删除数据库不使用的默认用户</span><br><span class="line">2、配置相应的权限（包括远程连接）</span><br><span class="line">3、不可在命令行界面下输入数据库的密码</span><br><span class="line">4、定期修改密码与加强密码的复杂度</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题011：MySQL root密码忘了如何找回？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">参考前面的回答</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题012：delete和truncate删除数据的区别？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">前者删除数据可以恢复，它是逐条删除速度慢</span><br><span class="line">后者是物理删除，不可恢复，它是整体删除速度快</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题013：MySQL Sleep线程过多如何解决？</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1、可以杀掉sleep进程，kill PID</span><br><span class="line">2、修改配置，重启服务</span><br><span class="line">[mysqld]</span><br><span class="line">wait_timeout = 600</span><br><span class="line"><span class="attribute">interactive_timeout</span>=30</span><br><span class="line"><span class="comment">#如果生产服务器不可随便重启可以使用下面的方法解决</span></span><br><span class="line"><span class="built_in">set</span> global <span class="attribute">wait_timeout</span>=600</span><br><span class="line"><span class="built_in">set</span> global <span class="attribute">interactive_timeout</span>=30;</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题014：sort_buffer_size参数作用？如何在线修改生效？</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在每个<span class="keyword">connection</span>(<span class="keyword">session</span>)第一次连接时需要使用到，来提访问性能 </span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> sort_buffer_size = <span class="number">2</span>M </span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题015：如何在线正确清理MySQL binlog？</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MySQL中的binlog日志记录了数据中的数据变动，便于对数据的基于时间点和基于位置的恢复</span><br><span class="line">但日志文件的大小会越来越大，点用大量的磁盘空间，因此需要定时清理一部分日志信息</span><br><span class="line">手工删除：</span><br><span class="line"></span><br><span class="line">首先查看主从库正在使用的binlog文件名称 </span><br><span class="line"><span class="keyword">show</span> master(slave) status\G</span><br><span class="line">删除之前一定要备份</span><br><span class="line">purge master logs befor<span class="string">e&#x27;2017-09-01 00:00:00&#x27;</span>; </span><br><span class="line">#删除指定时间前的日志</span><br><span class="line">purge master logs <span class="keyword">to</span><span class="string">&#x27;mysql-bin.000001&#x27;</span>;</span><br><span class="line">#删除指定的日志文件</span><br><span class="line">自动删除：</span><br><span class="line">通过设置binlog的过期时间让系统自动删除日志</span><br><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;expire_logs_days&#x27;</span>; </span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> expire_logs_days = <span class="number">30</span>;</span><br><span class="line">#查看过期时间与设置过期时间</span><br></pre></td></tr></table></figure>
+
+<p><a href="javascript:void(0);"><img src="/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/copycode.gif" alt="复制代码"></a></p>
+<p><strong>面试题016：Binlog工作模式有哪些？各什么特点，企业如何选择？</strong></p>
+<p><a href="javascript:void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span><span class="keyword">Row</span>(行模式)；</span><br><span class="line">日志中会记录成每一行数据被修改的形式，然后在slave端再对相同的数据进行修改</span><br><span class="line"><span class="number">2.</span><span class="keyword">Statement</span>(语句模式)</span><br><span class="line">每一条修改的数据都会完整的记录到主库master的binlog里面，在slave上完整执行在master执行的<span class="keyword">sql</span>语句</span><br><span class="line"><span class="number">3.</span>mixed(混合模式)</span><br><span class="line">结合前面的两种模式，如果在工作中有使用函数 或者触发器等特殊功能需求的时候，使用混合模式</span><br><span class="line">数据量达到比较高时候，它就会选择 <span class="keyword">statement</span>模式，而不会选择<span class="keyword">Row</span> <span class="keyword">Level</span>行模式</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题017：误操作执行了一个drop库SQL语句，如何完整恢复？</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、停止主从复制，在主库上执行锁表并刷新<span class="keyword">binlog操作，接着恢复之前的全备文件（比如0点的全备）</span></span><br><span class="line"><span class="keyword"></span><span class="number">2</span>、将<span class="number">0</span>点时的<span class="keyword">binlog文件与全备到故障期间的binlog文件合并导出成sql语句</span></span><br><span class="line"><span class="keyword"></span>mysqlbinlog --no-defaults mysql-<span class="keyword">bin.000011 </span>mysql-<span class="keyword">bin.000012 </span>&gt;<span class="keyword">bin.sql</span></span><br><span class="line"><span class="keyword"></span><span class="number">3</span>、将导出的sql语句中drop语句删除，恢复到数据库中 </span><br><span class="line">mysql -uroot -pmysql123 &lt; <span class="keyword">bin.sql</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题018：mysqldump备份使用了-A -B参数，如何实现恢复单表？</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-<span class="selector-tag">A</span> 此参数作用是备份所有数据库（相当于<span class="attr">--all-databases</span>）</span><br><span class="line">-<span class="selector-tag">B</span> databasename 备份指定数据（单库备份使用）</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题019：详述MySQL主从复制原理及配置主从的完整步骤</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">主从复制的原理如下：</span><br><span class="line">主库开启binlog功能并授权从库连接主库，从库通过change <span class="literal">master</span>得到主库的相关同步信息,然后连接主库进行验证，主库IO线程根据从库<span class="literal">slave</span>线程的请求，从<span class="literal">master</span>.<span class="literal">inf</span>o开始记录的位置点向下开始取信息，</span><br><span class="line">同时把取到的位置点和最新的位置与binlog信息一同发给从库IO线程，从库将相关的sql语句存放在relay-log里面，最终从库的sql线程将relay-log里的sql语句应用到从库上，至此整个同步过程完成，之后将是无限重复上述过程</span><br><span class="line">完整步骤如下：</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>、主库开启binlog功能，并进行全备，将全备文件推送到从库服务器上</span><br><span class="line"><span class="number">2</span>、show <span class="keyword">master</span> <span class="title">status</span>\G 记录下当前的位置信息及二进制文件名</span><br><span class="line"><span class="number">3</span>、登陆从库恢复全备文件</span><br><span class="line"><span class="number">4</span>、执行change <span class="keyword">master</span> <span class="title">to</span> 语句</span><br><span class="line"><span class="number">5</span>、执行<span class="literal">start</span> <span class="literal">slave</span> <span class="keyword">and</span> show <span class="literal">slave</span> status\G</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题020：如何开启从库的binlog功能？</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">修改配置文件加上下面的配置</span><br><span class="line"></span><br><span class="line"><span class="attribute">log_bin</span>=slave-bin</span><br><span class="line"><span class="attribute">log_bin_index</span>=slave-bin.index</span><br><span class="line">需要重启服务生效</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题021：MySQL如何实现双向互为主从复制，并说明应用场景?</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">双向同步主要应用于解决单一主库写的压力，具体配置如下</span><br><span class="line">主库配置</span><br></pre></td></tr></table></figure>
+
+<p>[mysqld]</p>
+<p>auto_increment_increment &#x3D; 2 #起始ID auto_increment_offset &#x3D; 1 #ID自增间隔 log-slave-updates 从库配置</p>
+<p>[mysqld]</p>
+<p>auto_increment_increment &#x3D; 2 #起始ID auto_increment_offset &#x3D; 2 #ID自增间隔 log-slave-updates 主从库服务器都需要重启mysql服务</p>
+<p><strong>面试题022：MySQL如何实现级联同步，并说明应用场景?</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">级联同步主要应用在从库需要做为其它数据库的主库</span><br><span class="line">在需要做级联同步的数据库配置文件增加下面的配置即可</span><br><span class="line"></span><br><span class="line"><span class="attribute">log_bin</span>=slave-bin</span><br><span class="line"><span class="attribute">log_bin_index</span>=slave-bin.index</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题023：MySQL主从复制故障如何解决？</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">登陆从库</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>、执行<span class="literal">stop</span> <span class="literal">slave</span>;停止主从同步</span><br><span class="line"><span class="number">2</span>、然后set global sql_slave_skip_counter = <span class="number">1</span>;跳过一步错误</span><br><span class="line"><span class="number">3</span>、最后执行 <span class="literal">start</span> <span class="literal">slave</span>;并查看主从同步状态</span><br><span class="line"></span><br><span class="line">需要重新进行主从同步操作步骤如下</span><br><span class="line">进入主库</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>、进行全备数据库并刷新binlog,查看主库此的状态</span><br><span class="line"><span class="number">2</span>、恢复全备文件到从库，然后执行change <span class="keyword">master</span> </span><br><span class="line"><span class="title">3</span>、开启主从同步<span class="literal">start</span> <span class="literal">slave</span>;并查看主从同步状态</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题024：如何监控主从复制是否故障?</strong></p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -ppassowrd -e <span class="string">&quot;show slave status\G&quot;</span> |<span class="type">grep</span> -E <span class="string">&quot;Slave_IO_Running|Slave_SQL_Running&quot;</span>|<span class="type">awk</span> &#x27;&#123;print $<span class="number">2</span>&#125;&#x27;|<span class="type">grep</span> -c Yes</span><br><span class="line">通过判断Yes的个数来监控主从复制状态，正常情况等于<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题025：MySQL数据库如何实现读写分离？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、通过开发程序实现</span><br><span class="line">2、通过其它工具实现（如mysql-mmm）</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题026：生产一主多从从库宕机，如何手工恢复？</strong></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、执行<span class="literal">stop</span> <span class="literal">slave</span> 或者停止服务</span><br><span class="line"><span class="number">2</span>、修复好从库数据库</span><br><span class="line"><span class="number">3</span>、然后重新操作主库同步</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题027：生产一主多从主库宕机，如何手工恢复？</strong></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、登陆各个从库停止同步，并查看谁的数据最新，将它设置为新主库让其它从库同步其数据</span><br><span class="line"><span class="number">2</span>、修复好主库之后，生新操作主从同步的步骤就可以了</span><br><span class="line"></span><br><span class="line"><span class="meta">#需要注意的新的主库如果之前是只读，需要关闭此功能让其可写</span></span><br><span class="line"><span class="meta">#需要在新从库创建与之前主库相同的同步的用户与权限</span></span><br><span class="line"><span class="meta">#其它从库执行change master to master_port=新主库的端口，start slave</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题028：工作中遇到过哪些数据库故障，请描述2个例子？</strong></p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、开发使<span class="built_in">用root</span>用户在从库上写入数据造成主从数据不一致，并且前端没有展示需要修改的内容（仍旧是老数据）</span><br><span class="line"><span class="number">2</span>、内网测试环境服务器突然断电造成主从同步故障</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题029：MySQL出现复制延迟有哪些原因？如何解决？</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、需要同步的从库数据太多</span><br><span class="line"><span class="number">2</span>、从库的硬件资源较差，需要提升</span><br><span class="line"><span class="number">3</span>、网络问题，需要提升网络带宽</span><br><span class="line"><span class="number">4</span>、主库的数据写入量较大，需要优配置和硬件资源</span><br><span class="line"><span class="number">5</span>、<span class="keyword">sql</span>语句执行过长导致，需要优化</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题030：给出企业生产大型MySQL集群架构可行备份方案？</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">1</span>、双主多从，主从同步的架构，然后实行某个从库专业做为备份服务器</span><br><span class="line"><span class="attribute">2</span>、编写脚本实行分库分表进行备份，并加入定时任务</span><br><span class="line"><span class="attribute">3</span>、最终将备份服务推送至内网专业服务器，数据库服务器本地保留一周</span><br><span class="line"><span class="attribute">4</span>、备份服务器根据实际情况来保留备份数据（一般<span class="number">30</span>天）</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题031：什么是数据库事务，事务有哪些特性？企业如何选择？</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数据库事务是指逻辑上的一组<span class="keyword">sql</span>语句，组成这组操作的各个语句，执行时要么成功，要么失败</span><br><span class="line">特点：具有原子性、隔离性、持久性、一致性</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题032：请解释全备、增备、冷备、热备概念及企业实践经验？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">全备：数据库所有数据的一次完整备份，也就是备份当前数据库的所有数据</span><br><span class="line">增备：就在上次备份的基础上备份到现在所有新增的数据</span><br><span class="line">冷备：停止服务的基础上进行备份操作</span><br><span class="line">热备：实行在线进行备份操作，不影响数据库的正常运行</span><br><span class="line">全备在企业中基本上是每周或天一次，其它时间是进行增量备份</span><br><span class="line">热备使用的情况是有两台数据库在同时提供服务的情况，针对归档模式的数据库</span><br><span class="line">冷备使用情况有企业初期，数据量不大且服务器数量不多，可能会执行某些库、表结构等重大操作时</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题033：MySQL的SQL语句如何优化？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">建立主键与增加索引</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题034：企业生产MySQL集群架构如何设计备份方案？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、集群架构可采用双主多从的模式，但实际双主只有一主在线提供服务，两台主之间做互备</span><br><span class="line">2、另外的从可做读的负载均衡，然后将其中一台抽出专业做备份</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题035：开发有一堆数据发给dba执行，DBA执行需注意什么？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、需要注意语句是否有格式上的错误，执行会出错导致过程中断</span><br><span class="line">2、还需要注意语句的执行时间是否过长，是否会对服务器负载产生压力影响实际生产</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题036：如何调整生产线中MySQL数据库的字符集。</strong></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、首先导出库的表结构 -d 只导出表结构，然后批量替换</span><br><span class="line"><span class="number">2</span>、导出库中的所有数据（在不产生新数据的前提下）</span><br><span class="line"><span class="number">3</span>、然后全局替换<span class="keyword">set</span> names <span class="comment">= xxxxx</span> </span><br><span class="line">4、删除原有库与表，并新创建出来，再导入建库与建表语句与所有数据</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题037：请描述MySQL里中文数据乱码原理，如何防止乱码？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">服务器系统、数据库、客户端三方字符集不一致导致，需要统一字符</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题038：企业生产MySQL如何优化（请多角度描述）？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、提升服务器硬件资源与网络带宽</span><br><span class="line">2、优化mysql服务配置文件</span><br><span class="line">3、开启慢查询日志然后分析问题所在</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题039：MySQL高可用方案有哪些，各自特点，企业如何选择？</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">高可用方案有</span><br><span class="line">1、主从架构</span><br><span class="line">2、MySQL+MMM </span><br><span class="line">3、MySQL+MHA </span><br><span class="line">4、mysql+haproxy+drbd </span><br><span class="line">5、mysql+proxy+amoeba</span><br></pre></td></tr></table></figure>
+
+<p><strong>面试题040：如何批量更改数据库表的引擎？</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">通过mysqldump命令备份出一个sql文件，再使用sed命令替换</span><br><span class="line">或者执行下面的脚本进行修改</span><br><span class="line"></span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="attribute">user</span>=root</span><br><span class="line"><span class="attribute">passwd</span>=123456</span><br><span class="line"><span class="attribute">cmd</span>=<span class="string">&quot;mysql -u<span class="variable">$user</span> -p<span class="variable">$passwd</span> &quot;</span></span><br><span class="line"><span class="attribute">dump</span>=<span class="string">&quot;mysqldump -u<span class="variable">$user</span> -p<span class="variable">$passwd</span>&quot;</span></span><br><span class="line"><span class="keyword">for</span> database <span class="keyword">in</span> `<span class="variable">$cmd</span> -e <span class="string">&quot;show databases;&quot;</span>|sed <span class="string">&#x27;1,2d&#x27;</span>|egrep -v <span class="string">&quot;mysql|performance_schema&quot;</span>`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line"><span class="keyword">for</span> tables <span class="keyword">in</span> `dump -e <span class="string">&quot;show tables from <span class="variable">$databses</span>;&quot;</span>|sed <span class="string">&#x27;1d&#x27;</span>`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line"><span class="variable">$cmd</span> <span class="string">&quot;alter table <span class="variable">$database</span>.<span class="variable">$tables</span> engine = MyISAm;&quot;</span></span><br><span class="line">done</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/09/Mysql/mysql%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" title="mysql运维必会的一些知识点整理">https://horus-k.github.io/2020/03/09/Mysql/mysql运维必会的一些知识点整理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%90%86%E8%AE%BA/" rel="tag"># 理论</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/09/Mysql/MySQL%E8%A7%84%E8%8C%83/" rel="prev" title="MySQL规范">
+                  <i class="fa fa-chevron-left"></i> MySQL规范
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/09/Mysql/INFORMATION-SCHEMA-INNODB-TRX-%E8%AF%A6%E8%A7%A3-%E8%A1%A8-%E9%94%81-%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6/" rel="next" title="INFORMATION_SCHEMA.INNODB_TRX,详解,表,锁,等待超时">
+                  INFORMATION_SCHEMA.INNODB_TRX,详解,表,锁,等待超时 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

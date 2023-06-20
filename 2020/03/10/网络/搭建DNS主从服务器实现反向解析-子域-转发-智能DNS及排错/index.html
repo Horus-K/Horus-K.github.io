@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1基本知识点DNS服务 DNS：Domain Name System 应用层协议C&#x2F;S,53&#x2F;udp, 53&#x2F;tcpBIND：Bekerley Internat Name DomainISC （www.isc.org）本地名称解析配置文件：hosts">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错">
+<meta property="og:url" content="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="1基本知识点DNS服务 DNS：Domain Name System 应用层协议C&#x2F;S,53&#x2F;udp, 53&#x2F;tcpBIND：Bekerley Internat Name DomainISC （www.isc.org）本地名称解析配置文件：hosts">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/b4fe36f93ae998b887f6c6144b45dce6.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/4e86fcf1e80d982ec9ce6a28102b0466.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/1d0a28182ede6778530a71413a50b67a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/4eed3d8d198a32f39759109218eb2e22.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/3c8a9445e755a53997f29ee9970499dc.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/44669b66622a2d2b03a2aed7ea6ae253.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/ae037053228097fa0e98cab90a77b66a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/22/fdccbff2cb487b79c3c3cd9491ff3835.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/4230821f50b9e5443c956adf71d0b718.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/1f95d201c5dc59f0c6f84f9e651b3ed0.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/4ff632af39761cf5bceff4b0ff578e1f.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/e82a5ea1fc6bb9c6de7447e0be298470.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/3eec26a43461935613e0ea1f3f92f7a2.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/771a3897a1ec14da75e83c8ad1c48f11.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/bc7e3d6b4dd96382abf30f3ec388c33c.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/39427f620ca793894ebdf3c79fde434b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/2a9f6b2327deed8d917370c9a9d3dd95.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/cca3d60e96aa4eea8e822fde8317c92b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/012760a2f70c8aba6ca2168d7ba04de3.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/13b5cf9fbe34d642a0c32ea152efb3ca.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/37bcfb09b8b8cebde697769102cef9aa.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/a0927242123387df4964be9d5edc1c7b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/7197edf6388d27da546e825f8d836630.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/bb046f33cee7c3d4cf7d69d7098020d6.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/387ebb426c0f93635ae1dd16195720f9.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/ae666cb5b3f78c9e8a3907fb3835ebc7.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/439afc3698b239beee93e66d027ceab1.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/0c10bdf2abc4cf1c7b3cd301da6c1dd1.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201904/23/1f0d9bb330ea28c452b560a7c5842cf7.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="article:published_time" content="2020-03-10T07:36:21.000Z">
+<meta property="article:modified_time" content="2020-03-10T09:41:35.271Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="DNS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.51cto.com/images/blog/201904/22/b4fe36f93ae998b887f6c6144b45dce6.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/","path":"2020/03/10/网络/搭建DNS主从服务器实现反向解析-子域-转发-智能DNS及排错/","title":"搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-03-10 15:36:21 / 修改时间：17:41:35" itemprop="dateCreated datePublished" datetime="2020-03-10T15:36:21+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DNS/" itemprop="url" rel="index"><span itemprop="name">DNS</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="1基本知识点"><a href="#1基本知识点" class="headerlink" title="1基本知识点"></a>1基本知识点</h2><h3 id="DNS服务"><a href="#DNS服务" class="headerlink" title="DNS服务"></a>DNS服务</h3><blockquote>
+<p>DNS：Domain Name System 应用层协议<br>C&#x2F;S,53&#x2F;udp, 53&#x2F;tcp<br>BIND：Bekerley Internat Name Domain<br>ISC （<a target="_blank" rel="noopener" href="http://www.isc.org)/">www.isc.org）</a><br>本地名称解析配置文件：hosts</p>
+</blockquote>
+<span id="more"></span>
+
+<p>### DNS域名</p>
+<blockquote>
+<p>根域<br>一级域名：Top Level Domain: tld<br>com, edu, mil, gov, net, org, int,arpa<br>三类：组织域、国家域(.cn, .ca, .hk, .tw)、反向域<br>二级域名<br>三级域名<br>最多127级域名<br>ICANN（The Internet Corporation for Assigned Names and Numbers）<br>互联网名称与数字地址分配机构，负责在全球范围内对互联网通用顶级域名<br>（gTLD）以及国家和地区顶级域名（ccTLD）系统的管理、以及根服务器系统<br>的管理</p>
+</blockquote>
+<h3 id="DNS域名结构"><a href="#DNS域名结构" class="headerlink" title="DNS域名结构"></a>DNS域名结构</h3><p><img src="https://s1.51cto.com/images/blog/201904/22/b4fe36f93ae998b887f6c6144b45dce6.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<h3 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h3><blockquote>
+<p>DNS查询类型：<br>递归查询<br>迭代查询<br>名称服务器：域内负责解析本域内的名称的主机<br>根服务器：13组服务器<br>解析类型：<br>FQDN –&gt; IP<br>IP –&gt; FQDN<br>注意：正反向解析是两个不同的名称空间，是两棵不同的解析树</p>
+</blockquote>
+<h3 id="DNS服务器类型"><a href="#DNS服务器类型" class="headerlink" title="DNS服务器类型"></a>DNS服务器类型</h3><blockquote>
+<p>DNS服务器的类型：<br>主DNS服务器<br>从DNS服务器<br>缓存DNS服务器（转发器）<br>* 主DNS服务器：管理和维护所负责解析的域内解析库的服务器<br>* 从DNS服务器：从主服务器或从服务器“复制”（区域传输）解析库副本<br>序列号：解析库版本号，主服务器解析库变化时，其序列递增<br>刷新时间间隔：从服务器从主服务器请求同步解析的时间间隔<br>重试时间间隔：从服务器请求同步失败时，再次尝试时间间隔<br>过期时长：从服务器联系不到主服务器时，多久后停止服务<br>* “通知”机制：主服务器解析库发生变化时，会主动通知从服务器</p>
+</blockquote>
+<h3 id="资源记录"><a href="#资源记录" class="headerlink" title="资源记录"></a>资源记录</h3><blockquote>
+<p>区域解析库：由众多RR组成：<br>资源记录：Resource Record, RR<br>记录类型：A, AAAA, PTR, SOA, NS, CNAME, MX<br>SOA：Start Of Authority，起始授权记录；一个区域解析库有且仅能有一个<br>SOA记录，必须位于解析库的第一条记录<br>A：internet Address，作用，FQDN –&gt; IP<br>AAAA：FQDN –&gt; IPv6<br>PTR：PoinTeR，IP –&gt; FQDN<br>NS：Name Server，专用于标明当前区域的DNS服务器<br>CNAME ： Canonical Name，别名记录<br>MX：Mail eXchanger，邮件交换器<br>TXT：对域名进行标识和说明的一种方式，一般做验证记录时会使用此项，如：<br>SPF（反垃圾邮件）记录，https验证等<br>示例：_dnsauth TXT 2012011200000051qgs69bwoh4h6nht4n1h0lr038x</p>
+</blockquote>
+<h2 id="2基本环境安装"><a href="#2基本环境安装" class="headerlink" title="2基本环境安装"></a>2基本环境安装</h2><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install -y bind</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vim /etc/named.conf</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改这两行,让所有主机都可访问<br>&gt;listen-on port 53 { localhost; };<br>allow-query { any; }<br><img src="https://s1.51cto.com/images/blog/201904/22/4e86fcf1e80d982ec9ce6a28102b0466.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/etc/</span>named <span class="comment"># systemctl start named.service</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3主从服务器搭建"><a href="#3主从服务器搭建" class="headerlink" title="3主从服务器搭建"></a>3主从服务器搭建</h2><h3 id="搭建主服务器"><a href="#搭建主服务器" class="headerlink" title="搭建主服务器"></a>搭建主服务器</h3><ul>
+<li>修改bind 配置文件</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vim <span class="regexp">/etc/</span>named.conf</span><br><span class="line"><span class="regexp">//</span>  listen-on port <span class="number">53</span> &#123; <span class="number">127.0</span>.<span class="number">0.1</span>; &#125;;</span><br><span class="line"><span class="regexp">//</span>  allow-query     &#123; localhost; &#125;;  </span><br><span class="line">allow-transfer &#123;从服务器IP;&#125;;          <span class="comment">#只允许从服务器同步</span></span><br><span class="line"></span><br><span class="line">vim <span class="regexp">/etc/</span>named.rfc1912.zones</span><br><span class="line">添加</span><br><span class="line">zone <span class="string">&quot;qh.com&quot;</span> IN &#123;</span><br><span class="line">        type master;</span><br><span class="line">        file <span class="string">&quot;qh.com.zone&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编辑DNS区域数据库文件</li>
+</ul>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/etc/</span>named # cp -p <span class="regexp">/var/</span>named<span class="regexp">/named.localhost /</span>var<span class="regexp">/named/</span>qh.com.zone</span><br><span class="line">root:<span class="regexp">/var/</span>named $ vi <span class="regexp">/var/</span>named/qh.com.zone</span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@       IN SOA  master qh.com. (</span><br><span class="line">                                        <span class="number">2019042210</span>      ; serial</span><br><span class="line">                                        <span class="number">1</span>D      ; refresh</span><br><span class="line">                                        <span class="number">1</span>H      ; retry</span><br><span class="line">                                        <span class="number">1</span>W      ; expire</span><br><span class="line">                                        <span class="number">3</span>H )    ; minimum</span><br><span class="line">                NS       master</span><br><span class="line">master      A    <span class="number">192.168</span>.<span class="number">64.151</span></span><br><span class="line">dbserver1   A    <span class="number">1.1</span>.<span class="number">1.1</span></span><br><span class="line">dbserver2   A    <span class="number">2.2</span>.<span class="number">2.2</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>root:~ # systemctl restart named.service #重启服务</p>
+</blockquote>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ $ dig dbserver1.qh.com <span class="subst">@192</span><span class="number">.168</span><span class="number">.64</span><span class="number">.151</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/22/1d0a28182ede6778530a71413a50b67a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<h3 id="搭建从服务器"><a href="#搭建从服务器" class="headerlink" title="搭建从服务器"></a>搭建从服务器</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">yum install bind </span><br><span class="line">vim <span class="regexp">/etc/</span>named.conf</span><br><span class="line"><span class="regexp">//</span>  listen-on port <span class="number">53</span> &#123; <span class="number">127.0</span>.<span class="number">0.1</span>; &#125;;</span><br><span class="line"><span class="regexp">//</span>  allow-query     &#123; localhost; &#125;;  </span><br><span class="line">allow-transfer &#123;none;&#125;;                                        <span class="comment">#不允许任何机器同步</span></span><br><span class="line">vim <span class="regexp">/etc/</span>named.rfc1912.zones</span><br><span class="line">zone <span class="string">&quot;qh.com&quot;</span> &#123;</span><br><span class="line">    type slave;</span><br><span class="line">    masters &#123;主服务器IP;&#125;;                                                                                         </span><br><span class="line">    file <span class="string">&quot;slaves/qh.com.slave&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">root:~ <span class="comment"># systemctl start named.service </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从服务器进行同步</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/var/</span>named<span class="regexp">/slaves # cp -p /</span>var<span class="regexp">/named/</span>named.localhost <span class="regexp">/var/</span>named<span class="regexp">/slave/</span>qh.com.slave</span><br><span class="line">root:<span class="regexp">/var/</span>named <span class="comment"># cd slaves/</span></span><br><span class="line">root:<span class="regexp">/var/</span>named/slaves <span class="comment"># chmod g+w qh.com.slave </span></span><br><span class="line">root:<span class="regexp">/var/</span>named/slaves <span class="comment"># rndc reload</span></span><br><span class="line">server reload successful</span><br><span class="line">root:<span class="regexp">/var/</span>named/slaves <span class="comment"># ll</span></span><br><span class="line">total <span class="number">4</span></span><br><span class="line">-rw-rw---- <span class="number">1</span> root named <span class="number">152</span> Jun <span class="number">21</span>  <span class="number">2007</span> qh.com.slave</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:~ $ vi <span class="regexp">/etc/</span>sysconfig<span class="regexp">/network-scripts/i</span>fcfg-ens33</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/22/4eed3d8d198a32f39759109218eb2e22.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root:~ $ service network <span class="keyword">restart</span> </span><br><span class="line">Restarting network (via systemctl):                        [  OK  ]</span><br><span class="line">root:~ $ cat /etc/resolv.conf</span><br><span class="line">; <span class="keyword">generated</span> <span class="keyword">by</span> /usr/sbin/dhclient-script</span><br><span class="line"><span class="keyword">search</span> localdomain</span><br><span class="line">nameserver <span class="number">192.168</span><span class="number">.64</span><span class="number">.151</span></span><br><span class="line">nameserver <span class="number">192.168</span><span class="number">.64</span><span class="number">.152</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>断开151网卡</li>
+<li>在客户机测试<br><img src="https://s1.51cto.com/images/blog/201904/22/3c8a9445e755a53997f29ee9970499dc.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>说明是从从服务器解析地址的，主从服务器已成功</li>
+</ul>
+<h2 id="4搭建反向主服务器"><a href="#4搭建反向主服务器" class="headerlink" title="4搭建反向主服务器"></a>4搭建反向主服务器</h2><ul>
+<li>配置文件</li>
+</ul>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zone <span class="string">&quot;64.168.192.in-addr.arpa&quot;</span> IN &#123;</span><br><span class="line">        type master<span class="comment">;    </span></span><br><span class="line">        file <span class="string">&quot;192.168.64.zone&quot;</span><span class="comment">;</span></span><br><span class="line">&#125;<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>区域数据库文件</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root:/var/named $ cp -<span class="selector-tag">p</span> qh<span class="selector-class">.com</span><span class="selector-class">.zone</span> <span class="number">192.168</span>.<span class="number">64</span><span class="selector-class">.zone</span></span><br><span class="line">root:/var/named $ vim <span class="number">192.168</span>.<span class="number">64</span><span class="selector-class">.zone</span></span><br><span class="line"><span class="variable">$TTL</span> <span class="number">1</span>D</span><br><span class="line">@ IN SOA master qh<span class="selector-class">.com</span>. ( <span class="number">1</span> <span class="number">1</span>H <span class="number">10</span>M <span class="number">12</span>H <span class="number">1</span>D )</span><br><span class="line">     NS  master</span><br><span class="line">master A <span class="number">192.168</span>.<span class="number">64.151</span></span><br><span class="line"><span class="number">7</span>    PTR websrv<span class="selector-class">.qh</span><span class="selector-class">.com</span>.</span><br><span class="line"><span class="number">6</span>    PTR  websrv<span class="selector-class">.qh</span><span class="selector-class">.com</span>.</span><br><span class="line"><span class="number">100</span>  PTR mail<span class="selector-class">.qh</span><span class="selector-class">.com</span>.</span><br><span class="line">root:~ $ rndc reload</span><br><span class="line">root:~ $ systemctl restart named.service</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试<br><img src="https://s1.51cto.com/images/blog/201904/22/44669b66622a2d2b03a2aed7ea6ae253.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br><img src="https://s1.51cto.com/images/blog/201904/22/ae037053228097fa0e98cab90a77b66a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+</ul>
+<h2 id="5父域委派子域到另一台服务器上"><a href="#5父域委派子域到另一台服务器上" class="headerlink" title="5父域委派子域到另一台服务器上"></a>5父域委派子域到另一台服务器上</h2><ul>
+<li>主服务器</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install bind </span><br><span class="line">vim <span class="regexp">/etc/</span>named.conf</span><br><span class="line"><span class="regexp">//</span>  listen-on port <span class="number">53</span> &#123; <span class="number">127.0</span>.<span class="number">0.1</span>; &#125;;</span><br><span class="line"><span class="regexp">//</span>  allow-query     &#123; localhost; &#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在子域的DNS服务器上192.168.64.153</li>
+</ul>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">root:/var/named <span class="comment"># vi /etc/named.rfc1912.zones </span></span><br><span class="line">zone &quot;beijing.qh.com&quot; IN &#123;</span><br><span class="line">        <span class="attribute">type master;</span></span><br><span class="line"><span class="attribute">        file &quot;beijing.qh.com.zone&quot;;</span></span><br><span class="line"><span class="attribute">&#125;;</span></span><br><span class="line"><span class="attribute"></span></span><br><span class="line"><span class="attribute">root</span>:/var/named # cp -p named<span class="variable">.empty</span> beijing<span class="variable">.qh</span><span class="variable">.com</span><span class="variable">.zone</span></span><br><span class="line">root:/var/named # chmod g+w beijing<span class="variable">.qh</span><span class="variable">.com</span><span class="variable">.zone</span></span><br><span class="line">root:~ $ vim /var/named/beijing<span class="variable">.qh</span><span class="variable">.com</span><span class="variable">.zone</span></span><br><span class="line">$TTL 1D</span><br><span class="line">@   IN SOA  master beijing<span class="variable">.qh</span><span class="variable">.com</span>. (</span><br><span class="line">                    2019042214  ; <span class="attribute">serial</span></span><br><span class="line"><span class="attribute">                    1D  ; refresh</span></span><br><span class="line"><span class="attribute">                    1H  ; retry</span></span><br><span class="line"><span class="attribute">                    1W  ; expire</span></span><br><span class="line"><span class="attribute">                    3H )    ; minimum</span></span><br><span class="line"><span class="attribute">            NS   master</span></span><br><span class="line"><span class="attribute">master      A    192.168.64.153</span></span><br><span class="line"><span class="attribute">websrv     A    3.3.3.3</span></span><br><span class="line"><span class="attribute">www       CNAME  websrv    #此处可使用别名</span></span><br><span class="line"><span class="attribute"></span></span><br><span class="line"><span class="attribute">root</span>:~ $ systemctl start named<span class="variable">.service</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试成功<br><img src="https://s1.51cto.com/images/blog/201904/22/fdccbff2cb487b79c3c3cd9491ff3835.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+</ul>
+<h2 id="6实现智能DNS"><a href="#6实现智能DNS" class="headerlink" title="6实现智能DNS"></a>6实现智能DNS</h2><ul>
+<li>主DNS</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root:~ <span class="comment"># vim /etc/named.conf #三个不同地区网段</span></span><br><span class="line">acl beijingnet&#123;</span><br><span class="line">        192.168.64.0/24;</span><br><span class="line">&#125;;</span><br><span class="line">acl shanghainet&#123;</span><br><span class="line">        192.168.65.0/24;</span><br><span class="line">&#125;;</span><br><span class="line">acl othernet&#123;</span><br><span class="line">        any;</span><br><span class="line">&#125;;</span><br><span class="line">view beijingview&#123;</span><br><span class="line">        match-clients &#123;beijingnet;&#125;;</span><br><span class="line">        include <span class="string">&quot;/etc/named/named.rfc1912.zones.bj&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">view shanghaiview&#123;</span><br><span class="line">        match-clients &#123;shanghainet;&#125;;</span><br><span class="line">        include <span class="string">&quot;/etc/named/named.rfc1912.zones.sh&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">view otherview&#123;</span><br><span class="line">        match-clients &#123;othernet;&#125;;</span><br><span class="line">        include <span class="string">&quot;/etc/named.rfc1912.zones&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">############################## zone开头的记录要放到includ包含的/etc/named.rfc1912.zones文件里</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/23/4230821f50b9e5443c956adf71d0b718.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">root:/var/named <span class="comment"># cp -p qh.com.zone qh.com.bj    ##创建北京与上海数据库</span></span><br><span class="line">root:/var/named <span class="comment"># cp -p qh.com.zone qh.com.sh</span></span><br><span class="line"></span><br><span class="line">root:/var/named <span class="comment"># cat qh.com.bj </span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@   <span class="keyword">IN</span>  SOA <span class="keyword">master</span> <span class="title">qh</span>.com ( <span class="number">1</span> <span class="number">1</span>D <span class="number">1H</span> <span class="number">1</span>W <span class="number">3H</span> )</span><br><span class="line">        NS <span class="keyword">master</span></span><br><span class="line"><span class="title">master</span>  A  <span class="number">192.168</span>.<span class="number">64.151</span></span><br><span class="line">www     A  <span class="number">6.6</span>.<span class="number">6.6</span></span><br><span class="line"></span><br><span class="line">root:/var/named <span class="comment"># vi qh.com.sh</span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@   <span class="keyword">IN</span>  SOA <span class="keyword">master</span> <span class="title">qh</span>.com ( <span class="number">1</span> <span class="number">1</span>D <span class="number">1H</span> <span class="number">1</span>W <span class="number">3H</span> )</span><br><span class="line">        NS <span class="keyword">master</span></span><br><span class="line"><span class="title">master</span>  A  <span class="number">192.168</span>.<span class="number">64.151</span></span><br><span class="line">www     A  <span class="number">7.7</span>.<span class="number">7.7</span></span><br><span class="line"></span><br><span class="line">root:/var/named <span class="comment"># cp qh.com.sh qh.com.zone  #其他地区数据库</span></span><br><span class="line">cp: overwrite ‘qh.com.zone’? y</span><br><span class="line"></span><br><span class="line">root:/var/named <span class="comment"># vi qh.com.zone </span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@   <span class="keyword">IN</span>  SOA <span class="keyword">master</span> <span class="title">qh</span>.com ( <span class="number">1</span> <span class="number">1</span>D <span class="number">1H</span> <span class="number">1</span>W <span class="number">3H</span> )</span><br><span class="line">        NS <span class="keyword">master</span></span><br><span class="line"><span class="title">master</span>  A  <span class="number">192.168</span>.<span class="number">64.151</span></span><br><span class="line">www     A  <span class="number">8.8</span>.<span class="number">8.8</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>共三个数据库，对应不同地区<br><img src="https://s1.51cto.com/images/blog/201904/23/1f95d201c5dc59f0c6f84f9e651b3ed0.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root:~ $ cp -<span class="selector-tag">p</span> /etc/named<span class="selector-class">.rfc1912</span><span class="selector-class">.zones</span> /etc/named/named<span class="selector-class">.rfc1912</span><span class="selector-class">.zones</span><span class="selector-class">.bj</span></span><br><span class="line">root:~ $ cp -<span class="selector-tag">p</span> /etc/named<span class="selector-class">.rfc1912</span><span class="selector-class">.zones</span> /etc/named/named<span class="selector-class">.rfc1912</span><span class="selector-class">.zones</span>.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>共三个区域数据库文件<br><img src="https://s1.51cto.com/images/blog/201904/23/4ff632af39761cf5bceff4b0ff578e1f.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>开始关联数据库</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/etc/</span>named <span class="comment"># vi named.rfc1912.zones.bj</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/23/e82a5ea1fc6bb9c6de7447e0be298470.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/etc/</span>named <span class="comment"># vi named.rfc1912.zones.sh</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/23/3eec26a43461935613e0ea1f3f92f7a2.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>原有named.rfc1912.zones配置不变<br><img src="https://s1.51cto.com/images/blog/201904/23/771a3897a1ec14da75e83c8ad1c48f11.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>* 语法检查</p>
+<p><img src="https://s1.51cto.com/images/blog/201904/23/bc7e3d6b4dd96382abf30f3ec388c33c.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>* 重启服务</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#报错</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># rndc reload</span></span><br><span class="line"><span class="symbol">rndc:</span> connect failed: <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="meta">#953: connection refused</span></span><br><span class="line"><span class="meta"># 尝试先重启服务在加载</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.51cto.com/images/blog/201904/23/39427f620ca793894ebdf3c79fde434b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>* 测试<br>必须把DNS指向所配服务器<br><img src="https://s1.51cto.com/images/blog/201904/23/2a9f6b2327deed8d917370c9a9d3dd95.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>* DNS服务器 有两个ip段<br><img src="https://s1.51cto.com/images/blog/201904/23/cca3d60e96aa4eea8e822fde8317c92b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"><br>* 以64网段<br><img src="https://s1.51cto.com/images/blog/201904/23/012760a2f70c8aba6ca2168d7ba04de3.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<ul>
+<li>以65网段<br><img src="https://s1.51cto.com/images/blog/201904/23/13b5cf9fbe34d642a0c32ea152efb3ca.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>其他网段</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">临时加一个网段</span><br><span class="line">服务器：ip <span class="selector-tag">a</span> <span class="selector-tag">a</span> <span class="number">192.168</span>.<span class="number">63.1</span>/<span class="number">24</span> dev ens33</span><br><span class="line">客户端：ip <span class="selector-tag">a</span> <span class="selector-tag">a</span> <span class="number">192.168</span>.<span class="number">63.2</span>/<span class="number">24</span> dev ens33</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试均已成功<br>![](<a target="_blank" rel="noopener" href="https://s1.51cto.com/">https://s1.51cto.com</a><br>&#x2F;images&#x2F;blog&#x2F;201904&#x2F;23&#x2F;0c181b664c6773ed2c32d1d336ae799a.png?x-oss-process&#x3D;image&#x2F;watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk&#x3D;)</li>
+</ul>
+<h2 id="7互联网DNS架构实验"><a href="#7互联网DNS架构实验" class="headerlink" title="7互联网DNS架构实验"></a>7互联网DNS架构实验</h2><ul>
+<li>架构图<br><img src="https://s1.51cto.com/images/blog/201904/23/37bcfb09b8b8cebde697769102cef9aa.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>共7台主机，联合实现互联网dns架构<br><img src="https://s1.51cto.com/images/blog/201904/23/a0927242123387df4964be9d5edc1c7b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>1将客户端dns服务器指向本地dns服务器<br><img src="https://s1.51cto.com/images/blog/201904/23/7197edf6388d27da546e825f8d836630.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>2将网站搭建好</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install httpd</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># cd /var/www/html/</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>www/html <span class="meta"># echo 192.168.64.57,hello &gt;index.html</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>www/html <span class="meta"># chmod a+r index.html</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>www/html <span class="meta"># service httpd restart</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>3客户端测试</p>
+</li>
+<li><p>4配置主masterDNS</p>
+</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install bind</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.conf</span></span><br><span class="line"><span class="comment">//      listen-on port 53 &#123; 127.0.0.1; &#125;;</span></span><br><span class="line"><span class="comment">//      allow-query     &#123; localhost; &#125;;</span></span><br><span class="line"><span class="title class_">allow-transfer</span> <span class="punctuation">&#123;</span><span class="number">192.168</span><span class="number">.64</span><span class="number">.47</span><span class="punctuation">;</span><span class="punctuation">&#125;;</span> </span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.rfc1912.zones</span></span><br><span class="line">zone <span class="string">&quot;qh.com&quot;</span> <span class="title class_">IN</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type <span class="attr">master</span><span class="punctuation">;</span></span><br><span class="line">        file <span class="string">&quot;qh.com.zone&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># cd /var/named/</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># vi qh.com.zone</span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@ IN SOA ns1 qh.mail.com. ( <span class="number">1</span> <span class="number">1</span>H <span class="number">10</span>M <span class="number">1</span>D <span class="number">3</span>H )</span><br><span class="line">        NS ns1</span><br><span class="line">        NS ns2</span><br><span class="line"></span><br><span class="line">ns1 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.37</span></span><br><span class="line">ns2 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.47</span></span><br><span class="line">www A <span class="number">192.168</span><span class="number">.64</span><span class="number">.57</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chgrp named qh.com.zone</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chmod 640 qh.com.zone</span></span><br><span class="line"><span class="meta">#### 语法检查</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># named-checkconf</span></span><br><span class="line"><span class="meta">#### 启动服务</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># systemctl start named.service</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>5客户端测试master服务器<br><img src="https://s1.51cto.com/images/blog/201904/23/bb046f33cee7c3d4cf7d69d7098020d6.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>6搭建从服务器</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install bind</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.conf</span></span><br><span class="line"><span class="comment">//      listen-on port 53 &#123; 127.0.0.1; &#125;;</span></span><br><span class="line"><span class="comment">//      allow-query     &#123; localhost; &#125;;</span></span><br><span class="line"><span class="title class_">allow-transfer</span> <span class="punctuation">&#123;</span><span class="attr">none</span><span class="punctuation">;</span><span class="punctuation">&#125;;</span> </span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.rfc1912.zones</span></span><br><span class="line">zone <span class="string">&quot;qh.com&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">    type <span class="attr">slave</span><span class="punctuation">;</span></span><br><span class="line">    <span class="title class_">masters</span> <span class="punctuation">&#123;</span><span class="number">192.168</span><span class="number">.64</span><span class="number">.37</span><span class="punctuation">;</span><span class="punctuation">&#125;;</span>                                              </span><br><span class="line">    file <span class="string">&quot;slaves/qh.com.slave&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named/slaves <span class="meta"># systemctl start named.service </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named/slaves <span class="meta"># rndc reload                   </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named/slaves <span class="meta"># ll</span></span><br><span class="line">total                                  <span class="meta">#已同步</span></span><br><span class="line">-rw-r--r-- <span class="number">1</span> named named <span class="number">269</span> Apr <span class="number">23</span> <span class="number">16</span>:<span class="number">34</span> qh.com.slave</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>7测试从服务器<br><img src="https://s1.51cto.com/images/blog/201904/23/387ebb426c0f93635ae1dd16195720f9.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>8配置com域服务器</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install bind</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.conf</span></span><br><span class="line"><span class="comment">//      listen-on port 53 &#123; 127.0.0.1; &#125;;</span></span><br><span class="line"><span class="comment">//      allow-query     &#123; localhost; &#125;;</span></span><br><span class="line"><span class="title class_">allow-transfer</span> <span class="punctuation">&#123;</span><span class="attr">none</span><span class="punctuation">;</span><span class="punctuation">&#125;;</span> </span><br><span class="line">------------------------------------------------</span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.rfc1912.zones</span></span><br><span class="line">zone <span class="string">&quot;com&quot;</span> <span class="title class_">IN</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type <span class="attr">master</span><span class="punctuation">;</span></span><br><span class="line">        file <span class="string">&quot;com.zone&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line">---------------------------------------------------------</span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># cd /var/named/</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># vim com.zone</span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@ IN SOA NS1 qh.mail.com. (<span class="number">1</span> <span class="number">1</span>D <span class="number">1</span>H <span class="number">1</span>W <span class="number">3</span>D )</span><br><span class="line">        NS ns1</span><br><span class="line">qh      NS qhns1</span><br><span class="line">qh      NS qhns2</span><br><span class="line">ns1 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.27</span></span><br><span class="line">qhns1 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.37</span>   <span class="meta">#主服务器</span></span><br><span class="line">qhns2 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.47</span>   <span class="meta">#从服务器</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chgrp named com.zone </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chmod g+w com.zone </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># systemctl start named.service </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># rndc reload</span></span><br><span class="line">server reload successful</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>9测试 （通过父域192.168.64.27测试）<br><img src="https://s1.51cto.com/images/blog/201904/23/ae666cb5b3f78c9e8a3907fb3835ebc7.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>10搭建根DNS</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root:</span>~ <span class="meta"># yum install bind</span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># vi /etc/named.conf</span></span><br><span class="line"><span class="comment">//      listen-on port 53 &#123; 127.0.0.1; &#125;;</span></span><br><span class="line"><span class="comment">//      allow-query     &#123; localhost; &#125;;</span></span><br><span class="line">zone <span class="string">&quot;.&quot;</span> <span class="title class_">IN</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type <span class="attr">master</span><span class="punctuation">;</span>          <span class="meta">#改为master自己做根</span></span><br><span class="line">        file <span class="string">&quot;root.zone&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">root:</span>~ <span class="meta"># cd /var/named/</span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># vim root.zone</span></span><br><span class="line">$TTL <span class="number">1</span>D</span><br><span class="line">@ IN SOA ns1 qh.mail.com. (<span class="number">1</span> <span class="number">1</span>D <span class="number">1</span>H <span class="number">1</span>W <span class="number">3</span>D )</span><br><span class="line">        NS ns1</span><br><span class="line">com     NS comns1</span><br><span class="line">ns1 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.17</span></span><br><span class="line">comns1 A <span class="number">192.168</span><span class="number">.64</span><span class="number">.27</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chgrp named com.zone </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># chmod g+w com.zone </span></span><br><span class="line"><span class="symbol">root:</span><span class="keyword">/var/</span>named <span class="meta"># systemctl start named.service </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>11测试（通过主根服务器测试）<br><img src="https://s1.51cto.com/images/blog/201904/23/439afc3698b239beee93e66d027ceab1.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+<li>12配置本地dns服务器</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root:~ <span class="comment"># yum install bind</span></span><br><span class="line">root:~ <span class="comment"># vi /etc/named.conf</span></span><br><span class="line"><span class="regexp">//</span>      listen-on port <span class="number">53</span> &#123; <span class="number">127.0</span>.<span class="number">0.1</span>; &#125;;</span><br><span class="line"><span class="regexp">//</span>      allow-query     &#123; localhost; &#125;;</span><br><span class="line"></span><br><span class="line">root:<span class="regexp">/etc/</span>sysconfig<span class="regexp">/network-scripts # vi /</span>var<span class="regexp">/named/</span>named.ca <span class="comment">#改为下面配置</span></span><br><span class="line">.                       <span class="number">518400</span>  IN      NS      a.root-servers.net.</span><br><span class="line"></span><br><span class="line">a.root-servers.net.     <span class="number">3600000</span> IN      A       <span class="number">192.168</span>.<span class="number">64.17</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>13清缓存</li>
+</ul>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:<span class="regexp">/var/</span>named <span class="comment"># rndc flush #清理所有dns缓存</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>14在本地dns修改安全配置</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root:~ # vi /etc/named.conf </span><br><span class="line">dnssec-<span class="built_in">enable</span> <span class="literal">no</span>;</span><br><span class="line">dnssec-validation <span class="literal">no</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>15测试<br><img src="https://s1.51cto.com/images/blog/201904/23/0c10bdf2abc4cf1c7b3cd301da6c1dd1.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></li>
+</ul>
+<h2 id="一些过程中可能遇到的错误"><a href="#一些过程中可能遇到的错误" class="headerlink" title="一些过程中可能遇到的错误"></a>一些过程中可能遇到的错误</h2><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root:/var/named <span class="comment"># systemctl start named.service</span></span><br><span class="line">Job <span class="keyword">for</span> named.service failed because <span class="keyword">the</span> control <span class="built_in">process</span> exited <span class="keyword">with</span> error code. See <span class="string">&quot;systemctl status named.service&quot;</span> <span class="keyword">and</span> <span class="string">&quot;journalctl -xe&quot;</span> <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+
+<p>一般可以通过systemctl status named.service -l 命令可以查看当前错误类型<br><img src="https://s1.51cto.com/images/blog/201904/23/1f0d9bb330ea28c452b560a7c5842cf7.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"></p>
+<blockquote>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#dig <span class="keyword">A</span> example.com</span><br><span class="line"><span class="comment">; &lt;&lt;&gt;&gt; DiG 9.9.4-RedHat-9.9.4-14.el7 &lt;&lt;&gt;&gt; A example.com</span></span><br><span class="line"><span class="comment">;; global options: +cmd</span></span><br><span class="line"><span class="comment">;; Got answer:</span></span><br><span class="line"><span class="comment">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 30523</span></span><br><span class="line">...</span><br><span class="line">SERVFAIL:The nameserver encountered a problem while processing the query.</span><br><span class="line">• 可使用dig +trace排错，可能是网络和防火墙导致</span><br><span class="line">NXDOMAIN：The queried name does not exist in the zone.</span><br><span class="line">• 可能是<span class="keyword">CNAME</span>对应的<span class="keyword">A</span>记录不存在导致</span><br><span class="line">REFUSED：The nameserver refused the client&#x27;s DNS request due to policy</span><br><span class="line">restrictions.</span><br><span class="line">• 可能是DNS策略导致</span><br><span class="line">• NOERROR不代表没有问题，也可以是过时的记录</span><br><span class="line">•查看是否为权威记录，flags:aa标记判断</span><br><span class="line">•被删除的记录仍能返回结果，可能是因为*记录存在</span><br><span class="line">•如：*.example.com． <span class="keyword">IN</span> <span class="keyword">A</span> <span class="number">172.25.254.254</span></span><br><span class="line">•注意“.”的使用</span><br><span class="line">•避免<span class="keyword">CNAME</span>指向<span class="keyword">CNAME</span>记录，可能产生回环</span><br><span class="line">•est.example.com. <span class="keyword">IN</span> <span class="keyword">CNAME</span> lab.example.com.</span><br><span class="line">•lab.example.com. <span class="keyword">IN</span> <span class="keyword">CNAME</span> test.example.com.</span><br><span class="line">•正确配置<span class="keyword">PTR</span>记录，许多服务依赖<span class="keyword">PTR</span>，如sshd,MTA</span><br><span class="line">•正确配置轮询round-robin记录</span><br></pre></td></tr></table></figure></blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/03/10/%E7%BD%91%E7%BB%9C/%E6%90%AD%E5%BB%BADNS%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E8%A7%A3%E6%9E%90-%E5%AD%90%E5%9F%9F-%E8%BD%AC%E5%8F%91-%E6%99%BA%E8%83%BDDNS%E5%8F%8A%E6%8E%92%E9%94%99/" title="搭建DNS主从服务器实现反向解析,子域,转发,智能DNS及排错">https://horus-k.github.io/2020/03/10/网络/搭建DNS主从服务器实现反向解析-子域-转发-智能DNS及排错/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/DNS/" rel="tag"># DNS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/10/%E7%BD%91%E7%BB%9C/DNS%E6%A8%A1%E6%8B%9F%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E5%AE%9E%E9%AA%8C/" rel="prev" title="DNS模拟互联网架构实验">
+                  <i class="fa fa-chevron-left"></i> DNS模拟互联网架构实验
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/10/%E8%87%AA%E5%8A%A8%E5%8C%96/%E6%90%AD%E5%BB%BAPXE%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F%EF%BC%8C%E6%94%AF%E6%8C%81%E5%A4%9A%E7%B3%BB%E7%BB%9F/" rel="next" title="搭建PXE无人值守自动化安装系统，支持多系统">
+                  搭建PXE无人值守自动化安装系统，支持多系统 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="NGINX服务器的反向代理PROXY_PASS配置方法讲解 Nginx的配置还是比较简单的，如： 123location ~ &#x2F;* &amp;#123;	proxy_pass http:&#x2F;&#x2F;127.0.0.1:8008;&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx反向代理">
+<meta property="og:url" content="https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="NGINX服务器的反向代理PROXY_PASS配置方法讲解 Nginx的配置还是比较简单的，如： 123location ~ &#x2F;* &amp;#123;	proxy_pass http:&#x2F;&#x2F;127.0.0.1:8008;&amp;#125;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-26T11:37:33.000Z">
+<meta property="article:modified_time" content="2020-04-21T10:02:05.240Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/","path":"2020/02/26/Nginx/Nginx反向代理/","title":"Nginx反向代理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nginx反向代理 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Nginx反向代理 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx反向代理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-26 19:37:33" itemprop="dateCreated datePublished" datetime="2020-02-26T19:37:33+08:00">2020-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-21 18:02:05" itemprop="dateModified" datetime="2020-04-21T18:02:05+08:00">2020-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>NGINX服务器的反向代理PROXY_PASS配置方法讲解</p>
+<p>Nginx的配置还是比较简单的，如：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ /*</span> &#123;</span><br><span class="line">	<span class="attribute">proxy_pass</span> http://127.0.0.1:8008;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>或者可以</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">location</span> <span class="title">/&#123;</span></span><br><span class="line"><span class="title">	proxy_pass</span> http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8008</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Apache2的反向代理的配置是：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProxyPass <span class="regexp">/ysz/</span> http:<span class="regexp">//</span>localhost:<span class="number">8080</span>/</span><br></pre></td></tr></table></figure>
+
+<p>然而，如果要配置一个相对复杂的反向代理<br>Nginx相对Apache2就要麻烦一些了<br>比如，将url中以&#x2F;wap&#x2F;开头的请求转发到后台对应的某台server上<br>可以再Nginx里设置一个变量，来临时保存&#x2F;wap&#x2F;后面的路径信息</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/wap/</span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$request_uri</span> ~ <span class="regexp">/wap/</span>(\d+)/(.+))&#123;</span><br><span class="line">		set <span class="variable">$bucketid</span> <span class="variable">$1</span>;``set <span class="variable">$params</span> <span class="variable">$2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	proxy_pass http:<span class="regexp">//m</span>x<span class="variable">$bucketid</span>.test.com:<span class="number">6601</span>/<span class="variable">$params</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也可以首先rewrite一下，然后再代理：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/wap/</span>&#123;</span><br><span class="line">	rewrite <span class="regexp">/wap/</span>(\d+)<span class="regexp">/(.+) /</span><span class="variable">$2</span>?<span class="variable">$args</span> <span class="keyword">break</span>;</span><br><span class="line">	proxy_pass http:<span class="regexp">//m</span>x<span class="variable">$1</span>.test.com:<span class="number">6601</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~* <span class="regexp">/wap/</span>(\d+)/(.+)&#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//m</span>x<span class="variable">$1</span>.test.com:<span class="number">6601</span>/<span class="variable">$2</span>?<span class="variable">$args</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意上面最后的?$args，表明把原始url最后的get参数也给代理到后台<br>如果在proxy_pass中使用了变量（不管是主机名变量$1或后面的$2变量），则必须得加这段代码<br>但如果pass_proxy后没用任何变量，则不需要加，它默认会把所有的url都给代理到后台，如：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~* <span class="regexp">/wap/</span>(\d+)/(.+)&#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//m</span>x.test.com:<span class="number">6601</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而Apache2相对就简单多了：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ProxyPassMatch</span><span class="regexp"> ^/wap/(.*)$</span>  http://192.168.132.147/<span class="variable">$1</span></span><br><span class="line"></span><br><span class="line">if (<span class="variable">$host</span> <span class="regexp">~* www.(.*))</span>&#123;</span><br><span class="line">	<span class="attribute">set</span> <span class="variable">$host_without_www</span> <span class="variable">$1</span>;</span><br><span class="line">	<span class="attribute">rewrite</span> (.*)$ http://<span class="variable">$host_without_www</span>/www<span class="variable">$1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>url的&#x2F;问题</strong>在nginx中配置proxy_pass时，当在后面的url加上了&#x2F;，相当于是绝对根路径，则nginx不会把location中匹配的路径部分代理走;如果没有&#x2F;，则会把匹配的路径部分也给代理走。</p>
+<p>下面四种情况分别用<a target="_blank" rel="noopener" href="http://192.168.1.4/proxy/test.html">http://192.168.1.4/proxy/test.html</a> 进行访问。<br>第一种：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/proxy/</span> &#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">81</span>/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会被代理到<a target="_blank" rel="noopener" href="http://127.0.0.1:81/test.html">http://127.0.0.1:81/test.html</a> 这个url</p>
+<p>第二咱(相对于第一种，最后少一个 &#x2F;)</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/proxy/</span> &#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">81</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会被代理到<a target="_blank" rel="noopener" href="http://127.0.0.1:81/proxy/test.html">http://127.0.0.1:81/proxy/test.html</a> 这个url</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /proxy &#123;</span><br><span class="line">	proxy_pass http://127.0.0.1:81;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会被代理到<a target="_blank" rel="noopener" href="http://127.0.0.1:81/proxy/test.html">http://127.0.0.1:81/proxy/test.html</a> 这个url</p>
+<p>第三种：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/proxy/</span> &#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">81</span><span class="regexp">/ftlynx/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会被代理到<a target="_blank" rel="noopener" href="http://127.0.0.1:81/ftlynx/test.html">http://127.0.0.1:81/ftlynx/test.html</a> 这个url。</p>
+<p>第四种情况(相对于第三种，最后少一个 &#x2F; )：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/proxy/</span> &#123;</span><br><span class="line">	proxy_pass http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">81</span>/ftlynx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会被代理到<a target="_blank" rel="noopener" href="http://127.0.0.1:81/ftlynxtest.html">http://127.0.0.1:81/ftlynxtest.html</a> 这个url</p>
+<p>上面的结果都是结合日志文件测试过的。从结果可以看出，应该说分为两种情况才正确。即<a target="_blank" rel="noopener" href="http://127.0.0.1:81/">http://127.0.0.1:81</a> (上面的第二种) 这种和 <a target="_blank" rel="noopener" href="http://127.0.0.1:81/">http://127.0.0.1:81/</a>…. （上面的第1，3，4种） 这种。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx反向代理">https://horus-k.github.io/2020/02/26/Nginx/Nginx反向代理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/02/22/k8s/docker/" rel="prev" title="部署 docker 组件">
+                  <i class="fa fa-chevron-left"></i> 部署 docker 组件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/03/01/k8s/k8s15/" rel="next" title="k8s15.1版本二进制部署">
+                  k8s15.1版本二进制部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

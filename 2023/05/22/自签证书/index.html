@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="生成证书123456789101112131415161718192021222324252627282930313233# ⽣成根证书私钥openssl genrsa -out rootCA.key 2048#可以将ca.key转为pem文件#openssl rsa -in rootCA.key -out rootCA.pem#再查看一下ca-key.pem文件，内容和ca.key是相同的# 生">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自签证书">
+<meta property="og:url" content="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="生成证书123456789101112131415161718192021222324252627282930313233# ⽣成根证书私钥openssl genrsa -out rootCA.key 2048#可以将ca.key转为pem文件#openssl rsa -in rootCA.key -out rootCA.pem#再查看一下ca-key.pem文件，内容和ca.key是相同的# 生">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-22T09:22:13.000Z">
+<meta property="article:modified_time" content="2023-06-20T03:07:30.591Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/","path":"2023/05/22/自签证书/","title":"自签证书"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>自签证书 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="自签证书 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自签证书
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-22 17:22:13" itemprop="dateCreated datePublished" datetime="2023-05-22T17:22:13+08:00">2023-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-20 11:07:30" itemprop="dateModified" datetime="2023-06-20T11:07:30+08:00">2023-06-20</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">⽣成根证书私钥</span></span><br><span class="line">openssl genrsa -out rootCA.key 2048</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">可以将ca.key转为pem文件</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">openssl rsa -<span class="keyword">in</span> rootCA.key -out rootCA.pem</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">再查看一下ca-key.pem文件，内容和ca.key是相同的</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成根证书</span></span><br><span class="line">openssl req -x509 -new -nodes -key rootCA.key -days 75000 -out rootCA.pem -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line">CN=commonName 注：生成证书时，CN要和服务器的域名相同，如果在本地测试，就使用localhost</span><br><span class="line">    　　OU=organizationUnit</span><br><span class="line">    　　O=organizationName</span><br><span class="line">    　　L=localityName</span><br><span class="line">    　　S=stateName</span><br><span class="line">    　　C=country</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看证书</span></span><br><span class="line">openssl x509 -in rootCA.pem -text -noout</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以将rootCA.pem转为.crt扩展名</span></span><br><span class="line">openssl x509 -outform pem -in rootCA.pem -out rootCA.crt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书签名请求文件</span></span><br><span class="line">openssl req -new -key server.key -out server.csr -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;subjectAltName=DNS:qyapi.weixin.qq.com,IP:0.0.0.0&quot; &gt; cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">根据签发请求⽣成服务端证书 增加-extfile参数即可生成v3版本的证书：</span></span><br><span class="line">openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 75000 -extfile cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">openssl verify -CAfile rootCA.pem -verify_hostname qyapi.weixin.qq.com server.crt</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29947615/article/details/127506022">https://blog.csdn.net/qq_29947615/article/details/127506022</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/MX__LL/article/details/125295929">https://blog.csdn.net/MX__LL/article/details/125295929</a></p>
+<blockquote>
+<p>① V1版本<br>标准证书体格式的第一版包括了版本号、序列号、签名算法、有效性及主体信息。其中，版主用来定义证书的版本号，一般为整数形式；序列号对CA所发布的每个证书具有唯一性，属于大整数形式；签名算法用来标识CA签署证书的算法。有效性则定义了证书的有效期；主体用以表明证书的发布对象。</p>
+<p>② V2版本<br>V2在V1的基础上添加了两个选项：发布者的惟一标识和主体的惟一标识。当多个证书发布者都使用相同的X.500名字，发布者的惟一标识可以将它们区分开来；而当两个主体有相同的X.500名字，主体惟一标识则可以将它们区分开来。由于这两项很少用到，因此第二版的证书也很少用到。</p>
+<p>③ V3版本<br>X.509在第三版中添加了扩展的功能, 虽然复杂但是很重要。扩展在v3版证书中是一个可选项，但是可以提供如下内容：主体和发布者的属性、密钥的用法和策略以及证书路径约束。主体和发布者的属性，这一部分提供了主体以及发布者的附加属性。</p>
+</blockquote>
+<h1 id="添加自签名ca证书的信任"><a href="#添加自签名ca证书的信任" class="headerlink" title="添加自签名ca证书的信任"></a>添加自签名ca证书的信任</h1><h2 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h2><p>某些java框架可能不会验证证书</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">keytool -<span class="keyword">import</span> -noprompt -v -trustcacerts -alias &lt;alias_name&gt; -<span class="keyword">file</span> &lt;ca_file_path&gt; -storepass &lt;store_password&gt; -keystore &lt;JAVA_HOME&gt;<span class="regexp">/lib/</span>security/cacerts</span><br><span class="line"></span><br><span class="line">示例:</span><br><span class="line">keytool -<span class="keyword">import</span> -noprompt -v -trustcacerts -alias ca-cert -<span class="keyword">file</span> <span class="regexp">/u01/</span>certs<span class="regexp">/ca.crt -storepass changeit -keystore /u</span>01<span class="regexp">/apps/</span>java<span class="regexp">/amazon-corretto-17.0.5.8.1-linux-x64/</span>lib<span class="regexp">/security/</span>cacerts</span><br></pre></td></tr></table></figure>
+
+<h2 id="python"><a href="#python" class="headerlink" title="python"></a>python</h2><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">运行时添加变量 REQUESTS_CA_BUNDLE=D:<span class="string">\Github\rootCA.crt</span>  <span class="comment"># 指定信任的ca证书列表</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/" title="自签证书">https://horus-k.github.io/2023/05/22/自签证书/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/" rel="prev" title="openresty lua 使用">
+                  <i class="fa fa-chevron-left"></i> openresty lua 使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/05/23/%E9%98%BF%E9%87%8C%E4%BA%91pod%E7%BB%91%E5%AE%9A%E5%9B%BA%E5%AE%9A%E5%87%BA%E5%8F%A3ip/" rel="next" title="阿里云pod绑定固定出口ip">
+                  阿里云pod绑定固定出口ip <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="高可用etcd 是基于 raft算法的分布式键值数据库，生来就为集群化而设计的，由于Raft算法在做决策时需要超半数节点的投票，所以etcd集群一般推荐奇数节点，如3、5或者7个节点构成一个集群。 以上是etcd集群部署的基础概念，但是还需要注意以下问题：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Etcd 问题,调优,监控">
+<meta property="og:url" content="https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="高可用etcd 是基于 raft算法的分布式键值数据库，生来就为集群化而设计的，由于Raft算法在做决策时需要超半数节点的投票，所以etcd集群一般推荐奇数节点，如3、5或者7个节点构成一个集群。 以上是etcd集群部署的基础概念，但是还需要注意以下问题：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOETGmj6t1L1w1EGZ5Y9gL0wE6nAf8dI1PKjuxoWfhgZicAeJzDFDarAQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOWoTGvqNbvtgzRVSejPPI2uFXrLkGrXwQkvYdJ9Knia8I3caicC8QQZfQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOcfHcJsmnDRWhoRURr8s4YlH01ZK27Jq1eP6A74NBiatuWJiaCF5rlQDg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHON58359F9uI63R9nnibXwwNPtrppFJ7icaJuzsaWf2eIEUeYhwq0yYOAA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOqK6icHfJibTvpRD8Flc1pvkdf3CiaocaR2icHT367XZFn7dhfN2bCN9ibOg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOgicOmQeXHcoIeLOum6ohnptyibm32yrkxDk1mB8cfYjMT0OT8RibK3RLg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOCY3Uav69ia9MgUZxHMMJv0Hpl2icOaFNuPX51FX8iaeyUnalHd7YicSvcg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOIJVwzs44Ho2e9qvczV5TDKnicKwqhQ5qib0Ag43mmtYFJeiaCvvre5aiag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOxOzlLMhX5pf6R2Z0FtGpCP4ynKSFEUHsMHdMoMibhr5iacymjOLalj8w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOrWgZQGAdLTcoofpWG6YoXUpbf12Zx7wlDvu36M9ZK7HSDTqice0OS7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOYnia3xFNzMtemElD53pwLTnIQG4CNe3N63PZTJ1K9OXoyTYoGe2U5Dg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOhyhV9XaZBDN6Syub8acMLwXK1xk7qJDEPyibWUNOFAbkdsRpI3Fd6Ng/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="article:published_time" content="2020-09-22T01:43:21.000Z">
+<meta property="article:modified_time" content="2020-09-22T01:44:46.221Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="etcd">
+<meta property="article:tag" content="调优">
+<meta property="article:tag" content="排错">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOETGmj6t1L1w1EGZ5Y9gL0wE6nAf8dI1PKjuxoWfhgZicAeJzDFDarAQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/","path":"2020/09/22/Etcd-问题-调优-监控/","title":"Etcd 问题,调优,监控"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Etcd 问题,调优,监控 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Etcd 问题,调优,监控 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Etcd 问题,调优,监控
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-22 09:43:21 / 修改时间：09:44:46" itemprop="dateCreated datePublished" datetime="2020-09-22T09:43:21+08:00">2020-09-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h2><p>etcd 是基于 raft算法的分布式键值数据库，生来就为集群化而设计的，由于Raft算法在做决策时需要超半数节点的投票，所以etcd集群一般推荐奇数节点，如3、5或者7个节点构成一个集群。</p>
+<p>以上是etcd集群部署的基础概念，但是还需要注意以下问题：</p>
+<span id="more"></span>
+
+<h3 id="选主过程"><a href="#选主过程" class="headerlink" title="选主过程"></a>选主过程</h3><p>etcd 是高可用的，允许部分机器故障，以标准的3 节点etcd 集群，最大容忍1台机器宕机，下面以最简单的leader宕机来演示raft 的投票逻辑，以实际的运行日志来验证并理解。更多的场景可以看之前的原理解析</p>
+<p>场景：正常运行的三台etcd：100、101、102。当前任期为 7，leader 为 101机器。现在使101 宕机</p>
+<p>宕机前：101 为 leader，3 个 member<img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOETGmj6t1L1w1EGZ5Y9gL0wE6nAf8dI1PKjuxoWfhgZicAeJzDFDarAQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>宕机后：102 成为新 leader，2 个 member</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOWoTGvqNbvtgzRVSejPPI2uFXrLkGrXwQkvYdJ9Knia8I3caicC8QQZfQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>过程：</p>
+<p>将 101 机器的 etcd 停止，此时只剩 2 台，但总数为 3</p>
+<ul>
+<li>101停止etcd 的运行</li>
+<li>102(91d63231b87fadda) 收到消息，发现101(8a4bb0af2f19bd46)心跳超时，于是发起了新一轮选举，任期为 7+1&#x3D;8</li>
+</ul>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">91</span>d63231b87fadda [term <span class="number">7</span>] received MsgTimeoutNow <span class="built_in">from</span> <span class="number">8</span>a4bb0af2f19bd46 <span class="keyword">and</span> starts <span class="keyword">an</span> election <span class="built_in">to</span> <span class="built_in">get</span> leadership.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>102(91d63231b87fadda)成为新一任的候选人，然后自己投给了自己，获得 1 票</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">91d63231b87fadda</span> became candidate at term <span class="number">8</span></span><br><span class="line"><span class="attribute">91d63231b87fadda</span> received MsgVoteResp from <span class="number">91</span>d63231b87fadda at term <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>102(91d63231b87fadda)发送给 挂掉的101 和 另一个100，希望他们也投给自己</li>
+</ul>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">91</span>d63231b87fadda [logterm: <span class="number">7</span>, index: <span class="number">4340153</span>] sent MsgVote request <span class="keyword">to</span> <span class="number">8</span>a4bb0af2f19bd46 <span class="keyword">at</span> term <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="number">91</span>d63231b87fadda [logterm: <span class="number">7</span>, index: <span class="number">4340153</span>] sent MsgVote request <span class="keyword">to</span> <span class="number">9</span>feab580a25dd270 <span class="keyword">at</span> term <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>102 肯定收不到 101 的回应，因为 101 已经挂掉</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">etcd</span>[<span class="number">24203</span>]: lost the TCP streaming connection with peer <span class="number">8</span>a4bb0af2f19bd46 (stream MsgApp v2 reader)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>100 (9feab580a25dd270)收到了 102 的拉票消息，因为任期 8 大于当前100机器所处的 7，于是知道是发起了新的一轮选举，因此回应 101，我给你投票。这里任期term是关键，也就是说，100 和 102 谁先感受到 101 宕机，发起投票，谁就是新的 leader，这个也和进程初始的启动时间有关。</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">9</span>feab580a25dd270 <span class="selector-attr">[term: 7]</span> received <span class="selector-tag">a</span> MsgVote message with higher term <span class="selector-tag">from</span> <span class="number">91</span>d63231b87fadda <span class="selector-attr">[term: 8]</span></span><br><span class="line"></span><br><span class="line"><span class="number">9</span>feab580a25dd270 became follower at term <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="number">9</span>feab580a25dd270 <span class="selector-attr">[logterm: 7, index: 4340153, vote: 0]</span> cast MsgVote for <span class="number">91</span>d63231b8</span><br><span class="line"></span><br><span class="line"><span class="number">9</span>feab580a25dd270 elected leader <span class="number">91</span>d63231b87fadda at term <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>102 获得了 2 票，一票是自己，一票是 100，超过半数，成为新的 leader。任期为 8</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">91d63231b87fadda</span> elected leader <span class="number">91</span>d63231b87fadda at term <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="必须是奇数节点吗"><a href="#必须是奇数节点吗" class="headerlink" title="必须是奇数节点吗"></a>必须是奇数节点吗</h3><p>etcd官方推荐3、5、7个节点，虽然raft算法也是半数以上投票才能有 leader，但奇数只是推荐，其实偶数也是可以的。如 2、4、8个节点。分情况说明：</p>
+<ul>
+<li>1 个节点：就是单实例，没有集群概念，不做讨论</li>
+<li>2 个节点：是集群，但没人会这么配，这里说点废话：双节点的etcd能启动，启动时也能有主，可以正常提供服务，但是一台挂掉之后，就选不出主了，因为他只能拿到1票，剩下的那台也无法提供服务，也就是双节点无容错能力，不要使用。</li>
+</ul>
+<p>2节点正常运行：<img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOcfHcJsmnDRWhoRURr8s4YlH01ZK27Jq1eP6A74NBiatuWJiaCF5rlQDg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>1台宕机后：<img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHON58359F9uI63R9nnibXwwNPtrppFJ7icaJuzsaWf2eIEUeYhwq0yYOAA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<ul>
+<li>3 节点：标准的3 节点etcd 集群只能容忍1台机器宕机，挂掉 1 台的逻辑上边已经演示过，如果再挂 1 台，就和 2节点的情形一致了，一直选，一直增加任期，但就是选不出来，服务也就不可用了</li>
+<li>4 节点：最大容忍1 台</li>
+<li>5 节点：最大容忍 2 台</li>
+<li>6 节点：最大容忍 2 台</li>
+</ul>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOqK6icHfJibTvpRD8Flc1pvkdf3CiaocaR2icHT367XZFn7dhfN2bCN9ibOg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>你会发现偶数节点虽然多了一台机器，但是容错能力是一样的，也就是说，你可以设置偶数节点，但没增加什么能力，还浪费了一台机器。同时etcd 是通过复制数据给所有节点来达到一致性，因此偶数的多一台机器增加不了性能，反而会拉低写入速度。</p>
+<h3 id="机器越多越好吗"><a href="#机器越多越好吗" class="headerlink" title="机器越多越好吗"></a>机器越多越好吗</h3><p>etcd 集群是一个 Raft Group，没有 shared。所以它的极限有两部分，一是单机的容量限制，内存和磁盘；二是网络开销，每次 Raft 操作需要所有节点参与，每一次写操作需要集群中大多数节点将日志落盘成功后，Leader 节点才能修改内部状态机，并将结果返回给客户端。因此节点越多性能越低，所以扩展很多 etcd 节点是没有意义的，一般是 3、5、7， 7 个也足够了。</p>
+<p>在 k8s 中一般是3*master机器做高可用，也就是 3节点的 etcd。也有人将 etcd独立于 k8s集群之外，来更好地扩展 etcd 集群，或者根据 k8s 的资源来拆分 etcd，如 events 放在单独的 etcd 集群中。不同的副本数视业务规模而定，3，5，7 都可以。</p>
+<h3 id="脑裂问题"><a href="#脑裂问题" class="headerlink" title="脑裂问题"></a>脑裂问题</h3><p>集群化的软件总会提到脑裂问题，如ElasticSearch、Zookeeper集群，脑裂就是同一个集群中的不同节点，对于集群的状态有了不一样的理解。</p>
+<p>etcd 中有没有脑裂问题？答案是：没有</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The majority side becomes the available <span class="keyword">cluster</span> <span class="keyword">and</span> the minority side <span class="keyword">is</span> unavailable; there <span class="keyword">is</span> <span class="keyword">no</span> “split-brain” <span class="keyword">in</span> etcd.</span><br></pre></td></tr></table></figure>
+
+<p>以网络分区导致脑裂为例，一开始有5个节点, Node 5 为 Leader</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOgicOmQeXHcoIeLOum6ohnptyibm32yrkxDk1mB8cfYjMT0OT8RibK3RLg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>由于出现网络故障，124 成为一个分区，35 成为一个分区， Node 5 的 leader 任期还没结束的一段时间内，仍然认为自己是当前leader，但是此时另外一边的分区，因为124无法连接 5，于是选出了新的leader 1，网络分区形成。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOCY3Uav69ia9MgUZxHMMJv0Hpl2icOaFNuPX51FX8iaeyUnalHd7YicSvcg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>35分区是否可用？如果写入了1而读取了 5，是否会读取旧数据(stale read)?</p>
+<p>答：35分区属于少数派，被认为是异常节点，无法执行写操作。写入 1 的可以成功，并在网络分区恢复后，35 因为任期旧，会自动成为 follower，异常期间的新数据也会从 1 同步给 35。</p>
+<p>而 5 的读请求也会失败，etcd 通过ReadIndex、Lease read保证线性一致读，即节点5在处理读请求时，首先需要与集群多数节点确认自己依然是Leader并查询 commit index，5做不到多数节点确认，因此读失败。</p>
+<p>因此 etcd 不存在脑裂问题。线性一致读的内容下面会提到。</p>
+<h3 id="etcd-是强一致性吗"><a href="#etcd-是强一致性吗" class="headerlink" title="etcd 是强一致性吗"></a>etcd 是强一致性吗</h3><p>是强一致性，读和写都可以保证线性一致，关于一致性的分析可以看 这篇文章</p>
+<h4 id="线性一致读"><a href="#线性一致读" class="headerlink" title="线性一致读"></a>线性一致读</h4><p>线性一致性读需要在所有节点走一遍确认，查询速度会有所降低，要开启线性一致性读，在不同的 client是有所区别的:</p>
+<ul>
+<li>v2 版本：通过 sdk访问时，quorum&#x3D;true 的时候读取是线性一致的，通过etcdctl访问时，该参数默认为true。</li>
+<li>v3 版本：通过 sdk访问时，WithSerializable&#x3D;true 的时候读取是线性一致的，通过etcdctl访问时consistency&#x3D;“l”表示线性（默认为 l，非线性为 s）</li>
+</ul>
+<p>为了保证线性一致性读，早期的 etcd（ etcd v3.0 ）对所有的读写请求都会走一遍 Raft 协议来满足强一致性。然而通常在现实使用中，读请求占了 etcd 所有请求中的绝大部分，如果每次读请求都要走一遍 raft 协议落盘，etcd 性能将非常差。</p>
+<p>因此在 etcd v3.1 版本中优化了读请求（PR#6275），使用的方法满足一个简单的策略：每次读操作时记录此时集群的 commit index，当状态机的 apply index 大于或者等于 commit index 时即可返回数据。由于此时状态机已经把读请求所要读的 commit index 对应的日志进行了 apply 操作，符合线性一致读的要求，便可返回此时读到的结果。</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>介绍下 etcd 的完整安装过程。下载 etcd3.4 的 release 包</p>
+<h3 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h3><p>1.ca-config.json</p>
+<p>创建用来生成 CA 文件的 JSON 配置文件，这个文件后面会被各种组件使用，包括了证书过期时间的配置，expiry字段</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;signing&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;default&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;87600h&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;profiles&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;demo&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;usages&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;signing&quot;</span>,</span><br><span class="line">            <span class="string">&quot;key encipherment&quot;</span>,</span><br><span class="line">            <span class="string">&quot;server auth&quot;</span>,</span><br><span class="line">            <span class="string">&quot;client auth&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;87600h&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.ca-csr.json</p>
+<p>创建用来生成 CA 证书签名请求（CSR）的 JSON 配置文件</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;CN&quot;</span>: <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">  <span class="string">&quot;key&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;algo&quot;</span>: <span class="string">&quot;rsa&quot;</span>,</span><br><span class="line">    <span class="string">&quot;size&quot;</span>: <span class="number">2048</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;names&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;C&quot;</span>: <span class="string">&quot;CN&quot;</span>,</span><br><span class="line">      <span class="string">&quot;ST&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">      <span class="string">&quot;L&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">      <span class="string">&quot;O&quot;</span>: <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">      <span class="string">&quot;OU&quot;</span>: <span class="string">&quot;cloudnative&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.生成基础 ca 证书</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cfssl gencert -initca <span class="keyword">ca</span>-csr.json | cfssljson -bare <span class="keyword">ca</span></span><br></pre></td></tr></table></figure>
+
+<p>执行后会生成三个文件：</p>
+<ul>
+<li>ca.csr：证书签名请求，一般用于提供给证书颁发机构，自签就不需要了</li>
+<li>ca.pem：证书，公共证书</li>
+<li>ca-key.pem：CA密钥</li>
+</ul>
+<ol>
+<li>生成 etcd 证书</li>
+</ol>
+<p>增加etcd-csr.json文件，ip 需要填写三台 etcd 机器的 ip</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;CN&quot;</span>: <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    <span class="string">&quot;hosts&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">        <span class="string">&quot;ip1&quot;</span>,<span class="string">&quot;ip2&quot;</span>,<span class="string">&quot;ip3&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;key&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;algo&quot;</span>: <span class="string">&quot;rsa&quot;</span>,</span><br><span class="line">        <span class="string">&quot;size&quot;</span>: <span class="number">2048</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;names&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;C&quot;</span>: <span class="string">&quot;CN&quot;</span>,</span><br><span class="line">            <span class="string">&quot;ST&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">            <span class="string">&quot;L&quot;</span>: <span class="string">&quot;BeiJing&quot;</span>,</span><br><span class="line">            <span class="string">&quot;O&quot;</span>: <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">            <span class="string">&quot;OU&quot;</span>: <span class="string">&quot;cloudnative&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的hosts字段中指定了授权使用该证书的IP和域名列表，因为现在要生成的证书需要被etcd集群各个节点使用，所以这里指定了各个节点的IP</p>
+<p>生成证书:</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cfssl gencert <span class="attribute">-ca</span>=ca.pem <span class="attribute">-ca-key</span>=ca-key.pem <span class="attribute">-config</span>=ca-config.json <span class="attribute">-profile</span>=jpaas etcd-csr.json | cfssljson -bare etcd</span><br></pre></td></tr></table></figure>
+
+<p>创建etcd 的 CA 证书：这里需要4 个文件</p>
+<ul>
+<li>etcd-csr.json：etcd的证书配置</li>
+<li>ca.pem：基础公钥</li>
+<li>ca-key.pem：基础私钥</li>
+<li>ca-config.json：配置文件，如过期时间</li>
+</ul>
+<p>执行后会生成三个文件：</p>
+<ul>
+<li>etcd.csr</li>
+<li>etcd.pem</li>
+<li>etcd-key.pem</li>
+</ul>
+<p>在一台机器上做证书生成，生成后将这三个文件拷贝到其他几台机器。</p>
+<h3 id="部署集群"><a href="#部署集群" class="headerlink" title="部署集群"></a>部署集群</h3><p>etcd 启动配置示例</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">./etcd \</span><br><span class="line">--name=etcd-<span class="number">0</span> \</span><br><span class="line">--client-cert-auth=true \</span><br><span class="line">--cert-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd.pem \</span><br><span class="line">--key-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd-key.pem \</span><br><span class="line">--peer-cert-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd.pem \</span><br><span class="line">--peer-key-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd-key.pem \</span><br><span class="line">--trusted-ca-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>ca.pem \</span><br><span class="line">--peer-trusted-ca-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>ca.pem \</span><br><span class="line">--initial-advertise-peer-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span> \</span><br><span class="line">--listen-peer-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span> \</span><br><span class="line">--listen-client-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2379</span>,https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--advertise-client-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2379</span> \</span><br><span class="line">--initial-cluster-token etcd-cluster \</span><br><span class="line">--initial-cluster etcd-<span class="number">0</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span>,etcd-<span class="number">1</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.1</span>:<span class="number">2380</span>,etcd-<span class="number">2</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.2</span>:<span class="number">2380</span> \</span><br><span class="line">--initial-cluster-state new \</span><br><span class="line">--quota-backend-bytes=<span class="number">8589934592</span> \</span><br><span class="line">--auto-compaction-retention=<span class="number">10</span> \</span><br><span class="line">--enable-pprof=true \</span><br><span class="line">--data-dir=<span class="regexp">/var/</span>lib/etcd</span><br></pre></td></tr></table></figure>
+
+<h2 id="etcdctl-命令"><a href="#etcdctl-命令" class="headerlink" title="etcdctl 命令"></a>etcdctl 命令</h2><p>因为我们的 etcd 配置了证书，所有的命令都要带上证书访问，如：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ETCDCTL_API=<span class="number">3</span> .<span class="regexp">/etcdctl --endpoints=https:/</span><span class="regexp">/0:2379,https:/</span><span class="regexp">/1:2379,https:/</span><span class="regexp">/2:2379 --cacert /</span>etc<span class="regexp">/etcd/</span>ssl<span class="regexp">/ca.pem --cert /</span>etc<span class="regexp">/etcd/</span>ssl<span class="regexp">/etcd.pem --key /</span>etc<span class="regexp">/etcd/</span>ssl/etcd-key.pem endpoint status --<span class="keyword">write</span>-out=table</span><br></pre></td></tr></table></figure>
+
+<p>etcd 版本为 3.4，可以ETCDCTL_API&#x3D;3，或ETCDCTL_API&#x3D;2，默认情况下用的就是v3了，可以不用声明ETCDCTL_API</p>
+<p>证书太长就不写了，以下命令均为无证书版：</p>
+<ul>
+<li>version: 查看版本</li>
+<li>member list: 查看节点状态，learner 情况</li>
+<li>endpoint status: 节点状态，leader 情况</li>
+<li>endpoint health: 健康状态与耗时</li>
+<li>alarm list: 查看警告，如存储满时会切换为只读，产生 alarm</li>
+<li>alarm disarm：清除所有警告</li>
+<li>set app demo: 写入</li>
+<li>get app: 获取</li>
+<li>update app demo1:更新</li>
+<li>rm app: 删除</li>
+<li>mkdir demo 创建文件夹</li>
+<li>rmdir dir 删除文件夹</li>
+<li>backup 备份</li>
+<li>compaction：压缩</li>
+<li>defrag：整理碎片</li>
+<li>watch key : 监测 key 变化</li>
+<li>get &#x2F; –prefix –keys-only: 查看所有 key</li>
+<li>–write-out&#x3D;table : 可以用表格形式输出更清晰，注意有些输出并不支持tables<img src="/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="img"></li>
+</ul>
+<p>注意，member list并没有展示 leader 信息，展示的是 learner，learner的含义后面会解释</p>
+<h2 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h2><p>版本建议使用 3.4 及以上，3.4存储容量做了提升，降低了读写延迟。</p>
+<p>etcd 的配置参数有很多，如果你觉得自己的etcd遇到了瓶颈，先不要急着提 issue 改代码，先看下这些参数的含义，也许调一下配置就能解决。</p>
+<p>etcd 的配置遇到按照功能来划分：</p>
+<h3 id="代理功能"><a href="#代理功能" class="headerlink" title="代理功能"></a>代理功能</h3><ul>
+<li>etcd gateway</li>
+<li>etcd grpc-proxy</li>
+</ul>
+<p>每个访问 etcd 的应用都要有 etcd 集群的 endpoints。如果在同一台服务器上的多个应用访问同一个 etcd 集群，大家都得配置一样的endpoints。如果这个时候 etcd 集群更换了集群或者 ip，每个应用都需要更新它的终端列表，这种重新配置是繁琐且容易出错的。</p>
+<p>这里提一下，etcd 的 client 使用的是 grpc 访问，client会根据传入的 endpoints 做客户端负载均衡。</p>
+<p>etcd gateway就是一个典型的转发代理，屏蔽掉后面的endpoints 信息。不过需要注意的是，etcd gateway在 TCP 层，不支持 https 类型的 endpoints。</p>
+<h3 id="成员配置"><a href="#成员配置" class="headerlink" title="成员配置"></a>成员配置</h3><ul>
+<li>–data-dir: 数据目录</li>
+<li>–snapshot-count: 最大快照次数，默认10万</li>
+<li>–heartbeat-interval: 心跳周期默认 100ms</li>
+<li>–election-timeout: 选举超时1s</li>
+<li>–max-snapshots: 最大保留快照数，默认 5 个</li>
+<li>–quota-backend-bytes: DB 数据大小，比如 10G，50G。</li>
+<li>–auto-compaction-retention: 自动压缩，默认为 0 不开启，k8s中 apiserver会开启这个压缩，5 分钟一次。如果你的 etcd 还被其他人使用，这里也可以设置下时间</li>
+<li>–enable-pprof: 开启pprof分析</li>
+<li>–metrics: 默认为basic模式，extensive代表暴露histogram类型 metric</li>
+<li>–log-level: 日志等级。info, warn, error, panic, or fatal</li>
+</ul>
+<h3 id="证书配置"><a href="#证书配置" class="headerlink" title="证书配置"></a>证书配置</h3><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">--client-cert-auth=<span class="keyword">true</span> \</span><br><span class="line">--cert-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd.pem \</span><br><span class="line">--key-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd-key.pem \</span><br><span class="line">--peer-cert-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd.pem \</span><br><span class="line">--peer-key-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>etcd-key.pem \</span><br><span class="line">--trusted-ca-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>ca.pem \</span><br><span class="line">--peer-trusted-ca-<span class="keyword">file</span>=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>ca.pem \</span><br></pre></td></tr></table></figure>
+
+<h3 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">--peer-trusted-ca-file=<span class="regexp">/etc/</span>etcd<span class="regexp">/ssl/</span>ca.pem \</span><br><span class="line">--initial-advertise-peer-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span> \</span><br><span class="line">--listen-peer-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span> \</span><br><span class="line">--listen-client-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2379</span>,https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--advertise-client-urls https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2379</span> \</span><br><span class="line">--initial-cluster-token etcd-cluster \</span><br><span class="line">--initial-cluster etcd-<span class="number">0</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.0</span>:<span class="number">2380</span>,etcd-<span class="number">1</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.1</span>:<span class="number">2380</span>,etcd-<span class="number">2</span>=https:<span class="regexp">//</span><span class="number">100.0</span>.<span class="number">0.2</span>:<span class="number">2380</span> \</span><br><span class="line">--initial-cluster-state new \</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置调优"><a href="#配置调优" class="headerlink" title="配置调优"></a>配置调优</h2><p>一般情况下，etcd 默认模式不会有什么问题，影响 etcd 的因素一般是网络和存储延时，尤其是跨地域、跨机房的集群。</p>
+<h3 id="网络延迟"><a href="#网络延迟" class="headerlink" title="网络延迟"></a>网络延迟</h3><p>因为 leader 和 member 之间有频繁的心跳和数据复制，因此网络拥塞影响会很大，当然长时间失败会无响应会导致 etcd 集群不可用。一般是将 etcd 集群规划在一个地域或一个机房内，并且使用tc提高带宽和优先级。</p>
+<h3 id="心跳间隔"><a href="#心跳间隔" class="headerlink" title="心跳间隔"></a>心跳间隔</h3><p>etcd 的一致性协议依赖两个时间参数。</p>
+<ul>
+<li>–heartbeat-interval：心跳间隔，即 leader 通知member 并保证自己 leader 地位的心跳，默认是 100ms，这个应该设置为节点间的 RTT 时间。</li>
+<li>–election-timeout：选举超时时间，即 member 多久没有收到 leader 的回应，就开始自己竞选 leader，默认超时时间为 1s</li>
+</ul>
+<p>默认值有可能不满足你的需求，如你的网络延迟较高，RTT 大于 100，就应该按真实延迟来，比如这个 issue，官方文档也对心跳的设置给了详细的解释和配置建议：<a target="_blank" rel="noopener" href="https://github.com/etcd-io/etcd/blob/master/Documentation/tuning.md">https://github.com/etcd-io/etcd/blob/master/Documentation/tuning.md</a></p>
+<p>如果心跳间隔太短，则 etcd 将发送不必要的消息，从而增加 CPU 和网络资源的使用。另一方面，心跳间隔过长会导致选举超时。较高的选举超时时间需要更长的时间来检测领导者失败。测量往返时间（RTT）的最简单方法是使用PING。</p>
+<h3 id="磁盘-IO"><a href="#磁盘-IO" class="headerlink" title="磁盘 IO"></a>磁盘 IO</h3><p>除了网络延迟，磁盘 IO 也严重影响 etcd 的稳定性， etcd需要持久化数据，对磁盘速度很敏感，强烈建议对 ETCD 的数据挂 SSD。</p>
+<p>另外，要确认机器上没有其他高 IO 操作，否则会影响 etcd 的 fsync，导致 etcd 丢失心跳，leader更换等。一般磁盘有问题时，报错的关键字类似于：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">took too<span class="built_in"> long </span>(1.483848046s) to<span class="built_in"> execute</span></span><br><span class="line"><span class="built_in"></span>etcdserver: failed to send out heartbeat on time</span><br></pre></td></tr></table></figure>
+
+<p>磁盘 IO 可以通过监控手段提前发现，并预防这类问题的出现</p>
+<h3 id="快照"><a href="#快照" class="headerlink" title="快照"></a>快照</h3><p>etcd的存储分为内存存储和持久化（硬盘）存储两部分，内存中的存储除了顺序化的记录下所有用户对节点数据变更的记录外，还会对用户数据进行索引、建堆等方便查询的操作。而持久化则使用预写式日志（WAL：Write Ahead Log）进行记录存储。</p>
+<p>在WAL的体系中，所有的数据在提交之前都会进行日志记录。在etcd的持久化存储目录中，有两个子目录。一个是WAL，存储着所有事务的变化记录；另一个则是snapshot，用于存储某一个时刻etcd所有目录的数据。通过WAL和snapshot相结合的方式，etcd可以有效的进行数据存储和节点故障恢复等操作。</p>
+<p>既然有了WAL实时存储了所有的变更，为什么还需要snapshot呢？随着使用量的增加，WAL存储的数据会暴增，为了防止磁盘很快就爆满，etcd默认每10000条记录做一次snapshot，经过snapshot以后的WAL文件就可以删除。而通过API可以查询的历史etcd操作默认为1000条。</p>
+<h3 id="客户端优化"><a href="#客户端优化" class="headerlink" title="客户端优化"></a>客户端优化</h3><p>etcd 的客户端应该避免一些频繁操作或者大对象操作，如：</p>
+<ul>
+<li>put 时避免大 value，精简再精简（例如 k8s 中 crd 使用）</li>
+<li>避免创建频繁变化的 kv（例如 k8s 中 node 信息汇报），如 node-lease</li>
+<li>避免创建大量 lease，尽量选择复用（例如 k8s 中 event 数据管理）</li>
+<li>合理利用 apiserver 中的缓存，避免大量请求打到 etcd上，如集群异常恢复后大量 pod同步</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>你可能还看到过lease revoke 、boltdb、内存优化等方式，这些已经合入了最新的 etcd3.4版本，因此选择最新的 release 版本也是提高稳定性的一种方式。</p>
+<h2 id="压缩机制"><a href="#压缩机制" class="headerlink" title="压缩机制"></a>压缩机制</h2><p>Etcd作为 KV 存储，会为每个 key 都保留历史版本，比如用于发布回滚、配置历史等。</p>
+<p>对 demo 写入值为 101，然后更为为 102，103。-w json 可以输出这次写入的 revision</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">etcdctl <span class="built_in">put</span> <span class="built_in">demo</span> <span class="number">101</span> -w json</span><br><span class="line">etcdctl <span class="built_in">put</span> <span class="built_in">demo</span> <span class="number">102</span> -w json</span><br><span class="line">etcdctl <span class="built_in">put</span> <span class="built_in">demo</span> <span class="number">103</span> -w json</span><br><span class="line"></span><br><span class="line">返回类似：</span><br><span class="line">&#123;<span class="string">&quot;header&quot;</span>:&#123;<span class="string">&quot;cluster_id&quot;</span>:<span class="number">4871617780647557296</span>,<span class="string">&quot;member_id&quot;</span>:<span class="number">3135801277950388570</span>,<span class="string">&quot;revision&quot;</span>:<span class="number">434841</span>,<span class="string">&quot;raft_term&quot;</span>:<span class="number">2</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>取值：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">etcdctl <span class="built_in">get</span> demo 默认 <span class="attribute">--rev</span>=0即最新值=103</span><br><span class="line"></span><br><span class="line">如果要拿到历史值，需要制定 rev 版本</span><br><span class="line">etcdctl <span class="built_in">get</span> demo  <span class="attribute">--rev</span>=434841，得到 102</span><br></pre></td></tr></table></figure>
+
+<p>观察 key的变化:</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">etcdctl watch  foo <span class="attribute">--rev</span>=0</span><br></pre></td></tr></table></figure>
+
+<p>历史版本越多，存储空间越大，性能越差，直到etcd到达空间配额限制的时候，etcd的写入将会被禁止变为只读，影响线上服务，因此这些历史版本需要进行压缩。</p>
+<p>数据压缩并不是清理现有数据，只是对给定版本之前的历史版本进行清理，清理后数据的历史版本将不能访问，但不会影响现有最新数据的访问。</p>
+<p>手动压缩</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">etcdctl compact 5。 在 5 之前的所有版本都会被压缩，不可访问</span><br><span class="line"></span><br><span class="line">如果 etcdctl get --rev=4 demo，会报错</span><br><span class="line"><span class="keyword">Error:  </span>rpc error: code = 11 desc = etcdserver: mvcc: required revision has been compacted</span><br></pre></td></tr></table></figure>
+
+<p>手动操作毕竟繁琐，Etcd提供了启动参数 “–auto-compaction-retention” 支持自动压缩 key 的历史版本，以小时为单位</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">etcd</span> --auto-compaction-retention=<span class="number">1</span> 代表 <span class="number">1</span> 小时压缩一次</span><br></pre></td></tr></table></figure>
+
+<p>v3.3之上的版本有这样一个规则：</p>
+<p>如果配置的值小于1小时，那么就严格按照这个时间来执行压缩；如果配置的值大于1小时，会每小时执行压缩，但是采样还是按照保留的版本窗口依然按照用户指定的时间周期来定。</p>
+<p>k8s api-server支持定期执行压缩操作，其参数里面有这样的配置：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">– etcd-compaction-<span class="built_in">int</span>erval 即默认 <span class="number">5</span> 分钟一次</span><br></pre></td></tr></table></figure>
+
+<p>你可以在 etcd 中看到这样的压缩日志，5 分钟一次：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">05</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: store.index: compact <span class="number">433912</span></span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">05</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: finished scheduled compaction at <span class="number">433912</span> (took <span class="number">1</span>.<span class="number">068846</span>ms)</span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">10</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: store.index: compact <span class="number">434487</span></span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">10</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: finished scheduled compaction at <span class="number">434487</span> (took <span class="number">1</span>.<span class="number">019571</span>ms)</span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: store.index: compact <span class="number">435063</span></span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: finished scheduled compaction at <span class="number">435063</span> (took <span class="number">1</span>.<span class="number">659541</span>ms)</span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">20</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: store.index: compact <span class="number">435637</span></span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">20</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: finished scheduled compaction at <span class="number">435637</span> (took <span class="number">1</span>.<span class="number">676035</span>ms)</span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">25</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: store.index: compact <span class="number">436211</span></span><br><span class="line"><span class="attribute">Apr</span> <span class="number">25</span> <span class="number">11</span>:<span class="number">25</span>:<span class="number">20</span>  etcd[<span class="number">2195</span>]: finished scheduled compaction at <span class="number">436211</span> (took <span class="number">1</span>.<span class="number">17725</span>ms)</span><br></pre></td></tr></table></figure>
+
+<h2 id="碎片整理"><a href="#碎片整理" class="headerlink" title="碎片整理"></a>碎片整理</h2><p>进行压缩操作之后，旧的revision被清理，会产生内部的碎片，内部碎片是指空闲状态的，能被etcd使用但是仍然消耗存储空间的磁盘空间，去碎片化实际上是将存储空间还给文件系统。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># defrag命令默认只对本机有效</span></span><br><span class="line">etcdctl defrag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果带参数--endpoints，可以指定集群中的其他节点也做整理</span></span><br><span class="line">etcdctl defrag <span class="comment">--endpoints</span></span><br></pre></td></tr></table></figure>
+
+<p>如果etcd没有运行，可以直接整理目录中db的碎片</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">etcdctl defrag --data-<span class="built_in">dir</span> &lt;<span class="built_in">path</span>-to-etcd-data-<span class="built_in">dir</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>碎片整理会阻塞对etcd的读写操作，因此偶尔一次大量数据的defrag最好逐台进行，以免影响集群稳定性。</p>
+<p>etcdctl执行后的返回 <code>Finished defragmenting etcd member[https://127.0.0.1:2379]</code></p>
+<h2 id="存储空间"><a href="#存储空间" class="headerlink" title="存储空间"></a>存储空间</h2><p>Etcd 的存储配额可保证集群操作的可靠性。如果没有存储配额，那么 Etcd 的性能就会因为存储空间的持续增长而严重下降，甚至有耗完集群磁盘空间导致不可预测集群行为的风险。一旦其中一个节点的后台数据库的存储空间超出了存储配额，Etcd 就会触发集群范围的告警，并将集群置于接受读 key 和删除 key 的维护模式。只有在释放足够的空间和消除后端数据库的碎片之后，清除存储配额告警，集群才能恢复正常操作。</p>
+<p>启动 etcd 时。–quota-backend-bytes 默认为 2G，2G 一般情况下是不够用的，</p>
+<p>你可以通过 etcdctl endpoint status 命令来查看当前的存储使用量</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOIJVwzs44Ho2e9qvczV5TDKnicKwqhQ5qib0Ag43mmtYFJeiaCvvre5aiag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<p>在 3.4 版本中，etcd 的存储容量得到了提高，你可以设置 100G 的存储空间，当然并不是越大越好，key 存储过多性能也会变差，根据集群规模适当调整。</p>
+<p>另外，–max-request-bytes 限制了请求的大小，默认值是1572864，即1.5M。在某些场景可能会出现请求过大导致无法写入的情况，可以调大到10485760即10M。</p>
+<p>如果遇到空间不足，可以这样操作：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取当前版本号</span></span><br><span class="line">$ <span class="attribute">rev</span>=$(ETCDCTL_API=3 etcdctl  endpoint status <span class="attribute">--write-out</span>=<span class="string">&quot;json&quot;</span> | egrep -o <span class="string">&#x27;&quot;revision&quot;:[0-9]*&#x27;</span> | egrep -o <span class="string">&#x27;[0-9]*&#x27;</span>）</span><br><span class="line"><span class="comment"># 压缩所有旧版本</span></span><br><span class="line">$ <span class="attribute">ETCDCTL_API</span>=3 etcdctl compact <span class="variable">$rev</span></span><br><span class="line"><span class="comment"># 去碎片化</span></span><br><span class="line">$ <span class="attribute">ETCDCTL_API</span>=3 etcdctl defrag</span><br><span class="line"><span class="comment"># 取消警报</span></span><br><span class="line">$ <span class="attribute">ETCDCTL_API</span>=3 etcdctl alarm disarm</span><br><span class="line"><span class="comment"># 测试通过</span></span><br><span class="line">$ <span class="attribute">ETCDCTL_API</span>=3 etcdctl put key0 1234</span><br></pre></td></tr></table></figure>
+
+<h2 id="快照备份"><a href="#快照备份" class="headerlink" title="快照备份"></a>快照备份</h2><p>etcd可以定期做备份、以保证数据更好的持久化。通过加载备份数据，etcd可以将集群恢复到具有已知良好状态的时间点。</p>
+<p>使用命令etcdctl：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">etcdctl snapshot save backup.db</span><br><span class="line"></span><br><span class="line">etcdctl --write-out=table snapshot status backup.db</span><br><span class="line"></span><br><span class="line"><span class="code">+----------+</span>----------<span class="code">+------------+</span>------------+</span><br><span class="line"><span class="section">|   HASH   | REVISION | TOTAL KEYS | TOTAL SIZE |</span></span><br><span class="line"><span class="section">+----------+----------+------------+------------+</span></span><br><span class="line"><span class="section">| fe01cf57 |       10 |          7 | 2.1 MB     |</span></span><br><span class="line"><span class="section">+----------+----------+------------+------------+</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="learner-角色"><a href="#learner-角色" class="headerlink" title="learner 角色"></a>learner 角色</h2><p>learner 是 etcd 3.4 版本中增加的新角色，类似于 zookeeper 的 observer, 不参与 raft 投票选举。通过这个新角色的引入，降低了加入新节点时给老集群的额外压力，增强了集群的稳定性。除此之外还可以使用它作为集群的热备或服务一些读请求。</p>
+<p>举例，如果 etcd集群需要加入一个新节点，新加入的 etcd 成员因为没有任何数据，因此需要从 leader 那里同步数据，直到赶上领导者的日志为止。这样就会导致 leader 的网络过载，导致 leader 和 member 之间的心跳可能阻塞。然后就开始了新的leader选举，也就是说，具有新成员的集群更容易受到领导人选举的影响。领导者的选举以及随后向新成员的更新都容易导致一段时间的群集不可用，这种是不符合预期，风险也是很大的。</p>
+<p>因此为了解决这个问题，raft 4.2.1 论文中介绍了一种新的节点角色：Learner。加入集群的节点不参与投票选举，只接收 leader 的 replication message，直到与 leader 保持同步为止。</p>
+<p>learner 在网络分区等场景下的处理，可以详细参考：<a target="_blank" rel="noopener" href="https://etcd.io/docs/v3.3.12/learning/learner/">https://etcd.io/docs/v3.3.12/learning/learner/</a></p>
+<p>具体操作：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加一个节点作为learner</span></span><br><span class="line">member <span class="built_in">add</span> --learner</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当learner的日志赶上了leader的进度时，将learner提升为有投票权的成员，然后该成员将计入法定人数</span></span><br><span class="line">member promote</span><br><span class="line"></span><br><span class="line">etcd<span class="built_in"> server </span>会验证 promote 请求以确保真实</span><br></pre></td></tr></table></figure>
+
+<p>在提升之前，learner仅充当备用节点，leader无法转移给learner。learner拒绝客户端读写（客户端平衡器不应将请求路由到learner）</p>
+<p>另外，etcd限制了集群可以拥有的learner总数，并避免了日志复制导致领导者过载。learner永远不会自我提升。</p>
+<h2 id="etcd-client-v3"><a href="#etcd-client-v3" class="headerlink" title="etcd client v3"></a>etcd client v3</h2><p>Etcd client v3是基于grpc实现的，而grpc又是基于http2.0实现的，借用了很多 http2的优势如二进制通讯、多路复用等，因此整体上借用grpc的框架做地址管理、连接管理、负载均衡等，而底层对每个Etcd的server只需维持一个http2.0连接。</p>
+<p>Etcd client v3实现了grpc中的Resolver接口，用于Etcd server地址管理。当client初始化或者server集群地址发生变更（可以配置定时刷新地址）时，Resolver解析出新的连接地址，通知grpc ClientConn来响应变更。</p>
+<p>client v3的原理解析可以看这篇文章：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/281b80ae619b">https://www.jianshu.com/p/281b80ae619b</a></p>
+<p>我们是用etcd client做应用的选主操作，可以看下这篇</p>
+<p>这里提一下，最早的时候以为 kubernetes 中的 scheduler、controller-manager是基于 etcd 做选主的，client拿来直接用很方便。后来发现不是，kubernetes 是用抢占 endpoint 资源的方式实现选主逻辑，不依赖外部 etcd，这么想来也合理，严格来讲，etcd 不是kubernetes的东西，不应该有太多依赖。</p>
+<p>k8s 中 scheduler 的选主逻辑可以看这篇文章</p>
+<h2 id="问题排查"><a href="#问题排查" class="headerlink" title="问题排查"></a>问题排查</h2><p>列几个常遇到的 etcd 问题，后面监控部分会提到如何监测、预防这类问题</p>
+<h3 id="一个节点宕机"><a href="#一个节点宕机" class="headerlink" title="一个节点宕机"></a>一个节点宕机</h3><p>一个节点宕机，并不会影响整个集群的正常工作，慢慢修复。</p>
+<ol>
+<li>移出该节点：etcdctl member remove xx</li>
+<li>修复机器问题，删除旧的数据目录，重新启动 etcd 服务</li>
+<li>因为 etcd 的证书需要签入所有节点 ip，因此这里的节点不能更改 ip，否则要全部重签证书，重启服务</li>
+<li>重启启动 etcd 时，需要将配置中的 cluster_state改为：existing，因为是加入已有集群，不能用 new</li>
+<li>加入 memeber：etcdctl member add xxx –peer-urls&#x3D;<a target="_blank" rel="noopener" href="https://x.x.x.x:2380/">https://x.x.x.x:2380</a></li>
+<li>验证：etcdctl endpoint status</li>
+</ol>
+<h3 id="迁移数据"><a href="#迁移数据" class="headerlink" title="迁移数据"></a>迁移数据</h3><p>如果你的集群需要更换所有的机器，包括更换 IP，那就得通过快照恢复的方式了</p>
+<p>使用 etcdctl snapshot save 来保存现有数据，新集群更换后，使用 restore 命令恢复数据，在执行快照时会产生一个 hash 值，来标记快照内容后面恢复时用于校验，如果你是直接复制的数据文件，可以–skip-hash-check 跳过这个检查。</p>
+<p>迁移集群会更换证书和端点，因此一定会影响上层服务，在迁移之前一定要做好新旧切换，如 apiserver 分批升级（会有部分数据不一致）、避免服务宕机时间过长等</p>
+<p>这个前面已经提过，大概率是因为磁盘性能不足，导致心跳失败，更换 SSD 或者排查机器上高 IO 的进程</p>
+<p>详细可以查看这个：<a target="_blank" rel="noopener" href="https://github.com/etcd-io/etcd/blob/master/Documentation/faq.md#what-does-the-etcd-warning-failed-to-send-out-heartbeat-on-time-mean">https://github.com/etcd-io/etcd/blob/master/Documentation/faq.md#what-does-the-etcd-warning-failed-to-send-out-heartbeat-on-time-mean</a></p>
+<p><code>request ... took too long to execute</code> 这类报错也是同理</p>
+<h3 id="mvcc-database-space-exceeded"><a href="#mvcc-database-space-exceeded" class="headerlink" title="mvcc: database space exceeded"></a>mvcc: database space exceeded</h3><p>存储空间不足，参考上面提到的清理和恢复步骤，或者提高存储空间</p>
+<h3 id="endpoints问题"><a href="#endpoints问题" class="headerlink" title="endpoints问题"></a>endpoints问题</h3><p>尽量不要使用lb 作为 etcd endpoints 配置，etcd client 是 grpc 访问，请使用默认的 全量list ,客户端做负载均衡的方式。详细内容可以参考 grpc 负载均衡场景解析</p>
+<h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><p>etcd 默认以&#x2F;metrics的 path 暴露了监控数据，数据为 prometheus 标准格式。</p>
+<p>通过 metric 数据可以配置出如下面板，一般我们关心的数据，或者说需要配置报警的内容：</p>
+<ul>
+<li>是否有 leader：集群就不可用了</li>
+<li>leader 更换次数：一定时间内频率过高一般是有问题，且leader 更换会影响到上层服务</li>
+<li>rpc 请求速率：即 qps，可以评估当前负载</li>
+<li>db 总大小：用于评估数据量、压缩策略等</li>
+<li>磁盘读写延迟：这个很关键，延迟过高会导致集群出现问题</li>
+</ul>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOxOzlLMhX5pf6R2Z0FtGpCP4ynKSFEUHsMHdMoMibhr5iacymjOLalj8w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOrWgZQGAdLTcoofpWG6YoXUpbf12Zx7wlDvu36M9ZK7HSDTqice0OS7A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOYnia3xFNzMtemElD53pwLTnIQG4CNe3N63PZTJ1K9OXoyTYoGe2U5Dg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"><img src="https://mmbiz.qpic.cn/mmbiz_png/MicUVUNcBialQfnJHcYpcyaDwQE8V1lBHOhyhV9XaZBDN6Syub8acMLwXK1xk7qJDEPyibWUNOFAbkdsRpI3Fd6Ng/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>etcd 可以很简单，毕竟只是 KV 存储，也可以很复杂，代表了云原生时代分布式存储的基石，本文中的内容只是工作中的问题描述，浅尝辄止，不足之处，欢迎指正。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/09/22/Etcd-%E9%97%AE%E9%A2%98-%E8%B0%83%E4%BC%98-%E7%9B%91%E6%8E%A7/" title="Etcd 问题,调优,监控">https://horus-k.github.io/2020/09/22/Etcd-问题-调优-监控/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/etcd/" rel="tag"># etcd</a>
+              <a href="/tags/%E8%B0%83%E4%BC%98/" rel="tag"># 调优</a>
+              <a href="/tags/%E6%8E%92%E9%94%99/" rel="tag"># 排错</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/22/K8S-Pod-%E5%86%85%E6%8A%93%E5%8C%85%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/" rel="prev" title="K8S Pod 内抓包快速定位网络问题">
+                  <i class="fa fa-chevron-left"></i> K8S Pod 内抓包快速定位网络问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/09/22/%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C%E5%AE%9E%E7%94%A8%E7%A4%BA%E4%BE%8B/" rel="next" title="亲和与反亲和实用示例">
+                  亲和与反亲和实用示例 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

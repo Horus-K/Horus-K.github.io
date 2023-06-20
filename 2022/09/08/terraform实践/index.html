@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介实现基础设施即代码的工具。方便多云环境重复部署。 安装下载cli https:&#x2F;&#x2F;www.terraform.io&#x2F;downloads 123$ terraform -versionTerraform v1.2.8on windows_amd64">
+<meta property="og:type" content="article">
+<meta property="og:title" content="terraform实践">
+<meta property="og:url" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="简介实现基础设施即代码的工具。方便多云环境重复部署。 安装下载cli https:&#x2F;&#x2F;www.terraform.io&#x2F;downloads 123$ terraform -versionTerraform v1.2.8on windows_amd64">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220908112340945.png">
+<meta property="og:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220908121134079.png">
+<meta property="og:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220909151249560.png">
+<meta property="og:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220911153312919.png">
+<meta property="og:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220911153428891.png">
+<meta property="article:published_time" content="2022-09-08T03:12:03.000Z">
+<meta property="article:modified_time" content="2022-11-24T12:07:02.592Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="terraform">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220908112340945.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/","path":"2022/09/08/terraform实践/","title":"terraform实践"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>terraform实践 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="terraform实践 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          terraform实践
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-08 11:12:03" itemprop="dateCreated datePublished" datetime="2022-09-08T11:12:03+08:00">2022-09-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-24 20:07:02" itemprop="dateModified" datetime="2022-11-24T20:07:02+08:00">2022-11-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>实现基础设施即代码的工具。方便多云环境重复部署。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>下载cli <a target="_blank" rel="noopener" href="https://www.terraform.io/downloads">https://www.terraform.io/downloads</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">terraform -version</span></span><br><span class="line">Terraform v1.2.8</span><br><span class="line">on windows_amd64</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><h3 id="配置阿里云Provider"><a href="#配置阿里云Provider" class="headerlink" title="配置阿里云Provider"></a>配置阿里云Provider</h3><p>main.tf</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">provider <span class="string">&quot;alicloud&quot;</span> <span class="punctuation">&#123;</span></span><br><span class="line">  access_key = var.ali_access_key</span><br><span class="line">  secret_key = var.ali_secret_key</span><br><span class="line">  region     = var.ali_region</span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>var.tf</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">variable</span> <span class="string">&quot;ali_access_key&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> = <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">variable</span> <span class="string">&quot;ali_secret_key&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> = <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">variable</span> <span class="string">&quot;ali_region&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> = <span class="built_in">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用env设置key</p>
+<p><code>set TF_VAR_ali_access_key=xxx</code> </p>
+<p><code>set TF_VAR_ali_secret_key=xxx</code></p>
+<p><code>set TF_VAR_ali_region=cn-hangzhou</code></p>
+<p>versions.tf</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">terraform <span class="punctuation">&#123;</span></span><br><span class="line">  required_version = <span class="string">&quot;1.2.8&quot;</span></span><br><span class="line">  required_providers <span class="punctuation">&#123;</span></span><br><span class="line">    alicloud = <span class="punctuation">&#123;</span></span><br><span class="line">      source = <span class="string">&quot;aliyun/alicloud&quot;</span></span><br><span class="line">      version = <span class="string">&quot;1.184.0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">terraform init</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这个很考虑网络，win如果开了代理，必须在cmd设置代理</span></span><br><span class="line">set http_proxy=http://127.0.0.1:20005 &amp; set https_proxy=http://127.0.0.1:20005</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220908112340945.png" alt="image-20220908112340945"></p>
+<h3 id="离线init设置"><a href="#离线init设置" class="headerlink" title="离线init设置"></a>离线init设置</h3><p><a target="_blank" rel="noopener" href="https://github.com/aliyun/terraform-provider-alicloud/releases">https://github.com/aliyun/terraform-provider-alicloud/releases</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/cli/config/config-file#implied-local-mirror-directories">https://www.terraform.io/cli/config/config-file#implied-local-mirror-directories</a></p>
+<p><a target="_blank" rel="noopener" href="https://ghproxy.com/https://github.com/aliyun/terraform-provider-alicloud/releases/download/v1.184.0/terraform-provider-alicloud_1.184.0_windows_amd64.zip">https://ghproxy.com/https://github.com/aliyun/terraform-provider-alicloud/releases/download/v1.184.0/terraform-provider-alicloud_1.184.0_windows_amd64.zip</a></p>
+<p>官网有说本地位置，但没有具体目录结构</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">D:\Github\terraform&gt; terraform init --plugin-dir D:\Github\terraform\cache</span><br><span class="line">D:\Github\terraform&gt; tree /f cache</span><br><span class="line">D:\GITHUB\TERRAFORM\CACHE</span><br><span class="line">└─registry.terraform.io</span><br><span class="line">    └─aliyun</span><br><span class="line">        └─alicloud</span><br><span class="line">            └─1.184.0</span><br><span class="line">                └─windows_amd64</span><br><span class="line">                        terraform-provider-alicloud_v1.184.0.exe</span><br></pre></td></tr></table></figure>
+
+<p>本地cli配置文件<a target="_blank" rel="noopener" href="https://www.terraform.io/cli/config/environment-variables#tf_cli_config_file">https://www.terraform.io/cli/config/environment-variables#tf_cli_config_file</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set TF_CLI_CONFIG_FILE=./.terraformrc</span><br><span class="line">cat .terraformrc</span><br><span class="line">plugin_cache_dir   = &quot;D:/Github/terraform/cache&quot;</span><br><span class="line">disable_checkpoint = true</span><br></pre></td></tr></table></figure>
+
+<h1 id="定义阿里云资源"><a href="#定义阿里云资源" class="headerlink" title="定义阿里云资源"></a>定义阿里云资源</h1><p>vpc.tf</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;alicloud_vpc&quot;</span> <span class="string">&quot;vpc_t1&quot;</span> &#123;</span><br><span class="line">  vpc_name    = <span class="string">&quot;tf_test_foo&quot;</span></span><br><span class="line">  description = <span class="string">&quot;TF测试&quot;</span></span><br><span class="line">  cidr_block  = <span class="string">&quot;172.16.0.0/12&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">resource <span class="string">&quot;alicloud_vswitch&quot;</span> <span class="string">&quot;vsw&quot;</span> &#123;</span><br><span class="line">  vpc_id     = alicloud_vpc.vpc_t1.id</span><br><span class="line">  cidr_block = <span class="string">&quot;172.16.0.0/21&quot;</span></span><br><span class="line">  zone_id    = <span class="keyword">var</span>.ali_region_zone</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>security_group.tf</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;alicloud_security_group&quot;</span> <span class="string">&quot;security_group1&quot;</span> &#123;</span><br><span class="line">  name        = <span class="string">&quot;terraform-test-group&quot;</span></span><br><span class="line">  description = <span class="string">&quot;新安全组&quot;</span></span><br><span class="line">  vpc_id = alicloud_vpc.vpc_t1.id</span><br><span class="line">&#125;</span><br><span class="line">resource <span class="string">&quot;alicloud_security_group_rule&quot;</span> <span class="string">&quot;allow_8080_tcp&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span>              = <span class="string">&quot;ingress&quot;</span></span><br><span class="line">  ip_protocol       = <span class="string">&quot;tcp&quot;</span></span><br><span class="line">  nic_type          = <span class="string">&quot;intranet&quot;</span></span><br><span class="line">  policy            = <span class="string">&quot;accept&quot;</span></span><br><span class="line">  port_range        = <span class="string">&quot;8080/8080&quot;</span></span><br><span class="line">  priority          = <span class="number">1</span></span><br><span class="line">  security_group_id = alicloud_security_group.security_group1.id</span><br><span class="line">  cidr_ip           = <span class="string">&quot;0.0.0.0/0&quot;</span></span><br><span class="line">  description       = <span class="string">&quot;测试规则&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">resource <span class="string">&quot;alicloud_security_group_rule&quot;</span> <span class="string">&quot;allow_9090_tcp&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span>              = <span class="string">&quot;ingress&quot;</span></span><br><span class="line">  ip_protocol       = <span class="string">&quot;tcp&quot;</span></span><br><span class="line">  nic_type          = <span class="string">&quot;intranet&quot;</span></span><br><span class="line">  policy            = <span class="string">&quot;accept&quot;</span></span><br><span class="line">  port_range        = <span class="string">&quot;9090/9090&quot;</span></span><br><span class="line">  priority          = <span class="number">1</span></span><br><span class="line">  security_group_id = alicloud_security_group.security_group1.id</span><br><span class="line">  cidr_ip           = <span class="string">&quot;0.0.0.0/0&quot;</span></span><br><span class="line">  description       = <span class="string">&quot;测试规则2&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="申请阿里云资源"><a href="#申请阿里云资源" class="headerlink" title="申请阿里云资源"></a>申请阿里云资源</h1><h2 id="格式化配置文件"><a href="#格式化配置文件" class="headerlink" title="格式化配置文件"></a>格式化配置文件</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">D:\Github\terraform\ali&gt; terraform fmt</span><br><span class="line">versions.<span class="keyword">tf</span></span><br><span class="line">vpc.<span class="keyword">tf</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="语法验证"><a href="#语法验证" class="headerlink" title="语法验证"></a>语法验证</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">D:\Github\terraform\ali&gt;terraform <span class="keyword">validate</span> -<span class="type">json</span> </span><br><span class="line">&#123;</span><br><span class="line">  &quot;format_version&quot;: &quot;1.0&quot;,</span><br><span class="line">  &quot;valid&quot;: <span class="keyword">true</span>,</span><br><span class="line">  &quot;error_count&quot;: <span class="number">0</span>,</span><br><span class="line">  &quot;warning_count&quot;: <span class="number">0</span>,</span><br><span class="line">  &quot;diagnostics&quot;: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="打印计划和预览-不执行变更"><a href="#打印计划和预览-不执行变更" class="headerlink" title="打印计划和预览(不执行变更)"></a>打印计划和预览(不执行变更)</h2><p><img src="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220908121134079.png" alt="image-20220908121134079"></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">D:\Github\terraform\ali&gt;terraform plan  <span class="comment"># -auto-approve</span></span><br><span class="line"></span><br><span class="line">Terraform used <span class="keyword">the</span> selected providers <span class="keyword">to</span> generate <span class="keyword">the</span> following execution plan. Resource actions are indicated <span class="keyword">with</span> <span class="keyword">the</span> following symbols:</span><br><span class="line">  + create</span><br><span class="line"></span><br><span class="line">Terraform will perform <span class="keyword">the</span> following actions:</span><br><span class="line"></span><br><span class="line">  <span class="comment"># alicloud_security_group.security_group1 will be created</span></span><br><span class="line">  + resource <span class="string">&quot;alicloud_security_group&quot;</span> <span class="string">&quot;security_group1&quot;</span> &#123;</span><br><span class="line">      + description         = <span class="string">&quot;New security group&quot;</span></span><br><span class="line">      + <span class="built_in">id</span>                  = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + inner_access        = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + inner_access_policy = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + <span class="built_in">name</span>                = <span class="string">&quot;terraform-test-group&quot;</span></span><br><span class="line">      + security_group_type = <span class="string">&quot;normal&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment"># alicloud_security_group_rule.allow_8080_tcp will be created</span></span><br><span class="line">  + resource <span class="string">&quot;alicloud_security_group_rule&quot;</span> <span class="string">&quot;allow_8080_tcp&quot;</span> &#123;</span><br><span class="line">      + cidr_ip           = <span class="string">&quot;0.0.0.0/0&quot;</span></span><br><span class="line">      + description       = <span class="string">&quot;测试规则&quot;</span></span><br><span class="line">      + <span class="built_in">id</span>                = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + ip_protocol       = <span class="string">&quot;tcp&quot;</span></span><br><span class="line">      + nic_type          = <span class="string">&quot;internet&quot;</span></span><br><span class="line">      + policy            = <span class="string">&quot;accept&quot;</span></span><br><span class="line">      + port_range        = <span class="string">&quot;8080/8080&quot;</span></span><br><span class="line">      + prefix_list_id    = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + priority          = <span class="number">1</span></span><br><span class="line">      + security_group_id = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + type              = <span class="string">&quot;ingress&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment"># alicloud_security_group_rule.allow_9090_tcp will be created</span></span><br><span class="line">  + resource <span class="string">&quot;alicloud_security_group_rule&quot;</span> <span class="string">&quot;allow_9090_tcp&quot;</span> &#123;</span><br><span class="line">      + cidr_ip           = <span class="string">&quot;0.0.0.0/0&quot;</span></span><br><span class="line">      + description       = <span class="string">&quot;测试规则2&quot;</span></span><br><span class="line">      + <span class="built_in">id</span>                = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + ip_protocol       = <span class="string">&quot;tcp&quot;</span></span><br><span class="line">      + nic_type          = <span class="string">&quot;internet&quot;</span></span><br><span class="line">      + policy            = <span class="string">&quot;accept&quot;</span></span><br><span class="line">      + port_range        = <span class="string">&quot;9090/9090&quot;</span></span><br><span class="line">      + prefix_list_id    = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + priority          = <span class="number">1</span></span><br><span class="line">      + security_group_id = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + type              = <span class="string">&quot;ingress&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment"># alicloud_vpc.vpc_t1 will be created</span></span><br><span class="line">  + resource <span class="string">&quot;alicloud_vpc&quot;</span> <span class="string">&quot;vpc_t1&quot;</span> &#123;</span><br><span class="line">      + cidr_block        = <span class="string">&quot;172.16.0.0/12&quot;</span></span><br><span class="line">      + description       = <span class="string">&quot;TF测试&quot;</span></span><br><span class="line">      + <span class="built_in">id</span>                = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + ipv6_cidr_block   = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + <span class="built_in">name</span>              = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + resource_group_id = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + route_table_id    = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + router_id         = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + router_table_id   = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + status            = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + vpc_name          = <span class="string">&quot;tf_test_foo&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment"># alicloud_vswitch.vsw will be created</span></span><br><span class="line">  + resource <span class="string">&quot;alicloud_vswitch&quot;</span> <span class="string">&quot;vsw&quot;</span> &#123;</span><br><span class="line">      + availability_zone = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + cidr_block        = <span class="string">&quot;172.16.0.0/21&quot;</span></span><br><span class="line">      + <span class="built_in">id</span>                = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + <span class="built_in">name</span>              = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + status            = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + vpc_id            = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + vswitch_name      = (known <span class="keyword">after</span> apply)</span><br><span class="line">      + zone_id           = <span class="string">&quot;cn-hangzhou-b&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">Plan: <span class="number">5</span> <span class="keyword">to</span> add, <span class="number">0</span> <span class="keyword">to</span> change, <span class="number">0</span> <span class="keyword">to</span> destroy.</span><br></pre></td></tr></table></figure>
+
+<h2 id="申请资源"><a href="#申请资源" class="headerlink" title="申请资源"></a>申请资源</h2><figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">D:\Github\terraform\ali&gt;terraform apply -auto-approve <span class="comment">#加参数可以不用输入yes</span></span><br><span class="line">alicloud_vpc.vpc_t1: Refreshing <span class="keyword">state</span>... [id=vpc-bp1d0s12fw8tx8wlmydrp]</span><br><span class="line">alicloud_security_group.security_group1: Refreshing <span class="keyword">state</span>... [id=sg-bp1exvm2rcbjgfao8zmn]</span><br><span class="line">alicloud_vswitch.vsw: Refreshing <span class="keyword">state</span>... [id=vsw-bp1x3z6zfzwjimuymsxrk]</span><br><span class="line">alicloud_security_group_rule.allow_8080_tcp: Refreshing <span class="keyword">state</span>... [id=sg-bp1exvm2rcbjgfao8zmn:ingress:tcp:<span class="number">8080</span>/<span class="number">8080</span>:intranet:<span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>:accept:<span class="number">1</span>]</span><br><span class="line">alicloud_security_group_rule.allow_9090_tcp: Refreshing <span class="keyword">state</span>... [id=sg-bp1exvm2rcbjgfao8zmn:ingress:tcp:<span class="number">9090</span>/<span class="number">9090</span>:intranet:<span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>:accept:<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">No changes. Your infrastructure matches the configuration.</span><br><span class="line"></span><br><span class="line">Terraform has compared your real infrastructure against your configuration and found <span class="keyword">no</span> differences, so <span class="keyword">no</span> changes are needed.</span><br><span class="line"></span><br><span class="line">Apply complete! Resources: <span class="number">0</span> added, <span class="number">0</span> changed, <span class="number">0</span> destroyed.</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除资源"><a href="#删除资源" class="headerlink" title="删除资源"></a>删除资源</h2><p>这个就全删了，别瞎鸡巴乱用</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">D:</span>\Github\terraform\ali&gt;terraform destroy</span><br></pre></td></tr></table></figure>
+
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">terraform</span> &#123;</span><br><span class="line">  <span class="attribute">required_version</span> = <span class="string">&quot;1.2.8&quot;</span></span><br><span class="line">  required_providers &#123;</span><br><span class="line">    <span class="attribute">alicloud</span> = &#123;</span><br><span class="line">      <span class="comment"># 源</span></span><br><span class="line">      <span class="attribute">source</span> = <span class="string">&quot;aliyun/alicloud&quot;</span></span><br><span class="line">      <span class="comment"># 版本</span></span><br><span class="line">      version = <span class="string">&quot;1.184.0&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="provider"><a href="#provider" class="headerlink" title="provider"></a>provider</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">provider <span class="string">&quot;alicloud&quot;</span> &#123; #必须有个默认的</span><br><span class="line">  access_key = <span class="keyword">var</span>.ali_access_key</span><br><span class="line">  secret_key = <span class="keyword">var</span>.ali_secret_key</span><br><span class="line">  region     = <span class="string">&quot;cn-hangzhou&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">provider <span class="string">&quot;alicloud&quot;</span> &#123;</span><br><span class="line">  alias = <span class="string">&quot;ali_beijin&quot;</span></span><br><span class="line">  access_key = <span class="keyword">var</span>.ali_access_key</span><br><span class="line">  secret_key = <span class="keyword">var</span>.ali_secret_key</span><br><span class="line">  region     = <span class="string">&quot;cn-beijing&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="dns"><a href="#dns" class="headerlink" title="dns"></a>dns</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">resource <span class="string">&quot;alicloud_dns_record&quot;</span> <span class="string">&quot;test1&quot;</span> &#123;</span><br><span class="line">  name        = <span class="string">&quot;xxx.com&quot;</span></span><br><span class="line">  host_record = <span class="string">&quot;test1&quot;</span></span><br><span class="line">  <span class="keyword">type</span>        = <span class="string">&quot;A&quot;</span></span><br><span class="line">  value       = <span class="string">&quot;1.1.1.1&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="DataSource"><a href="#DataSource" class="headerlink" title="DataSource"></a>DataSource</h1><h2 id="dns-1"><a href="#dns-1" class="headerlink" title="dns"></a>dns</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data <span class="string">&quot;alicloud_alidns_records&quot;</span> <span class="string">&quot;records_ds&quot;</span> &#123;</span><br><span class="line">  domain_name = <span class="string">&quot;xxxxxx.com&quot;</span></span><br><span class="line">  output_file = <span class="string">&quot;records.json&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">#执行plan会生成文件</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用值"><a href="#使用值" class="headerlink" title="使用值"></a>使用值</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">output <span class="string">&quot;first_record_id&quot;</span> &#123;</span><br><span class="line">  value = data.alicloud_alidns_records.records_ds.records<span class="number">.0</span>.record_id</span><br><span class="line">&#125;</span><br><span class="line">output <span class="string">&quot;record_ids&quot;</span> &#123;</span><br><span class="line">  value = data.alicloud_alidns_records.records_ds.records.*.record_id</span><br><span class="line">&#125;</span><br><span class="line">#使用命令获取</span><br><span class="line">D:\Github\terraform\ali&gt;terraform output -json first_record_id  </span><br><span class="line"><span class="string">&quot;783933231xxxx72&quot;</span></span><br><span class="line"></span><br><span class="line">D:\Github\terraform\ali&gt;terraform output -json record_ids        </span><br><span class="line">[<span class="string">&quot;783933231886xxxx&quot;</span>,<span class="string">&quot;70086148440790xxxxx&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h1 id="Variables"><a href="#Variables" class="headerlink" title="Variables"></a>Variables</h1><p>变量允许自定义 Terraform 模块，而无需更改模块自己的源代码，这可以实现跨不同的 Terraform 配置共享模块，<strong>使模块可以组合和可重用</strong>。定以后通过<code>VAR_NAME</code>调用</p>
+<ul>
+<li>在 <code>variables.tf</code> 文件中定义变量</li>
+<li>在同一个模块的所有变量中必须是唯一的</li>
+<li>可以从环境变量或者文本文件中读取</li>
+<li>Terraform 默认读取 <code>terraform.tfvars</code></li>
+<li>定义<ul>
+<li><code>terraform.tfvars</code> | <code>terraform.tfvars.json</code></li>
+<li><code>*.auto.tfvars</code> | <code>*.auto.tfvars.json</code></li>
+<li>命令行 -var | -var-file</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">variable <span class="string">&quot;ali_region&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> = <span class="type">string</span></span><br><span class="line">  <span class="keyword">default</span> = <span class="string">&quot;cn-hangzhou&quot;</span></span><br><span class="line">  description = <span class="string">&quot;区域&quot;</span></span><br><span class="line">  sensitive = <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220909151249560.png" alt="image-20220909151249560" style="zoom:33%;">
+
+<h2 id="使用map定义dns域名"><a href="#使用map定义dns域名" class="headerlink" title="使用map定义dns域名"></a>使用map定义dns域名</h2><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">variable <span class="string">&quot;dns_record&quot;</span> &#123;</span><br><span class="line">  type <span class="operator">=</span> map(string)</span><br><span class="line">&#125;</span><br><span class="line">dns_record <span class="operator">=</span> &#123;</span><br><span class="line">  <span class="string">&quot;dev&quot;</span>  <span class="operator">=</span> <span class="string">&quot;dev.xyh&quot;</span></span><br><span class="line">  <span class="string">&quot;test&quot;</span> <span class="operator">=</span> <span class="string">&quot;test.xyh&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">resource <span class="string">&quot;alicloud_dns_record&quot;</span> <span class="string">&quot;test2&quot;</span> &#123;</span><br><span class="line">  name        <span class="operator">=</span> <span class="string">&quot;xxx.com&quot;</span></span><br><span class="line">  host_record <span class="operator">=</span> var.dns_record[<span class="string">&quot;test&quot;</span>]</span><br><span class="line">  type        <span class="operator">=</span> <span class="string">&quot;A&quot;</span></span><br><span class="line">  value       <span class="operator">=</span> <span class="string">&quot;1.1.1.1&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用list定义环境列表"><a href="#使用list定义环境列表" class="headerlink" title="使用list定义环境列表"></a>使用list定义环境列表</h2><figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">variable</span> <span class="string">&quot;env_list&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">type</span> = list(string)</span><br><span class="line">&#125;</span><br><span class="line"><span class="title">env_list</span> = [<span class="string">&quot;prod&quot;</span>, <span class="string">&quot;test&quot;</span>, <span class="string">&quot;dev&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="object自定义属性"><a href="#object自定义属性" class="headerlink" title="object自定义属性"></a>object自定义属性</h2><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">variable <span class="string">&quot;zons&quot;</span> &#123;</span><br><span class="line">  type <span class="operator">=</span> object(&#123;</span><br><span class="line">    zonsA <span class="operator">=</span> string</span><br><span class="line">    zonsB <span class="operator">=</span> string</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="attribute">zons</span> <span class="operator">=</span> &#123;</span><br><span class="line">  zonsA <span class="operator">=</span> <span class="string">&quot;cn-hangzhou-b&quot;</span></span><br><span class="line">  zonsB <span class="operator">=</span> <span class="string">&quot;cn-hangzhou-e&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="本地变量"><a href="#本地变量" class="headerlink" title="本地变量"></a>本地变量</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">locals &#123;</span><br><span class="line">    <span class="type">name</span> = &quot;ecs1&quot;</span><br><span class="line">    owner = &quot;xxx&quot;</span><br><span class="line">&#125;</span><br><span class="line">resource &quot;alicloud_vpc&quot; &quot;vpc_t1&quot; &#123;</span><br><span class="line">  # provider = alicloud.hangzhou</span><br><span class="line">  vpc_name    = &quot;tf_test_foo&quot;</span><br><span class="line">  description = <span class="keyword">local</span>.name</span><br><span class="line">  cidr_block  = &quot;172.16.0.0/12&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="资源导入"><a href="#资源导入" class="headerlink" title="资源导入"></a>资源导入</h1><p>目前只能一个一个导入</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#假设没有states文件</span><br><span class="line">#可以用datasource + output获取资源</span><br><span class="line">#使用terraform plan获取资源路径</span><br><span class="line"><span class="keyword">module</span>.vpc.alicloud_vpc.vpc_t1</span><br><span class="line"># 导入</span><br><span class="line">terraform <span class="keyword">import</span> <span class="keyword">module</span>.vpc.alicloud_vpc.vpc_t1 &lt;对应云资源id&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">provider</span> <span class="string">&quot;alicloud&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">access_key</span> = var.ali_access_key</span><br><span class="line">  secret_key = var.ali_secret_key</span><br><span class="line">  region     = var.ali_region</span><br><span class="line">&#125;</span><br><span class="line">locals &#123;</span><br><span class="line">  <span class="attribute">region</span> = <span class="string">&quot;cn-hangzhou&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">module <span class="string">&quot;vpc&quot;</span> &#123;  <span class="comment">#这里面就光写资源就好</span></span><br><span class="line">  <span class="attribute">source</span>  = <span class="string">&quot;../../modules/vpc&quot;</span></span><br><span class="line">  zons = &#123; <span class="comment"># 后面这些是变量</span></span><br><span class="line">    <span class="attribute">zonsA</span> = <span class="string">&quot;cn-hangzhou-b&quot;</span></span><br><span class="line">    zonsB = <span class="string">&quot;cn-hangzhou-f&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跨module引用变量<code>module.vpc.vpc_id</code></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#变量需使用output在对应模块声明</span></span><br><span class="line"><span class="attribute">output</span> <span class="string">&quot;vpc_id&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">value</span> = alicloud_vpc.vpc_t1.id</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h1><p><code>condition ? true_val : false_val</code></p>
+<ul>
+<li>condition 条件(返回true&#x2F;false)</li>
+<li>true_val 条件为true的值</li>
+<li>false_val 条件为false的值</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">output <span class="string">&quot;test&quot;</span> &#123;</span><br><span class="line">  value = module.vpc.vpc_id == <span class="string">&quot;&quot;</span> ? <span class="string">&quot;为空&quot;</span> : <span class="string">&quot;不为空&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Outputs:</span><br><span class="line">test = <span class="string">&quot;不为空&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>[ for VAR in OBJ : VAR]</code></p>
+<p><code>[for INDEX,VAR in OBJ : &quot;$&#123;INDEX&#125; $&#123;VAR&#125;&quot;]</code></p>
+<h1 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h1><h2 id="数值"><a href="#数值" class="headerlink" title="数值"></a>数值</h2><p>max()</p>
+<p>min()</p>
+<p>parseint()将字符串解析为正整数</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p><code>format(&quot;hello %s!&quot;, &quot;qh&quot;)格式化</code></p>
+<p><code>join(&quot;,&quot;,[&quot;name&quot;, &quot;age&quot;])字符串拼接</code></p>
+<p><code>replace(&quot;a=b=c&quot;, &quot;=&quot;, &quot;-&quot;)替换</code></p>
+<p><code>split(&quot;,&quot;, &quot;name,age,sex&quot;)字符串分割</code></p>
+<h2 id="list"><a href="#list" class="headerlink" title="list"></a>list</h2><p><img src="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220911153312919.png" alt="image-20220911153312919"></p>
+<h2 id="map"><a href="#map" class="headerlink" title="map"></a>map</h2><p><img src="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/image-20220911153428891.png" alt="image-20220911153428891"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/" title="terraform实践">https://horus-k.github.io/2022/09/08/terraform实践/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/terraform/" rel="tag"># terraform</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/" rel="prev" title="openvpn打通云">
+                  <i class="fa fa-chevron-left"></i> openvpn打通云
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/15/acme/" rel="next" title="acme">
+                  acme <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

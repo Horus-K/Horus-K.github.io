@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="问题在Kuberetes应用中，一般都是通过Ingress来暴露HTTP&#x2F;HTTPS的服务。但是在实际应用中，还是有不少应用是TCP长连接的，这个是否也是可以通过Ingress来暴露呢？大家知道Kubernetes社区默认带了一个Nginx的Ingress的，而它本身又是支持TCP做反向代理的。所以也就能支持TCP方式的Ingress的。 具体可以参考：https:&#x2F;&#x2F;kubernete">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云k8s-ingress创建TCP端口">
+<meta property="og:url" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="问题在Kuberetes应用中，一般都是通过Ingress来暴露HTTP&#x2F;HTTPS的服务。但是在实际应用中，还是有不少应用是TCP长连接的，这个是否也是可以通过Ingress来暴露呢？大家知道Kubernetes社区默认带了一个Nginx的Ingress的，而它本身又是支持TCP做反向代理的。所以也就能支持TCP方式的Ingress的。 具体可以参考：https:&#x2F;&#x2F;kubernete">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/c7c4c069117a7acd1d2cb2904f808a03.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/b87adfa0ede4f695f0338180c0244003.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/5776e07f67a442b5eacf0766bebc88d8.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/ea2190211413eec64b0677b3e89c421e.png">
+<meta property="article:published_time" content="2020-08-26T03:24:24.000Z">
+<meta property="article:modified_time" content="2020-08-26T07:24:04.252Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/c7c4c069117a7acd1d2cb2904f808a03.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/","path":"2020/08/26/ingress/阿里云k8s-ingress创建TCP端口/","title":"阿里云k8s-ingress创建TCP端口"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>阿里云k8s-ingress创建TCP端口 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="阿里云k8s-ingress创建TCP端口 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里云k8s-ingress创建TCP端口
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-08-26 11:24:24 / 修改时间：15:24:04" itemprop="dateCreated datePublished" datetime="2020-08-26T11:24:24+08:00">2020-08-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Ingress/" itemprop="url" rel="index"><span itemprop="name">Ingress</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>在Kuberetes应用中，一般都是通过Ingress来暴露HTTP&#x2F;HTTPS的服务。但是在实际应用中，还是有不少应用是TCP长连接的，这个是否也是可以通过Ingress来暴露呢？大家知道Kubernetes社区默认带了一个Nginx的Ingress的，而它本身又是支持TCP做反向代理的。所以也就能支持TCP方式的Ingress的。</p>
+<p>具体可以参考：<br><a target="_blank" rel="noopener" href="https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/">https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/</a></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Ingress Controller在启动时会去watch两个configmap(一个tcp，一个 udp)，里面记录了后面需要反向代理的TCP的服务以及暴露的端口。如果里面的key-value发生变换，Ingress controller会去更改Nginx的配置，增加对应的TCP的listen的server以及对应的后端的upstream。</p>
+<span id="more"></span>
+
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><h4 id="配置Nginx的Ingress的deployment-x2F-daemonSet"><a href="#配置Nginx的Ingress的deployment-x2F-daemonSet" class="headerlink" title="配置Nginx的Ingress的deployment&#x2F;daemonSet"></a>配置Nginx的Ingress的deployment&#x2F;daemonSet</h4><ul>
+<li>增加Ingress controller需要watch的configmap<br><img src="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/c7c4c069117a7acd1d2cb2904f808a03.png" alt="c7c4c069117a7acd1d2cb2904f808a03"></li>
+<li>创建对应的configmap，暂时不需要配置服务。（注意，阿里云的Kubernetes集群，已经默认创建好了对应的configmap: tcp-services, udp-services，无需再创建）</li>
+</ul>
+<p>TCP configmap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: tcp-services</span><br><span class="line">  namespace: kube-system</span><br></pre></td></tr></table></figure>
+
+<p>UDP configmap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: udp-services</span><br><span class="line">  namespace: kube-system</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建一个TCP服务"><a href="#创建一个TCP服务" class="headerlink" title="创建一个TCP服务"></a>创建一个TCP服务</h4><p>为了简单，可以直接用一个Nginx来模拟就可。如果创建这个deployment, service这个就不啰嗦了。</p>
+<ul>
+<li>给TCP的服务配置”Ingress” TCP服务不像HTTP，不能使用Kubernetes的Ingress对象来配置，而是使用修改对应的Configmap来增加一个”Ingress”</li>
+</ul>
+<p>kubectl edit configmap&#x2F;tcp-services -n kube-system</p>
+<ul>
+<li>然后增加data部分:</li>
+</ul>
+<p>格式为：</p>
+<p><Nginx port>: &lt;namespace&#x2F;service name&gt;:<service port>:[PROXY]:[PROXY]</service></Nginx></p>
+<p><img src="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/b87adfa0ede4f695f0338180c0244003.png" alt="b87adfa0ede4f695f0338180c0244003"></p>
+<p>例子中将default&#x2F;nginx这个服务暴露到5555端口</p>
+<h4 id="修改Ingress-Controller的Service"><a href="#修改Ingress-Controller的Service" class="headerlink" title="修改Ingress Controller的Service"></a>修改Ingress Controller的Service</h4><p>因为TCP部分是需要通过端口来区分服务的，所以每个服务都需要增加一个独立端口，所以需要给Ingress Controller增加新的端口来映射后端的TCP服务</p>
+<p><img src="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/5776e07f67a442b5eacf0766bebc88d8.png" alt="5776e07f67a442b5eacf0766bebc88d8"></p>
+<p>注意：在阿里云的Kubernetes服务创建的集群，可以不用指定nodeport，对应的cloud provider会自动到对应的SLB上创建端口映射如：</p>
+<p><img src="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/ea2190211413eec64b0677b3e89c421e.png" alt="ea2190211413eec64b0677b3e89c421e"></p>
+<p>这样就完成了一个TCP的“Ingress”的创建了。</p>
+<h4 id="访问TCP服务"><a href="#访问TCP服务" class="headerlink" title="访问TCP服务"></a>访问TCP服务</h4><p>直接访问对应的SLB的5555端口就可以。如果没有SLB可以直接访问对应的node节点的nodeport也可以。 </p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>给TCP创建“Ingress”总觉得有些workaround 的味道，还是期望后续社区能提供通过”Ingress”对象的方式来创建TCP的Ingress。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/" title="阿里云k8s-ingress创建TCP端口">https://horus-k.github.io/2020/08/26/ingress/阿里云k8s-ingress创建TCP端口/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/25/git/gitclone%E5%8A%A0%E9%80%9F/" rel="prev" title="gitclone加速">
+                  <i class="fa fa-chevron-left"></i> gitclone加速
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/09/08/jenkins%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86https/" rel="next" title="jenkins反向代理https">
+                  jenkins反向代理https <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

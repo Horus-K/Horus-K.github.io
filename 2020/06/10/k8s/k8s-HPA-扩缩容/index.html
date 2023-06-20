@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Horizontal Pod Autoscaler（HPA，Pod水平自动伸缩），根据资源利用率或者自定义指标自动调整replication controller, deployment 或 replica set，实现部署的自动扩展和缩减，让部署的规模接近于实际服务的负载。HPA不适于无法缩放的对象，例如DaemonSet。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s-HPA-扩缩容">
+<meta property="og:url" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="Horizontal Pod Autoscaler（HPA，Pod水平自动伸缩），根据资源利用率或者自定义指标自动调整replication controller, deployment 或 replica set，实现部署的自动扩展和缩减，让部署的规模接近于实际服务的负载。HPA不适于无法缩放的对象，例如DaemonSet。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-1.png">
+<meta property="og:image" content="https://k8s-1252881505.cos.ap-beijing.myqcloud.com/k8s-2/hpa-2.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/aggergation.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-3.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-4.png">
+<meta property="og:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/prometheus-arch.png">
+<meta property="og:image" content="https://k8s-1252881505.cos.ap-beijing.myqcloud.com/k8s-2/hpa-5.png">
+<meta property="article:published_time" content="2020-06-10T07:11:23.000Z">
+<meta property="article:modified_time" content="2020-06-10T07:13:12.274Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="HPA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-1.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/","path":"2020/06/10/k8s/k8s-HPA-扩缩容/","title":"k8s-HPA-扩缩容"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s-HPA-扩缩容 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s-HPA-扩缩容 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s-HPA-扩缩容
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-06-10 15:11:23 / 修改时间：15:13:12" itemprop="dateCreated datePublished" datetime="2020-06-10T15:11:23+08:00">2020-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Horizontal Pod Autoscaler（HPA，Pod水平自动伸缩），根据资源利用率或者自定义指标自动调整replication controller, deployment 或 replica set，实现部署的自动扩展和缩减，让部署的规模接近于实际服务的负载。HPA不适于无法缩放的对象，例如DaemonSet。</p>
+<p><img src="/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-1.png"></p>
+<span id="more"></span>
+
+<h3 id="1、HPA基本原理"><a href="#1、HPA基本原理" class="headerlink" title="1、HPA基本原理"></a>1、HPA基本原理</h3><p>Kubernetes 中的 Metrics Server 持续采集所有 Pod 副本的指标数据。HPA 控制器通过 Metrics Server 的 API（Heapster 的 API 或聚合 API）获取这些数据，基于用户定义的扩缩容规则进行计算，得到目标 Pod 副本数量。当目标 Pod 副本数量与当前副本数量不同时，HPA 控制器就向 Pod 的副本控制器（Deployment、RC 或 ReplicaSet）发起 scale 操作，调整 Pod 的副本数量，完成扩缩容操作。如图所示。</p>
+<img src="https://k8s-1252881505.cos.ap-beijing.myqcloud.com/k8s-2/hpa-2.png">
+
+<p>在弹性伸缩中，冷却周期是不能逃避的一个话题， 由于评估的度量标准是动态特性，副本的数量可能会不断波动。有时被称为颠簸， 所以在每次做出扩容缩容后，冷却时间是多少。</p>
+<p>在 HPA 中，<strong>默认的扩容冷却周期是 3 分钟，缩容冷却周期是 5 分钟。</strong></p>
+<p>可以通过调整kube-controller-manager组件启动参数设置冷却时间：</p>
+<ul>
+<li>–horizontal-pod-autoscaler-downscale-delay ：扩容冷却</li>
+<li>–horizontal-pod-autoscaler-upscale-delay ：缩容冷却</li>
+</ul>
+<h3 id="2、HPA的演进历程"><a href="#2、HPA的演进历程" class="headerlink" title="2、HPA的演进历程"></a>2、HPA的演进历程</h3><p>目前 HPA 已经支持了 autoscaling&#x2F;v1、autoscaling&#x2F;v2beta1和autoscaling&#x2F;v2beta2  三个大版本 。</p>
+<p>目前大多数人比较熟悉是autoscaling&#x2F;v1，这个版本只支持CPU一个指标的弹性伸缩。</p>
+<p>而autoscaling&#x2F;v2beta1增加了支持自定义指标，autoscaling&#x2F;v2beta2又额外增加了外部指标支持。</p>
+<p>而产生这些变化不得不提的是Kubernetes社区对监控与监控指标的认识与转变。从早期Heapster到Metrics Server再到将指标边界进行划分，一直在丰富监控生态。</p>
+<p>示例：</p>
+<p>v1版本：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">apiVersion:</span> autoscaling/v1</span><br><span class="line"><span class="symbol">kind:</span> HorizontalPodAutoscaler</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span> php-apache</span><br><span class="line"><span class="symbol">  namespace:</span> default</span><br><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  scaleTargetRef:</span></span><br><span class="line"><span class="symbol">    apiVersion:</span> apps/v1</span><br><span class="line"><span class="symbol">    kind:</span> Deployment</span><br><span class="line"><span class="symbol">    name:</span> php-apache</span><br><span class="line"><span class="symbol">  minReplicas:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">  maxReplicas:</span> <span class="number">10</span></span><br><span class="line"><span class="symbol">  targetCPUUtilizationPercentage:</span> <span class="number">50</span></span><br></pre></td></tr></table></figure>
+
+<p>v2beta2版本：</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">autoscaling/v2beta2</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">php-apache</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">default</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">scaleTargetRef</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Deployment</span></span><br><span class="line">    <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">php-apache</span></span><br><span class="line">  <span class="attribute">minReplicas</span><span class="punctuation">:</span> <span class="string">1</span></span><br><span class="line">  <span class="attribute">maxReplicas</span><span class="punctuation">:</span> <span class="string">10</span></span><br><span class="line">  <span class="attribute">metrics</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Resource</span></span><br><span class="line">    <span class="attribute">resource</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">cpu</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Utilization</span></span><br><span class="line">        <span class="attribute">averageUtilization</span><span class="punctuation">:</span> <span class="string">50</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Pods</span></span><br><span class="line">    <span class="attribute">pods</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">metric</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">packets-per-second</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">AverageValue</span></span><br><span class="line">        <span class="attribute">averageValue</span><span class="punctuation">:</span> <span class="string">1k</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Object</span></span><br><span class="line">    <span class="attribute">object</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">metric</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">requests-per-second</span></span><br><span class="line">      <span class="attribute">describedObject</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">networking.k8s.io/v1beta1</span></span><br><span class="line">        <span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Ingress</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">main-route</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Value</span></span><br><span class="line">        <span class="attribute">value</span><span class="punctuation">:</span> <span class="string">10k</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: External</span></span><br><span class="line">    <span class="attribute">external</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">metric</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">queue_messages_ready</span></span><br><span class="line">        <span class="attribute">selector</span><span class="punctuation">:</span> <span class="string">&quot;queue=worker_tasks&quot;</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">AverageValue</span></span><br><span class="line">        <span class="attribute">averageValue</span><span class="punctuation">:</span> <span class="string">30</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-基于CPU指标缩放"><a href="#2-5-基于CPU指标缩放" class="headerlink" title="2.5 基于CPU指标缩放"></a>2.5 基于CPU指标缩放</h2><h3 id="1、-Kubernetes-API-Aggregation"><a href="#1、-Kubernetes-API-Aggregation" class="headerlink" title="1、 Kubernetes API Aggregation"></a>1、 Kubernetes API Aggregation</h3><p>在 Kubernetes 1.7 版本引入了聚合层，允许第三方应用程序通过将自己注册到kube-apiserver上，仍然通过 API Server 的 HTTP URL 对新的 API 进行访问和操作。为了实现这个机制，Kubernetes 在 kube-apiserver 服务中引入了一个 API 聚合层（API Aggregation Layer），用于将扩展 API 的访问请求转发到用户服务的功能。</p>
+<p><img src="/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/aggergation.png"></p>
+<p>当你访问 apis&#x2F;metrics.k8s.io&#x2F;v1beta1 的时候，实际上访问到的是一个叫作 kube-aggregator 的代理。而 kube-apiserver，正是这个代理的一个后端；而 Metrics Server，则是另一个后端 。通过这种方式，我们就可以很方便地扩展 Kubernetes 的 API 了。</p>
+<p>如果你使用kubeadm部署的，默认已开启。如果你使用二进制方式部署的话，需要在kube-APIServer中添加启动参数，增加以下配置：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># vi <span class="regexp">/opt/</span>kubernetes<span class="regexp">/cfg/</span>kube-apiserver.conf</span><br><span class="line">...</span><br><span class="line">--requestheader-client-ca-<span class="keyword">file</span>=<span class="regexp">/opt/</span>kubernetes<span class="regexp">/ssl/</span>ca.pem \</span><br><span class="line">--proxy-client-cert-<span class="keyword">file</span>=<span class="regexp">/opt/</span>kubernetes<span class="regexp">/ssl/</span>server.pem \</span><br><span class="line">--proxy-client-key-<span class="keyword">file</span>=<span class="regexp">/opt/</span>kubernetes<span class="regexp">/ssl/</span>server-key.pem \</span><br><span class="line">--requestheader-allowed-names=kubernetes \</span><br><span class="line">--requestheader-extra-headers-prefix=X-Remote-Extra- \</span><br><span class="line">--requestheader-<span class="keyword">group</span>-headers=X-Remote-<span class="keyword">Group</span> \</span><br><span class="line">--requestheader-username-headers=X-Remote-User \</span><br><span class="line">--enable-aggregator-routing=<span class="keyword">true</span> \</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>  在设置完成重启 kube-apiserver 服务，就启用 API 聚合功能了。  </p>
+<h3 id="2、部署-Metrics-Server"><a href="#2、部署-Metrics-Server" class="headerlink" title="2、部署 Metrics Server"></a>2、部署 Metrics Server</h3><p>Metrics Server是一个集群范围的资源使用情况的数据聚合器。作为一个应用部署在集群中。</p>
+<p>Metric server从每个节点上Kubelet公开的摘要API收集指标。 </p>
+<p>Metrics server通过Kubernetes聚合器注册在Master APIServer中。</p>
+<p><img src="/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-3.png"></p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># git clone https://github.com/kubernetes-incubator/metrics-server</span></span><br><span class="line"><span class="comment"># cd metrics-server/deploy/1.8+/</span></span><br><span class="line"><span class="comment"># vi metrics-server-deployment.yaml   # 添加2条启动参数   </span></span><br><span class="line"><span class="attribute">...</span></span><br><span class="line"><span class="attribute">      containers</span><span class="punctuation">:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">name: metrics-server</span></span><br><span class="line">        <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">lizhenliang/metrics-server-amd64:v0.3.1</span></span><br><span class="line">        <span class="attribute">command</span><span class="punctuation">:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">/metrics-server</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">--kubelet-insecure-tls</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">--kubelet-preferred-address-types=InternalIP</span></span><br><span class="line">...</span><br><span class="line"><span class="comment"># kubectl create -f .</span></span><br></pre></td></tr></table></figure>
+
+<p>可通过Metrics API在Kubernetes中获得资源使用率指标，例如容器CPU和内存使用率。这些度量标准既可以由用户直接访问（例如，通过使用<code>kubectl top</code>命令），也可以由集群中的控制器（例如，Horizontal Pod Autoscaler）用于进行决策。 </p>
+<p>测试：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get --raw <span class="regexp">/apis/m</span>etrics.k8s.io<span class="regexp">/v1beta1/</span>nodes</span><br><span class="line">kubectl top node</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、autoscaling-x2F-v1（CPU指标实践）"><a href="#3、autoscaling-x2F-v1（CPU指标实践）" class="headerlink" title="3、autoscaling&#x2F;v1（CPU指标实践）"></a>3、autoscaling&#x2F;v1（CPU指标实践）</h3><p>autoscaling&#x2F;v1版本只支持CPU一个指标。</p>
+<p>首先部署一个应用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx-php</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx-php</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">lizhenliang/nginx-php</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">java</span></span><br><span class="line">        <span class="attr">resources:</span> </span><br><span class="line">           <span class="attr">requests:</span></span><br><span class="line">             <span class="attr">memory:</span> <span class="string">&quot;300Mi&quot;</span></span><br><span class="line">             <span class="attr">cpu:</span> <span class="string">&quot;250m&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx-php</span></span><br></pre></td></tr></table></figure>
+
+<p>创建HPA策略：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">apiVersion:</span> autoscaling/v1</span><br><span class="line"><span class="symbol">kind:</span> HorizontalPodAutoscaler</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span> web</span><br><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  maxReplicas:</span> <span class="number">5</span></span><br><span class="line"><span class="symbol">  minReplicas:</span> <span class="number">1</span></span><br><span class="line"><span class="symbol">  scaleTargetRef:</span></span><br><span class="line"><span class="symbol">    apiVersion:</span> apps/v1</span><br><span class="line"><span class="symbol">    kind:</span> Deployment</span><br><span class="line"><span class="symbol">    name:</span> web</span><br><span class="line"><span class="symbol">  targetCPUUtilizationPercentage:</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
+
+<p>scaleTargetRef：表示当前要伸缩对象是谁</p>
+<p>targetCPUUtilizationPercentage：当整体的资源利用率超过50%的时候，会进行扩容。</p>
+<p>开启压测：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># yum install httpd-tools</span></span><br><span class="line"><span class="meta"># ab -n 100000 -c 100  http:<span class="comment">//10.1.206.176/status.php</span></span></span><br></pre></td></tr></table></figure>
+
+<p>10.0.0.147 为ClusterIP。</p>
+<p>检查扩容状态：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># kubectl get hpa</span></span><br><span class="line"><span class="meta"># kubectl top pods</span></span><br><span class="line"><span class="meta"># kubectl get pods</span></span><br></pre></td></tr></table></figure>
+
+<p>关闭压测，过一会检查缩容状态。</p>
+<p><strong>工作流程：hpa -&gt; apiserver -&gt; kube aggregation -&gt; metrics-server -&gt; kubelet(cadvisor)</strong></p>
+<h3 id="4、autoscaling-x2F-v2beta2（多指标）"><a href="#4、autoscaling-x2F-v2beta2（多指标）" class="headerlink" title="4、autoscaling&#x2F;v2beta2（多指标）"></a>4、autoscaling&#x2F;v2beta2（多指标）</h3><p>为满足更多的需求， HPA 还有 autoscaling&#x2F;v2beta1和 autoscaling&#x2F;v2beta2两个版本。</p>
+<p>这两个版本的区别是 autoscaling&#x2F;v1beta1支持了 Resource Metrics（CPU）和 Custom Metrics（应用程序指标），而在 autoscaling&#x2F;v2beta2的版本中额外增加了 External Metrics的支持。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># kubectl get hpa.v2beta2.autoscaling -o yaml &gt; <span class="regexp">/tmp/</span>hpa-v2.yaml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">autoscaling/v2beta2</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">web</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">default</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">scaleTargetRef</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Deployment</span></span><br><span class="line">    <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">web</span></span><br><span class="line">  <span class="attribute">minReplicas</span><span class="punctuation">:</span> <span class="string">1</span></span><br><span class="line">  <span class="attribute">maxReplicas</span><span class="punctuation">:</span> <span class="string">10</span></span><br><span class="line">  <span class="attribute">metrics</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">resource:</span></span><br><span class="line">    <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Resource</span></span><br><span class="line">      <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">cpu</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">averageUtilization</span><span class="punctuation">:</span> <span class="string">60</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Utilization</span></span><br></pre></td></tr></table></figure>
+
+<p>与上面v1版本效果一样，只不过这里格式有所变化。</p>
+<p>v2还支持其他另种类型的度量指标，：Pods和Object。  </p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">type:</span> Pods</span><br><span class="line"><span class="symbol">pods:</span></span><br><span class="line"><span class="symbol">  metric:</span></span><br><span class="line"><span class="symbol">    name:</span> packets-per-second</span><br><span class="line"><span class="symbol">  target:</span></span><br><span class="line"><span class="symbol">    type:</span> AverageValue</span><br><span class="line"><span class="symbol">    averageValue:</span> <span class="number">1</span>k</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">type:</span> Object</span><br><span class="line"><span class="symbol">object:</span></span><br><span class="line"><span class="symbol">  metric:</span></span><br><span class="line"><span class="symbol">    name:</span> requests-per-second</span><br><span class="line"><span class="symbol">  describedObject:</span></span><br><span class="line"><span class="symbol">    apiVersion:</span> networking.k8s.io/v1beta1</span><br><span class="line"><span class="symbol">    kind:</span> Ingress</span><br><span class="line"><span class="symbol">    name:</span> main-route</span><br><span class="line"><span class="symbol">  target:</span></span><br><span class="line"><span class="symbol">    type:</span> Value</span><br><span class="line"><span class="symbol">    value:</span> <span class="number">2</span>k</span><br></pre></td></tr></table></figure>
+
+<p>metrics中的type字段有四种类型的值：Object、Pods、Resource、External。 </p>
+<ul>
+<li><p>Resource：指的是当前伸缩对象下的pod的cpu和memory指标，只支持Utilization和AverageValue类型的目标值。</p>
+</li>
+<li><p>Object：指的是指定k8s内部对象的指标，数据需要第三方adapter提供，只支持Value和AverageValue类型的目标值。</p>
+</li>
+<li><p>Pods：指的是伸缩对象Pods的指标，数据需要第三方的adapter提供，只允许AverageValue类型的目标值。</p>
+</li>
+<li><p>External：指的是k8s外部的指标，数据同样需要第三方的adapter提供，只支持Value和AverageValue类型的目标值。</p>
+</li>
+</ul>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hpa-v2.yaml</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">autoscaling/v2beta2</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">web</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">default</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">scaleTargetRef</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Deployment</span></span><br><span class="line">    <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">web</span></span><br><span class="line">  <span class="attribute">minReplicas</span><span class="punctuation">:</span> <span class="string">1</span></span><br><span class="line">  <span class="attribute">maxReplicas</span><span class="punctuation">:</span> <span class="string">10</span></span><br><span class="line">  <span class="attribute">metrics</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Resource</span></span><br><span class="line">    <span class="attribute">resource</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">cpu</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Utilization</span></span><br><span class="line">        <span class="attribute">averageUtilization</span><span class="punctuation">:</span> <span class="string">50</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Pods</span></span><br><span class="line">    <span class="attribute">pods</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">metric</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">packets-per-second</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">AverageValue</span></span><br><span class="line">        <span class="attribute">averageValue</span><span class="punctuation">:</span> <span class="string">1k</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">type: Object</span></span><br><span class="line">    <span class="attribute">object</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">metric</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">requests-per-second</span></span><br><span class="line">      <span class="attribute">describedObject</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">networking.k8s.io/v1beta1</span></span><br><span class="line">        <span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Ingress</span></span><br><span class="line">        <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">main-route</span></span><br><span class="line">      <span class="attribute">target</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">Value</span></span><br><span class="line">        <span class="attribute">value</span><span class="punctuation">:</span> <span class="string">10k</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>工作流程：hpa -&gt; apiserver -&gt; kube aggregation  -&gt; prometheus-adapter -&gt; prometheus -&gt; pods</strong></p>
+<h2 id="2-6-基于Prometheus自定义指标缩放"><a href="#2-6-基于Prometheus自定义指标缩放" class="headerlink" title="2.6 基于Prometheus自定义指标缩放"></a>2.6 基于Prometheus自定义指标缩放</h2><p>资源指标只包含CPU、内存，一般来说也够了。但如果想根据自定义指标:如请求qps&#x2F;5xx错误数来实现HPA，就需要使用自定义指标了，目前比较成熟的实现是 Prometheus Custom Metrics。自定义指标由Prometheus来提供，再利用k8s-prometheus-adpater聚合到apiserver，实现和核心指标（metric-server)同样的效果。</p>
+<p><img src="/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/hpa-4.png"></p>
+<h3 id="1、部署Prometheus"><a href="#1、部署Prometheus" class="headerlink" title="1、部署Prometheus"></a>1、部署Prometheus</h3><p>Prometheus（普罗米修斯）是一个最初在SoundCloud上构建的监控系统。自2012年成为社区开源项目，拥有非常活跃的开发人员和用户社区。为强调开源及独立维护，Prometheus于2016年加入云原生云计算基金会（CNCF），成为继Kubernetes之后的第二个托管项目。</p>
+<p><strong>Prometheus</strong> <strong>特点：</strong></p>
+<ul>
+<li><p>多维数据模型：由度量名称和键值对标识的时间序列数据</p>
+</li>
+<li><p>PromSQL：一种灵活的查询语言，可以利用多维数据完成复杂的查询</p>
+</li>
+<li><p>不依赖分布式存储，单个服务器节点可直接工作</p>
+</li>
+<li><p>基于HTTP的pull方式采集时间序列数据</p>
+</li>
+<li><p>推送时间序列数据通过PushGateway组件支持</p>
+</li>
+<li><p>通过服务发现或静态配置发现目标</p>
+</li>
+<li><p>多种图形模式及仪表盘支持（grafana）</p>
+</li>
+</ul>
+<p><strong>Prometheus组成及架构：</strong></p>
+<p><img src="/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/prometheus-arch.png"></p>
+<ul>
+<li><p>Prometheus Server：收集指标和存储时间序列数据，并提供查询接口</p>
+</li>
+<li><p>ClientLibrary：客户端库</p>
+</li>
+<li><p>Push Gateway：短期存储指标数据。主要用于临时性的任务</p>
+</li>
+<li><p>Exporters：采集已有的第三方服务监控指标并暴露metrics</p>
+</li>
+<li><p>Alertmanager：告警</p>
+</li>
+<li><p>Web UI：简单的Web控制台</p>
+</li>
+</ul>
+<p><strong>部署：</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cd prometheus-k8s</span></span><br><span class="line"><span class="comment"># kubectl apply -f .</span></span><br><span class="line"><span class="comment"># kubectl get pods -n kube-system</span></span><br><span class="line"><span class="attribute">NAME</span>                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line"><span class="attribute">kube</span>-state-metrics-<span class="number">7</span>f7cfc4f54-xjnk7   <span class="number">2</span>/<span class="number">2</span>     Running   <span class="number">0</span>          <span class="number">10</span>m</span><br><span class="line"><span class="attribute">metrics</span>-server-<span class="number">7</span>dbbcf4c7-<span class="number">8</span>m8x9        <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">10</span>m</span><br><span class="line"><span class="attribute">prometheus</span>-<span class="number">0</span>                          <span class="number">2</span>/<span class="number">2</span>     Running   <span class="number">0</span>          <span class="number">10</span>m</span><br><span class="line"><span class="comment"># kubectl get svc -n kube-system</span></span><br><span class="line"><span class="attribute">NAME</span>                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line"><span class="attribute">kube</span>-state-metrics   ClusterIP   <span class="number">10.1.243.160</span>   &lt;none&gt;        <span class="number">8080</span>/TCP,<span class="number">8081</span>/TCP        <span class="number">3</span>d6h</span><br><span class="line"><span class="attribute">metrics</span>-server       ClusterIP   <span class="number">10.1.56.84</span>     &lt;none&gt;        <span class="number">443</span>/TCP                  <span class="number">13</span>h</span><br><span class="line"><span class="attribute">prometheus</span>           NodePort    <span class="number">10.1.36.8</span>      &lt;none&gt;        <span class="number">9090</span>:<span class="number">30090</span>/TCP           <span class="number">10</span>m</span><br></pre></td></tr></table></figure>
+
+<p>访问Prometheus UI：<a target="_blank" rel="noopener" href="http://ndeip:30090/">http://NdeIP:30090</a></p>
+<h3 id="2、-部署-Custom-Metrics-Adapter"><a href="#2、-部署-Custom-Metrics-Adapter" class="headerlink" title="2、 部署 Custom Metrics Adapter"></a>2、 部署 Custom Metrics Adapter</h3><p>但是prometheus采集到的metrics并不能直接给k8s用，因为两者数据格式不兼容，还需要另外一个组件(k8s-prometheus-adpater)，将prometheus的metrics 数据格式转换成k8s API接口能识别的格式，转换以后，因为是自定义API，所以还需要用Kubernetes aggregator在主APIServer中注册，以便直接通过&#x2F;apis&#x2F;来访问。</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/DirectXMan12/k8s-prometheus-adapter">https://github.com/DirectXMan12/k8s-prometheus-adapter</a> </p>
+<p>该 PrometheusAdapter 有一个稳定的Helm Charts，我们直接使用。</p>
+<p>先准备下helm环境：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="regexp">//g</span>et.helm.sh/helm-v3.<span class="number">0.0</span>-linux-amd64.tar.gz</span><br><span class="line">tar zxvf helm-v3.<span class="number">0.0</span>-linux-amd64.tar.gz </span><br><span class="line">mv linux-amd64<span class="regexp">/helm /u</span>sr<span class="regexp">/bin/</span></span><br><span class="line">helm repo add stable http:<span class="regexp">//mi</span>rror.azure.cn<span class="regexp">/kubernetes/</span>charts</span><br><span class="line">helm repo update</span><br><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
+
+<p>部署prometheus-adapter，指定prometheus地址：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># helm install prometheus-adapter stable/prometheus-adapter --namespace kube-<span class="keyword">system</span> --set prometheus.url=http:<span class="comment">//prometheus.kube-system,prometheus.port=9090</span></span><br><span class="line"># helm list -n kube-<span class="keyword">system</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get pods -n kube-system</span></span><br><span class="line"><span class="attribute">NAME</span>                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line"><span class="attribute">prometheus</span>-adapter-<span class="number">77</span>b7b4dd8b-ktsvx   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">9</span>m</span><br></pre></td></tr></table></figure>
+
+<p>确保适配器注册到APIServer：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># kubectl <span class="keyword">get</span> apiservices |grep <span class="keyword">custom</span> </span><br><span class="line"># kubectl <span class="keyword">get</span> --raw <span class="string">&quot;/apis/custom.metrics.k8s.io/v1beta1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3、基于QPS指标实践"><a href="#3、基于QPS指标实践" class="headerlink" title="3、基于QPS指标实践"></a>3、基于QPS指标实践</h3><p>部署一个应用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">metrics-app</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">metrics-app</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">metrics-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">metrics-app</span></span><br><span class="line">      <span class="attr">annotations:</span></span><br><span class="line">        <span class="attr">prometheus.io/scrape:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">        <span class="attr">prometheus.io/port:</span> <span class="string">&quot;80&quot;</span></span><br><span class="line">        <span class="attr">prometheus.io/path:</span> <span class="string">&quot;/metrics&quot;</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">lizhenliang/metrics-app</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">metrics-app</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">200m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">256Mi</span></span><br><span class="line">        <span class="attr">readinessProbe:</span></span><br><span class="line">          <span class="attr">httpGet:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">initialDelaySeconds:</span> <span class="number">3</span></span><br><span class="line">          <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">        <span class="attr">livenessProbe:</span></span><br><span class="line">          <span class="attr">httpGet:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">initialDelaySeconds:</span> <span class="number">3</span></span><br><span class="line">          <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">metrics-app</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">metrics-app</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">metrics-app</span></span><br></pre></td></tr></table></figure>
+
+<p>该metrics-app暴露了一个Prometheus指标接口，可以通过访问service看到：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># curl 10.1.181.193/metrics</span></span><br><span class="line"><span class="comment"># HELP http_requests_total The amount of requests in total</span></span><br><span class="line"><span class="comment"># TYPE http_requests_total counter</span></span><br><span class="line"><span class="attribute">http_requests_total</span> <span class="number">115006</span></span><br><span class="line"><span class="comment"># HELP http_requests_per_second The amount of requests per second the latest ten seconds</span></span><br><span class="line"><span class="comment"># TYPE http_requests_per_second gauge</span></span><br><span class="line"><span class="attribute">http_requests_per_second</span> <span class="number">0</span>.<span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p>创建HPA策略：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi app-hpa-v2.yml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">autoscaling/v2beta2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">metrics-app-hpa</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">scaleTargetRef:</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">metrics-app</span></span><br><span class="line">  <span class="attr">minReplicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">maxReplicas:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">metrics:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">Pods</span></span><br><span class="line">    <span class="attr">pods:</span></span><br><span class="line">      <span class="attr">metric:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">http_requests_per_second</span></span><br><span class="line">      <span class="attr">target:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">AverageValue</span></span><br><span class="line">        <span class="attr">averageValue:</span> <span class="string">800m</span>   <span class="comment"># 800m 即0.8个/秒</span></span><br></pre></td></tr></table></figure>
+
+<p>这里使用Prometheus提供的指标测试来测试自定义指标（QPS）的自动缩放。</p>
+<h3 id="4、配置适配器收集特定的指标"><a href="#4、配置适配器收集特定的指标" class="headerlink" title="4、配置适配器收集特定的指标"></a>4、配置适配器收集特定的指标</h3><p>当创建好HPA还没结束，因为适配器还不知道你要什么指标（http_requests_per_second），HPA也就获取不到Pod提供指标。</p>
+<p> ConfigMap在default名称空间中编辑prometheus-adapter ，并seriesQuery在该rules: 部分的顶部添加一个新的： </p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl edit cm prometheus-adapter -n kube-system</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">labels</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">app</span><span class="punctuation">:</span> <span class="string">prometheus-adapter</span></span><br><span class="line">    <span class="attribute">chart</span><span class="punctuation">:</span> <span class="string">prometheus-adapter-v0.1.2</span></span><br><span class="line">    <span class="attribute">heritage</span><span class="punctuation">:</span> <span class="string">Tiller</span></span><br><span class="line">    <span class="attribute">release</span><span class="punctuation">:</span> <span class="string">prometheus-adapter</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">prometheus-adapter</span></span><br><span class="line"><span class="attribute">data</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">config.yaml</span><span class="punctuation">:</span> <span class="string">|</span></span><br><span class="line">    <span class="attribute">rules</span><span class="punctuation">:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">seriesQuery: &#x27;http_requests_total&#123;kubernetes_namespace!=&quot;&quot;,kubernetes_pod_name!=&quot;&quot;&#125;&#x27;</span></span><br><span class="line">      <span class="attribute">resources</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">overrides</span><span class="punctuation">:</span></span><br><span class="line">          <span class="attribute">kubernetes_namespace</span><span class="punctuation">:</span> <span class="string">&#123;resource: &quot;namespace&quot;&#125;</span></span><br><span class="line">          <span class="attribute">kubernetes_pod_name</span><span class="punctuation">:</span> <span class="string">&#123;resource: &quot;pod&quot;&#125;</span></span><br><span class="line">      <span class="attribute">name</span><span class="punctuation">:</span></span><br><span class="line">        <span class="attribute">matches</span><span class="punctuation">:</span> <span class="string">&quot;^(.*)_total&quot;</span></span><br><span class="line">        <span class="attribute">as</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;1&#125;_per_second&quot;</span></span><br><span class="line">      <span class="attribute">metricsQuery</span><span class="punctuation">:</span> <span class="string">&#x27;sum(rate(&lt;&lt;.Series&gt;&gt;&#123;&lt;&lt;.LabelMatchers&gt;&gt;&#125;[2m])) by (&lt;&lt;.GroupBy&gt;&gt;)&#x27;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>该规则将http_requests在2分钟的间隔内收集该服务的所有Pod的平均速率。</p>
+<p>测试API：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">get</span> --raw <span class="string">&quot;/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/http_requests_per_second&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>压测：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ab</span> -n <span class="number">100000</span> -c <span class="number">100</span>  http://<span class="number">10.1.181.193</span>/metrics</span><br></pre></td></tr></table></figure>
+
+<p>查看HPA状态：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">get</span> hpa</span><br><span class="line">kubectl <span class="built_in">describe</span> hpa metrics-app-hpa</span><br></pre></td></tr></table></figure>
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><img src="https://k8s-1252881505.cos.ap-beijing.myqcloud.com/k8s-2/hpa-5.png" style="zoom:200%;">
+
+<ol>
+<li>通过&#x2F;metrics收集每个Pod的http_request_total指标；</li>
+<li>prometheus将收集到的信息汇总；</li>
+<li>APIServer定时从Prometheus查询，获取request_per_second的数据；</li>
+<li>HPA定期向APIServer查询以判断是否符合配置的autoscaler规则；</li>
+<li>如果符合autoscaler规则，则修改Deployment的ReplicaSet副本数量进行伸缩。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-%E6%89%A9%E7%BC%A9%E5%AE%B9/" title="k8s-HPA-扩缩容">https://horus-k.github.io/2020/06/10/k8s/k8s-HPA-扩缩容/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/HPA/" rel="tag"># HPA</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/08/EFK/Fluentd%E4%B8%80%E4%BA%9B%E4%BE%8B%E5%AD%90/" rel="prev" title="Fluentd一些例子">
+                  <i class="fa fa-chevron-left"></i> Fluentd一些例子
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/12/docker/docker-daemon%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="next" title="docker-daemon配置文件">
+                  docker-daemon配置文件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

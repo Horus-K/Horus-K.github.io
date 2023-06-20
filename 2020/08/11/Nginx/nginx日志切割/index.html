@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用log-rotatenginx命令和信号控制 nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求 nginx -c nginx配置文件地址 启动 nginx -s reload 重启 nginx -s reopen 重新打开日志 nginx -t 检查配置文件是否正确 kill -INT pid 表示快速关闭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx日志切割">
+<meta property="og:url" content="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="使用log-rotatenginx命令和信号控制 nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求 nginx -c nginx配置文件地址 启动 nginx -s reload 重启 nginx -s reopen 重新打开日志 nginx -t 检查配置文件是否正确 kill -INT pid 表示快速关闭">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-11T08:04:11.000Z">
+<meta property="article:modified_time" content="2020-10-29T12:44:42.443Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/","path":"2020/08/11/Nginx/nginx日志切割/","title":"nginx日志切割"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>nginx日志切割 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="nginx日志切割 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          nginx日志切割
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
+<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
+<li>nginx -c nginx配置文件地址 启动</li>
+<li>nginx -s reload 重启</li>
+<li>nginx -s reopen 重新打开日志</li>
+<li>nginx -t 检查配置文件是否正确</li>
+<li>kill -INT pid 表示快速关闭</li>
+<li>kill -HUP pid表示重启</li>
+<li>通过信号控制的方式实现和命令相同的功能</li>
+</ol>
+<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3><span id="more"></span>
+
+<table>
+<thead>
+<tr>
+<th>变量名称</th>
+<th>变量描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$arg_PARAMETER</td>
+<td>客户端GET请求中PARAMETER 字段的值</td>
+</tr>
+<tr>
+<td>$args</td>
+<td>客户端请求中的参数</td>
+</tr>
+<tr>
+<td>$binary_remote_addr</td>
+<td>远程地址的二进制表示</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>已发送的消息体字节数</td>
+</tr>
+<tr>
+<td>$content_length</td>
+<td>HTTP请求信息中content-length的字段</td>
+</tr>
+<tr>
+<td>$content_type</td>
+<td>请求信息中content-type字段</td>
+</tr>
+<tr>
+<td>$cookie_COOKIE</td>
+<td>客户端请求中COOKIE头域的值</td>
+</tr>
+<tr>
+<td>$document_root</td>
+<td>针对当前请求的根路径设置值</td>
+</tr>
+<tr>
+<td>$document_uri</td>
+<td>与$uri相同</td>
+</tr>
+<tr>
+<td>$host</td>
+<td>请求信息中的host头域，如果请求中没有Host行，则等于设置的服务器名</td>
+</tr>
+<tr>
+<td>$http_HEADER</td>
+<td>HTTP请求信息里的HEADER地段</td>
+</tr>
+<tr>
+<td>$http_host</td>
+<td>与$host相同，但是如果请求信息中没有host行，则可能不同客户端cookie信息</td>
+</tr>
+<tr>
+<td>$http_cookie</td>
+<td>客户端cookie信息</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>客户端是从哪一个地址跳转过来的</td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>客户端代理信息，也就是你客户端浏览器</td>
+</tr>
+<tr>
+<td>$http_via</td>
+<td>最后一个访问服务器的IP</td>
+</tr>
+<tr>
+<td>$http_x_forwarded_for</td>
+<td>相当于访问网路访问的路径</td>
+</tr>
+<tr>
+<td>$is_args</td>
+<td>如果有args的值，则等于”?”，否则为空</td>
+</tr>
+<tr>
+<td>$limit_rate</td>
+<td>对连接速率的限制</td>
+</tr>
+<tr>
+<td>$nginx_version</td>
+<td>当前Nginx的版本</td>
+</tr>
+<tr>
+<td>$pid</td>
+<td>当前Nginx服务器的进程的进程ID</td>
+</tr>
+<tr>
+<td>$query_string</td>
+<td>与$args相同</td>
+</tr>
+<tr>
+<td>$remote_addr</td>
+<td>客户端IP地址</td>
+</tr>
+<tr>
+<td>$remote_port</td>
+<td>客户端的端口</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>客户端的用户名，用于 auth basic module验证</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>客户端请求</td>
+</tr>
+<tr>
+<td>$request_body</td>
+<td>客户端发送的报文体</td>
+</tr>
+<tr>
+<td>$request_body_file</td>
+<td>发送后端服务器的本地临时缓存文件的名称</td>
+</tr>
+<tr>
+<td>$request_filename</td>
+<td>当前请求的文件路径名，由root或alias指令与URI请求生成</td>
+</tr>
+<tr>
+<td>$request_method</td>
+<td>请求后端数据的方法，例如”GET”,”POST”</td>
+</tr>
+<tr>
+<td>$request_uri</td>
+<td>请求的URI，带参数，不包含主机名</td>
+</tr>
+<tr>
+<td>$scheme</td>
+<td>所用的协议，如http或者HTTPS，比如rewrite^(.+)$$scheme:&#x2F;&#x2F;mysite.name$redirect</td>
+</tr>
+<tr>
+<td>$sent_http_cache_control</td>
+<td>对应http请求头中的Cache-Control，需要打开chrome浏览器，右键检查，选中network，点中其中一个请求的资源</td>
+</tr>
+<tr>
+<td>$sent_http_connection</td>
+<td>对应http请求中的Connection</td>
+</tr>
+<tr>
+<td>$sent_http_content_type</td>
+<td>对应http请求中的Content-Type</td>
+</tr>
+<tr>
+<td>$sent_last_modified</td>
+<td>对应请求中的Last-Modified</td>
+</tr>
+<tr>
+<td>$server_addr</td>
+<td>服务端的地址</td>
+</tr>
+<tr>
+<td>$server_name</td>
+<td>请求到达的服务器名</td>
+</tr>
+<tr>
+<td>$server_port</td>
+<td>请求到达服务器端口号</td>
+</tr>
+<tr>
+<td>$server_protocol</td>
+<td>请求协议的版本号，HTTP1.0&#x2F;HTTP1.1</td>
+</tr>
+<tr>
+<td>$uri</td>
+<td>请求的不带请求参数的URI，可能和最初的值有不同，比如经过重定向之类的</td>
+</tr>
+</tbody></table>
+<h3 id="定义日志轮滚策略"><a href="#定义日志轮滚策略" class="headerlink" title="定义日志轮滚策略"></a>定义日志轮滚策略</h3><p>vim nginx-log-rotate</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/Data/apps/nginx/logs/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    nocompress</span><br><span class="line">    daily</span><br><span class="line">    copytruncate</span><br><span class="line">    create</span><br><span class="line">    notifempty</span><br><span class="line">    rotate 7</span><br><span class="line">    olddir /Data/apps/nginx/logs</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/kill -HUP `<span class="built_in">cat</span> /Data/apps/nginx/sbin/nginx.pid 2&gt; /dev/null` 2&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>&#x2F;data&#x2F;weblogs&#x2F;*.log使用通配符时，&#x2F;data&#x2F;weblogs&#x2F;目录下的所有匹配到的日志文件都将切割。如果要切割特定日志文件，就指定到该文件。</li>
+</ul>
+<h3 id="设置计划任务"><a href="#设置计划任务" class="headerlink" title="设置计划任务"></a>设置计划任务</h3><p>vim &#x2F;etc&#x2F;crontab</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">59 23 * * * root ( /usr/sbin/logrotate -f /PATH/TO/nginx-log-rotate)</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用脚本"><a href="#使用脚本" class="headerlink" title="使用脚本"></a>使用脚本</h1><h4 id="参数和执行流程说明"><a href="#参数和执行流程说明" class="headerlink" title="参数和执行流程说明"></a>参数和执行流程说明</h4><figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">复制log_format main <span class="string">&#x27;<span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>:<span class="variable">$minutes</span>:<span class="variable">$seconds</span>|<span class="variable">$request_method</span>|<span class="variable">$request_uri</span>|<span class="variable">$http_host</span>|<span class="variable">$server_name</span>|<span class="variable">$status</span>|<span class="variable">$request_time</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_x_forwarded_for</span>|<span class="variable">$http_referer</span>|<span class="variable">$http_user_agent</span>&#x27;</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">main	表示给当前格式的命名</span><br><span class="line"><span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>:<span class="variable">$minutes</span>:<span class="variable">$seconds</span>	使用自己定义的变量</span><br><span class="line"><span class="variable">$request_method</span>		请求方法,比如GET或者POST</span><br><span class="line"><span class="variable">$request_uri</span>		请求URI</span><br><span class="line"><span class="variable">$http_host</span>		请求信息中的host</span><br><span class="line"><span class="variable">$server_name</span>		实际nginx匹配到的host(因为一个server可以有多个<span class="keyword">name</span>,这个时候貌似输出的是第一个<span class="keyword">name</span>,所以多个的时候可能会和<span class="variable">$http_host</span>不一致)</span><br><span class="line"><span class="variable">$status</span>			返回的http状态码</span><br><span class="line"><span class="variable">$request_time</span>		请求所花费的时间</span><br><span class="line"><span class="variable">$remote_addr</span>		正常请求中的客户端ip地址,但是如果经过反向代理,这个时候是<span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="variable">$http_x_forwarded_for</span>	如果经过反向代理,这个字段可以拿到原本的ip地址</span><br><span class="line"><span class="variable">$http_referer</span>		来源地址,如果是通过其他网页来源访问到的,这里可以看到</span><br><span class="line"><span class="variable">$http_user_agent</span>	浏览器请求头</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在说明一下时间格式</span><br><span class="line">nginx日志有默认两种时间格式可以选择(目前只查询到这两个)</span><br><span class="line"><span class="variable">$time_local</span></span><br><span class="line">输出格式: <span class="number">01</span>/Jul/<span class="number">2020</span>:<span class="number">10</span>:<span class="number">56</span>:<span class="number">37</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$time_iso8601</span></span><br><span class="line"><span class="number">2020</span>-<span class="number">07</span>-<span class="number">01</span>T11:<span class="number">16</span>:<span class="number">35</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line"></span><br><span class="line">但是上面两种都不是我们想要的,我们想要的是这种格式</span><br><span class="line">yyyy-MM-dd HH:mm:ss</span><br><span class="line"><span class="number">2020</span>-<span class="number">07</span>-<span class="number">01</span> <span class="number">11</span>:<span class="number">21</span>:<span class="number">00</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">所以需要我们对日志进行设置</span><br><span class="line">nginx中的变量都是全局变量,但是只会对当前共享</span><br><span class="line">所以需要在每一个server中定义出对应的变量,这样在每次日志记录的时候就可以使用这些变量了</span><br><span class="line">如果觉得这种方法太麻烦,也可以使用自编译的nginx或者openresty,这样可以直接通过lua解决</span><br><span class="line">这个问题,也可以在源代码中修改格式,因为我们这边是通过yum安装的,同时为了通用性,就选择这</span><br><span class="line">种添加变量的方式解决</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">如果觉得这段代码稍微有点长,不愿意接受</span><br><span class="line">那么可以单独写一个配置文件,然后使用include的方式倒入</span><br></pre></td></tr></table></figure>
+
+<h3 id="按照日期存放"><a href="#按照日期存放" class="headerlink" title="按照日期存放"></a>按照日期存放</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自定义格式</span></span><br><span class="line">log_format main <span class="string">&#x27;$year-$month-$day $hour:$minutes:$seconds|$request_method|$request_uri|$http_host|$server_name|$status|$request_time|$remote_addr|$http_x_forwarded_for|$http_referer|$http_user_agent&#x27;</span>;</span><br><span class="line"><span class="comment">#必须在server里添加自定义变量</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="按天分割日志"><a href="#按天分割日志" class="headerlink" title="按天分割日志"></a>按天分割日志</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">复制</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$time_iso8601</span> ~ <span class="string">&quot;^(\d&#123;4&#125;)-(\d&#123;2&#125;)-(\d&#123;2&#125;)&quot;</span>) &#123;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$year</span> <span class="variable">$1</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$month</span> <span class="variable">$2</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$day</span> <span class="variable">$3</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$hour</span> <span class="variable">$4</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$minutes</span> <span class="variable">$5</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$seconds</span> <span class="variable">$6</span>;</span><br><span class="line">&#125;</span><br><span class="line"> access_log  /var/logs/nginx/access/$server_name_<span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-access.log  main;</span><br></pre></td></tr></table></figure>
+
+<h4 id="按小时、分、秒分割"><a href="#按小时、分、秒分割" class="headerlink" title="按小时、分、秒分割"></a>按小时、分、秒分割</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">复制<span class="keyword">if</span> (<span class="variable">$time_iso8601</span> ~ <span class="string">&quot;^(\d&#123;4&#125;)-(\d&#123;2&#125;)-(\d&#123;2&#125;)T(\d&#123;2&#125;):(\d&#123;2&#125;):(\d&#123;2&#125;)&quot;</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$year</span> <span class="variable">$1</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$month</span> <span class="variable">$2</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$day</span> <span class="variable">$3</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$hour</span> <span class="variable">$4</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$minutes</span> <span class="variable">$5</span>;</span><br><span class="line">    <span class="built_in">set</span> <span class="variable">$seconds</span> <span class="variable">$6</span>;</span><br><span class="line">&#125;</span><br><span class="line">access_log  /var/logs/xxxx/access/xxxxx_xx_access_<span class="variable">$year</span>-<span class="variable">$month</span>-<span class="variable">$day</span>-<span class="variable">$hour</span>-<span class="variable">$minutes</span>-<span class="variable">$seconds</span>.<span class="built_in">log</span>  main;</span><br></pre></td></tr></table></figure>
+
+<h3 id="不记录日志"><a href="#不记录日志" class="headerlink" title="不记录日志"></a>不记录日志</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">复制<span class="comment"># 对不需要记录访问日志的server添加这两个代码可以关闭日志记录</span></span><br><span class="line">server &#123;</span><br><span class="line">	....</span><br><span class="line">	<span class="comment">#不记录访问日志</span></span><br><span class="line">	access_log  off;</span><br><span class="line">	<span class="comment">#不记录错误日志</span></span><br><span class="line">	error_log /dev/null;</span><br><span class="line">	....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他注意事项"><a href="#其他注意事项" class="headerlink" title="其他注意事项"></a>其他注意事项</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">复制1. access日志修改目录后,记得要把访问权限给nginx的对应用户</span><br><span class="line">        <span class="built_in">chown</span> nginx:nginx /usr/local/nginx/logs/acces</span><br><span class="line">	或者</span><br><span class="line">	<span class="built_in">chmod</span> -R 777 /usr/local/nginx/logs/acceserror</span><br><span class="line">2. 错误日志不能使用日期格式,这个没有办法</span><br><span class="line">3. 错误日志虽然不能修改日期格式,但是可以修改文件路径</span><br><span class="line">4. 需要在http下面添加root的对应路径,或者server下面添加,否则比如反向代理这种接口会无法写出日志</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" title="nginx日志切割">https://horus-k.github.io/2020/08/11/Nginx/nginx日志切割/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" rel="prev" title="阿里云ASM服务网格">
+                  <i class="fa fa-chevron-left"></i> 阿里云ASM服务网格
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/08/18/k8s/pod%E4%BC%98%E9%9B%85%E5%85%B3%E9%97%AD-%E6%97%A0%E5%AE%95%E6%9C%BA-eureka%E6%B3%A8%E5%86%8C%E6%91%98%E5%8F%96/" rel="next" title="pod优雅关闭+无宕机+eureka注册摘取">
+                  pod优雅关闭+无宕机+eureka注册摘取 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

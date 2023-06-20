@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="YAML中多行字符串的配置方法有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：  文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。 文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。  简单的说，就是：  配置与显示，都严格按段落展示 配置按段落，显示不需要按段落  假设，我们需要配置这样一段文字： 1I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yaml文本换行语法">
+<meta property="og:url" content="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="YAML中多行字符串的配置方法有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：  文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。 文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。  简单的说，就是：  配置与显示，都严格按段落展示 配置按段落，显示不需要按段落  假设，我们需要配置这样一段文字： 1I">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-30T05:57:07.000Z">
+<meta property="article:modified_time" content="2020-08-01T13:20:14.416Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="yaml">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/","path":"2020/07/30/yaml文本换行语法/","title":"yaml文本换行语法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>yaml文本换行语法 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="yaml文本换行语法 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          yaml文本换行语法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-30 13:57:07" itemprop="dateCreated datePublished" datetime="2020-07-30T13:57:07+08:00">2020-07-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-08-01 21:20:14" itemprop="dateModified" datetime="2020-08-01T21:20:14+08:00">2020-08-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="YAML中多行字符串的配置方法"><a href="#YAML中多行字符串的配置方法" class="headerlink" title="YAML中多行字符串的配置方法"></a>YAML中多行字符串的配置方法</h1><p>有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：</p>
+<ol>
+<li>文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。</li>
+<li>文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。</li>
+</ol>
+<p>简单的说，就是：</p>
+<ol>
+<li>配置与显示，都严格按段落展示</li>
+<li>配置按段落，显示不需要按段落</li>
+</ol>
+<p>假设，我们需要配置这样一段文字：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>下面，就针对上面的两种情况来看看可以怎么来实现：</p>
+<span id="more"></span>
+
+<h2 id="配置与显示，都严格按段落展示"><a href="#配置与显示，都严格按段落展示" class="headerlink" title="配置与显示，都严格按段落展示"></a>配置与显示，都严格按段落展示</h2><p>这个需求下，我们希望配置和显示都按句子换行，就是这样：</p>
+<figure class="highlight mercury"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I am a coder.</span><br><span class="line">My blog <span class="keyword">is</span> didispace.com.</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法一：直接使用-n来换行"><a href="#方法一：直接使用-n来换行" class="headerlink" title="方法一：直接使用\n来换行"></a>方法一：直接使用<code>\n</code>来换行</h3><p>这样写：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">string:</span> <span class="string">&quot;I am a coder.\n\</span></span><br><span class="line"><span class="string">         My blog is didispace.com.&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>最终输出：</p>
+<figure class="highlight mercury"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I am a coder.</span><br><span class="line">My blog <span class="keyword">is</span> didispace.com.</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>\n</code>在显示的时候换行，通过配置行末的<code>\</code>让这个字符串换行继续写（这个必须有，如果没有第二行行首会多一个空格）。</p>
+<p><strong>注意</strong>：这里必须使用双引号来定义字符串，不能用单引号。因为单引号是不支持<code>\n</code>换行的。</p>
+<h3 id="方法二：使用｜、｜-、｜"><a href="#方法二：使用｜、｜-、｜" class="headerlink" title="方法二：使用｜、｜+、｜-"></a>方法二：使用<code>｜</code>、<code>｜+</code>、<code>｜-</code></h3><p>在方法一种，其实我们在文字中加入了几个转义符号，其实对于阅读并不方便。在方法二中，将介绍更适合阅读的几种形式：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span>: |</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br><span class="line"></span><br><span class="line"><span class="built_in">string</span>: |+</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br><span class="line"></span><br><span class="line"><span class="built_in">string</span>: |-</span><br><span class="line">  I <span class="keyword">am</span> <span class="keyword">a</span> coder.</span><br><span class="line">  My blog <span class="keyword">is</span> didispace.<span class="keyword">com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>如上面一共有三种配置都会自动按配置中所写的换行来换行，但是在文末会有一些区别，有的会增加一个空行，有的不会，有的会新增两个空行，具体说明如下：</p>
+<ul>
+<li><code>|</code>：文中自动换行 + 文末新增一空行</li>
+<li><code>|+</code>：文中自动换行 + 文末新增两空行</li>
+<li><code>|-</code>：文中自动换行 + 文末不新增行</li>
+</ul>
+<h2 id="配置按段落，显示不需要按段落"><a href="#配置按段落，显示不需要按段落" class="headerlink" title="配置按段落，显示不需要按段落"></a>配置按段落，显示不需要按段落</h2><p>这个需求下，我们希望配置里是按行写的，但是显示是如下面这样在一行的：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法一：直接在字符串中换行写"><a href="#方法一：直接在字符串中换行写" class="headerlink" title="方法一：直接在字符串中换行写"></a>方法一：直接在字符串中换行写</h3><p>最粗暴的写法，反正不用换行，那就直接写了：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">string:</span> <span class="comment">&#x27;I am a coder.</span></span><br><span class="line">         My blog <span class="built_in">is</span> didispace.com.<span class="comment">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里不论用双引号还是单引号都是可以的。因为不存在需要转移的内容，所以总体还算清晰。</p>
+<h3 id="方法二：使用-gt-、-gt-、-gt"><a href="#方法二：使用-gt-、-gt-、-gt" class="headerlink" title="方法二：使用&gt;、&gt;+、&gt;-"></a>方法二：使用<code>&gt;</code>、<code>&gt;+</code>、<code>&gt;-</code></h3><p>比较好的表述方式就是使用<code>&gt;</code>、<code>&gt;+</code>、<code>&gt;-</code>来定义，比如下面这几种：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">string:</span> <span class="string">&gt;</span></span><br><span class="line"><span class="string">  I am a coder.</span></span><br><span class="line"><span class="string">  My blog is didispace.com.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="attr">string:</span> <span class="string">&gt;+</span></span><br><span class="line"><span class="string">  I am a coder.</span></span><br><span class="line"><span class="string">  My blog is didispace.com.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="attr">string:</span> <span class="string">&gt;-</span></span><br><span class="line"><span class="string">  I am a coder.</span></span><br><span class="line"><span class="string">  My blog is didispace.com.</span></span><br></pre></td></tr></table></figure>
+
+<p>这三种都不会对配置中的换行进行实际换行，但是依然在文末的处理会有一些小区别，具体如下：</p>
+<ul>
+<li><code>&gt;</code>：文中不自动换行 + 文末新增一空行</li>
+<li><code>&gt;+</code>：文中不自动换行 + 文末新增两空行</li>
+<li><code>&gt;-</code>：文中不自动换行 + 文末不新增行</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/" title="yaml文本换行语法">https://horus-k.github.io/2020/07/30/yaml文本换行语法/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/yaml/" rel="tag"># yaml</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/24/Linux/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/" rel="prev" title="linux配置代理">
+                  <i class="fa fa-chevron-left"></i> linux配置代理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/" rel="next" title="ingress强制https">
+                  ingress强制https <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

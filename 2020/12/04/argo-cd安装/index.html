@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.1&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:wget">
+<meta property="og:type" content="article">
+<meta property="og:title" content="argo cd安装">
+<meta property="og:url" content="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="官方仓库： https:&#x2F;&#x2F;github.com&#x2F;argoproj&#x2F;argo-cd 安装12345678kubectl create namespace argocd#Non-HA:wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;argoproj&#x2F;argo-cd&#x2F;v1.8.1&#x2F;manifests&#x2F;install.yaml -O argo-cd.yaml#HA:wget">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-04T07:23:39.000Z">
+<meta property="article:modified_time" content="2020-12-24T11:44:07.380Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="cicd">
+<meta property="article:tag" content="argo">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/","path":"2020/12/04/argo-cd安装/","title":"argo cd安装"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>argo cd安装 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="argo cd安装 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          argo cd安装
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-04 15:23:39" itemprop="dateCreated datePublished" datetime="2020-12-04T15:23:39+08:00">2020-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-12-24 19:44:07" itemprop="dateModified" datetime="2020-12-24T19:44:07+08:00">2020-12-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>官方仓库：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/argoproj/argo-cd">https://github.com/argoproj/argo-cd</a></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace argocd</span><br><span class="line"><span class="comment">#Non-HA:</span></span><br><span class="line">wget https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/argoproj/</span>argo-cd<span class="regexp">/v1.8.1/m</span>anifests/install.yaml -O argo-cd.yaml</span><br><span class="line"><span class="comment">#HA:</span></span><br><span class="line">wget https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/argoproj/</span>argo-cd<span class="regexp">/v1.8.1/m</span>anifests<span class="regexp">/ha/i</span>nstall.yaml -O argo-cd.yaml</span><br><span class="line"><span class="comment">#替换镜像</span></span><br><span class="line">sed -i -e <span class="string">&#x27;s?image: argoproj?image: dockerhub.azk8s.cn/argoproj?g&#x27;</span>  -e <span class="string">&#x27;s?quay.io?quay.azk8s.cn?g&#x27;</span> -e <span class="string">&#x27;s?k8s.gcr.io?gcr.azk8s.cn/google-containers?g&#x27;</span>  argo-cd.yaml</span><br><span class="line">kubectl apply -n argocd -f argo-cd.yaml</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="配置访问入口"><a href="#配置访问入口" class="headerlink" title="配置访问入口"></a>配置访问入口</h3><p>Argo CD既运行gRPC服务器（由CLI使用），又运行HTTP &#x2F; HTTPS服务器（由UI使用）。argocd-server服务对象在以下端口上公开了这两种协议：</p>
+<ul>
+<li>443-gRPC &#x2F; HTTPS</li>
+<li>80-HTTP（重定向到HTTPS</li>
+</ul>
+<blockquote>
+<p>具体看官方：<a target="_blank" rel="noopener" href="https://argoproj.github.io/argo-cd/operator-manual/ingress/">https://argoproj.github.io/argo-cd/operator-manual/ingress/</a></p>
+</blockquote>
+<h4 id="选项1：SSL传递"><a href="#选项1：SSL传递" class="headerlink" title="选项1：SSL传递"></a>选项1：SSL传递</h4><p>Argo CD在同一端口（443）上提供多种协议（gRPC &#x2F; HTTPS），这在尝试为argocd-service定义单个nginx入口对象和规则时提出了挑战，因为<code>nginx.ingress.kubernetes.io/backend-protocol</code> <a target="_blank" rel="noopener" href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#backend-protocol">注释</a> 仅接受后端的单个值协议（例如HTTP，HTTPS，GRPC，GRPCS）。</p>
+<p><strong>带证书管理器的SSL传递的加密</strong></p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">cat &gt;   argocd-ingress.yaml &lt;&lt;-EOF</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">argocd-server-ingress</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">argocd</span></span><br><span class="line">  <span class="attribute">annotations</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">cert-manager.io/cluster-issuer</span><span class="punctuation">:</span> <span class="string">letsencrypt-prod</span></span><br><span class="line">    <span class="attribute">kubernetes.io/ingress.class</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attribute">kubernetes.io/tls-acme</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">    <span class="attribute">nginx.ingress.kubernetes.io/ssl-passthrough</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">    <span class="comment"># If you encounter a redirect loop or are getting a 307 response code </span></span><br><span class="line">    <span class="comment"># then you need to force the nginx ingress to connect to the backend using HTTPS.</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># nginx.ingress.kubernetes.io/backend-protocol: &quot;HTTPS&quot;</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">rules</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">host: argocd.example.com</span></span><br><span class="line">    <span class="attribute">http</span><span class="punctuation">:</span></span><br><span class="line">      <span class="attribute">paths</span><span class="punctuation">:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">backend:</span></span><br><span class="line">          <span class="attribute">serviceName</span><span class="punctuation">:</span> <span class="string">argocd-server</span></span><br><span class="line">          <span class="attribute">servicePort</span><span class="punctuation">:</span> <span class="string">https</span></span><br><span class="line">        <span class="attribute">path</span><span class="punctuation">:</span> <span class="string">/</span></span><br><span class="line">  <span class="attribute">tls</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">argocd.example.com</span></span><br><span class="line">    <span class="attribute">secretName</span><span class="punctuation">:</span> <span class="string">argocd-secret # 请勿更改，这是由Argo CD提供的</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">#运行</span></span><br><span class="line">$ kubectl apply -f argocd-ingress.yaml </span><br></pre></td></tr></table></figure>
+
+<p>在nginx-ingress-controller增加<code>--enable-ssl-passthrough</code></p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl edit DaemonSet/nginx-ingress-controller -n ingress-nginx</span><br><span class="line"></span><br><span class="line"><span class="comment">###</span></span><br><span class="line">containers:</span><br><span class="line">      - args:</span><br><span class="line">        - <span class="string">/nginx-ingress-controller</span></span><br><span class="line">        - <span class="params">--configmap=</span>$<span class="params">(POD_NAMESPACE)</span><span class="string">/nginx-configuration</span></span><br><span class="line">        - <span class="params">--tcp-services-configmap=</span>$<span class="params">(POD_NAMESPACE)</span><span class="string">/tcp-services</span></span><br><span class="line">        - <span class="params">--udp-services-configmap=</span>$<span class="params">(POD_NAMESPACE)</span><span class="string">/udp-services</span></span><br><span class="line">        - <span class="params">--publish-service=</span>$<span class="params">(POD_NAMESPACE)</span><span class="string">/ingress-nginx</span></span><br><span class="line">        - <span class="params">--annotations-prefix=nginx</span>.ingress.kubernetes.io</span><br><span class="line">        - <span class="params">--enable-ssl-passthrough</span> <span class="comment">#在args追加</span></span><br><span class="line">        env:</span><br><span class="line">        <span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>然后直接访问<a target="_blank" rel="noopener" href="https://argocd.example.com/">https://argocd.example.com</a>	</p>
+<h2 id="修改-admin-密码的方式"><a href="#修改-admin-密码的方式" class="headerlink" title="修改 admin 密码的方式"></a>修改 admin 密码的方式</h2><p>密码要先经过 Bcrypt 加密, 密码为 A123456</p>
+<figure class="highlight scilab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n argocd patch secret argocd-secret   -p <span class="string">&#x27;&#123;&quot;</span>stringData<span class="string">&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;</span>admin.password<span class="string">&quot;: &quot;</span>$<span class="number">2</span>a$<span class="number">10</span>$<span class="number">88</span>NHgAw3gSbPmMGvPH8wl.E.wh/JpxF6LpAkN.<span class="number">3</span>YzI8vCKqz92rpi<span class="string">&quot;,</span></span><br><span class="line"><span class="string">      &quot;</span>admin.passwordMtime<span class="string">&quot;: &quot;</span><span class="string">&#x27;$(date +%FT%T%Z)&#x27;</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">    &#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="范例应用"><a href="#范例应用" class="headerlink" title="范例应用"></a>范例应用</h2><p><a target="_blank" rel="noopener" href="https://github.com/argoproj/argocd-example-apps">https://github.com/argoproj/argocd-example-apps</a></p>
+<h2 id="下载Argo-CD-CLI"><a href="#下载Argo-CD-CLI" class="headerlink" title="下载Argo CD CLI"></a>下载Argo CD CLI</h2><ul>
+<li>Linux安装</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VERSION=$(curl --silent &quot;https://api.github.com/repos/argoproj/argo-cd/releases/latest&quot; | grep &#x27;&quot;tag_name&quot;&#x27; | sed -E &#x27;s/.*&quot;([^&quot;]+)&quot;.*/\1/&#x27;)</span><br><span class="line">curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64</span><br><span class="line">chmod +x /usr/local/bin/argocd</span><br></pre></td></tr></table></figure>
+
+<p>可以参考：<a target="_blank" rel="noopener" href="https://argoproj.github.io/argo-cd/cli_installation/">https://argoproj.github.io/argo-cd/cli_installation/</a></p>
+<h2 id="通过CLI登录Argo"><a href="#通过CLI登录Argo" class="headerlink" title="通过CLI登录Argo"></a>通过CLI登录Argo</h2><p>初始密码将自动生成为Argo CD API服务器的容器名称。可以使用以下命令进行检索：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@master</span> <span class="string">~</span>]<span class="comment"># kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d&#x27;/&#x27; -f 2</span></span><br><span class="line"><span class="string">argocd-server-656f9b895b-bfjvw</span></span><br></pre></td></tr></table></figure>
+
+<p>使用用户名admin和上面的密码，登录到Argo CD的IP或主机名：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd login <span class="tag">&lt;<span class="name">ARGOCD_SERVER</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用以下命令更改密码：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">argocd account <span class="keyword">update</span>-<span class="keyword">password</span></span><br><span class="line"># 登录</span><br><span class="line">[root@master ~]# argocd login localhost:<span class="number">8080</span></span><br><span class="line">WARNING: server certificate had error: x509: certificate signed <span class="keyword">by</span> <span class="keyword">unknown</span> authority. Proceed insecurely (y/n)? yes</span><br><span class="line">Username: admin</span><br><span class="line"><span class="keyword">Password</span>: </span><br><span class="line"><span class="string">&#x27;admin&#x27;</span> logged <span class="keyword">in</span> successfully</span><br><span class="line">Context <span class="string">&#x27;localhost:8080&#x27;</span> updated</span><br><span class="line"># 修改密码</span><br><span class="line">[root@master ~]# argocd account <span class="keyword">update</span>-<span class="keyword">password</span></span><br><span class="line">*** Enter current <span class="keyword">password</span>: </span><br><span class="line">*** Enter new <span class="keyword">password</span>: </span><br><span class="line">*** Confirm new <span class="keyword">password</span>: </span><br><span class="line"><span class="keyword">Password</span> updated</span><br><span class="line">Context <span class="string">&#x27;localhost:8080&#x27;</span> updated</span><br></pre></td></tr></table></figure>
+
+<h2 id="注册集群"><a href="#注册集群" class="headerlink" title="注册集群"></a>注册集群</h2><p>此步骤将群集的凭据注册到Argo CD，仅在部署到外部群集时才需要。在内部进行部署（到与Argo CD运行所在的同一集群）时，应将https：<a target="_blank" rel="noopener" href="https://kubernetes.default.svc用作应用程序的k8s/">&#x2F;&#x2F;kubernetes.default.svc用作应用程序的K8s</a> API服务器地址。</p>
+<p>首先列出当前kubconfig中的所有集群上下文：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd <span class="keyword">cluster</span> <span class="keyword">add</span> <span class="comment">--kubeconfig=</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的命令将ServiceAccount（argocd-manager）安装到该kubectl上下文的kube-system命名空间中，并将服务帐户绑定到管理员级别的ClusterRole。Argo CD使用此服务帐户令牌执行其管理任务（即部署&#x2F;监视）。</p>
+<p>可以修改argocd-manager-role角色的规则，使其仅具有对一组有限的名称空间，组和种类的创建，更新，修补，删除特权。但是，在群集作用域中，获取，列出，监视特权是Argo CD起作用所必需的。</p>
+<h2 id="通过CLI创建APP"><a href="#通过CLI创建APP" class="headerlink" title="通过CLI创建APP"></a>通过CLI创建APP</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">argocd app create guestbook --repo https:<span class="regexp">//gi</span>thub.com<span class="regexp">/argoproj/</span>argocd-example-apps.git --path guestbook --dest-server https:<span class="regexp">//</span>kubernetes.default.svc --dest-namespace default</span><br></pre></td></tr></table></figure>
+
+<h2 id="同步（部署）应用"><a href="#同步（部署）应用" class="headerlink" title="同步（部署）应用"></a>同步（部署）应用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">argocd app list</span><br><span class="line">argocd app get t1</span><br><span class="line">argocd app <span class="built_in">sync</span> t1</span><br><span class="line">argocd app <span class="built_in">wait</span> t1</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/" title="argo cd安装">https://horus-k.github.io/2020/12/04/argo-cd安装/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/cicd/" rel="tag"># cicd</a>
+              <a href="/tags/argo/" rel="tag"># argo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/03/%E5%9F%BA%E4%BA%8EJenkins%E5%92%8CArgocd%E5%AE%9E%E7%8E%B0CI-CD/" rel="prev" title="基于Jenkins和Argocd实现CI/CD">
+                  <i class="fa fa-chevron-left"></i> 基于Jenkins和Argocd实现CI/CD
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/08/gitlab%E9%83%A8%E7%BD%B2/" rel="next" title="gitlab部署">
+                  gitlab部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="初中级运维工程师：负载均衡：haproxy lvs nginx，调度算法和具体区别 监控服务zabbix：主被动模式和自定义监控项及模板 web服务器：nginx php tomcat apache，动静分离，location，优化配置，apache三种运行模式的区别，tomcat的java选项 数据库：mysql主从 数据备份恢复 读写分离 双主 结合业务与开发拆库拆表 iptables：源地址">
+<meta property="og:type" content="article">
+<meta property="og:title" content="总结">
+<meta property="og:url" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="初中级运维工程师：负载均衡：haproxy lvs nginx，调度算法和具体区别 监控服务zabbix：主被动模式和自定义监控项及模板 web服务器：nginx php tomcat apache，动静分离，location，优化配置，apache三种运行模式的区别，tomcat的java选项 数据库：mysql主从 数据备份恢复 读写分离 双主 结合业务与开发拆库拆表 iptables：源地址">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image002.jpg">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image004.jpg">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image006.jpg">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image008.jpg">
+<meta property="og:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image010.jpg">
+<meta property="article:published_time" content="2020-09-15T02:52:32.000Z">
+<meta property="article:modified_time" content="2020-09-15T03:26:39.396Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/clip_image002.jpg">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/","path":"2020/09/15/总结/","title":"总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>总结 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">264</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="总结 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-15 10:52:32 / 修改时间：11:26:39" itemprop="dateCreated datePublished" datetime="2020-09-15T10:52:32+08:00">2020-09-15</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>45k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>41 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="初中级运维工程师："><a href="#初中级运维工程师：" class="headerlink" title="初中级运维工程师："></a>初中级运维工程师：</h1><p>负载均衡：haproxy lvs nginx，调度算法和具体区别</p>
+<p>监控服务zabbix：主被动模式和自定义监控项及模板</p>
+<p>web服务器：nginx php tomcat apache，动静分离，location，优化配置，apache三种运行模式的区别，tomcat的java选项</p>
+<p>数据库：mysql主从 数据备份恢复 读写分离 双主 结合业务与开发拆库拆表</p>
+<p>iptables：源地址，目标地址转换 端口转换 访问禁止等</p>
+<p>熟练使用jenkins</p>
+<p>nfs等数据共享，实线基于共享存储的动静分离lnmp等web环境</p>
+<h1 id="高级运维工程师："><a href="#高级运维工程师：" class="headerlink" title="高级运维工程师："></a>高级运维工程师：</h1><p>内核参数调优 公有云使用 网络知识 vmware docker  熟练k8s运行各种服务 kvm openstack 熟练shell脚本 微服务，实现业务高并发，稳定性，横向扩容</p>
+<p>gitlab+jenkins：结合或python实现代码自动化部署与回滚</p>
+<p>elk：各种业务日志收集雨分析，展示，故障定位</p>
+<h1 id="架构师："><a href="#架构师：" class="headerlink" title="架构师："></a>架构师：</h1><p>熟练python 微服务 自动化 良好的故障定位及排除能力 安全技术 业务流程异步处理 分布式web集群  弹性扩容 业务自治愈 多数据中心业务管理 </p>
+<span id="more"></span>
+
+<h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><h2 id="Linux里面的常用系统命令"><a href="#Linux里面的常用系统命令" class="headerlink" title="Linux里面的常用系统命令"></a>Linux里面的常用系统命令</h2><p>tcpdump，traceroute，vim，awk，sed，mysqldump</p>
+<h2 id="简要描述Linux的启动过程"><a href="#简要描述Linux的启动过程" class="headerlink" title="简要描述Linux的启动过程"></a>简要描述Linux的启动过程</h2><p>1）开机BIOS自检，加载硬盘。<br> 2）读取MBR,进行MBR引导。<br> 3）grub引导菜单(Boot Loader)。<br> 4）加载内核kernel。<br> 5）启动init进程，依据inittab文件设定运行级别<br> 6）init进程，执行rc.sysinit文件。</p>
+<p>7）启动内核模块，执行不同级别的脚本程序。<br> 8）执行&#x2F;etc&#x2F;rc.d&#x2F;rc.local<br> 9）启动mingetty，进入系统登陆界面。</p>
+<h2 id="计划任务-x2F-etc-x2F-crontab"><a href="#计划任务-x2F-etc-x2F-crontab" class="headerlink" title="计划任务&#x2F;etc&#x2F;crontab"></a>计划任务&#x2F;etc&#x2F;crontab</h2><p>文件格式：</p>
+<p>分钟    小时    天      月      天每星期     命令(命令的绝对路径)</p>
+<h2 id="常用端口号与对应的服务"><a href="#常用端口号与对应的服务" class="headerlink" title="常用端口号与对应的服务"></a>常用端口号与对应的服务</h2><p>21端口主要用于FTP</p>
+<p>21 ftp<br> 22 ssh<br> 23 Telnet </p>
+<p>25端口：25端口为SMTP</p>
+<p>53端口：53端口为DNS</p>
+<p>67、68端口分别是为Bootp服务的Bootstrap Protocol Server（引导程序协议服务端）</p>
+<p>443端口：43端口即网页浏览端口，主要是用于HTTPS服务</p>
+<p>1080端口：1080端口是Socks代理服务使用的端口</p>
+<p>80 http</p>
+<p>8080 tomcat</p>
+<p>3306 数据库</p>
+<p>6379 redis</p>
+<p>11211 memcached</p>
+<p>443 ssl</p>
+<p>2181 zookeeper</p>
+<p>110 pop3</p>
+<h2 id="符号（或软）链接"><a href="#符号（或软）链接" class="headerlink" title="符号（或软）链接"></a>符号（或软）链接</h2><p>1⼀个符号链接指向另⼀个⽂件</p>
+<p>2⼀个符号链接的内容是它引⽤⽂件的名称</p>
+<p>3、可以对⽬录进⾏</p>
+<p>4、可以跨分区</p>
+<p>5、指向的是另⼀个⽂件的路径</p>
+<p>6、其⼤⼩为指向的路径字符串的长度</p>
+<p>7、不增加或减少⽬标⽂件inode的引⽤计数</p>
+<p>硬链接 </p>
+<p>1、创建硬链接会增加额外的记录项以引⽤⽂件 </p>
+<p>2、对应于同⼀⽂件系统上⼀个物理⽂件</p>
+<p>3、每个⽬录引⽤相同的inode号</p>
+<p>4、创建时链接数递增</p>
+<p>5、删除⽂件时： rm命令递减计数的链接 ⽂件要存在，⾄少有⼀个链接数 当链接数为零时，该⽂件被删除</p>
+<p>6、不能跨越驱动器或分区</p>
+<p>Linux中系统有几个运行级别?分别是：6个</p>
+<p>inito:init1:init2:init3:init4:init5:init6:</p>
+<h2 id="什么命令查看硬件使用找态信息？"><a href="#什么命令查看硬件使用找态信息？" class="headerlink" title="什么命令查看硬件使用找态信息？"></a>什么命令查看硬件使用找态信息？</h2><p>Iscpu（查看cpu信息）、</p>
+<p>free-m（查看内存信息）、</p>
+<p>df-h（查看硬盘分区信息）、</p>
+<p>top（还可以动态查看cpu、内存使用情况的信息）</p>
+<p>.&#x2F;proc&#x2F;目录下也可以查看很多硬件信息。</p>
+<h2 id="怎么把脚本添加到系统服务里，即用service来调用，以及如何开机自启动？"><a href="#怎么把脚本添加到系统服务里，即用service来调用，以及如何开机自启动？" class="headerlink" title="怎么把脚本添加到系统服务里，即用service来调用，以及如何开机自启动？"></a>怎么把脚本添加到系统服务里，即用service来调用，以及如何开机自启动？</h2><p>把脚本放到&#x2F;etc&#x2F;init.d目录中，然后chkconfig –add脚本名字，或者给&#x2F;etc&#x2F;rc.d&#x2F;rc.local执行权限，然后把启动命令写进去</p>
+<p>文件系统</p>
+<h2 id="简述Linux文件系统通过i节点把文件的逻辑结构和物理结构转换的工作过程。"><a href="#简述Linux文件系统通过i节点把文件的逻辑结构和物理结构转换的工作过程。" class="headerlink" title="简述Linux文件系统通过i节点把文件的逻辑结构和物理结构转换的工作过程。"></a>简述Linux文件系统通过i节点把文件的逻辑结构和物理结构转换的工作过程。</h2><p>i node节点是一个64字节长的表，表中包含了文件的相关信息，其中有文件的大小、文件所有者、文件的存取许可方式以及文件的类型等重要信息。在i节点表中最重要的内容是磁盘地址表。在磁盘地址表中有13个块号，文件将以块号在磁盘地址表中出现的顺序依次读取相应的块。Linux文件系统通过把i节点和文件名进行 连接，当需要读取该文件时，文件系统在当前目录表中查找该文件名对应的项，由此得到该文件相对应的i节点号，通过该i节点的磁盘地址表把分散存放的文件物理块连接成文件的逻辑结构。</p>
+<h2 id="当文件系统受到破坏时，如何检查和修复系统？"><a href="#当文件系统受到破坏时，如何检查和修复系统？" class="headerlink" title="当文件系统受到破坏时，如何检查和修复系统？"></a>当文件系统受到破坏时，如何检查和修复系统？</h2><p>答：成功修复文件系统的前提是要有两个以上的主文件系统，并保证在修复之前首先却载将被修复的文件</p>
+<p>系统。使用命令fsck对受到破坏的文件系统进行修复。fsck检查文件系统分为5步，每一步检查系统不</p>
+<p>同部分的连接特性并对上一步进行验证和修改。在执行fsck命令时，检查首先从超级块开始，然后是分</p>
+<p>配的磁盘块、路径名、目录的连接性、链接数目以及空闲块链表、i-node。</p>
+<p>某&#x2F;etc&#x2F;fstab文件中的某行如下：&#x2F;</p>
+<p>dev&#x2F;had5&#x2F;mnt&#x2F;dosdata msdos defaults,usrquota 1 2</p>
+<p>答：第一列：将被加载的文件系统名；第二列：该文件系统的安装点；第三列：文件系统的类型；第四列：</p>
+<p>设置参数；第五列：供备份程序确定上次备份距现在的天数；第六列：在系统引导时检测文件系统的顺序。</p>
+<h1 id="Yum"><a href="#Yum" class="headerlink" title="Yum"></a>Yum</h1><h2 id="创建本地光盘yum源："><a href="#创建本地光盘yum源：" class="headerlink" title="创建本地光盘yum源："></a>创建本地光盘yum源：</h2><p>答：1、挂载本地光盘；mount&#x2F;dev&#x2F;sr0&#x2F;mnt；（目录下有repodata）</p>
+<p>2、清空&#x2F;etc&#x2F;yum.repos.d&#x2F;的自带 文件；</p>
+<p>3、编辑base.repo文件：</p>
+<p>4、清除yum缓存，重读repolist列表：</p>
+<h1 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h1><h2 id="将本地80端口的请求转发到8080端口，当前主机IP为192-168-16-8"><a href="#将本地80端口的请求转发到8080端口，当前主机IP为192-168-16-8" class="headerlink" title="将本地80端口的请求转发到8080端口，当前主机IP为192.168.16.8"></a>将本地80端口的请求转发到8080端口，当前主机IP为192.168.16.8</h2><p>iptables -t nat -A PREROUTING -d 192.168.1.80 -p tcp –dport 80 -j DNAT –to-destination 192.168.1.80:8080</p>
+<h1 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h1><h2 id="路由的查询及添加"><a href="#路由的查询及添加" class="headerlink" title="路由的查询及添加"></a>路由的查询及添加</h2><p>两种方法：</p>
+<p>1.通过route命令添加路由，但是机器重启或者网卡重启后就会失效</p>
+<p>#添加到主机的路由</p>
+<p>route add -host 127.0.0.1 dev eth0</p>
+<p>route add -host 172.20.15.137 gw 172.20.0.1</p>
+<p>#添加到网络的路由</p>
+<p>route add -net 172.20.15.137 netmask 255.255.0.0 eth0</p>
+<p>route add -net 172.20.15.137 netmask 255.255.0.0 gw 172.20.0.1</p>
+<p>route add -net 172.20.1.0&#x2F;16 eth1</p>
+<p>#添加默认网关</p>
+<p>route add default gw 172.20.1.1</p>
+<p>#删除路由</p>
+<p>route del -host 172.20.15.137 dev eth0 </p>
+<p>#删除默认路由</p>
+<p>route del default gw 172.20.0.1</p>
+<p>2.设置永久路由，即添加在文件内&#x2F;etc&#x2F;rc.local</p>
+<p>route add -net 172.20.15.137&#x2F;16 dev eth0</p>
+<p>route add -net 172.20.15.137&#x2F;16 gw 172.20.1.254</p>
+<h2 id="什么是动态路由，特点是什么？"><a href="#什么是动态路由，特点是什么？" class="headerlink" title="什么是动态路由，特点是什么？"></a>什么是动态路由，特点是什么？</h2><p>1.动态路由是由路由选择协议而动态构建的，路由协议之间通过交换各自所拥有的路由信息实时更新路由表的内容，动态路由可以自动学习网络的拓扑结构，并更新路由表。其缺点是路由广播更新信息将占据大量的网络带宽</p>
+<h2 id="什么是静态路由，特点是什么？"><a href="#什么是静态路由，特点是什么？" class="headerlink" title="什么是静态路由，特点是什么？"></a>什么是静态路由，特点是什么？</h2><p>2.静态路由是由系统管理员设计与构建的路由表规定的路由，适用于网关数量有限的场合，且网络拓扑结构不经常变化的网络。其缺点是不能动态的适用网络状况的变化，当网络状况变化后必须由网络管理员修改路由表</p>
+<h2 id="查错"><a href="#查错" class="headerlink" title="查错"></a>查错</h2><p>ROUTE add -net default gw 192.168.0.101 netmask 255.255.0.0 metric 1</p>
+<p>ROUTE add -net 192.168.1.0 gw 192.168.0.250 netmask 255.255.0.0 metric 1</p>
+<p>答：修正错误：1、ROUTE应改为小写：route；2、netmask 255.255.0.0应改为：netmask 255.255.255.0；</p>
+<p>3、缺省路由的子网抢码应改为：netmask 0.0.0.0；4、缺省路由必须在最后设定，否则其后的路由将无效。</p>
+<p>解释内容：a、route:建立静态路由表的命令；b、add:增加一条新路由：c、-net 192.168.1.0:</p>
+<p>到达一个目标网络的网络地址；d、default：建立一条缺省路由；e、gw192.168.0.101：网关地址；f、</p>
+<p>metric 1:到达目标网络经过的路由器数（跳数）。</p>
+<h1 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h1><h2 id="基于iptables将访问本机192-168-7-103：80的请求转发到192-168-7-102：80"><a href="#基于iptables将访问本机192-168-7-103：80的请求转发到192-168-7-102：80" class="headerlink" title="基于iptables将访问本机192.168.7.103：80的请求转发到192.168.7.102：80?"></a>基于iptables将访问本机192.168.7.103：80的请求转发到192.168.7.102：80?</h2><p>答：iptables-t nat -A PREROUTING -d 192,168.7.103 -p tcp –dport 80 -j DNAT</p>
+<p>–to-destination 192.168.7.102:80</p>
+<p>实现内外网</p>
+<h2 id="Linux照务器外网IP为192-168-7-104，内两IP为172-16-1-104，如何使用iptables实现公司员工网段为172-16-1-0-x2F-24通过linux访问连接外网？"><a href="#Linux照务器外网IP为192-168-7-104，内两IP为172-16-1-104，如何使用iptables实现公司员工网段为172-16-1-0-x2F-24通过linux访问连接外网？" class="headerlink" title="Linux照务器外网IP为192.168.7.104，内两IP为172.16.1.104，如何使用iptables实现公司员工网段为172.16.1.0&#x2F;24通过linux访问连接外网？"></a>Linux照务器外网IP为192.168.7.104，内两IP为172.16.1.104，如何使用iptables实现公司员工网段为172.16.1.0&#x2F;24通过linux访问连接外网？</h2><p>答；iptabies-t nat- POSTROUTING -D 172.16 1.0&#x2F;24 -j SNAT –to 192.168.7.104</p>
+<h2 id="iptables的原理，有哪些表、哪些链-怎么修改默认策全部为DROP"><a href="#iptables的原理，有哪些表、哪些链-怎么修改默认策全部为DROP" class="headerlink" title="iptables的原理，有哪些表、哪些链?怎么修改默认策全部为DROP"></a>iptables的原理，有哪些表、哪些链?怎么修改默认策全部为DROP</h2><p>答：iptables是工作在TCP&#x2F;IP的2、3、4层，当主机收到一个数据包后，数据包先在内核空间中处理，若发现目的地过是自身，则传到用户空间中交给对应的应用程序处理，若发现目的不是自身，则会将包丢弃或进行转发。</p>
+<p>4张表（raw表、mangle表、net表、filter表）</p>
+<p>5条链（INPUT链、OUTPUT链、PORWARD链、PREROUTING链、POSTROUTING链）</p>
+<p>全部设置为DROP：</p>
+<p>#iptables-PINPUT DROP </p>
+<h2 id="防火墙策略查询及删除"><a href="#防火墙策略查询及删除" class="headerlink" title="防火墙策略查询及删除"></a>防火墙策略查询及删除</h2><p>iptables -vnL #查看 </p>
+<p>iptables -D  #删除</p>
+<h1 id="三剑客"><a href="#三剑客" class="headerlink" title="三剑客"></a>三剑客</h1><p>grep的选项和使用</p>
+<p>sed 的选项和使用</p>
+<p>awk 的选项和使用</p>
+<h1 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h1><h2 id="简述raid0-raid1-raid5-三种工作模式的特点"><a href="#简述raid0-raid1-raid5-三种工作模式的特点" class="headerlink" title="简述raid0 raid1 raid5 三种工作模式的特点"></a>简述raid0 raid1 raid5 三种工作模式的特点</h2><p>RAID，可以把硬盘整合成一个大磁盘，还可以在大磁盘上再分区，放数据</p>
+<p>还有一个大功能，多块盘放在一起可以有冗余（备份）</p>
+<p>RAID整合方式有很多，常用的：0 1 5 10</p>
+<p>RAID 0，可以是一块盘和N个盘组合 </p>
+<p>其优点读写快，是RAID中最好的</p>
+<p>缺点：没有冗余，一块坏了数据就全没有了</p>
+<p>RAID 1，只能2块盘，盘的大小可以不一样，以小的为准</p>
+<p>10G+10G只有10G，另一个做备份。它有100%的冗余，缺点：浪费资源，成本高</p>
+<p>RAID 5 ，3块盘，容量计算10*（n-1）,损失一块盘</p>
+<p>特点，读写性能一般，读还好一点，写不好</p>
+<p>冗余从好到坏：RAID1 RAID10 RAID 5 RAID0</p>
+<p>性能从好到坏：RAID0 RAID10 RAID5 RAID1</p>
+<p>成本从低到高：RAID0 RAID5 RAID1 RAID10</p>
+<p>单台服务器：很重要盘不多，系统盘，RAID1</p>
+<p>数据库服务器：主库：RAID10 从库 RAID5RAID0（为了维护成本，RAID10）</p>
+<p>WEB服务器，如果没有太多的数据的话，RAID5,RAID0（单盘）</p>
+<p>有多台，监控、应用服务器，RAID0 RAID5</p>
+<p>我们会根据数据的存储和访问的需求，去匹配对应的RAID级别</p>
+<p>简述raid0 raid1 raid5 三种工作模式的工作原理</p>
+<p>RAID 0：带区卷，连续以位或字节为单位分割数据，并行读&#x2F;写于多个磁盘上，因此具有很高的数据传输率</p>
+<p>但它没有数据冗余，RAID 0 只是单纯地提高性能，并没有为数据的可靠性提供保证</p>
+<p>而且其中的一个磁盘失效将影响到所有数据。因此，RAID 0 不能应用于数据安全性要求高的场合</p>
+<p>RAID 1：镜像卷，它是通过磁盘数据镜像实现数据冗余，在成对的独立磁盘上产生互为备份的数据</p>
+<p>不能提升写数据效率。当原始数据繁忙时，可直接从镜像拷贝中读取数据，因此RAID1 可以提高读取性能</p>
+<p>RAID 1 是磁盘阵列中单位成本最高的，镜像卷可用容量为总容量的1&#x2F;2，但提供了很高的数据安全性和可用性</p>
+<p>当一个磁盘失效时，系统可以自动切换到镜像磁盘上读写，而不需要重组失效的数据</p>
+<p>RAID5：至少由3块硬盘组成，分布式奇偶校验的独立磁盘结构，它的奇偶校验码存在于所有磁盘上</p>
+<p>任何一个硬盘损坏，都可以根据其它硬盘上的校验位来重建损坏的数据（最多允许1块硬盘损坏）</p>
+<p>所以raid5可以实现数据冗余，确保数据的安全性，同时raid5也可以提升数据的读写性能</p>
+<h1 id="分区工具"><a href="#分区工具" class="headerlink" title="分区工具"></a>分区工具</h1><p>fdisk 因为这个工具不常用，用的时候查询帮助即可</p>
+<p>fdisk &#x2F;dev&#x2F;sd*</p>
+<p>系统添加一块新硬盘不用关闭系统即可加获硬盘信息的操作：</p>
+<p>s&#x2F;sys&#x2F;class&#x2F;scsi_host echo“—“&gt;&#x2F;sys&#x2F;class&#x2F;scsi_host&#x2F;host0&#x2F;scan</p>
+<h1 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h1><h2 id="复制文件最小权限"><a href="#复制文件最小权限" class="headerlink" title="复制文件最小权限"></a>复制文件最小权限</h2><p>cp&#x2F;etc&#x2F;fstab &#x2F;data&#x2F;dir问：他需要有最小权限是什么？</p>
+<p>1、探究cp外部命令有啥权限，他至少必须要有x：执行权限。</p>
+<p>2、&#x2F;etc&#x2F;fstab：&#x2F;fstab只要有读权限就可以了，前提是&#x2F;etc要有x执行权限，&#x2F;etc可以没有读权限，只要&#x2F;etc有基本可执行权限进得去就可以。</p>
+<p>3、&#x2F;data&#x2F;dir:至少要有执行和写权限。</p>
+<h1 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h1><h2 id="Nginx几层负载"><a href="#Nginx几层负载" class="headerlink" title="Nginx几层负载"></a>Nginx几层负载</h2><p>1.9版本及之后，可以支持四层和七层。1.9版本之前只支持七层</p>
+<p>7应用层-http，https，ssh，ftp，telnet</p>
+<p>表示层</p>
+<p>会话层</p>
+<p>4传输层–haproxy、Nginx,端口+IP地址</p>
+<p>网络层-源地址目标地址</p>
+<p>数据链路层-</p>
+<p>1物理层</p>
+<h2 id="Nginx使用的什么版本"><a href="#Nginx使用的什么版本" class="headerlink" title="Nginx使用的什么版本"></a>Nginx使用的什么版本</h2><p>1.2</p>
+<p>1.4</p>
+<p>1.8</p>
+<p>1.9-cp</p>
+<p>1.12</p>
+<p>1.14</p>
+<h2 id="Web服务怎么升级，多久一次"><a href="#Web服务怎么升级，多久一次" class="headerlink" title="Web服务怎么升级，多久一次"></a>Web服务怎么升级，多久一次</h2><p>jenkins–服务器分组升级 开发测试环境–测试环境–预发布环境-生产金丝雀-正式环境</p>
+<p>Cookie和session 用来做什么，如何生成，客户端还是服务端生成</p>
+<p>cookie 客户端浏览器保存，是服务端返回给客户端的字符串，比如可以用于保存登录信息</p>
+<p>session：服务器保存，用于在多个服务器识别用户身份</p>
+<p>Nginx 中配置CPU亲和性，</p>
+<p>worker_processes 和worker_cpu_affinity 有什么好处</p>
+<p>降低了系统对CPU和内存的开销，主要是Nginx的工作进程内存开销和回收</p>
+<h2 id="三种模式"><a href="#三种模式" class="headerlink" title="三种模式"></a>三种模式</h2><p>prefork-基于select模型，最大并发1024</p>
+<p>work-在一个进程内由多个线程处理不同的用户请求，解决了1024最大并发的问题</p>
+<p>event-增加监听线程，处理用户的空连接请求并分配用户请求到空闲线程</p>
+<p>Apache prefork模型：</p>
+<p>预派生模式，有一个主控制进程，然后生成多个子进程，使用select模型，最大并发1024，每个子进程有一个独立的线程响应用户请求，相对比较占用内存，但是比较稳定，可以设置最大和最小进程数，是最古老的一种模式，也是最稳定的模式，适用于访问量不是很大的场景。 优点：稳定 缺点：慢，占用资源，1024个进程不适用于高并发</p>
+<p><img src="/2020/09/15/%E6%80%BB%E7%BB%93/clip_image002.jpg" alt="img"></p>
+<p>1.2.1.2：Apache woker模型：</p>
+<p>一种多进程和多线程混合的模型，有一个控制进程，启动多个子进程，每个子进程里面包含固定的线程，使用线程程来处理请求，当线程不够使用的时候会再启动一个新的子进程，然后在进程里面再启动线程处理请求，由于其使用了线程处理请求，因此可以承受更高的并发。 优点：相比prefork 占用的内存较少，可以同时处理更多的请求 </p>
+<p>缺点：使用keepalive的长连接方式，某个线程会一直被占据，即使没有传输数据，也需要一直等待到超时才会被释放。如果过多的线程，被这样占据，也会导致在高并发场景下的无服务线程可用。（该问题在prefork模式下，同样会发生）</p>
+<p><img src="/2020/09/15/%E6%80%BB%E7%BB%93/clip_image004.jpg" alt="img"></p>
+<p>1.2.1.3：Apache event模型：</p>
+<p>Apache中最新的模式，2012年发布的apache 2.4.X系列正式支持event 模型，属于事件驱动模型(epoll)，每个进程响应多个请求，在现在版本里的已经是稳定可用的模式。它和worker模式很像，最大的区别在于，它解决了keepalive场景下，长期被占用的线程的资源浪费问题（某些线程因为被keepalive，空挂在哪里等待，中间几乎没有请求过来，甚至等到超时）。event MPM中，会有一个专门的线程来管理这些keepalive类型的线程，当有真实请求过来的时候，将请求传递给服务线程，执行完毕后，又允许它释放。这样增强了高并发场景下的请求处理能力。</p>
+<p>优点：单线程响应多请求，占据更少的内存，高并发下表现更优秀，会有一个专门的线程来管理keep-alive类型的线程，当有真实请求过来的时候，将请求传递给服务线程，执行完毕后，又允许它释放</p>
+<p>缺点：没有线程安全控制</p>
+<p><img src="/2020/09/15/%E6%80%BB%E7%BB%93/clip_image006.jpg" alt="img"></p>
+<h2 id="你常用的Nginx模块，用来做什么"><a href="#你常用的Nginx模块，用来做什么" class="headerlink" title="你常用的Nginx模块，用来做什么"></a>你常用的Nginx模块，用来做什么</h2><p>rewrite模块，实现重写功能</p>
+<p>access模块：来源控制</p>
+<p>ssl模块：安全加密</p>
+<p>ngx_http_gzip_module：网络传输压缩模块</p>
+<p>ngx_http_proxy_module 模块实现代理</p>
+<p>ngx_http_upstream_module模块实现定义后端服务器列表</p>
+<p>ngx_cache_purge实现缓存清除功能</p>
+<h2 id="如何统计网站访问量："><a href="#如何统计网站访问量：" class="headerlink" title="如何统计网站访问量："></a>如何统计网站访问量：</h2><p>pv访问量（Page View），即页面访问量。每打开一次页面PV计教+1，刷新页面也是。</p>
+<p>UW访问数（Unique Visitor)指独立访客访问教，一台电脑终端为一个访客。</p>
+<p>HV是IP访问数指独立IP访问数，计算是以一个独立的IP在一个计算时段内访问同站计异为1次1P访问</p>
+<p>数。在同一个计算时段内不管这个IP访问多少次均计异为1次。计算时段有以1天为一个计算时我，也有</p>
+<p>以1个小时为一个计算时段。</p>
+<h2 id="Session共享如何做-如何共享？"><a href="#Session共享如何做-如何共享？" class="headerlink" title="Session共享如何做?如何共享？"></a>Session共享如何做?如何共享？</h2><p>答：使用redis 把ava和php服务的session信息放在session缓存服务器，</p>
+<h2 id="有状态和无状态"><a href="#有状态和无状态" class="headerlink" title="有状态和无状态"></a>有状态和无状态</h2><p>http请求无状态，多次请求之间没有依赖关系</p>
+<p>有状态就是多次访问之间有关联关系，需要记录多次之间的访问关系</p>
+<p>无状态的服务器程序，最著名的就是WEB服务器。每次HTTP请求和以前都没有啥关系，只是获取目标URI。得到目标内容之后，这次连接就被杀死，没有任何痕迹。在后来的发展进程中，逐渐在无状态化的过程中，加入状态化的信息，比如COOKIE。服务端在响应客户端的请求的时候，会向客户端推送一个COOKIE，这个COOKIE记录服务端上面的一些信息。客户端在后续的请求中，可以携带这个COOKIE，服务端可以根据这个COOKIE判断这个请求的上下文关系。COOKIE的存在，是无状态化向状态化的一个过渡手段，他通过外部扩展手段，COOKIE来维护上下文关系。</p>
+<p>​    状态化的服务器有更广阔的应用范围，比如MSN、网络游戏等服务器。他在服务端维护每个连接的状态信息，服务端在接收到每个连接的发送的请求时，可以从本地存储的信息来重现上下文关系。这样，客户端可以很容易使用缺省的信息，服务端也可以很容易地进行状态管理。比如说，当一个用户登录后，服务端可以根据用户名获取他的生日等先前的注册信息；而且在后续的处理中，服务端也很容易找到这个用户的历史信息。</p>
+<p>​    状态化服务器在功能实现方面具有更加强大的优势，但由于他需要维护大量的信息和状态，在性能方面要稍逊于无状态服务器。无状态服务器在处理简单服务方面有优势，但复杂功能方面有很多弊端，比如，用无状态服务器来实现即时通讯服务器，将会是场恶梦。</p>
+<h2 id="Nginx代理tomcat"><a href="#Nginx代理tomcat" class="headerlink" title="Nginx代理tomcat"></a>Nginx代理tomcat</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span><span class="regexp"> ^~</span> /tomcat/ &#123;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">proxy_pass</span> http://127.0.0.1:8080/;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line"></span><br><span class="line">   <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="nginx中rewrite有哪几个flag标志位（last、break、redirect、permanent-，说一下都什么意思？"><a href="#nginx中rewrite有哪几个flag标志位（last、break、redirect、permanent-，说一下都什么意思？" class="headerlink" title="nginx中rewrite有哪几个flag标志位（last、break、redirect、permanent)，说一下都什么意思？"></a>nginx中rewrite有哪几个flag标志位（last、break、redirect、permanent)，说一下都什么意思？</h2><p>答：</p>
+<p>last：相当于Apache的[L]标记，表示完成当前的rewrite规则</p>
+<p>break:停止执行当前虚拟主机的后续rewrite指令集</p>
+<p>redirect:返回302临时重定向，地址栏会显示跳转后的地址</p>
+<p>permanent:返回301永久重定向，地址栏会显示跳转后的地址、</p>
+<p>301和302不能简单的只返回状态码，还必须有重定向的URL，这就是return指令无法返回301，302的原因了。</p>
+<p>这里last和break区别有点难以理解：</p>
+<p>last一般写在server和if中，而break一般使用在location中</p>
+<p>last不终止重写后的url匹配，即新的url会再从server走一遍匹配流程，而break终止重写后匹配break和last都能组织继续执行后面的rewrite指令</p>
+<h1 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h1><h2 id="给你一套环境，你会如何设计高可用、高并发的架构？"><a href="#给你一套环境，你会如何设计高可用、高并发的架构？" class="headerlink" title="给你一套环境，你会如何设计高可用、高并发的架构？"></a>给你一套环境，你会如何设计高可用、高并发的架构？</h2><p>采用haproxy&#x2F;nginx+keepalived的负载层，各个服务尽量保持主备或集群模式，使用vip调用，数据存储使用例如nfs或ceph等专业存储软件。所有的服务要使用zabbix或其他监控软件监控，发生错误及时警报。</p>
+<h2 id="keepalive的工作原理和如何做到健康检查"><a href="#keepalive的工作原理和如何做到健康检查" class="headerlink" title="keepalive的工作原理和如何做到健康检查?"></a>keepalive的工作原理和如何做到健康检查?</h2><p>Keepalived高可用对之间是通过 VRRP进行通信的， VRRP是通过竞选机制来确定主备的，主的优先级高于备，因此，工作时主会优先获得所有的资源，备节点处于等待状态，当主宕机的时候，备节点就会接管主节点的资源，然后顶替主节点对外提供服务。</p>
+<p>keepalived通过调用外部脚本来监控相关进程的运行状态或者访问相应状态的返回值进行健康检查</p>
+<h2 id="LVS负载的原理，和Nginx负载有啥区别"><a href="#LVS负载的原理，和Nginx负载有啥区别" class="headerlink" title="LVS负载的原理，和Nginx负载有啥区别?"></a>LVS负载的原理，和Nginx负载有啥区别?</h2><p>LVS是4层负载，不产生流量，功能集合到内核中，因此有很好的转发性能，不支持后端服务的检查和正则表达式。nginx在1.9版本后支持tcp和http负载，强大的正则表达式功能，配置简单灵活，除了负载还是静态web服务器，可换成页面</p>
+<h2 id="Nginx默认几种调度算法"><a href="#Nginx默认几种调度算法" class="headerlink" title="Nginx默认几种调度算法"></a>Nginx默认几种调度算法</h2><p>常用有三种调度算法：轮询、ip hash、权重、最少连接数</p>
+<p>轮询：upstream按照轮询方式进行负载，每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除</p>
+<p>ip hash：每个请求按访问ip的hash结果进行分配，这样每个访客固定访问一个后端服务器，可以解决session的问题</p>
+<p>权重：指定轮询几率，权重和访问比率成正比，用于后端服务器性能不均的情况</p>
+<p>LVS、Nginx、HAproxy有什么区别？工作中你怎么选择？</p>
+<p>LVS： 是基于四层的转发</p>
+<p>HAproxy： 是基于四层和七层的转发，是专业的代理服务器</p>
+<p>Nginx： 是WEB服务器，缓存服务器，又是反向代理服务器，可以做七层的转发</p>
+<p>区别： LVS由于是基于四层的转发所以只能做端口的转发</p>
+<p>而基于URL的、基于目录的这种转发LVS就做不了</p>
+<p>工作选择：</p>
+<p>HAproxy和Nginx由于可以做七层的转发，所以URL和目录的转发都可以做</p>
+<p>在很大并发量的时候我们就要选择LVS，像中小型公司的话并发量没那么大</p>
+<p>选择HAproxy或者Nginx足已，由于HAproxy由是专业的代理服务器</p>
+<p>配置简单，所以中小型企业推荐使用Haproxy</p>
+<p>lvs&#x2F;nginx&#x2F;haproxy优缺点</p>
+<h2 id="Nginx的优点是："><a href="#Nginx的优点是：" class="headerlink" title="Nginx的优点是："></a>Nginx的优点是：</h2><p>1、工作在网络的7层之上，可以针对http应用做一些分流的策略，比如针对域名、目录结构</p>
+<p>它的正则规则比HAProxy更为强大和灵活，这也是它目前广泛流行的主要原因之一</p>
+<p>Nginx单凭这点可利用的场合就远多于LVS了。</p>
+<p>2、Nginx对网络稳定性的依赖非常小，理论上能ping通就就能进行负载功能，这个也是它的优势之一</p>
+<p>相反LVS对网络稳定性依赖比较大，这点本人深有体会；</p>
+<p>3、Nginx安装和配置比较简单，测试起来比较方便，它基本能把错误用日志打印出来</p>
+<p>LVS的配置、测试就要花比较长的时间了，LVS对网络依赖比较大。</p>
+<p>4、可以承担高负载压力且稳定，在硬件不差的情况下一般能支撑几万次的并发量，负载度比LVS相对小些。</p>
+<p>5、Nginx可以通过端口检测到服务器内部的故障，比如根据服务器处理网页返回的状态码、超时等等，并且会把返回错误的请求重新提交到另一个节点，不过其中缺点就是不支持url来检测。比如用户正在上传一个文件，而处理该上传的节点刚好在上传过程中出现故障，Nginx会把上传切到另一台服务器重新处理，而LVS就直接断掉了</p>
+<p>如果是上传一个很大的文件或者很重要的文件的话，用户可能会因此而不满。</p>
+<p>6、Nginx不仅仅是一款优秀的负载均衡器&#x2F;反向代理软件，它同时也是功能强大的Web应用服务器</p>
+<p>LNMP也是近几年非常流行的web架构，在高流量的环境中稳定性也很好。</p>
+<p>7、Nginx现在作为Web反向加速缓存越来越成熟了，速度比传统的Squid服务器更快，可考虑用其作为反向代理加速器</p>
+<p>8、Nginx可作为中层反向代理使用，这一层面Nginx基本上无对手，唯一可以对比Nginx的就只有lighttpd了</p>
+<p>不过lighttpd目前还没有做到Nginx完全的功能，配置也不那么清晰易读，社区资料也远远没Nginx活跃</p>
+<p>9、Nginx也可作为静态网页和图片服务器，这方面的性能也无对手。还有Nginx社区非常活跃，第三方模块也很多</p>
+<h2 id="Nginx的缺点是："><a href="#Nginx的缺点是：" class="headerlink" title="Nginx的缺点是："></a>Nginx的缺点是：</h2><p>1、Nginx仅能支持http、https和Email协议，这样就在适用范围上面小些，这个是它的缺点</p>
+<p>2、对后端服务器的健康检查，只支持通过端口来检测，不支持通过url来检测</p>
+<p>不支持Session的直接保持，但能通过ip_hash来解决</p>
+<p>LVS：使用Linux内核集群实现一个高性能、高可用的负载均衡服务器</p>
+<p>它具有很好的可伸缩性（Scalability)、可靠性（Reliability)和可管理性（Manageability)</p>
+<h2 id="LVS的优点是："><a href="#LVS的优点是：" class="headerlink" title="LVS的优点是："></a>LVS的优点是：</h2><p>1、抗负载能力强、是工作在网络4层之上仅作分发之用，没有流量的产生</p>
+<p>这个特点也决定了它在负载均衡软件里的性能最强的，对内存和cpu资源消耗比较低</p>
+<p>2、配置性比较低，这是一个缺点也是一个优点，因为没有可太多配置的东西</p>
+<p>所以并不需要太多接触，大大减少了人为出错的几率</p>
+<p>3、工作稳定，因为其本身抗负载能力很强，自身有完整的双机热备方案</p>
+<p>如LVS+Keepalived，不过我们在项目实施中用得最多的还是LVS&#x2F;DR+Keepalived</p>
+<p>4、无流量，LVS只分发请求，而流量并不从它本身出去，这点保证了均衡器IO的性能不会收到大流量的影响。</p>
+<p>5、应用范围较广，因为LVS工作在4层，所以它几乎可对所有应用做负载均衡，包括http、数据库、在线聊天室等</p>
+<h2 id="LVS的缺点是："><a href="#LVS的缺点是：" class="headerlink" title="LVS的缺点是："></a>LVS的缺点是：</h2><p>1、软件本身不支持正则表达式处理，不能做动静分离</p>
+<p>而现在许多网站在这方面都有较强的需求，这个是Nginx&#x2F;HAProxy+Keepalived的优势所在</p>
+<p>2、如果是网站应用比较庞大的话，LVS&#x2F;DR+Keepalived实施起来就比较复杂了</p>
+<p>特别后面有Windows Server的机器的话，如果实施及配置还有维护过程就比较复杂了</p>
+<p>相对而言，Nginx&#x2F;HAProxy+Keepalived就简单多了。</p>
+<h2 id="HAProxy的特点是："><a href="#HAProxy的特点是：" class="headerlink" title="HAProxy的特点是："></a>HAProxy的特点是：</h2><p>1、HAProxy也是支持虚拟主机的。</p>
+<p>2、HAProxy的优点能够补充Nginx的一些缺点，比如支持Session的保持，Cookie的引导,同时支持通过获取指定的url来检测后端服务器的状态</p>
+<p>3、HAProxy跟LVS类似，本身就只是一款负载均衡软件,单纯从效率上来讲HAProxy会比Nginx有更出色的负载均衡速度，在并发处理上也是优于Nginx的</p>
+<p>4、HAProxy支持TCP协议的负载均衡转发，可以对MySQL读进行负载均衡,对后端的MySQL节点进行检测和负载均衡，大家可以用LVS+Keepalived对MySQL主从做负载均衡</p>
+<p>5、HAProxy负载均衡策略非常多，HAProxy的负载均衡算法现在具体有如下8种：</p>
+<ul>
+<li>①roundrobin，表示简单的轮询，这个不多说，这个是负载均衡基本都具备的；</li>
+<li>② static-rr，表示根据权重，建议关注；</li>
+<li>③leastconn，表示最少连接者先处理，建议关注；</li>
+<li>④ source，表示根据请求源IP，这个跟Nginx的IP_hash机制类似</li>
+</ul>
+<p>我们用其作为解决session问题的一种方法，建议关注；</p>
+<ul>
+<li>⑤ri，表示根据请求的URI；</li>
+<li>⑥rl_param，表示根据请求的URl参数’balance url_param’ requires an URL parameter name；</li>
+<li>⑦hdr(name)，表示根据HTTP请求头来锁定每一次HTTP请求；</li>
+<li>⑧rdp-cookie(name)，表示根据据cookie(name)来锁定并哈希每一次TCP请求。</li>
+<li>Squid、Varinsh和Nginx有什么区别，工作中你怎么选择？</li>
+<li>Squid、Varinsh和Nginx都是代理服务器</li>
+</ul>
+<h2 id="什么是代理服务器："><a href="#什么是代理服务器：" class="headerlink" title="什么是代理服务器："></a>什么是代理服务器：</h2><p>能当替用户去访问公网，并且能把访问到的数据缓存到服务器本地，等用户下次再访问相同的资</p>
+<p>源的时候，代理服务器直接从本地回应给用户，当本地没有的时候，我代替你去访问公网，我接</p>
+<p>收你的请求，我先在我自已的本地缓存找，如果我本地缓存有，我直接从我本地的缓存里回复你</p>
+<p>如果我在我本地没有找到你要访问的缓存的数据，那么代理服务器就会代替你去访问公网</p>
+<p>区别：</p>
+<p>1）Nginx本来是反向代理&#x2F;web服务器，用了插件可以做做这个副业</p>
+<p>但是本身不支持特性挺多，只能缓存静态文件</p>
+<p>2）从这些功能上。varnish和squid是专业的cache服务，而nginx这些是第三方模块完成</p>
+<p>3）varnish本身的技术上优势要高于squid，它采用了可视化页面缓存技术</p>
+<p>在内存的利用上，Varnish比Squid具有优势，性能要比Squid高。</p>
+<p>还有强大的通过Varnish管理端口，可以使用正则表达式快速、批量地清除部分缓存</p>
+<p>它是内存缓存，速度一流，但是内存缓存也限制了其容量，缓存页面和图片一般是挺好的</p>
+<p>4）squid的优势在于完整的庞大的cache技术资料，和很多的应用生产环境</p>
+<p>工作中选择：</p>
+<p>要做cache服务的话，我们肯定是要选择专业的cache服务，优先选择squid或者varnish。</p>
+<p>keepalive的工作原理和如何做到健康检查</p>
+<p>keepalived是以VRRP协议为实现基础的，VRRP全称Virtual Router Redundancy Protocol，即虚拟路由冗余协议。</p>
+<p>虚拟路由冗余协议，可以认为是实现路由器高可用的协议，即将N台提供相同功能的路由器组成一个路由器组</p>
+<p>这个组里面有一个master和多个backup，master上面有一个对外提供服务的vip（该路由器所在局域网内</p>
+<p>其他机器的默认路由为该vip），master会发组播，当backup收不到vrrp包时就认为master宕掉了</p>
+<p>这时就需要根据VRRP的优先级来选举一个backup当master。这样就可以保证路由器的高可用了</p>
+<h2 id="KEEPLIVED"><a href="#KEEPLIVED" class="headerlink" title="KEEPLIVED"></a>KEEPLIVED</h2><p>keepalived主要有三个模块，分别是core、check和vrrp。core模块为keepalived的核心，负责主进程的启动、维护</p>
+<p>及全局配置文件的加载和解析。check负责健康检查，包括常见的各种检查方式，vrrp模块是来实现VRRP协议的</p>
+<p>Keepalived健康检查方式配置</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">HTTP_GET|SSL_GET</span><br><span class="line"></span><br><span class="line">HTTP_GET | SSL_GET</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">url &#123;</span><br><span class="line"></span><br><span class="line">path /<span class="comment"># HTTP/SSL 检查的url可以是多个</span></span><br><span class="line"></span><br><span class="line">digest <span class="comment"># HTTP/SSL 检查后的摘要信息用工具genhash生成</span></span><br><span class="line"></span><br><span class="line">status_code 200<span class="comment"># HTTP/SSL 检查返回的状态码</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">connect_port<span class="number"> 80 </span><span class="comment"># 连接端口</span></span><br><span class="line"></span><br><span class="line">bindto</span><br><span class="line"></span><br><span class="line">connect_timeout<span class="number"> 3 </span><span class="comment"># 连接超时时间</span></span><br><span class="line"></span><br><span class="line">nb_get_retry<span class="number"> 3 </span><span class="comment"># 重连次数</span></span><br><span class="line"></span><br><span class="line">delay_before_retry<span class="number"> 2 </span><span class="comment">#连接间隔时间</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="讲一下Keepalived的工作原理？"><a href="#讲一下Keepalived的工作原理？" class="headerlink" title="讲一下Keepalived的工作原理？"></a>讲一下Keepalived的工作原理？</h3><p>在一个虚拟路由器中，只有作为MASTER的VRRP路由器会一直发送VRRP通告信息,</p>
+<p>BACKUP不会抢占MASTER，除非它的优先级更高。当MASTER不可用时(BACKUP收不到通告信息)</p>
+<p>多台BACKUP中优先级最高的这台会被抢占为MASTER。这种抢占是非常快速的(&lt;1s)，以保证服务的连续性</p>
+<p>由于安全性考虑，VRRP包使用了加密协议进行加密。BACKUP不会发送通告信息，只会接收通告信息</p>
+<p>讲述一下LVS三种模式的工作过程？</p>
+<p>LVS 有三种负载均衡的模式，分别是VS&#x2F;NAT（nat 模式） VS&#x2F;DR(路由模式) VS&#x2F;TUN（隧道模式）</p>
+<h4 id="一、NAT模式（VS-NAT）"><a href="#一、NAT模式（VS-NAT）" class="headerlink" title="一、NAT模式（VS-NAT）"></a>一、NAT模式（VS-NAT）</h4><p>原理：就是把客户端发来的数据包的IP头的目的地址，在负载均衡器上换成其中一台RS的IP地址</p>
+<p>并发至此RS来处理,RS处理完后把数据交给负载均衡器,负载均衡器再把数据包原IP地址改为自己的IP</p>
+<p>将目的地址改为客户端IP地址即可期间,无论是进来的流量,还是出去的流量,都必须经过负载均衡器</p>
+<p>优点：集群中的物理服务器可以使用任何支持TCP&#x2F;IP操作系统，只有负载均衡器需要一个合法的IP地址</p>
+<p>缺点：扩展性有限。当服务器节点（普通PC服务器）增长过多时,负载均衡器将成为整个系统的瓶颈</p>
+<p>因为所有的请求包和应答包的流向都经过负载均衡器。当服务器节点过多时</p>
+<p>大量的数据包都交汇在负载均衡器那，速度就会变慢！</p>
+<h4 id="二、IP隧道模式（VS-TUN）"><a href="#二、IP隧道模式（VS-TUN）" class="headerlink" title="二、IP隧道模式（VS-TUN）"></a>二、IP隧道模式（VS-TUN）</h4><p>原理：首先要知道，互联网上的大多Internet服务的请求包很短小，而应答包通常很大</p>
+<p>那么隧道模式就是，把客户端发来的数据包，封装一个新的IP头标记(仅目的IP)发给RS</p>
+<p>RS收到后,先把数据包的头解开,还原数据包,处理后,直接返回给客户端,不需要再经过</p>
+<p>负载均衡器。注意,由于RS需要对负载均衡器发过来的数据包进行还原,所以说必须支持</p>
+<p>IPTUNNEL协议，所以,在RS的内核中,必须编译支持IPTUNNEL这个选项</p>
+<p>优点：负载均衡器只负责将请求包分发给后端节点服务器，而RS将应答包直接发给用户</p>
+<p>所以，减少了负载均衡器的大量数据流动，负载均衡器不再是系统的瓶颈，就能处理很巨大的请求量</p>
+<p>这种方式，一台负载均衡器能够为很多RS进行分发。而且跑在公网上就能进行不同地域的分发。</p>
+<p>缺点：隧道模式的RS节点需要合法IP，这种方式需要所有的服务器支持”IP Tunneling”</p>
+<p>(IP Encapsulation)协议，服务器可能只局限在部分Linux系统上</p>
+<h4 id="三、直接路由模式（VS-DR）"><a href="#三、直接路由模式（VS-DR）" class="headerlink" title="三、直接路由模式（VS-DR）"></a>三、直接路由模式（VS-DR）</h4><p><img src="/2020/09/15/%E6%80%BB%E7%BB%93/clip_image008.jpg" alt="img"></p>
+<p>原理：负载均衡器和RS都使用同一个IP对外服务但只有DR对ARP请求进行响应</p>
+<p>所有RS对本身这个IP的ARP请求保持静默也就是说,网关会把对这个服务IP的请求全部定向给DR</p>
+<p>而DR收到数据包后根据调度算法,找出对应的RS,把目的MAC地址改为RS的MAC（因为IP一致）</p>
+<p>并将请求分发给这台RS这时RS收到这个数据包,处理完成之后，由于IP一致，可以直接将数据返给客户</p>
+<p>则等于直接从客户端收到这个数据包无异,处理后直接返回给客户端</p>
+<p>由于负载均衡器要对二层包头进行改换,所以负载均衡器和RS之间必须在一个广播域</p>
+<p>也可以简单的理解为在同一台交换机上</p>
+<p>优点：和TUN（隧道模式）一样，负载均衡器也只是分发请求，应答包通过单独的路由方法返回给客户端</p>
+<p>与VS-TUN相比，VS-DR这种实现方式不需要隧道结构，因此可以使用大多数操作系统做为物理服务器。</p>
+<p>缺点：（不能说缺点，只能说是不足）要求负载均衡器的网卡必须与物理网卡在一个物理段上。</p>
+<p>如何将本地80 端口的请求转发到8080 端口，当前主机IP 为192.168.2.1</p>
+<p>iptables -A PREROUTING -d 192.168.2.1 -p tcp -m tcp -dport 80 -j DNAT-to-destination 192.168.2.1:8080</p>
+<h1 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h1><h2 id="Tomcat-有几种部署方式-Tomcat如何优化？如：内存调优"><a href="#Tomcat-有几种部署方式-Tomcat如何优化？如：内存调优" class="headerlink" title="Tomcat 有几种部署方式?Tomcat如何优化？如：内存调优"></a>Tomcat 有几种部署方式?Tomcat如何优化？如：内存调优</h2><p>yum，源码安装。修改端口，会话连接数，ajp端口关闭，会话保持时间，JVM堆内存限制</p>
+<h2 id="什么是中间件？什么是jdk？"><a href="#什么是中间件？什么是jdk？" class="headerlink" title="什么是中间件？什么是jdk？"></a>什么是中间件？什么是jdk？</h2><h3 id="中间件介绍："><a href="#中间件介绍：" class="headerlink" title="中间件介绍："></a>中间件介绍：</h3><p>中间件是一种独立的系统软件或服务程序，分布式应用软件借助这种软件在不同的技术之间共享资源</p>
+<p>中间件位于客户机&#x2F; 服务器的操作系统之上，管理计算机资源和网络通讯</p>
+<p>是连接两个独立应用程序或独立系统的软件。相连接的系统，即使它们具有不同的接口</p>
+<p>但通过中间件相互之间仍能交换信息。执行中间件的一个关键途径是信息传递</p>
+<p>通过中间件，应用程序可以工作于多平台或OS环境。</p>
+<h3 id="jdk：jdk是Java的开发工具包"><a href="#jdk：jdk是Java的开发工具包" class="headerlink" title="jdk：jdk是Java的开发工具包"></a>jdk：jdk是Java的开发工具包</h3><p>它是一种用于构建在 Java 平台上发布的应用程序、applet 和组件的开发环境</p>
+<p>Tomcat和Resin有什么区别，工作中你怎么选择？</p>
+<p>区别：Tomcat用户数多，可参考文档多，Resin用户数少，可考虑文档少</p>
+<p>最主要区别则是Tomcat是标准的java容器，不过性能方面比resin的要差一些</p>
+<p>但稳定性和java程序的兼容性，应该是比resin的要好</p>
+<p>工作中选择：现在大公司都是用resin，追求性能；而中小型公司都是用Tomcat，追求稳定和程序的兼容</p>
+<p>讲述一下Tomcat8005、8009、8080三个端口的含义？</p>
+<p>8005&#x3D;&#x3D;》 关闭时使用</p>
+<p>8009&#x3D;&#x3D;》 为AJP端口，即容器使用，如Apache能通过AJP协议访问Tomcat的8009端口</p>
+<p>8080&#x3D;&#x3D;》 一般应用使用</p>
+<h2 id="什么叫CDN？"><a href="#什么叫CDN？" class="headerlink" title="什么叫CDN？"></a>什么叫CDN？</h2><p>•    即内容分发网络</p>
+<p>•    其目的是通过在现有的Internet中增加一层新的网络架构，将网站的内容发布到</p>
+<p>最接近用户的网络边缘，使用户可就近取得所需的内容，提高用户访问网站的速度</p>
+<p>缓存</p>
+<h2 id="RabbitMQ是什么东西？"><a href="#RabbitMQ是什么东西？" class="headerlink" title="RabbitMQ是什么东西？"></a>RabbitMQ是什么东西？</h2><p>RabbitMQ也就是消息队列中间件，消息中间件是在消息的传息过程中保存消息的容器</p>
+<p>消息中间件再将消息从它的源中到它的目标中标时充当中间人的作用</p>
+<p>队列的主要目的是提供路由并保证消息的传递；如果发送消息时接收者不可用</p>
+<p>消息队列不会保留消息，直到可以成功地传递为止，当然，消息队列保存消息也是有期限地</p>
+<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h2 id="简述NoSQL是什么？"><a href="#简述NoSQL是什么？" class="headerlink" title="简述NoSQL是什么？"></a>简述NoSQL是什么？</h2><p>NoSQL，指的是非关系型的数据库。NoSQL 有时也称作 Not Only SQL（意即”不仅仅是SQL”） 的缩写，其显著特点是不使用SQL作为查询语言，数据存储不需要特定的表格模式。</p>
+<h2 id="简述NoSQL（非关系型）数据库和SQL（关系型）数据库的区别？"><a href="#简述NoSQL（非关系型）数据库和SQL（关系型）数据库的区别？" class="headerlink" title="简述NoSQL（非关系型）数据库和SQL（关系型）数据库的区别？"></a>简述NoSQL（非关系型）数据库和SQL（关系型）数据库的区别？</h2><p>NoSQL和SQL的主要区别有如下区别：</p>
+<p>·   存储方式：</p>
+<p>§ 关系型数据库是表格式的，因此存储在表的行和列中。他们之间很容易关联协作存储，提取数据很方便。</p>
+<p>§ NoSQL数据库则与其相反，它是大块的组合在一起。通常存储在数据集中，就像文档、键值对或者图结构。</p>
+<p>·   存储结构</p>
+<p>§ 关系型数据库对应的是结构化数据，数据表都预先定义了结构（列的定义），结构描述了数据的形式和内容。预定义结构带来了可靠性和稳定性，但是修改这些数据比较困难。</p>
+<p>§ NoSQL数据库基于动态结构，使用与非结构化数据。由于NoSQL数据库是动态结构，可以很容易适应数据类型和结构的变化。</p>
+<p>·   存储规范</p>
+<p>§ 关系型数据库的数据存储为了更高的规范性，把数据分割为最小的关系表以避免重复，获得精简的空间利用。</p>
+<p>§ NoSQL数据存储在平面数据集中，数据经常可能会重复。单个数据库很少被分隔开，而是存储成了一个整体，这样整块数据更加便于读写 。</p>
+<p>·   存储扩展</p>
+<p>§ 关系型数据库数据存储在关系表中，操作的性能瓶颈可能涉及到多个表，需要通过提升计算机性能来克服，因此更多是采用纵向扩展</p>
+<p>§ NoSQL数据库是横向扩展的，它的存储天然就是分布式的，可以通过给资源池添加更多的普通数据库服务器来分担负载。</p>
+<p>·   查询方式</p>
+<p>§ 关系型数据库通过结构化查询语言来操作数据库（即通常说的SQL）。SQL支持数据库CURD操作的功能非常强大，是业界的标准用法。</p>
+<p>§ NoSQL查询以块为单元操作数据，使用的是非结构化查询语言（UnQl），它是没有标准的。</p>
+<p>§ 关系型数据库表中主键的概念对应NoSQL中存储文档的ID。</p>
+<p>§ 关系型数据库使用预定义优化方式（比如索引）来加快查询操作，而NoSQL更简单更精确的数据访问模式。</p>
+<p>·   事务</p>
+<p>§ 关系型数据库遵循ACID规则（原子性(Atomicity)、一致性(Consistency)、隔离性(Isolation)、持久性(Durability)）。</p>
+<p>§ NoSQL数据库遵循BASE原则（基本可用（Basically Availble）、软&#x2F;柔性事务（Soft-state ）、最终一致性（Eventual Consistency））。</p>
+<p>§ 由于关系型数据库的数据强一致性，所以对事务的支持很好。关系型数据库支持对事务原子性细粒度控制，并且易于回滚事务。</p>
+<p>§ NoSQL数据库是在CAP（一致性、可用性、分区容忍度）中任选两项，因为基于节点的分布式系统中，不可能同时全部满足，所以对事务的支持不是很好。</p>
+<h2 id="简述NoSQL（非关系型）数据库和SQL（关系型）数据库的各自主要代表？"><a href="#简述NoSQL（非关系型）数据库和SQL（关系型）数据库的各自主要代表？" class="headerlink" title="简述NoSQL（非关系型）数据库和SQL（关系型）数据库的各自主要代表？"></a>简述NoSQL（非关系型）数据库和SQL（关系型）数据库的各自主要代表？</h2><p>SQL：MariaDB、MySQL、SQLite、SQLServer、Oracle、PostgreSQL。</p>
+<p>NoSQL代表：Redis、MongoDB、Memcache、HBASE。</p>
+<h2 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h2><h3 id="1、什么是Redis？简述它的优缺点？"><a href="#1、什么是Redis？简述它的优缺点？" class="headerlink" title="1、什么是Redis？简述它的优缺点？"></a>1、什么是Redis？简述它的优缺点？</h3><p>Redis本质上是一个Key-Value类型的内存数据库，很像memcached，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。</p>
+<p>因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过 10万次读写操作，是已知性能最快的Key-Value DB。</p>
+<p>Redis的出色之处不仅仅是性能，Redis最大的魅力是支持保存多种数据结构，此外单个value的最大限制是1GB，不像 memcached只能保存1MB的数据，因此Redis可以用来实现很多有用的功能。</p>
+<p>比方说用他的List来做FIFO双向链表，实现一个轻量级的高性 能消息队列服务，用他的Set可以做高性能的tag系统等等。</p>
+<p>另外Redis也可以对存入的Key-Value设置expire时间，因此也可以被当作一 个功能加强版的memcached来用。 Redis的主要缺点是数据库容量受到物理内存的限制，不能用作海量数据的高性能读写，因此Redis适合的场景主要局限在较小数据量的高性能操作和运算上。</p>
+<p><strong>Redis</strong> <strong>集群的数据分片</strong></p>
+<p>Redis 集群没有使用一致性哈希，而是另外一种不同的分片形式，每个键概念上是被我们称为哈希槽 (hash slot)的东西的一部分。 Redis 集群有 16384 个哈希槽，我们只是使用键的 CRC16 编码对 16384 取模来计算一个指定键所属的 哈希槽。 每一个 Redis 集群中的节点都承担一个哈希槽的子集，例如，你可能有一个 3 个节点的集群，其中： </p>
+<p><img src="/2020/09/15/%E6%80%BB%E7%BB%93/clip_image010.jpg" alt="http://dl2.iteye.com/upload/attachment/0110/7302/1d690cce-6b05-3344-9923-2921983e6eee.jpg"></p>
+<p>1节点 A 包含从 0 到 5500 的哈希槽。</p>
+<p>2节点 B 包含从 5501 到 11000 的哈希槽。</p>
+<p>3节点 C 包含从 11001 到 16384 的哈希槽。</p>
+<p>这可以让在集群中添加和移除节点非常容易。例如，如果我想添加一个新节点 D，我需要从节点 A，B， C 移动一些哈希槽到节点 D。同样地，如果我想从集群中移除节点 A，我只需要移动 A 的哈希槽到 B 和 C。 当节点 A 变成空的以后，我就可以从集群中彻底删除它。 因为从一个节点向另一个节点移动哈希槽并不需要停止操作，所以添加和移除节点，或者改变节点持有 的哈希槽百分比，都不需要任何停机时间(downtime)。</p>
+<h3 id="2、Redis相比memcached有哪些优势？"><a href="#2、Redis相比memcached有哪些优势？" class="headerlink" title="2、Redis相比memcached有哪些优势？"></a>2、Redis相比memcached有哪些优势？</h3><p>(1) memcached所有的值均是简单的字符串，redis作为其替代者，支持更为丰富的数据类型</p>
+<p>(2) redis的速度比memcached快很多</p>
+<p>(3) redis可以持久化其数据</p>
+<h3 id="3、Redis支持哪几种数据类型？"><a href="#3、Redis支持哪几种数据类型？" class="headerlink" title="3、Redis支持哪几种数据类型？"></a>3、Redis支持哪几种数据类型？</h3><p>String、List、Set、Sorted Set、hashes</p>
+<h3 id="4、Redis主要消耗什么物理资源？"><a href="#4、Redis主要消耗什么物理资源？" class="headerlink" title="4、Redis主要消耗什么物理资源？"></a>4、Redis主要消耗什么物理资源？</h3><p>内存。</p>
+<h3 id="5、Redis的全称是什么？"><a href="#5、Redis的全称是什么？" class="headerlink" title="5、Redis的全称是什么？"></a>5、Redis的全称是什么？</h3><p>Remote Dictionary Server。（这里加粗一下）</p>
+<h3 id="6、Redis有哪几种数据淘汰策略？"><a href="#6、Redis有哪几种数据淘汰策略？" class="headerlink" title="6、Redis有哪几种数据淘汰策略？"></a>6、Redis有哪几种数据淘汰策略？</h3><p>noeviction:返回错误当内存限制达到并且客户端尝试执行会让更多内存被使用的命令（大部分的写入指令，但DEL和几个例外）</p>
+<p>allkeys-lru: 尝试回收最少使用的键（LRU），使得新添加的数据有空间存放。</p>
+<p>volatile-lru: 尝试回收最少使用的键（LRU），但仅限于在过期集合的键,使得新添加的数据有空间存放。</p>
+<p>allkeys-random: 回收随机的键使得新添加的数据有空间存放。</p>
+<p>volatile-random: 回收随机的键使得新添加的数据有空间存放，但仅限于在过期集合的键。</p>
+<p>volatile-ttl: 回收在过期集合的键，并且优先回收存活时间（TTL）较短的键,使得新添加的数据有空间存放。</p>
+<h3 id="7、Redis官方为什么不提供Windows版本？"><a href="#7、Redis官方为什么不提供Windows版本？" class="headerlink" title="7、Redis官方为什么不提供Windows版本？"></a>7、Redis官方为什么不提供Windows版本？</h3><p>因为目前Linux版本已经相当稳定，而且用户量很大，无需开发windows版本，反而会带来兼容性等问题。</p>
+<p>8、一个字符串类型的值能存储最大容量是多少？</p>
+<p>512M</p>
+<h3 id="9、为什么Redis需要把所有数据放到内存中？"><a href="#9、为什么Redis需要把所有数据放到内存中？" class="headerlink" title="9、为什么Redis需要把所有数据放到内存中？"></a>9、为什么Redis需要把所有数据放到内存中？</h3><p>Redis为了达到最快的读写速度将数据都读到内存中，并通过异步的方式将数据写入磁盘。</p>
+<p>所以redis具有快速和数据持久化的特征。如果不将数据放在内存中，磁盘I&#x2F;O速度为严重影响redis的性能。</p>
+<p>在内存越来越便宜的今天，redis将会越来越受欢迎。 如果设置了最大使用的内存，则数据已有记录数达到内存限值后不能继续插入新值。</p>
+<p>10、Redis集群方案应该怎么做？都有哪些方案？</p>
+<h3 id="1-codis。"><a href="#1-codis。" class="headerlink" title="1.codis。"></a>1.codis。</h3><p>目前用的最多的集群方案，基本和twemproxy一致的效果，但它支持在 节点数量改变情况下，旧节点数据可恢复到新hash节点。</p>
+<p>2.redis cluster3.0自带的集群，特点在于他的分布式算法不是一致性hash，而是hash槽的概念，以及自身支持节点设置从节点。具体看官方文档介绍。</p>
+<p>3.在业务代码层实现，起几个毫无关联的redis实例，在代码层，对key 进行hash计算，然后去对应的redis实例操作数据。 这种方式对hash层代码要求比较高，考虑部分包括，节点失效后的替代算法方案，数据震荡后的自动脚本恢复，实例的监控，等等。</p>
+<h3 id="11、Redis集群方案什么情况下会导致整个集群不可用？"><a href="#11、Redis集群方案什么情况下会导致整个集群不可用？" class="headerlink" title="11、Redis集群方案什么情况下会导致整个集群不可用？"></a>11、Redis集群方案什么情况下会导致整个集群不可用？</h3><p>有A，B，C三个节点的集群,在没有复制模型的情况下,如果节点B失败了，那么整个集群就会以为缺少5501-11000这个范围的槽而不可用。</p>
+<h3 id="12、MySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据？"><a href="#12、MySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据？" class="headerlink" title="12、MySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据？"></a>12、MySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据？</h3><p>redis内存数据集大小上升到一定大小的时候，就会施行数据淘汰策略。</p>
+<h3 id="13、Redis有哪些适合的场景？"><a href="#13、Redis有哪些适合的场景？" class="headerlink" title="13、Redis有哪些适合的场景？"></a>13、Redis有哪些适合的场景？</h3><p>（1）会话缓存（Session Cache）</p>
+<p>最常用的一种使用Redis的情景是会话缓存（session cache）。用Redis缓存会话比其他存储（如Memcached）的优势在于：Redis提供持久化。当维护一个不是严格要求一致性的缓存时，如果用户的购物车信息全部丢失，大部分人都会不高兴的，现在，他们还会这样吗？幸运的是，随着 Redis 这些年的改进，很容易找到怎么恰当的使用Redis来缓存会话的文档。甚至广为人知的商业平台Magento也提供Redis的插件。</p>
+<p>（2）全页缓存（FPC）</p>
+<p>除基本的会话token之外，Redis还提供很简便的FPC平台。回到一致性问题，即使重启了Redis实例，因为有磁盘的持久化，用户也不会看到页面加载速度的下降，这是一个极大改进，类似PHP本地FPC。</p>
+<p>再次以Magento为例，Magento提供一个插件来使用Redis作为全页缓存后端。</p>
+<p>此外，对WordPress的用户来说，Pantheon有一个非常好的插件 wp-redis，这个插件能帮助你以最快速度加载你曾浏览过的页面。</p>
+<p>（3）队列</p>
+<p>Reids在内存存储引擎领域的一大优点是提供 list 和 set 操作，这使得Redis能作为一个很好的消息队列平台来使用。Redis作为队列使用的操作，就类似于本地程序语言（如Python）对 list 的 push&#x2F;pop 操作。</p>
+<p>如果你快速的在Google中搜索“Redis queues”，你马上就能找到大量的开源项目，这些项目的目的就是利用Redis创建非常好的后端工具，以满足各种队列需求。例如，Celery有一个后台就是使用Redis作为broker，你可以从这里去查看。</p>
+<p>（4）排行榜&#x2F;计数器</p>
+<p>Redis在内存中对数字进行递增或递减的操作实现的非常好。集合（Set）和有序集合（Sorted Set）也使得我们在执行这些操作的时候变的非常简单，Redis只是正好提供了这两种数据结构。</p>
+<p>所以，我们要从排序集合中获取到排名最靠前的10个用户–我们称之为“user_scores”，我们只需要像下面一样执行即可：</p>
+<p>当然，这是假定你是根据你用户的分数做递增的排序。如果你想返回用户及用户的分数，你需要这样执行：</p>
+<p>ZRANGE user_scores 0 10 WITHSCORES</p>
+<p>Agora Games就是一个很好的例子，用Ruby实现的，它的排行榜就是使用Redis来存储数据的，你可以在这里看到。</p>
+<p>（5）发布&#x2F;订阅</p>
+<p>最后（但肯定不是最不重要的）是Redis的发布&#x2F;订阅功能。发布&#x2F;订阅的使用场景确实非常多。我已看见人们在社交网络连接中使用，还可作为基于发布&#x2F;订阅的脚本触发器，甚至用Redis的发布&#x2F;订阅功能来建立聊天系统！</p>
+<h3 id="14、Redis支持的Java客户端都有哪些？官方推荐用哪个？"><a href="#14、Redis支持的Java客户端都有哪些？官方推荐用哪个？" class="headerlink" title="14、Redis支持的Java客户端都有哪些？官方推荐用哪个？"></a>14、Redis支持的Java客户端都有哪些？官方推荐用哪个？</h3><p>Redisson、Jedis、lettuce等等，官方推荐使用Redisson。</p>
+<h3 id="15、Redis和Redisson有什么关系？"><a href="#15、Redis和Redisson有什么关系？" class="headerlink" title="15、Redis和Redisson有什么关系？"></a>15、Redis和Redisson有什么关系？</h3><p>Redisson是一个高级的分布式协调Redis客服端，能帮助用户在分布式环境中轻松实现一些Java的对象 (Bloom filter, BitSet, Set, SetMultimap, ScoredSortedSet, SortedSet, Map, ConcurrentMap, List, ListMultimap, Queue, BlockingQueue, Deque, BlockingDeque, Semaphore, Lock, ReadWriteLock, AtomicLong, CountDownLatch, Publish &#x2F; Subscribe, HyperLogLog)。</p>
+<h3 id="16、Jedis与Redisson对比有什么优缺点？"><a href="#16、Jedis与Redisson对比有什么优缺点？" class="headerlink" title="16、Jedis与Redisson对比有什么优缺点？"></a>16、Jedis与Redisson对比有什么优缺点？</h3><p>Jedis是Redis的Java实现的客户端，其API提供了比较全面的Redis命令的支持；</p>
+<p>Redisson实现了分布式和可扩展的Java数据结构，和Jedis相比，功能较为简单，不支持字符串操作，不支持排序、事务、管道、分区等Redis特性。Redisson的宗旨是促进使用者对Redis的关注分离，从而让使用者能够将精力更集中地放在处理业务逻辑上。</p>
+<h3 id="17、Redis如何设置密码及验证密码？"><a href="#17、Redis如何设置密码及验证密码？" class="headerlink" title="17、Redis如何设置密码及验证密码？"></a>17、Redis如何设置密码及验证密码？</h3><p>设置密码：config set requirepass 123456</p>
+<p>授权密码：auth 123456</p>
+<h3 id="18、说说Redis哈希槽的概念？"><a href="#18、说说Redis哈希槽的概念？" class="headerlink" title="18、说说Redis哈希槽的概念？"></a>18、说说Redis哈希槽的概念？</h3><p>Redis集群没有使用一致性hash,而是引入了哈希槽的概念，Redis集群有16384个哈希槽，每个key通过CRC16校验后对16384取模来决定放置哪个槽，集群的每个节点负责一部分hash槽。</p>
+<h3 id="19、Redis集群的主从复制模型是怎样的？"><a href="#19、Redis集群的主从复制模型是怎样的？" class="headerlink" title="19、Redis集群的主从复制模型是怎样的？"></a>19、Redis集群的主从复制模型是怎样的？</h3><p>为了使在部分节点失败或者大部分节点无法通信的情况下集群仍然可用，所以集群使用了主从复制模型,每个节点都会有N-1个复制品.</p>
+<h3 id="20、Redis集群会有写操作丢失吗？为什么？"><a href="#20、Redis集群会有写操作丢失吗？为什么？" class="headerlink" title="20、Redis集群会有写操作丢失吗？为什么？"></a>20、Redis集群会有写操作丢失吗？为什么？</h3><p>Redis并不能保证数据的强一致性，这意味这在实际中集群在特定的条件下可能会丢失写操作。</p>
+<h2 id="mongo"><a href="#mongo" class="headerlink" title="mongo"></a>mongo</h2><h3 id="简述MongoDB及其特点？"><a href="#简述MongoDB及其特点？" class="headerlink" title="简述MongoDB及其特点？"></a>简述MongoDB及其特点？</h3><p>MongoDB是一个开源的、基于分布式的、面向文档存储的非关系型数据库。是非关系型数据库当中功能最丰富、最像关系数据库的。其主要特点如下：</p>
+<p>·   <code>查询丰富</code>：MongoDB最大的特点是支持的查询语言非常强大，其语法有点类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立索引。</p>
+<p>·   <code>面向文档</code>：文档就是存储在MongoDB中的一条记录,是一个由键值对组成的数据结构。</p>
+<p>·   <code>模式自由</code>：MongoDB每一个Document都包含了元数据信息，每个文档之间不强迫要求使用相同的格式，同时他们也支持各种索引。</p>
+<p>·   <code>高可用性</code>：MongoDB支持在复制集(Replica Set)通过异步复制达到故障转移，自动恢复，集群中主服务器崩溃停止服务和丢失数据，备份服务器通过选举获得大多数投票成为主节点，以此来实现高可用。</p>
+<p>·   <code>水平拓展</code>：MongoDB支持分片技术，它能够支持并行处理和水平扩展。</p>
+<p>·   <code>支持丰富</code>：MongoDB另外还提供了丰富的BSON数据类型，还有MongoDB的官方不同语言的driver支持(C&#x2F;C++、C#、Java、Node.js、Perl、PHP、Python、Ruby、Scala)。</p>
+<p>简述MongoDB的优势有哪些？</p>
+<p>·   面向文档的存储：以 JSON 格式的文档保存数据。</p>
+<p>·   任何属性都可以建立索引。</p>
+<p>·   复制以及高可扩展性。</p>
+<p>·   自动分片。</p>
+<p>·   丰富的查询功能。</p>
+<p>·   快速的即时更新。</p>
+<p>简述MongoDB适应的场景和不适用的场景？</p>
+<p>MongoDB属于典型的非关系型数据库。</p>
+<p>·   主要适应场景</p>
+<p>§ 网站实时数据：MongoDB 非常适合实时的插入，更新与查询，并具备网站实时数据存储所需的复制及高度伸缩性。</p>
+<p>§ 数据缓存：由于性能很高，MongoDB 也适合作为信息基础设施的缓存层。在系统重启之后，由 MongoDB 搭建的持久化缓存层可以避免下层的数据源过载。</p>
+<p>§ 高伸缩性场景：MongoDB 非常适合由数十或数百台服务器组成的数据库。</p>
+<p>§ 对象或 JSON 数据存储：MongoDB 的 BSON 数据格式非常适合文档化格式的存储及查询。</p>
+<p>·   不适应场景</p>
+<p>§ 高度事务性系统：例如银行或会计系统。传统的关系型数据库目前还是更适用于需要大量原子性复杂事务的应用程序。</p>
+<p>§ 传统的商业智能应用：针对特定问题的 BI 数据库会对产生高度优化的查询方式。对于此类应用，数据仓库可能是更合适的选择。</p>
+<p>§ 需要复杂 SQL 查询的场景。</p>
+<h3 id="简述MongoDB中的库、集合、文档？"><a href="#简述MongoDB中的库、集合、文档？" class="headerlink" title="简述MongoDB中的库、集合、文档？"></a>简述MongoDB中的库、集合、文档？</h3><p>·   <code>库</code>：MongoDB可以建立多个数据库，MongoDB默认数据库为”db”。MongoDB的单个实例可以容纳多个独立的数据库，每一个都有自己的集合和权限，不同的数据库也放置在不同的文件中。</p>
+<p>·   <code>集合</code>：MongoDB集合就是 MongoDB 文档组，类似于 RDBMS （关系数据库中的表格）。集合存在于数据库中，集合没有固定的结构。</p>
+<p>·   <code>文档</code>：MongoDB的Document是一组键值(key-value)对(即 BSON)，相当于关系型数据库的行。且不需要设置相同的字段，并且相同的字段不需要相同的数据类型。</p>
+<h3 id="简述MongoDB支持的常见数据类型？"><a href="#简述MongoDB支持的常见数据类型？" class="headerlink" title="简述MongoDB支持的常见数据类型？"></a>简述MongoDB支持的常见数据类型？</h3><p>MongoDB支持丰富的数据类型，常见的有：</p>
+<p>·   String：字符串。存储数据常用的数据类型。</p>
+<p>·   Integer：整型数值。用于存储数值。</p>
+<p>·   Boolean：布尔值。用于存储布尔值（真&#x2F;假）。</p>
+<p>·   Array：用于将数组或列表或多个值存储为一个键。</p>
+<p>·   Date：日期时间。用 UNIX 时间格式来存储当前日期或时间。</p>
+<p>·   Binary Data：二进制数据。用于存储二进制数据。</p>
+<p>·   Code：代码类型。用于在文档中存储 JavaScript 代码。</p>
+<p>·   Regular expression：正则表达式类型。用于存储正则表达式。</p>
+<h3 id="简述MongoDB索引及其作用？"><a href="#简述MongoDB索引及其作用？" class="headerlink" title="简述MongoDB索引及其作用？"></a>简述MongoDB索引及其作用？</h3><p>索引通常能够极大的提高查询的效率，如果没有索引，MongoDB在读取数据时必须扫描集合中的每个文件并选取那些符合查询条件的记录。</p>
+<p>这种扫描全集合的查询效率是非常低的，特别在处理大量的数据时，查询可能要花费几十秒甚至几分钟，这对网站的性能是非常致命的。</p>
+<p>索引是特殊的数据结构，索引存储在一个易于遍历读取的数据集合中，索引是对数据库表中一列或多列的值进行排序的一种结构。</p>
+<h3 id="简述MongoDB常见的索引有哪些？"><a href="#简述MongoDB常见的索引有哪些？" class="headerlink" title="简述MongoDB常见的索引有哪些？"></a>简述MongoDB常见的索引有哪些？</h3><p>MongoDB常见的索引有：</p>
+<p>·   单字段索引（Single Field Indexes）</p>
+<p>·   符合索引（Compound Indexes）</p>
+<p>·   多键索引（Multikey Indexes）</p>
+<p>·   全文索引（Text Indexes）</p>
+<p>·   Hash索引（Hash Indexes）</p>
+<p>·   通配符索引（Wildcard Indexes）</p>
+<h3 id="简述MongoDB复制（本）集原理？"><a href="#简述MongoDB复制（本）集原理？" class="headerlink" title="简述MongoDB复制（本）集原理？"></a>简述MongoDB复制（本）集原理？</h3><p>mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。</p>
+<p>mongodb各个节点常见的搭配方式为：一主一从、一主多从。</p>
+<p>主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。</p>
+<h3 id="简述MongoDB的复制过程？"><a href="#简述MongoDB的复制过程？" class="headerlink" title="简述MongoDB的复制过程？"></a>简述MongoDB的复制过程？</h3><p>Primary节点写入数据，Secondary通过读取Primary的oplog（即Primary的oplog.rs表）得到复制信息，开始复制数据并且将复制信息写入到自己的oplog。如果某个操作失败，则备份节点停止从当前数据源复制数据。如果某个备份节点由于某些原因挂掉了，当重新启动后，就会自动从oplog的最后一个操作开始同步。同步完成后，将信息写入自己的oplog，由于复制操作是先复制数据，复制完成后再写入oplog，有可能相同的操作会同步两份，MongoDB设定将oplog的同一个操作执行多次，与执行一次的效果是一样的。</p>
+<p>当Primary节点完成数据操作后，Secondary的数据同步过程如下：</p>
+<p>·   1、检查自己local库的oplog.rs集合找出最近的时间戳。</p>
+<p>·   2、检查Primary节点local库oplog.rs集合，找出大于此时间戳的记录。</p>
+<p>·   3、将找到的记录插入到自己的oplog.rs集合中，并执行这些操作。</p>
+<h3 id="简述MongoDB副本集及其特点？"><a href="#简述MongoDB副本集及其特点？" class="headerlink" title="简述MongoDB副本集及其特点？"></a>简述MongoDB副本集及其特点？</h3><p>MongoDB副本集是一组Mongod维护相同数据集的实例，副本集可以包含多个数据承载点和多个仲裁点。在承载数据的节点中，仅有一个节点被视为主节点，其他节点称为次节点。</p>
+<p>主要特点：</p>
+<p>·   N 个节点的集群，任何节点可作为主节点，由选举产生；</p>
+<p>·   最小构成是：primary，secondary，arbiter，一般部署是：primary，2 secondary。</p>
+<p>·   所有写入操作都在主节点上，同时具有自动故障转移，自动恢复；</p>
+<p>·   成员数应该为奇数，如果为偶数的情况下添加arbiter，arbiter不保存数据，只投票。</p>
+<h3 id="简述MongoDB有哪些特殊成员？"><a href="#简述MongoDB有哪些特殊成员？" class="headerlink" title="简述MongoDB有哪些特殊成员？"></a>简述MongoDB有哪些特殊成员？</h3><p>MongoDB中Secondary角色存在一些特殊的成员类型：</p>
+<p>·   Priority 0（优先级0型）：不能升为主，可以用于多数据中心场景；</p>
+<p>·   Hidden（隐藏型）：对客户端来说是不可见的，一般用作备份或统计报告用；</p>
+<p>·   Delayed（延迟型）：数据比副集晚，一般用作 rolling backup 或历史快照。</p>
+<p>·   Vote（投票型）：仅参与投票。</p>
+<h3 id="简述MongoDB分片集群？"><a href="#简述MongoDB分片集群？" class="headerlink" title="简述MongoDB分片集群？"></a>简述MongoDB分片集群？</h3><p>MongoDB分片集群（Sharded Cluster）：主要利用分片技术，使数据分散存储到多个分片（Shard）上，来实现高可扩展性。</p>
+<p>分片是将数据水平切分到不同的物理节点。当数据量越来越大时，单台机器有可能无法存储数据或读取写入吞吐量有所降低，利用分片技术可以添加更多的机器来应对数据量增加以及读写操作的要求。</p>
+<h3 id="简述MongoDB分片集群相对副本集的优势？"><a href="#简述MongoDB分片集群相对副本集的优势？" class="headerlink" title="简述MongoDB分片集群相对副本集的优势？"></a>简述MongoDB分片集群相对副本集的优势？</h3><p>MongoDB分片集群主要可以解决副本集如下的不足：</p>
+<p>·   副本集所有的写入操作都位于主节点；</p>
+<p>·   延迟的敏感数据会在主节点查询；</p>
+<p>·   单个副本集限制在12个节点；</p>
+<p>·   当请求量巨大时会出现内存不足；</p>
+<p>·   本地磁盘不足；</p>
+<p>·   垂直扩展价格昂贵。</p>
+<h3 id="简述MongoDB分片集群的优势？"><a href="#简述MongoDB分片集群的优势？" class="headerlink" title="简述MongoDB分片集群的优势？"></a>简述MongoDB分片集群的优势？</h3><p>MongoDB分片集群主要有如下优势：</p>
+<p>·   使用分片减少了每个分片需要处理的请求数：通过水平扩展，群集可以提高自己的存储容量。比如，当插入一条数据时，应用只需要访问存储这条数据的分片。</p>
+<p>·   使用分片减少了每个分片存储的数据：分片的优势在于提供类似线性增长的架构，提高数据可用性，提高大型数据库查询服务器的性能。当MongoDB单点数据库服务器存储成为瓶颈、单点数据库服务器的性能成为瓶颈或需要部署大型应用以充分利用内存时，可以使用分片技术。</p>
+<h3 id="简述MongoDB分片集群的架构组件？"><a href="#简述MongoDB分片集群的架构组件？" class="headerlink" title="简述MongoDB分片集群的架构组件？"></a>简述MongoDB分片集群的架构组件？</h3><p>MongoDB架构组件主要有：</p>
+<p>·   Shard：用于存储实际的数据块，实际生产环境中一个shard server角色可由几台机器组成一个replica set承担，防止主机单点故障。</p>
+<p>·   Config Server：mongod实例，存储了整个 ClusterMetadata，其中包括 chunk信息。</p>
+<p>·   Query Routers：前端路由，客户端由此接入，且让整个集群看上去像单一数据库，前端应用可以透明使用。</p>
+<h3 id="简述MongoDB分片集群和副本集群的区别？"><a href="#简述MongoDB分片集群和副本集群的区别？" class="headerlink" title="简述MongoDB分片集群和副本集群的区别？"></a>简述MongoDB分片集群和副本集群的区别？</h3><p>副本集不是为了提高读性能存在的，在进行oplog的时候，读操作是被阻塞的；</p>
+<p>提高读取性能应该使用分片和索引，它的存在更多是作为数据冗余，备份。</p>
+<h3 id="简述MongoDB的几种分片策略及其相互之间的差异？"><a href="#简述MongoDB的几种分片策略及其相互之间的差异？" class="headerlink" title="简述MongoDB的几种分片策略及其相互之间的差异？"></a>简述MongoDB的几种分片策略及其相互之间的差异？</h3><p>MongoDB的数据划分是基于集合级别为标准，通过shard key来划分集合数据。主要分片策略有如下三种：</p>
+<p>·   范围划分：通过shard key值将数据集划分到不同的范围就称为基于范围划分。对于数值型的shard key：可以虚构一条从负无穷到正无穷的直线（理解为x轴），每个shard key 值都落在这条直线的某个点上，然后MongoDB把这条线划分为许多更小的没有重复的范围成为块（chunks），一个chunk就是某些最小值到最大值的范围。</p>
+<p>·   散列划分：MongoDB计算每个字段的hash值，然后用这些hash值建立chunks。基于散列值的数据分布有助于更均匀的数据分布，尤其是在shard key单调变化的数据集中。</p>
+<p>·   自定义标签划分：MongoDB支持通过自定义标签标记分片的方式直接平衡数据分布策略，可以创建标签并且将它们与shard key值的范围进行关联，然后分配这些标签到各个分片上，最终平衡器转移带有标签标记的数据到对应的分片上，确保集群总是按标签描述的那样进行数据分布。标签是控制平衡器行为及集群中块分布的主要方法。</p>
+<p><code>差异</code>：</p>
+<p>·   基于范围划分对于范围查询比较高效。假设在shard key上进行范围查询，查询路由很容易能够知道哪些块与这个范围重叠，然后把相关查询按照这个路线发送到仅仅包含这些chunks的分片。</p>
+<p>·   基于范围划分很容易导致数据不均匀分布，这样会削弱分片集群的功能。</p>
+<p>·   基于散列划分是以牺牲高效范围查询为代价，它能够均匀的分布数据，散列值能够保证数据随机分布到各个分片上。</p>
+<h3 id="简述MongoDB分片集群采取什么方式确保数据分布的平衡？"><a href="#简述MongoDB分片集群采取什么方式确保数据分布的平衡？" class="headerlink" title="简述MongoDB分片集群采取什么方式确保数据分布的平衡？"></a>简述MongoDB分片集群采取什么方式确保数据分布的平衡？</h3><p>新加入的数据及服务器都会导致集群数据分布不平衡，MongoDB采用两种方式确保数据分布的平衡：</p>
+<p>·   拆分</p>
+<p>拆分是一个后台进程，防止块变得太大。当一个块增长到指定块大小的时候，拆分进程就会块一分为二，整个拆分过程是高效的。不会涉及到数据的迁移等操作。</p>
+<p>·   平衡</p>
+<p>平衡器是一个后台进程，管理块的迁移。平衡器能够运行在集群任何的mongd实例上。当集群中数据分布不均匀时，平衡器就会将某个分片中比较多的块迁移到拥有块较少的分片中，直到数据分片平衡为止。</p>
+<p>分片采用后台操作的方式管理着源分片和目标分片之间块的迁移。在迁移的过程中，源分片中的块会将所有文档发送到目标分片中，然后目标分片会获取并应用这些变化。最后，更新配置服务器上关于块位置元数据。</p>
+<h3 id="简述MongoDB备份及恢复方式？"><a href="#简述MongoDB备份及恢复方式？" class="headerlink" title="简述MongoDB备份及恢复方式？"></a>简述MongoDB备份及恢复方式？</h3><p>mongodb备份恢复方式通常有以下三种：</p>
+<p>·   <code>文件快照方式</code>：此方式相对简单，需要系统文件支持快照和mongod必须启用journal。可以在任何时刻创建快照。恢复时，确保没有运行mongod，执行快照恢复操作命令，然后启动mongod进程，mongod将重放journal日志。</p>
+<p>·   <code>复制数据文件方式</code>：直接拷贝数据目录下的一切文件，但是在拷贝过程中必须阻止数据文件发生更改。因此需要对数据库加锁，以防止数据写入。恢复时，确保mongod没有运行，清空数据目录，将备份的数据拷贝到数据目录下，然后启动mongod。</p>
+<p>·   <code>使用``mongodump``和``mongorestore``方式</code>：在Mongodb中我们使用mongodump命令来备份MongoDB数据。该命令可以导出所有数据到指定目录中。恢复时，使用mongorestore命令来恢复MongoDB数据。该命令可以从指定目录恢复相应数据。</p>
+<h3 id="简述MongoDB的聚合操作？"><a href="#简述MongoDB的聚合操作？" class="headerlink" title="简述MongoDB的聚合操作？"></a>简述MongoDB的聚合操作？</h3><p>聚合操作能够处理数据记录并返回计算结果。聚合操作能将多个文档中的值组合起来，对成组数据执行各种操作，返回单一的结果。它相当于 SQL 中的 count(*) 组合 group by。对于 MongoDB 中的聚合操作，应该使用aggregate()方法。</p>
+<h3 id="简述MongoDB中的GridFS机制？"><a href="#简述MongoDB中的GridFS机制？" class="headerlink" title="简述MongoDB中的GridFS机制？"></a>简述MongoDB中的GridFS机制？</h3><p>GridFS是一种将大型文件存储在MongoDB中的文件规范。使用GridFS可以将大文件分隔成多个小文档存放，这样我们能够有效的保存大文档，而且解决了BSON对象有限制的问题。</p>
+<h3 id="简述MongoDB针对查询优化的措施？"><a href="#简述MongoDB针对查询优化的措施？" class="headerlink" title="简述MongoDB针对查询优化的措施？"></a>简述MongoDB针对查询优化的措施？</h3><p>MongoDB查询优化大致可能从如下步骤着手：</p>
+<p>·   第一步：找出慢速查询</p>
+<p>如下方式开启内置的查询分析器,记录读写操作效率：</p>
+<p>db.setProfilingLevel(n,{m}),n的取值可选0,1,2；</p>
+<p>查询监控结果：监控结果保存在一个特殊的集合system.profile里。</p>
+<p>§ 0：默认值，表示不记录；</p>
+<p>§ 1：表示记录慢速操作，如果值为1，m必须赋值单位为ms，用于定义慢速查询时间的阈值；</p>
+<p>§ 2：表示记录所有的读写操作。</p>
+<p>·   第二步：分析慢速查询</p>
+<p>找出慢速查询的原因，通常可能的原因有：应用程序设计不合理、不正确的数据模型、硬件配置问题、缺少索引等</p>
+<p>·   第三部：根据不同的分析结果进行优化，如建立索引。</p>
+<h3 id="简述MongoDB的更新操作是否会立刻fsync到磁盘？"><a href="#简述MongoDB的更新操作是否会立刻fsync到磁盘？" class="headerlink" title="简述MongoDB的更新操作是否会立刻fsync到磁盘？"></a>简述MongoDB的更新操作是否会立刻fsync到磁盘？</h3><p>不会，磁盘写操作默认是延时执行的，写操作可能在两三秒（默认在60秒内）后到达磁盘，可通过syncPeriodSecs参数进行配置。</p>
+<h3 id="简述MySQL索引及其作用？"><a href="#简述MySQL索引及其作用？" class="headerlink" title="简述MySQL索引及其作用？"></a>简述MySQL索引及其作用？</h3><p>是数据库管理系统中一个排序的数据结构，根据不同的存储引擎索引分为Hash索引、B+树索引等。常见的InnoDB存储引擎的默认索引实现为：B+树索引。</p>
+<p>索引可以协助快速查询、更新数据库表中数据。</p>
+<h3 id="简述MySQL中什么是事务？"><a href="#简述MySQL中什么是事务？" class="headerlink" title="简述MySQL中什么是事务？"></a>简述MySQL中什么是事务？</h3><p>事务是一系列的操作，需要要符合ACID特性，即：事务中的操作要么全部成功，要么全部失败。</p>
+<h3 id="简述MySQL事务之间的隔离？"><a href="#简述MySQL事务之间的隔离？" class="headerlink" title="简述MySQL事务之间的隔离？"></a>简述MySQL事务之间的隔离？</h3><p>MySQL事务支持如下四种隔离：</p>
+<p>·   <code>未提交读</code>(Read Uncommitted)：允许脏读，其他事务只要修改了数据，即使未提交，本事务也能看到修改后的数据值。也就是可能读取到其他会话中未提交事务修改的数据。</p>
+<p>·   <code>提交读</code>(Read Committed)：只能读取到已经提交的数据。Oracle等多数数据库默认都是该级别 (不重复读)。</p>
+<p>·   <code>可重复读</code>(Repeated Read)：可重复读。无论其他事务是否修改并提交了数据，在这个事务中看到的数据值始终不受其他事务影响。</p>
+<p>·   <code>串行读</code>(Serializable)：完全串行化的读，每次读都需要获得表级共享锁，读写相互都会阻塞。</p>
+<h3 id="简述MySQL锁及其作用？"><a href="#简述MySQL锁及其作用？" class="headerlink" title="简述MySQL锁及其作用？"></a>简述MySQL锁及其作用？</h3><p>锁机制是为了避免，在数据库有并发事务的时候，可能会产生数据的不一致而诞生的的一个机制。锁从类别上分为：</p>
+<p>·   <code>共享锁</code>：又叫做读锁，当用户要进行数据的读取时，对数据加上共享锁，共享锁可以同时加上多个。</p>
+<p>·   <code>排他锁</code>：又叫做写锁，当用户要进行数据的写入时，对数据加上排他锁，排他锁只可以加一个，他和其他的排他锁,共享锁都相斥。</p>
+<h3 id="简述MySQL表中为什么建议添加主键？"><a href="#简述MySQL表中为什么建议添加主键？" class="headerlink" title="简述MySQL表中为什么建议添加主键？"></a>简述MySQL表中为什么建议添加主键？</h3><p>主键是数据库确保数据行在整张表唯一性的保障，即使数据库中表没有主键，也建议添加一个自增长的ID列作为主键，设定了主键之后，在后续的删改查的时候可能更加快速以及确保操作数据范围安全。</p>
+<h3 id="简述MySQL所支持的存储引擎？"><a href="#简述MySQL所支持的存储引擎？" class="headerlink" title="简述MySQL所支持的存储引擎？"></a>简述MySQL所支持的存储引擎？</h3><p>MySQL支持多种存储引擎，常见的有InnoDB、MyISAM、Memory、Archive等。通常使用InnoDB引擎都是最合适的，InnoDB也是MySQL的默认存储引擎。</p>
+<h3 id="简述MySQL-InnoDB引擎和MyISAM引擎的差异？"><a href="#简述MySQL-InnoDB引擎和MyISAM引擎的差异？" class="headerlink" title="简述MySQL InnoDB引擎和MyISAM引擎的差异？"></a>简述MySQL InnoDB引擎和MyISAM引擎的差异？</h3><p>·   InnoDB支持事物，而MyISAM不支持事物。</p>
+<p>·   InnoDB支持行级锁，而MyISAM支持表级锁。</p>
+<p>·   InnoDB支持MVCC, 而MyISAM不支持。</p>
+<p>·   InnoDB支持外键，而MyISAM不支持。</p>
+<p>·   InnoDB不支持全文索引，而MyISAM支持。</p>
+<h3 id="简述MySQL主从复制过程？"><a href="#简述MySQL主从复制过程？" class="headerlink" title="简述MySQL主从复制过程？"></a>简述MySQL主从复制过程？</h3><p>·   1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容；</p>
+<p>·   2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息在Master端binary log文件的名称以及在Binary log中的位置；</p>
+<p>·   3、Slave的IO线程收到信息后，将接收到的日志内容依次写入到Slave端的RelayLog文件（mysql-relay-lin.xxxxx）的最末端，并将读取到的Master端的bin-log的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够明确知道从什么位置开始读取日志；</p>
+<p>·   4、Slave的SQL线程检测到Relay Log中新增加了内容后，会马上解析该Log文件中的内容成为在Master端真实执行时候的那些可执行的查询或操作语句，并在自身执行那些查询或操作语句，这样，实际上就是在master端和Slave端执行了同样的查询或操作语句，所以两端的数据是完全一样的。</p>
+<h3 id="简述MySQL常见的读写分离方案？"><a href="#简述MySQL常见的读写分离方案？" class="headerlink" title="简述MySQL常见的读写分离方案？"></a>简述MySQL常见的读写分离方案？</h3><p>MySQL+Amoeba读写分离方案：Amoeba(变形虫)项目，这个工具致力于MySQL的分布式数据库前端代理层，它主要在应用层访问MySQL的时候充当SQL路由功能。具有负载均衡、高可用性、SQL 过滤、读写分离、可路由相关的到目标数据库、可并发请求多台数据库合并结果。通过Amoeba你能够完成多数据源的高可用、负载均衡、数据切片、读写分离的功能。</p>
+<p>MySQL+MMM读写分离方案：MMM即Multi-Master Replication Manager for MySQL，mysql多主复制管理器是关于mysql主主复制配置的监控、故障转移和管理的一套可伸缩的脚本套件(在任何时候只有一个节点可以被写入)。MMM也能对从服务器进行读负载均衡，通过MMM方案能实现服务器的故障转移，从而实现mysql的高可用。MMM不仅能提供浮动IP的功能，如果当前的主服务器挂掉后，会将你后端的从服务器自动转向新的主服务器进行同步复制，不用手工更改同步配置。</p>
+<h3 id="简述MySQL常见的高可用方案？"><a href="#简述MySQL常见的高可用方案？" class="headerlink" title="简述MySQL常见的高可用方案？"></a>简述MySQL常见的高可用方案？</h3><p>·   <code>MySQL``主从复制</code>：Mysql内建的复制功能是构建大型，高性能应用程序的基础。将Mysql的数据分布在多个节点（slaves）之上，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。主服务器将更新写入二进制日志文件，并维护文件的一个索引以跟踪日志循环。这些日志可以记录发送到从服务器的更新。</p>
+<p>·   <code>MySQL``双主</code>：参考MySQL主从复制。</p>
+<p>·   <code>MySQL``双主多从</code>：参考MySQL主从复制。</p>
+<p>·   <code>MySQL``复制``+Keepalived``高可用</code>：MySQL自身的复制，对外基于Keepalived技术，暴露一个VIP，从而实现高可用。</p>
+<p>·   <code>Heartbeat + MySQL ``实现``MySQL``的高可用</code>：通过Heartbeat的心跳检测和资源接管、集群中服务的监测、失效切换等功能，结合MySQL来实现高可用性。</p>
+<h3 id="简述MySQL常见的优化措施？"><a href="#简述MySQL常见的优化措施？" class="headerlink" title="简述MySQL常见的优化措施？"></a>简述MySQL常见的优化措施？</h3><p>MySQL可通过如下方式优化：</p>
+<p>·   1、开启查询缓存，优化查询。</p>
+<p>·   2、使用explain判断select查询，从而分析查询语句或是表结构的性能瓶颈，然后有针对性的进行优化。</p>
+<p>·   3、为搜索字段建索引</p>
+<p>·   4、对于有限定范围取值的字段，推荐使用 ENUM 而不是 VARCHAR。</p>
+<p>·   5、垂直分表。</p>
+<p>·   6、选择正确的存储引擎。</p>
+<h3 id="简述MySQL常见备份方式和工具？"><a href="#简述MySQL常见备份方式和工具？" class="headerlink" title="简述MySQL常见备份方式和工具？"></a>简述MySQL常见备份方式和工具？</h3><p>·   MySQL自带</p>
+<p>mysqldump：mysqldump支持基于innodb的热备份，使用mysqldump完全备份+二进制日志可以实现基于时间点的恢复，通常适合备份数据比较小的场景 。</p>
+<p>·   系统层面</p>
+<p>tar备份：可以使用tar之类的系统命令对整个数据库目录进行打包备份。</p>
+<p>lvm快照备份：可基于文件系统的LVM制作快照，进行对整个数据库目录所在的逻辑卷备份。</p>
+<p>·   第三方备份工具</p>
+<p>可使用其他第三方工具进行备份，如xtrabackup工具，该工具支持innodb的物理热备份，支持完全备份、增量备份，而且速度非常快，支持innodb存储引起的数据在不同数据库之间迁移，支持复制模式下的从机备份恢复备份恢复。</p>
+<h3 id="你是怎么备份数据的，包括数据库备份？"><a href="#你是怎么备份数据的，包括数据库备份？" class="headerlink" title="你是怎么备份数据的，包括数据库备份？"></a>你是怎么备份数据的，包括数据库备份？</h3><p>因为数据量少，采用mysqldump逻辑备份，写个定时任务，每周一完全备份一次，然后每天增量备份</p>
+<p>mysql部分：四种隔离级别：</p>
+<p>A、READ UNCOMMITTED(未提交读），事务中的修改，即使没有提文，对其他事务也都是可见的，事务可以</p>
+<p>读取未提交的数据，也被称为脏读（Dirty Read)，这个级别会导致很多问题</p>
+<p>B、READ COMMITTED(提文读），大多数数据库系统的默认隔离级别，一个事务开始时，只能“看见”已经</p>
+<p>提交的事务所做的修改，一个事务从开始直到提交之前，所做的任何修改对其他事务都是不可见的，也叫</p>
+<p>不可重复读（nonrepeatableread)，有可能出现幻读（Phantom Read)，指的是当某个事务在读取某个</p>
+<p>范围内的记录时，另外一个事务又在该范围内插入了新的记录，当之前的事务再次读取该范围的记录时，</p>
+<p>会产生幻行（Phantom Row）</p>
+<p>C、REPEATABLE READ(可重复读），通过InnoDB和XtraDB存储引等，是MySQL的默认事务隔离级别</p>
+<p>D、SERIALIZABLE(可串行化）最高级别，通过强制事务串行执行，避免了幻读问题，会在读取的每一行数</p>
+<p>据上都加锁，可能导致大量的超时和锁争用的问题。</p>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><h3 id="1-之前工作使用的是什么版本MySQL？为什么选择这个版本？"><a href="#1-之前工作使用的是什么版本MySQL？为什么选择这个版本？" class="headerlink" title="1.之前工作使用的是什么版本MySQL？为什么选择这个版本？"></a>1.之前工作使用的是什么版本MySQL？为什么选择这个版本？</h3><p>MySQL常见的版本；</p>
+<p>MySQL官方(ORACLE)版本(社区版，企业版)；企业版监控工具，社区版不提供，企业版防火墙，企业版用户审计</p>
+<p>PerconaMySQL；与官方版完全兼容，提供了innodb热备份工具，审计日志</p>
+<p>MariaDB，审计日志，10.2开始支持基于日志回滚</p>
+<p>MySQL版本升级</p>
+<h3 id="升级前要考虑什么？"><a href="#升级前要考虑什么？" class="headerlink" title="升级前要考虑什么？"></a>升级前要考虑什么？</h3><p>1.升级可以给业务带来的益处</p>
+<p>2.升级可能对业务带来的影响</p>
+<p>3.数据库升级方案的指定</p>
+<p>升级时不会一次性全部升级，会先在测试环境反复演练测试确认无误，然后选取一个小区域服务器进行升级</p>
+<p>4.升级失败的回滚方案</p>
+<h3 id="主从同步怎样配置"><a href="#主从同步怎样配置" class="headerlink" title="主从同步怎样配置"></a>主从同步怎样配置</h3><p>1.master开启二进制日志</p>
+<p>2.master和slave配置不同的server_id</p>
+<p>3.slave配置中继日志</p>
+<p>4.master做账户授权</p>
+<p>5.slave开启同步</p>
+<p>1.master开启二进制日志</p>
+<p>2.master和slave配置不同的server_id</p>
+<p>3.slave配置中继日志</p>
+<p>4.master做账户授权</p>
+<p>5.往slave 导入master的数据</p>
+<p>5.slave通过chagnge master指向mysql master</p>
+<p>mySQL主从复制过程</p>
+<p>master：IO线程，读取日志文件内容并且发给slave</p>
+<p>slave：IO线程，介绍master的日志并且写到中继日志+SQL线程，读取中继日志并且转换成SQL语句顺序执行</p>
+<p>1.slave端的IO线程连接上master，并项master请求指定日志文件的指定位置(新部署的master和slave从最开始的日志)之后的日志</p>
+<p>2.master接收到来自slave的IO线程请求，负责IO复制的IO线程根据slave的请求信息读取相应的日志内容，然后将本地读取的bin-log的文件名、位置及指定位置之后的内容一起返回给slave的IO线程处理</p>
+<p>3.slave的IO线程将接收到的信息依次添加到slave端的relay-log文件的最末端，并将读取到的master端的bin-log的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够清楚的告诉master“我需要从那个bin-log的哪个位置开始往回的日志内容请发给我”</p>
+<p>4.slave的SQL线程检查到relay-log中新增了内容后，会马上将relay-log中的内容解析为在master端真实执行时候可执行命令，并顺序执行，从而保证对slave的MySQL进行响应的增加或删除操作，最终实现和master数据保持一致</p>
+<h3 id="MySQL主从复制原理"><a href="#MySQL主从复制原理" class="headerlink" title="MySQL主从复制原理"></a>MySQL主从复制原理</h3><p>该过程的第一部分就是master记录二进制日志，在每个事务更新数据完成之前，master在二进制日志记录这些改变，MySQL将事务串行的写入二进制日志，即便事务中的语句都是交叉执行的，在世间写入二进制日志完成后，master通知存储引擎提交事务</p>
+<p>下一步就是slave将master的binary-log拷贝到它自己的中继日志，首先，slave开始一个工作线程一个IO线程。IO线程在master上打开一个普通连接，然后开始binlog dumpprocess。binlog dumpprocess从master的二进制日志中读取事件，如果已经跟上master，他会睡眠并等待master产生新的事件。IO线程将这些事件写入中继日志，</p>
+<p>SQLslave thread(SQL从线程)处理该过程的最后一步。SQL线程从中继日志读取事件，并重放其中的事件而更新slave的数据，使其与master中的数据一致，只要该线程与IO线程保持一致，中继日志通常会位于OS缓存中，所以中继日志的开销很小</p>
+<h3 id="在已知MYSQL数据库的ROOT用户密码的情况下，修改密码的方法："><a href="#在已知MYSQL数据库的ROOT用户密码的情况下，修改密码的方法：" class="headerlink" title="在已知MYSQL数据库的ROOT用户密码的情况下，修改密码的方法："></a>在已知MYSQL数据库的ROOT用户密码的情况下，修改密码的方法：</h3><p>1、 在SHELL环境下，使用mysqladmin命令设置：</p>
+<p>mysqladmin –u root –p password “新密码” 回车后要求输入旧密码</p>
+<p>2、 在mysql&gt;环境中,使用update命令，直接更新mysql库user表的数据：</p>
+<p>Update mysql.user set password&#x3D;password(‘新密码’) where user&#x3D;’root’;</p>
+<p>flush privileges;</p>
+<p>注意：mysql语句要以分号”；”结束</p>
+<p>3、 在mysql&gt;环境中，使用grant命令，修改root用户的授权权限。</p>
+<p>grant all on . to root@’localhost’ identified by ‘新密码’；</p>
+<h3 id="如查忘记了mysql数据库的ROOT用户的密码，又如何做呢？方法如下："><a href="#如查忘记了mysql数据库的ROOT用户的密码，又如何做呢？方法如下：" class="headerlink" title="如查忘记了mysql数据库的ROOT用户的密码，又如何做呢？方法如下："></a>如查忘记了mysql数据库的ROOT用户的密码，又如何做呢？方法如下：</h3><p>1、 关闭当前运行的mysqld服务程序：service mysqld stop（要先将mysqld添加为系统服务）</p>
+<p>2、 使用mysqld_safe脚本以安全模式（不加载授权表）启动mysqld 服务</p>
+<p>&#x2F;usr&#x2F;local&#x2F;mysql&#x2F;bin&#x2F;mysqld_safe –skip-grant-table &amp;</p>
+<p>3、 使用空密码的root用户登录数据库，重新设置ROOT用户的密码</p>
+<p>＃mysql -u root</p>
+<p>Mysql&gt; Update mysql.user set password&#x3D;password(‘新密码’) where user&#x3D;’root’;</p>
+<p>Mysql&gt; flush privileges;</p>
+<h3 id="mysql数据备份工具"><a href="#mysql数据备份工具" class="headerlink" title="mysql数据备份工具"></a>mysql数据备份工具</h3><p>mysqldump工具</p>
+<p>mysqldump是mysql自带的备份工具，目录在bin目录下面：&#x2F;usr&#x2F;local&#x2F;mysql&#x2F;bin&#x2F;mysqldump</p>
+<p>支持基于innodb的热备份，但是由于是逻辑备份，所以速度不是很快，适合备份数据比较小的场景</p>
+<p>Mysqldump完全备份+二进制日志可以实现基于时间点的恢复。</p>
+<p>基于LVM快照备份</p>
+<p>在物理备份中，有基于文件系统的物理备份（LVM的快照），也可以直接用tar之类的命令对整个数据库目录</p>
+<p>进行打包备份，但是这些只能进行泠备份，不同的存储引擎备份的也不一样，myisam自动备份到表级别</p>
+<p>而innodb不开启独立表空间的话只能备份整个数据库。</p>
+<p>tar包备份</p>
+<p>percona提供的xtrabackup工具</p>
+<p>支持innodb的物理热备份，支持完全备份，增量备份，而且速度非常快，支持innodb存储引起的数据在不同</p>
+<p>数据库之间迁移，支持复制模式下的从机备份恢复备份恢复，为了让xtrabackup支持更多的功能扩展</p>
+<p>可以设立独立表空间，打开 innodb_file_per_table功能，启用之后可以支持单独的表备份</p>
+<h3 id="mysql的innodb如何定位锁问题，mysql如何减少主从复制延迟？"><a href="#mysql的innodb如何定位锁问题，mysql如何减少主从复制延迟？" class="headerlink" title="mysql的innodb如何定位锁问题，mysql如何减少主从复制延迟？"></a>mysql的innodb如何定位锁问题，mysql如何减少主从复制延迟？</h3><p>mysql的innodb如何定位锁问题:</p>
+<p>在使用 show engine innodb status检查引擎状态时，发现了死锁问题</p>
+<p>在5.5中，information_schema 库中增加了三个关于锁的表（MEMORY引擎）</p>
+<p>innodb_trx ## 当前运行的所有事务</p>
+<p>innodb_locks ## 当前出现的锁</p>
+<p>innodb_lock_waits ## 锁等待的对应关系</p>
+<h3 id="mysql如何减少主从复制延迟"><a href="#mysql如何减少主从复制延迟" class="headerlink" title="mysql如何减少主从复制延迟:"></a>mysql如何减少主从复制延迟:</h3><p>如果延迟比较大，就先确认以下几个因素：</p>
+<p>\1.   从库硬件比主库差，导致复制延迟</p>
+<p>\2.   主从复制单线程，如果主库写并发太大，来不及传送到从库</p>
+<p>就会导致延迟。更高版本的mysql可以支持多线程复制</p>
+<p>\3.   慢SQL语句过多</p>
+<p>\4.   网络延迟</p>
+<p>\5.   master负载</p>
+<p>主库读写压力大，导致复制延迟，架构的前端要加buffer及缓存层</p>
+<p>\6.   slave负载</p>
+<p>一般的做法是，使用多台slave来分摊读请求，再从这些slave中取一台专用的服务器</p>
+<p>只作为备份用，不进行其他任何操作.另外， 2个可以减少延迟的参数:</p>
+<p>–slave-net-timeout&#x3D;seconds 单位为秒 默认设置为 3600秒</p>
+<p>参数含义：当slave从主数据库读取log数据失败后，等待多久重新建立连接并获取数据</p>
+<p>–master-connect-retry&#x3D;seconds 单位为秒 默认设置为 60秒</p>
+<p>参数含义：当重新建立主从连接时，如果连接建立失败，间隔多久后重试</p>
+<p>通常配置以上2个参数可以减少网络问题导致的主从数据同步延迟</p>
+<p><strong>MySQL****数据库主从同步延迟解决方案</strong></p>
+<p>最简单的减少slave同步延时的方案就是在架构上做优化，尽量让主库的DDL快速执行</p>
+<p>还有就是主库是写，对数据安全性较高，比如sync_binlog&#x3D;1，innodb_flush_log_at_trx_commit</p>
+<p>&#x3D; 1 之类的设置，而slave则不需要这么高的数据安全，完全可以讲sync_binlog设置为0或者关闭binlog</p>
+<p>innodb_flushlog也可以设置为0来提高sql的执行效率。另外就是使用比主库更好的硬件设备作为slave</p>
+<h3 id="数据库如何实现分库备份"><a href="#数据库如何实现分库备份" class="headerlink" title="数据库如何实现分库备份"></a>数据库如何实现分库备份</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">BAK_TIME=$(<span class="built_in">date</span> +%Y-%m-%d_%H:%M:%S)</span><br><span class="line"></span><br><span class="line">USER_PSWD=123456</span><br><span class="line"></span><br><span class="line">USER_NAME=root</span><br><span class="line"></span><br><span class="line">SOCKET=<span class="string">&quot;/var/lib/mysql/mysql.sock&quot;</span></span><br><span class="line"></span><br><span class="line">MYLOGIN=<span class="string">&quot;mysql -u<span class="variable">$&#123;USER_NAME&#125;</span> -p<span class="variable">$&#123;USER_PSWD&#125;</span> -S <span class="variable">$&#123;SOCKET&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">DUMP_CMD=<span class="string">&quot;/usr/local/mysql/bin/mysqldump -u<span class="variable">$&#123;USER_NAME&#125;</span> -p<span class="variable">$&#123;USER_PSWD&#125;</span> -S<span class="variable">$&#123;SOCKET&#125;</span></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">-B --master-data=2 --single_transaction --flush-logs --skip-add-drop-table&quot;</span></span><br><span class="line"></span><br><span class="line">DATABASE=<span class="string">&quot;<span class="subst">$($MYLOGIN -e <span class="string">&quot;show databases;&quot;</span>|egrep -vi <span class="string">&quot;_schema|mysql&quot;</span>)</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> dbname <span class="keyword">in</span> <span class="variable">$&#123;DATABASE&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line"></span><br><span class="line"> MYDIR=/data/backup/<span class="variable">$&#123;dbname&#125;</span></span><br><span class="line"></span><br><span class="line"> [ ! -d <span class="variable">$&#123;MYDIR&#125;</span> ] &amp;&amp; <span class="built_in">mkdir</span> -p <span class="variable">$&#123;MYDIR&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$DUMP_CMD</span> <span class="variable">$&#123;dbname&#125;</span>|gzip &gt;<span class="variable">$&#123;MYDIR&#125;</span>/<span class="variable">$&#123;dbname&#125;</span>_<span class="variable">$&#123;BAK_TIME&#125;</span>.sql.gz</span><br><span class="line"></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="网络原理"><a href="#网络原理" class="headerlink" title="网络原理"></a>网络原理</h1><h2 id="说说TCP-x2F-IP的七层模型"><a href="#说说TCP-x2F-IP的七层模型" class="headerlink" title="说说TCP&#x2F;IP的七层模型"></a>说说TCP&#x2F;IP的七层模型</h2><p>应用层 (Application)：</p>
+<p>网络服务与最终用户的一个接口。</p>
+<p>协议有：HTTP FTP TFTP SMTP SNMP DNS TELNET HTTPS POP3 DHCP</p>
+<p>表示层（Presentation Layer）：</p>
+<p>数据的表示、安全、压缩。（在五层模型里面已经合并到了应用层）</p>
+<p>格式有，JPEG、ASCll、DECOIC、加密格式等</p>
+<p>会话层（Session Layer）：</p>
+<p>建立、管理、终止会话。（在五层模型里面已经合并到了应用层）</p>
+<p>对应主机进程，指本地主机与远程主机正在进行的会话</p>
+<p>传输层 (Transport)：</p>
+<p>定义传输数据的协议端口号，以及流控和差错校验。</p>
+<p>协议有：TCP UDP，数据包一旦离开网卡即进入网络传输层</p>
+<p>网络层 (Network)：</p>
+<p>进行逻辑地址寻址，实现不同网络之间的路径选择。</p>
+<p>协议有：ICMP IGMP IP（IPV4 IPV6） ARP RARP</p>
+<p>数据链路层 (Link)：</p>
+<p>建立逻辑连接、进行硬件地址寻址、差错校验等功能。（由底层网络定义协议）</p>
+<p>将比特组合成字节进而组合成帧，用MAC地址访问介质，错误发现但不能纠正</p>
+<p>物理层（Physical Layer）：</p>
+<p>是计算机网络OSI模型中最低的一层</p>
+<p>物理层规定:为传输数据所需要的物理链路创建、维持、拆除</p>
+<p>而提供具有机械的，电子的，功能的和规范的特性</p>
+<p>简单的说，物理层确保原始的数据可在各种物理媒体上传输。局域网与广域网皆属第1、2层</p>
+<p>物理层是OSI的第一层，它虽然处于最底层，却是整个开放系统的基础</p>
+<p>物理层为设备之间的数据通信提供传输媒体及互连设备，为数据传输提供可靠的环境</p>
+<p>如果您想要用尽量少的词来记住这个第一层，那就是“信号和介质”</p>
+<h2 id="什么叫网站灰度发布？"><a href="#什么叫网站灰度发布？" class="headerlink" title="什么叫网站灰度发布？"></a>什么叫网站灰度发布？</h2><p>灰度发布是指在黑与白之间，能够平滑过渡的一种发布方式</p>
+<p>AB test就是一种灰度发布方式，让一部用户继续用A，一部分用户开始用B</p>
+<p>如果用户对B没有什么反对意见，那么逐步扩大范围，把所有用户都迁移到B上面 来</p>
+<p>灰度发布可以保证整体系统的稳定，在初始灰度的时候就可以发现、调整问题，以保证其影响度</p>
+<p>简述DNS进行域名解析的过程？</p>
+<p>用户要访问<a target="_blank" rel="noopener" href="http://www.baidu.com,会先找本机的host文件,再找本地设置的dns服务器,如果也没有的话,就去网络中找根服务器,根服务器反馈结果,说只能提供一级域名服务器.cn,就去找一级域名服务器,一级域名服务器说只能提供二级域名服务器.com.cn,就去找二级域名服务器,二级域服务器只能提供三级域名服务器.baidu.com.cn,就去找三级域名服务器,三级域名服务器正好有这个网站www.baidu.com,然后发给请求的服务器,保存一份之后,再发给客户端/">www.baidu.com，会先找本机的host文件，再找本地设置的DNS服务器，如果也没有的话，就去网络中找根服务器，根服务器反馈结果，说只能提供一级域名服务器.cn，就去找一级域名服务器，一级域名服务器说只能提供二级域名服务器.com.cn,就去找二级域名服务器，二级域服务器只能提供三级域名服务器.baidu.com.cn，就去找三级域名服务器，三级域名服务器正好有这个网站www.baidu.com，然后发给请求的服务器，保存一份之后，再发给客户端</a></p>
+<h2 id="递归查询和迭代查询的区别"><a href="#递归查询和迭代查询的区别" class="headerlink" title="递归查询和迭代查询的区别"></a>递归查询和迭代查询的区别</h2><p>1）递归查询<br> 递归查询是一种DNS 服务器的查询模式，在该模式下DNS 服务器接收到客户机请求，必须使用一个准确的查询结果回复客户机。如果DNS 服务器本地没有存储查询DNS 信息，那么该服务器会询问其他服务器，并将返回的查询结果提交给客户机。<br> （2）迭代查询<br> DNS 服务器另外一种查询方式为迭代查询，DNS 服务器会向客户机提供其他能够解析查询请求的DNS 服务器地址，当客户机发送查询请求时，DNS 服务器并不直接回复查询结果，而是告诉客户机另一台DNS 服务器地址，客户机再向这台DNS 服务器提交请求，依次循环直到返回查询的结果<br> 为止。 </p>
+<h2 id="简述什么是CDN？"><a href="#简述什么是CDN？" class="headerlink" title="简述什么是CDN？"></a>简述什么是CDN？</h2><p>CDN即内容分发网络，是在现有网络中增加一层新的网络架构，从而实现将源站内容发布和传送到最靠近用户的边缘地区，使用户可以就近访问想要的内容，提高用户访问的响应速度。</p>
+<p>请写出下面 linux SecureCRT 命令行快捷键命令的功能？</p>
+<p>Ctrl + a —-&gt;光标移动到行首</p>
+<p>Ctrl + e —-&gt;光标移动到行尾</p>
+<p>Ctrl + c —-&gt;终止当前程序</p>
+<p>Ctrl + d —-&gt;如果光标前有字符则删除，没有则退出当前中断</p>
+<p>Ctrl + l —-&gt;清屏</p>
+<p>Ctrl + u —-&gt;剪切光标以前的字符</p>
+<p>Ctrl + k —-&gt;剪切光标以后的字符</p>
+<p>Ctrl + y —-&gt;复制u&#x2F;k的内容</p>
+<p>Ctrl + r —-&gt;查找最近用过的命令</p>
+<p>tab —-&gt;命令或路径补全</p>
+<p>Ctrl+shift+c —-&gt;复制</p>
+<p>Ctrl+shift+v —-&gt;粘贴</p>
+<p>你对现在运维工程师的理解和以及对其工作的认识</p>
+<p>运维工程师在公司当中责任重大，需要保证时刻为公司及客户提供最高、最快、最稳定、最安全的服务</p>
+<p>运维工程师的一个小小的失误，很有可能会对公司及客户造成重大损失</p>
+<p>因此运维工程师的工作需要严谨及富有创新精神</p>
+<h1 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h1><h2 id="ipmi"><a href="#ipmi" class="headerlink" title="ipmi"></a>ipmi</h2><p>智能平台管理接口（Intelligent Platform Management Interface）</p>
+<p>原本是一种Intel架构的企业系统的周边设备所采用的一种工业标准。IPMI亦是一个开放的免费标准，用户无需支付额外的费用即可使用此标准。</p>
+<p>IPMI 能够横跨不同的操作系统、固件和硬件平台，可以智能的监视、控制和自动回报大量服务器的运作状况，以降低服务器系统成本</p>
+<h1 id="系统优化"><a href="#系统优化" class="headerlink" title="系统优化"></a>系统优化</h1><h2 id="Nginx优化"><a href="#Nginx优化" class="headerlink" title="Nginx优化"></a>Nginx优化</h2><p>工作进程绑定、多进程、普通启用Nginx、最大上传文件大小……</p>
+<p>如果你们公司的网站访问很慢，你会如何排查?</p>
+<p>答：问清是反应的人哪个服务应用或者页面调取哪个接口慢，叫他把页面或相关的URL发给你，首先，最直观的分析就是用测览器按F12，看下是哪一块的内容过慢（ONS解析、同络加载、大图片、还是某个文件内容等），如果有，就对症下药去解决（图片慢就优化图片、同络慢就查看内同情况等）。</p>
+<p>其次，看后端服务的日志，其实大多敬的问题看相关日志光最有效分析，最好用tail-f跟踪一下日志，当然你也要点击测试来访问接口日志才会打出来。</p>
+<p>最后，排除sql，，找到sql去mysal执行一下，看看时间是否很久，如果根久，就要优化SOL问题了，expain一下SqL看看奈引情况验的，针对性优化。教据量太大的能分表就分表，能分殊就分库。如果S0L没哈问题，那可能就是写的逻辑代码的问题了，一行行审代码，我到耗时的地方改造，优化逻辑。</p>
+<p>ulimit -n 查看linux系统打开最大的文件描述符，</p>
+<p>这里默认1024</p>
+<p>不修改这里web服务器修改再大也没用，若要用就修改很几个办法，这里说其中一个：</p>
+<p>修改&#x2F;etc&#x2F;security&#x2F;limits.conf</p>
+<p>soft nofile 10240</p>
+<p>hard nofile 10240</p>
+<p>重启后生效</p>
+<p>如何优化 Linux系统（可以不说太具体）？</p>
+<p>不用root，添加普通用户，通过sudo授权管理</p>
+<p>更改默认的远程连接SSH服务端口及禁止root用户远程连接</p>
+<p>定时自动更新服务器时间</p>
+<p>配置国内yum源</p>
+<p>关闭selinux及iptables（iptables工作场景如果有外网IP一定要打开，高并发除外）</p>
+<p>调整文件描述符的数量</p>
+<p>精简开机启动服务（crond rsyslog network sshd）</p>
+<p>内核参数优化（&#x2F;etc&#x2F;sysctl.conf）</p>
+<p>更改字符集，支持中文，但建议还是用英文字符集，防止乱码</p>
+<p>锁定关键系统文件</p>
+<p>清空&#x2F;etc&#x2F;issue，去除系统及内核版本登录前的屏幕显示</p>
+<h2 id="服务器开不了机怎么解决一步步的排查"><a href="#服务器开不了机怎么解决一步步的排查" class="headerlink" title="服务器开不了机怎么解决一步步的排查"></a>服务器开不了机怎么解决一步步的排查</h2><p>A、造成服务器故障的原因可能有以下几点：</p>
+<p>1: 服务器电有问题（断电，电源线松动，人为原因）。</p>
+<p>2：服务器系统文件去失，硬件问题，散热不良造成蓝屏和死机。</p>
+<p>3：服务器网络参数配置错误，物理链路原因等。</p>
+<p>B、如何排查服务器故障的处理步骤如下：</p>
+<p>1: 长先看服务器的电源指示灯是否亮，如果电源灯不亮，先检并确认电源没间时，试着按开机键是否能点亮服务器．如果不能点亮，和数据确认后先更换备用服务器以便快速恢复业务．</p>
+<p>2：如果服务器电源灯亮，接上显示器和键盘，如果服务器系统有异常（比如蓝屏．“）不能]下常登录系统，先和数据确认，是否执行能启服务器或是换各用服务器，以便快速恢复业务．</p>
+<p>3：如果正确输入用户名和密码情况下能登录系统，查看网指示灯是否正常，并用ifconfig命令查看网卡接0状态。用ng对端ip测试网络是否连</p>
+<p>4：如Rping不通，先和数据人员确认并检查网卡配置文件参数是否配置正确@是否正确配置网关（不正确则修正后）用”ifdown；ifup网名“命令重启单个网一网卡接口（灯）状态正常后，再用pi腿命令測试·</p>
+<p>5:还ping不通，及时排查并确保本地尾纤．模块等物理设各接入正常，收发光在规定范围内，和数据人员确认是否可以重启服务器，并确认数据方面没有网络配置和数据方面的变化。</p>
+<p>6、能Ding通则告知数据人员，并让数据人员帮忙确认链路是否正常@有没有去包现象等．没有去包就有去包就继续排查尾纤，模块等，直到链路正常没有去包，数据人员能及时的从远程登录服务器做数据配置能快速恢复业务为0K。</p>
+<p>7、如果不能接入服务器，与数据确认是否可以重启，重启后登陆正常，继续3．4．6步骒，如果还是不行，权衡利弊，有没有必要更换新的服务器上去，恢复业务要紧：</p>
+<p>Linux系统中病毒怎么解决</p>
+<p>1）最简单有效的方法就是重装系统</p>
+<p>2）要查的话就是找到病毒文件然后删除</p>
+<p>中毒之后一般机器cpu、内存使用率会比较高</p>
+<p>机器向外发包等异常情况，排查方法简单介绍下</p>
+<p>top 命令找到cpu使用率最高的进程</p>
+<p>一般病毒文件命名都比较乱，可以用 ps aux 找到病毒文件位置 </p>
+<p>rm -f 命令删除病毒文件</p>
+<p>检查计划任务、开机启动项和病毒文件目录有无其他可以文件等</p>
+<p>3）由于即使删除病毒文件不排除有潜伏病毒，所以最好是把机器备份数据之后重装一下</p>
+<p>发现一个病毒文件你删了他又自动创建怎么解决</p>
+<p>公司的内网某台linux服务器流量莫名其妙的剧增,用iftop查看有连接外网的情况</p>
+<p>针对这种情况一般重点查看netstat连接的外网ip和端口。</p>
+<p>用lsof -p pid可以查看到具体是那些进程，哪些文件</p>
+<p>经查勘发现&#x2F;root下有相关的配置conf.n hhe两个可疑文件，rm -rf后不到一分钟就自动生成了</p>
+<p>由此推断是某个母进程产生的这些文件。所以找到母进程就是找到罪魁祸首</p>
+<p>查杀病毒最好断掉外网访问，还好是内网服务器，可以通过内网访问</p>
+<p>断了内网，病毒就失去外联的能力，杀掉它就容易的多</p>
+<p>怎么找到呢，找了半天也没有看到蛛丝马迹，没办法只有ps axu一个个排查</p>
+<p>方法是查看可以的用户和和系统相似而又不是的冒牌货，果然，看到了如下进程可疑</p>
+<p>看不到图片就是&#x2F;usr&#x2F;bin&#x2F;.sshd</p>
+<p>于是我杀掉所有.sshd相关的进程，然后直接删掉.sshd这个可执行文件</p>
+<p>然后才删掉了文章开头提到的自动复活的文件</p>
+<p>总结一下，遇到这种问题，如果不是太严重，尽量不要重装系统</p>
+<p>一般就是先断外网，然后利用iftop,ps,netstat,chattr,lsof,pstree这些工具顺藤摸瓜</p>
+<p>一般都能找到元凶。但是如果遇到诸如此类的问题</p>
+<p>&#x2F;boot&#x2F;efi&#x2F;EFI&#x2F;redhat&#x2F;grub.efi: Heuristics.Broken.Executable FOUND，个人觉得就要重装系统了</p>
+<h1 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h1><h2 id="监控主要监控什么指标"><a href="#监控主要监控什么指标" class="headerlink" title="监控主要监控什么指标"></a>监控主要监控什么指标</h2><p>CPU、内存、网络、磁盘利用率，WEB，API, 存储满了，40T</p>
+<p>zabbix主被动模式有啥区别：</p>
+<p>答：<strong>被动模式：</strong>此模式为zabbix默认的工作模式，由zabbix server向zabbix agent发出指令获取数据，</p>
+<p>zabbix agent 被动地去获取数据并返回给zabbix server，zabbix server会周期性地向agent索取数据。</p>
+<p>此模式的最大问题就是会增加zabbix server的工作量，在大量的服务器环境下，zabbix server不能及时获取到最新的数据。</p>
+<p><strong>主动模式；</strong>即由zabbixagent主动来集数据并返回给zabbix server，不需要zabbixserver的另行干预，</p>
+<p>因此使用主动模式能在一定程序上减轻zabbix server的压力。</p>
+<p>shell或者python脚本，增加nginx自定义指标做监控</p>
+<p>1.用命令测试获取监控值 2.改成shell脚本测试获取监控值</p>
+<p>3.添加到zabix agent配置文件并重启</p>
+<p>4.到zabbix server使用zabbix_get命令测试监控项能不能获取到监控值</p>
+<p>5.在web界面添加监控项或者制作模板等</p>
+<h2 id="简述常见的监控软件？"><a href="#简述常见的监控软件？" class="headerlink" title="简述常见的监控软件？"></a>简述常见的监控软件？</h2><p>常见的监控软件有：</p>
+<p>·   <code>Cacti</code>：是一套基于PHP、MySQL、SNMP及RRDTool开发的网络流量监测图形分析工具。</p>
+<p>·   <code>Zabbix</code>：Zabbix是一个企业级的高度集成开源监控软件，提供分布式监控解决方案。可以用来监控设备、服务等可用性和性能。</p>
+<p>·   <code>Open-falcon</code>：open-falcon是一款用golang和python写的监控系统，由小米启动这个项目。</p>
+<p>·   <code>Prometheus</code>：Prometheus是由SoundCloud开发的开源监控报警系统和时序列数据库(TSDB)。Prometheus使用Go语言开发，是Google BorgMon监控系统的开源版本。</p>
+<h2 id="简述Prometheus及其主要特性？"><a href="#简述Prometheus及其主要特性？" class="headerlink" title="简述Prometheus及其主要特性？"></a>简述Prometheus及其主要特性？</h2><p>Prometheus是一个已加入CNCF的开源监控报警系统和时序列数据库项目，通过不同的组件完成数据的采集，数据的存储和告警。</p>
+<p>Prometheus主要特性：</p>
+<p>·   多维数据模型</p>
+<p>§ 时间序列数据通过 metric 名和键值对来区分。</p>
+<p>§ 所有的 metrics 都可以设置任意的多维标签。</p>
+<p>§ 数据模型更随意，不需要刻意设置为以点分隔的字符串。</p>
+<p>§ 可以对数据模型进行聚合，切割和切片操作。</p>
+<p>§ 支持双精度浮点类型，标签可以设为全 unicode。</p>
+<p>·   灵活的查询语句（PromQL），可以利用多维数据完成复杂的查询</p>
+<p>·   Prometheus server 是一个单独的二进制文件，不依赖（任何分布式）存储，支持 local 和 remote 不同模型</p>
+<p>·   采用 http 协议，使用 pull 模式，拉取数据，或者通过中间网关推送方式采集数据</p>
+<p>·   监控目标，可以采用服务发现或静态配置的方式</p>
+<p>·   支持多种统计数据模型，图形化友好</p>
+<p>·   高效：一个 Prometheus server 可以处理数百万的 metrics</p>
+<p>·   适用于以机器为中心的监控以及高度动态面向服务架构的监控</p>
+<h2 id="简述Prometheus主要组件及其功能？"><a href="#简述Prometheus主要组件及其功能？" class="headerlink" title="简述Prometheus主要组件及其功能？"></a>简述Prometheus主要组件及其功能？</h2><p>Prometheus 的主要模块包含：prometheus server, exporters, push gateway, PromQL, Alertmanager, WebUI 等。</p>
+<p>·   1、<code>prometheus server</code>：定期从静态配置的 targets 或者服务发现（主要是DNS、consul、k8s、mesos等）的 targets 拉取数据，用于收集和存储时间序列数据。</p>
+<p>·   2、<code>exporters</code>：负责向prometheus server做数据汇报，暴露一个http服务的接口给Prometheus server定时抓取。而不同的数据汇报由不同的exporters实现，比如监控主机有node-exporters，mysql有MySQL server exporter。</p>
+<p>·   3、<code>push gateway</code>：主要使用场景为，当Prometheus 采用 pull 模式，可能由于不在一个子网或者防火墙原因，导致 Prometheus 无法直接拉取各个 target 数据。此时需要push gateway接入，以便于在监控业务数据的时候，将不同数据汇总, 由 Prometheus 统一收集。实现机制类似于zabbix-proxy功能。</p>
+<p>·   4、<code>Alertmanager</code>：从 Prometheus server 端接收到 alerts 后，会进行去除重复数据，分组，并路由到对收的接受方式，发出报警，即主要实现prometheus的告警功能。AlertManager的整体工作流程如下图所示:</p>
+<p>·   5、<code>webui</code>：Prometheus内置一个简单的Web控制台，可以查询指标，查看配置信息或者Service Discovery等，实践中通常结合Grafana，Prometheus仅作为Grafana的数据源。</p>
+<h2 id="简述Prometheus的机制？"><a href="#简述Prometheus的机制？" class="headerlink" title="简述Prometheus的机制？"></a>简述Prometheus的机制？</h2><p>Prometheus简单机制如下：</p>
+<p>·   Prometheus以其Server为核心，用于收集和存储时间序列数据。Prometheus Server 从监控目标中拉取数据，或通过push gateway间接的把监控目标的监控数据存储到本地HDD&#x2F;SSD中。</p>
+<p>·   用户接口界面通过各种UI使用PromQL查询语言从Server获取数据。</p>
+<p>·   一旦Server检测到异常，会推送告警到AlertManager，由告警管理负责去通知相关方。</p>
+<h2 id="简述Prometheus中什么是时序数据？"><a href="#简述Prometheus中什么是时序数据？" class="headerlink" title="简述Prometheus中什么是时序数据？"></a>简述Prometheus中什么是时序数据？</h2><p>Prometheus 存储的是时序数据,，时序数据是指按照相同时序(相同的名字和标签)，以时间维度存储连续的数据的集合。时序(time series) 是由名字(Metric)，以及一组 key&#x2F;value 标签定义的，具有相同的名字以及标签属于相同时序。</p>
+<h2 id="简述Prometheus时序数据有哪些类型？"><a href="#简述Prometheus时序数据有哪些类型？" class="headerlink" title="简述Prometheus时序数据有哪些类型？"></a>简述Prometheus时序数据有哪些类型？</h2><p>Prometheus 时序数据分为 Counter, Gauge, Histogram, Summary 四种类型。</p>
+<p>·   <code>Counter</code>：计数器表示收集的数据是按照某个趋势（增加／减少）一直变化的，通常用它记录服务请求总量，错误总数等。</p>
+<p>·   <code>Gauge</code>：计量器表示搜集的数据是一个瞬时的，与时间没有关系，可以任意变高变低，往往可以用来记录内存使用率、磁盘使用率等。</p>
+<p>·   <code>Histogram</code>：直方图 Histogram 主要用于对一段时间范围内的数据进行采样，（通常是请求持续时间或响应大小），并能够对其指定区间以及总数进行统计，通常我们用它计算分位数的直方图。</p>
+<p>·   <code>Summary</code>：汇总Summary 和 直方图Histogram 类似，主要用于表示一段时间内数据采样结果，（通常是请求持续时间或响应大小），它直接存储了 quantile 数据，而不是根据统计区间计算出来的。</p>
+<h1 id="zabbix"><a href="#zabbix" class="headerlink" title="zabbix"></a>zabbix</h1><h2 id="简述Zabbix及其优势？"><a href="#简述Zabbix及其优势？" class="headerlink" title="简述Zabbix及其优势？"></a>简述Zabbix及其优势？</h2><p>Zabbix是一个企业级的高度集成开源监控软件，提供分布式监控解决方案。可以用来监控设备、服务等可用性和性能。其主要优势有：</p>
+<p>·   自由开放源代码产品，可以对其进行任意修改和二次开发，采用GPL协议；</p>
+<p>·   安装和配置简单；</p>
+<p>·   搭建环境简单，基于开源软件构建平台；</p>
+<p>·   完全支持Linux、Unix、Windows、AIX、BSD等平台，采用C语言编码，系统占用小，数据采集性能和速度非常快；</p>
+<p>·   数据采集持久存储到数据库，便于对监控数据的二次分析；</p>
+<p>·   非常丰富的扩展能力，轻松实现自定义监控项和实现数据采集。</p>
+<h2 id="简述Zabbix体系架构？"><a href="#简述Zabbix体系架构？" class="headerlink" title="简述Zabbix体系架构？"></a>简述Zabbix体系架构？</h2><p>Zabbix体系相对清晰，其主要组件有：</p>
+<p>·   <code>Zabbix Server</code>：负责接收agent发送的报告信息的核心组件，所有配置、统计数据及操作数据均由其组织进行。</p>
+<p>·   <code>Database Storage</code>：专用于存储所有配置信息，以及有zabbix收集的数据。</p>
+<p>·   <code>Web interface</code>（frontend）：zabbix的GUI接口，通常与server运行在同一台机器上。</p>
+<p>·   <code>Proxy</code>：可选组件，常用于分布式监控环境中，代理Server收集部分被监控数据并统一发往Server端。</p>
+<p>·   <code>Agent</code>：部署在被监控主机上，负责收集本地数据并发往Server端或者Proxy端。</p>
+<h2 id="简述Zabbix所支持的监控方式？"><a href="#简述Zabbix所支持的监控方式？" class="headerlink" title="简述Zabbix所支持的监控方式？"></a>简述Zabbix所支持的监控方式？</h2><p>目前由zabbix提供包括但不限于以下事项类型的支持：</p>
+<p>·   <code>Zabbix agent checks</code>：这些客户端来进行数据采集，又分为Zabbix agent（被动模式：客户端等着服务器端来要数据），Zabbix agent (active)（主动模式：客户端主动发送数据到服务器端）</p>
+<p>·   <code>SNMP agent checks</code>：SNMP方式，如果要监控打印机网络设备等支持SNMP设备的话，但是又不能安装agent的设备。</p>
+<p>·   <code>SNMP traps</code> ：</p>
+<p>·   <code>IPMI checks</code>：IPMI即智能平台管理接口，现在是业界通过的标准。用户可以利用IPMI监视服务器的物理特性，如温度、电压、电扇工作状态、电源供应以及机箱入侵等。</p>
+<h2 id="简述Zabbix分布式及其适应场景？"><a href="#简述Zabbix分布式及其适应场景？" class="headerlink" title="简述Zabbix分布式及其适应场景？"></a>简述Zabbix分布式及其适应场景？</h2><p>zabbix proxy 可以代替 zabbix server 收集性能和可用性数据,然后把数据汇报给 zabbix server，并且在一定程度上分担了zabbix server 的压力。</p>
+<p>此外，当所有agents和proxy报告给一个Zabbix server并且所有数据都集中收集时，使用proxy是实现集中式和分布式监控的最简单方法。</p>
+<p>zabbix proxy 使用场景:</p>
+<p>·   监控远程区域设备</p>
+<p>·   监控本地网络不稳定区域</p>
+<p>·   当 zabbix 监控上千设备时,使用它来减轻 server 的压力</p>
+<p>·   简化分布式监控的维护</p>
+<h1 id="ELK"><a href="#ELK" class="headerlink" title="ELK"></a>ELK</h1><h2 id="日志收集大概流程"><a href="#日志收集大概流程" class="headerlink" title="日志收集大概流程"></a>日志收集大概流程</h2><p>filebeat–&gt;logstash-&gt;redis&lt;-logetash-&gt;olasticsearch&lt;–kibana</p>
+<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><h2 id="dockerfile打镜像的过程"><a href="#dockerfile打镜像的过程" class="headerlink" title="dockerfile打镜像的过程"></a>dockerfile打镜像的过程</h2><p>1.启动一个临时容器</p>
+<p>2.顺序执行dockerfile命令</p>
+<p>3.build -t保存并更名为指定的名称做本地保存</p>
+<p>4.把临时容器删除           </p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">ENV</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash">volume</span></span><br><span class="line"><span class="keyword">USER</span> nginx</span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> 执行shell命令</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash">/ADD 添加本地文件或者目录，或者压缩包</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span> <span class="number">443</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;nginx&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="k8s"><a href="#k8s" class="headerlink" title="k8s"></a>k8s</h1><h2 id="kubernetes包含几个组件，各个组件的功能是什么，组件之间是如何交互的"><a href="#kubernetes包含几个组件，各个组件的功能是什么，组件之间是如何交互的" class="headerlink" title="kubernetes包含几个组件，各个组件的功能是什么，组件之间是如何交互的?"></a>kubernetes包含几个组件，各个组件的功能是什么，组件之间是如何交互的?</h2><p>Kubernetes API server 为 api 对象验证并配置数据，包括 pods、</p>
+<p>services、 replicationcontrollers 和其它 api 对象,API Server 提供 REST 操作和到</p>
+<p>集群共享状态的前端，所有其他组件通过它进行交互。</p>
+<p>Kubernetes scheduler 是一个拥有丰富策略、能够感知拓扑变化、支持特定负载的</p>
+<p>功能组件，它对集群的可用性、性能表现以及容量都影响巨大。scheduler 需要考</p>
+<p>虑独立的和集体的资源需求、服务质量需求、硬件&#x2F;软件&#x2F;策略限制、亲和与反亲</p>
+<p>和规范、数据位置、内部负载接口、截止时间等等。如有必要，特定的负载需求</p>
+<p>可以通过 API 暴露出来。</p>
+<p>kube-controller-manager：Controller Manager 作为集群内部的管理控制中心，负</p>
+<p>责集群内的 Node、Pod 副本、服务端点（Endpoint）、命名空间（Namespace）、</p>
+<p>服务账号（ServiceAccount）、资源定额（ResourceQuota）的管理，当某个 Node</p>
+<p>意外宕机时，Controller Manager 会及时发现并执行自动化修复流程，确保集群始</p>
+<p>终处于预期的工作状态。</p>
+<p>kube-proxy：Kubernetes 网络代理运行在 node 上，它反映了 node 上</p>
+<p>Kubernetes API 中定义的服务，并可以通过一组后端进行简单的 TCP、UDP 流转</p>
+<p>发或循环模式（round robin)）的 TCP、UDP 转发，用户必须使用 apiserver API 创</p>
+<p>建一个服务来配置代理，其实就是 kube-proxy 通过在主机上维护网络规则并执行</p>
+<p>连接转发来实现 Kubernetes 服务访问。</p>
+<p>kubelet ： 是主要的节点代理，它会监视已分配给节点的 pod，具体功能如下：</p>
+<p>向 master 汇报 node 节点的状态信息</p>
+<p>接受指令并在 Pod 中创建 docker 容器</p>
+<p>准备 Pod 所需的数据卷</p>
+<p>返回 pod 的运行状态</p>
+<p>在 node 节点执行容器健康检查</p>
+<p>etcd：</p>
+<p>etcd 是CoreOS公司开发目前是Kubernetes默认使用的key-value数据存储系统，</p>
+<p>用户保存所有集群数据，支持分布式集群功能，生成环境使用，需要为 etcd 数</p>
+<p>据提供定期备份机</p>
+<h2 id="启动nginx-docker-容器（随机端口映射），并挂载本地某个文件目录到容器html的命令。"><a href="#启动nginx-docker-容器（随机端口映射），并挂载本地某个文件目录到容器html的命令。" class="headerlink" title="启动nginx docker 容器（随机端口映射），并挂载本地某个文件目录到容器html的命令。"></a>启动nginx docker 容器（随机端口映射），并挂载本地某个文件目录到容器html的命令。</h2><p>docker run nginx -P -v &#x2F;data:&#x2F;html</p>
+<p>Docker的优势：</p>
+<p>docker虚拟机比传统虚拟机少了一层虚拟化层。docker是直接依赖linux内核启动的轻量虚拟机，本质是宿主机上的一个进程</p>
+<p><strong>快速部署：</strong>短时间内可以部署成百上千个应用，更快速交付到线上。</p>
+<p><strong>高效虚拟化：</strong>不需要额外的hypervisor支持，直接基于linux实现应用虚拟化，相比虚拟机大幅提高性能和效率。节省开支：提高服务器利用率，降低IT支出。</p>
+<p><strong>简化配置：</strong>将运行环境打包保存至容器，使用时直接启动即可。</p>
+<p><strong>快速迁移和扩展；</strong>可夸平台运行在物理机、虚拟机、公有云等环境，良好的兼容性可以方便将应用从A宿主机迁移到B宿主机，甚至是A平台迁移到B平台。</p>
+<p>缺点：隔离性：各应用之间的隔离不如虚拟机。</p>
+<h2 id="copy-只复制文件-add-复制并解压"><a href="#copy-只复制文件-add-复制并解压" class="headerlink" title="copy 只复制文件 add 复制并解压"></a>copy 只复制文件 add 复制并解压</h2><h2 id="Docker都有哪些网络模式及之间的区别"><a href="#Docker都有哪些网络模式及之间的区别" class="headerlink" title="Docker都有哪些网络模式及之间的区别?"></a>Docker都有哪些网络模式及之间的区别?</h2><p>host:宿主机端口</p>
+<p>   none：无网络</p>
+<p>   bridge：桥接</p>
+<p>   container：网络共享</p>
+<p>Jenkins</p>
+<p>.Jenkins上线流程</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/" title="总结">https://horus-k.github.io/2020/09/15/总结/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/14/%E8%AE%BE%E7%BD%AEzookeeperJVM%E5%A4%A7%E5%B0%8F/" rel="prev" title="设置zookeeperJVM大小">
+                  <i class="fa fa-chevron-left"></i> 设置zookeeperJVM大小
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/" rel="next" title="kubeasz快速部署二进制k8s集群">
+                  kubeasz快速部署二进制k8s集群 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

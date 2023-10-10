@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">265</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -123,6 +123,962 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/06/Linux/centos%E6%9C%80%E5%B0%8F%E5%8C%96%E5%88%9D%E5%A7%8B%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/06/Linux/centos%E6%9C%80%E5%B0%8F%E5%8C%96%E5%88%9D%E5%A7%8B%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">centos最小化初始安装</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-06 19:06:07" itemprop="dateCreated datePublished" datetime="2020-03-06T19:06:07+08:00">2020-03-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-11-18 16:14:31" itemprop="dateModified" datetime="2020-11-18T16:14:31+08:00">2020-11-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h5 id="系统时最小化安装的，这里要安装系统的软件库"><a href="#系统时最小化安装的，这里要安装系统的软件库" class="headerlink" title="系统时最小化安装的，这里要安装系统的软件库"></a><em>系统时最小化安装的，这里要安装系统的软件库</em></h5><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install </span> -y net-tools vim iotop <span class="keyword">bc </span>zip \</span><br><span class="line">unzip lrzsz tree ntpdate telnet lsof iostat \</span><br><span class="line">tcpdump wget traceroute <span class="keyword">bc </span>net-tools \</span><br><span class="line"><span class="keyword">bash-completion</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line">apt <span class="keyword">install </span><span class="keyword">build-essential</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">yum</span> groupinstall -y <span class="string">&quot;development tools&quot;</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/06/Linux/centos%E6%9C%80%E5%B0%8F%E5%8C%96%E5%88%9D%E5%A7%8B%E5%AE%89%E8%A3%85/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/02/k8s/k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/02/k8s/k8s/" class="post-title-link" itemprop="url">k8s-15.1手动搭建</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-02 11:57:12" itemprop="dateCreated datePublished" datetime="2020-03-02T11:57:12+08:00">2020-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-12 23:36:58" itemprop="dateModified" datetime="2020-03-12T23:36:58+08:00">2020-03-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>39k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>35 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><h3 id="部署节点说明"><a href="#部署节点说明" class="headerlink" title="部署节点说明"></a>部署节点说明</h3><table>
+<thead>
+<tr>
+<th align="center">主机名</th>
+<th align="center">IP</th>
+<th align="center">用途</th>
+<th align="center">部署软件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">k8s-1</td>
+<td align="center">192.168.123.110</td>
+<td align="center">master</td>
+<td align="center">apiserver,scheduler,controller-manager etcd,flanneld</td>
+</tr>
+<tr>
+<td align="center">k8s-2</td>
+<td align="center">192.168.123.120</td>
+<td align="center">node</td>
+<td align="center">kubelet,kube-proxy etcd,flanneld,docker</td>
+</tr>
+<tr>
+<td align="center">k8s-3</td>
+<td align="center">192.168.123.130</td>
+<td align="center">node</td>
+<td align="center">kubelet,kube-proxy etcd,flanneld,docker</td>
+</tr>
+</tbody></table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/02/k8s/k8s/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/01/k8s/k8s15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/01/k8s/k8s15/" class="post-title-link" itemprop="url">k8s15.1版本二进制部署</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-01 11:44:50" itemprop="dateCreated datePublished" datetime="2020-03-01T11:44:50+08:00">2020-03-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-06 19:00:49" itemprop="dateModified" datetime="2020-03-06T19:00:49+08:00">2020-03-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>33k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>30 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="1-架构篇"><a href="#1-架构篇" class="headerlink" title="1. 架构篇"></a>1. 架构篇</h2><h3 id="1-1-kubernetes-架构说明"><a href="#1-1-kubernetes-架构说明" class="headerlink" title="1.1 kubernetes 架构说明"></a>1.1 kubernetes 架构说明</h3><p><img src="/2020/03/01/k8s/k8s15/1.png"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/01/k8s/k8s15/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">Nginx反向代理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-26 19:37:33" itemprop="dateCreated datePublished" datetime="2020-02-26T19:37:33+08:00">2020-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-04-21 18:02:05" itemprop="dateModified" datetime="2020-04-21T18:02:05+08:00">2020-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>NGINX服务器的反向代理PROXY_PASS配置方法讲解</p>
+<p>Nginx的配置还是比较简单的，如：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> <span class="regexp">~ /*</span> &#123;</span><br><span class="line">	<span class="attribute">proxy_pass</span> http://127.0.0.1:8008;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/02/26/Nginx/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/02/22/k8s/docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/22/k8s/docker/" class="post-title-link" itemprop="url">部署 docker 组件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-22 13:18:13" itemprop="dateCreated datePublished" datetime="2020-02-22T13:18:13+08:00">2020-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-26 15:03:35" itemprop="dateModified" datetime="2020-03-26T15:03:35+08:00">2020-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="F-部署-docker-组件"><a href="#F-部署-docker-组件" class="headerlink" title="F. 部署 docker 组件"></a>F. 部署 docker 组件</h1><!-- TOC -->
+
+<ul>
+<li><a href="#f-%E9%83%A8%E7%BD%B2-docker-%E7%BB%84%E4%BB%B6">F. 部署 docker 组件</a><ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85">安装依赖包</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%88%86%E5%8F%91-docker-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6">下载和分发 docker 二进制文件</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%86%E5%8F%91-systemd-unit-%E6%96%87%E4%BB%B6">创建和分发 systemd unit 文件</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E5%92%8C%E5%88%86%E5%8F%91-docker-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">配置和分发 docker 配置文件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8-docker-%E6%9C%8D%E5%8A%A1">启动 docker 服务</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E6%9C%8D%E5%8A%A1%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81">检查服务运行状态</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5-docker0-%E7%BD%91%E6%A1%A5">检查 docker0 网桥</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B-docker-%E7%9A%84%E7%8A%B6%E6%80%81%E4%BF%A1%E6%81%AF">查看 docker 的状态信息</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0-kubelet-%E9%85%8D%E7%BD%AE%E5%B9%B6%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A%E9%83%BD%E6%93%8D%E4%BD%9C">更新 kubelet 配置并重启服务（每个节点上都操作）</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+
+<p>docker 运行和管理容器，kubelet 通过 Container Runtime Interface (CRI) 与它进行交互。</p>
+<p>注意：</p>
+<ol>
+<li>如果没有特殊指明，本文档的所有操作<strong>均在 k8s01 节点上执行</strong>，然后远程分发文件和执行命令；</li>
+<li>需要先安装 flannel，请参考附件 <a href="E.%E9%83%A8%E7%BD%B2flannel%E7%BD%91%E7%BB%9C.md">E.部署flannel网络.md</a>；</li>
+</ol>
+<h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><p>参考 <a href="07-0.%E9%83%A8%E7%BD%B2worker%E8%8A%82%E7%82%B9.md">07-0.部署worker节点.md</a>。</p>
+<h2 id="下载和分发-docker-二进制文件"><a href="#下载和分发-docker-二进制文件" class="headerlink" title="下载和分发 docker 二进制文件"></a>下载和分发 docker 二进制文件</h2><p>到 <a target="_blank" rel="noopener" href="https://download.docker.com/linux/static/stable/x86_64/">docker 下载页面</a> 下载最新发布包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line">wget https://download.docker.com/linux/static/stable/x86_64/docker-18.09.6.tgz</span><br><span class="line">tar -xvf docker-18.09.6.tgz</span><br></pre></td></tr></table></figure>
+
+<p>分发二进制文件到所有 worker 节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    scp docker/*  root@<span class="variable">$&#123;node_ip&#125;</span>:/opt/k8s/bin/</span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;chmod +x /opt/k8s/bin/*&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建和分发-systemd-unit-文件"><a href="#创建和分发-systemd-unit-文件" class="headerlink" title="创建和分发 systemd unit 文件"></a>创建和分发 systemd unit 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">cat</span> &gt; docker.service &lt;&lt;<span class="string">&quot;EOF&quot;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=Docker Application Container Engine</span><br><span class="line">Documentation=http://docs.docker.io</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">WorkingDirectory=<span class="comment">##DOCKER_DIR##</span></span><br><span class="line">Environment=<span class="string">&quot;PATH=/opt/k8s/bin:/bin:/sbin:/usr/bin:/usr/sbin&quot;</span></span><br><span class="line">EnvironmentFile=-/run/flannel/docker</span><br><span class="line">ExecStart=/opt/k8s/bin/dockerd <span class="variable">$DOCKER_NETWORK_OPTIONS</span></span><br><span class="line">ExecReload=/bin/kill -s HUP <span class="variable">$MAINPID</span></span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5</span><br><span class="line">LimitNOFILE=infinity</span><br><span class="line">LimitNPROC=infinity</span><br><span class="line">LimitCORE=infinity</span><br><span class="line">Delegate=<span class="built_in">yes</span></span><br><span class="line">KillMode=process</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>EOF 前后有双引号，这样 bash 不会替换文档中的变量，如 <code>$DOCKER_NETWORK_OPTIONS</code> (这些环境变量是 systemd 负责替换的。)；</p>
+</li>
+<li><p>dockerd 运行时会调用其它 docker 命令，如 docker-proxy，所以需要将 docker 命令所在的目录加到 PATH 环境变量中；</p>
+</li>
+<li><p>flanneld 启动时将网络配置写入 <code>/run/flannel/docker</code> 文件中，dockerd 启动前读取该文件中的环境变量 <code>DOCKER_NETWORK_OPTIONS</code> ，然后设置 docker0 网桥网段；</p>
+</li>
+<li><p>如果指定了多个 <code>EnvironmentFile</code> 选项，则必须将 <code>/run/flannel/docker</code> 放在最后(确保 docker0 使用 flanneld 生成的 bip 参数)；</p>
+</li>
+<li><p>docker 需要以 root 用于运行；</p>
+</li>
+<li><p>docker 从 1.13 版本开始，可能将 <strong>iptables FORWARD chain的默认策略设置为DROP</strong>，从而导致 ping 其它 Node 上的 Pod IP 失败，遇到这种情况时，需要手动设置策略为 <code>ACCEPT</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo iptables -P FORWARD ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>并且把以下命令写入 <code>/etc/rc.local</code> 文件中，防止节点重启<strong>iptables FORWARD chain的默认策略又还原为DROP</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/sbin/iptables -P FORWARD ACCEPT</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>分发 systemd unit 文件到所有 worker 机器:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line">sed -i -e <span class="string">&quot;s|##DOCKER_DIR##|<span class="variable">$&#123;DOCKER_DIR&#125;</span>|&quot;</span> docker.service</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    scp docker.service root@<span class="variable">$&#123;node_ip&#125;</span>:/etc/systemd/system/</span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置和分发-docker-配置文件"><a href="#配置和分发-docker-配置文件" class="headerlink" title="配置和分发 docker 配置文件"></a>配置和分发 docker 配置文件</h2><p>使用国内的仓库镜像服务器以加快 pull image 的速度，同时增加下载的并发数 (需要重启 dockerd 生效)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="built_in">cat</span> &gt; docker-daemon.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    &quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;,&quot;https://hub-mirror.c.163.com&quot;],</span></span><br><span class="line"><span class="string">    &quot;insecure-registries&quot;: [&quot;docker02:35000&quot;],</span></span><br><span class="line"><span class="string">    &quot;max-concurrent-downloads&quot;: 20,</span></span><br><span class="line"><span class="string">    &quot;live-restore&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;max-concurrent-uploads&quot;: 10,</span></span><br><span class="line"><span class="string">    &quot;debug&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;data-root&quot;: &quot;$&#123;DOCKER_DIR&#125;/data&quot;,</span></span><br><span class="line"><span class="string">    &quot;exec-root&quot;: &quot;$&#123;DOCKER_DIR&#125;/exec&quot;,</span></span><br><span class="line"><span class="string">    &quot;log-opts&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;max-size&quot;: &quot;100m&quot;,</span></span><br><span class="line"><span class="string">      &quot;max-file&quot;: &quot;5&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>分发 docker 配置文件到所有 worker 节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;mkdir -p  /etc/docker/ <span class="variable">$&#123;DOCKER_DIR&#125;</span>/&#123;data,exec&#125;&quot;</span></span><br><span class="line">    scp docker-daemon.json root@<span class="variable">$&#123;node_ip&#125;</span>:/etc/docker/daemon.json</span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动-docker-服务"><a href="#启动-docker-服务" class="headerlink" title="启动 docker 服务"></a>启动 docker 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;systemctl daemon-reload &amp;&amp; systemctl enable docker &amp;&amp; systemctl restart docker&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="检查服务运行状态"><a href="#检查服务运行状态" class="headerlink" title="检查服务运行状态"></a>检查服务运行状态</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;systemctl status docker|grep Active&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>确保状态为 <code>active (running)</code>，否则查看日志，确认原因：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="检查-docker0-网桥"><a href="#检查-docker0-网桥" class="headerlink" title="检查 docker0 网桥"></a>检查 docker0 网桥</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;/usr/sbin/ip addr show flannel.1 &amp;&amp; /usr/sbin/ip addr show docker0&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>确认各 worker 节点的 docker0 网桥和 flannel.1 接口的 IP 处于同一个网段中(如下 172.30.80.0&#x2F;32 位于 172.30.80.1&#x2F;21 中)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; 172.27.137.240</span><br><span class="line">3: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default</span><br><span class="line">    <span class="built_in">link</span>/ether ce:9c:a9:08:50:03 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.30.80.0/32 scope global flannel.1</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default</span><br><span class="line">    <span class="built_in">link</span>/ether 02:42:5c:c1:77:03 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.30.80.1/21 brd 172.30.87.255 scope global docker0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p>注意: 如果您的服务安装顺序不对或者机器环境比较复杂, docker服务早于flanneld服务安装，此时 worker 节点的 docker0 网桥和 flannel.1 接口的 IP可能不会同处同一个网段下，这个时候请先停止docker服务, 手工删除docker0网卡，重新启动docker服务后即可修复:</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">stop</span> docker</span><br><span class="line">ip link <span class="built_in">delete</span> docker0</span><br><span class="line">systemctl <span class="built_in">start</span> docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看-docker-的状态信息"><a href="#查看-docker-的状态信息" class="headerlink" title="查看 docker 的状态信息"></a>查看 docker 的状态信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ps -elfH|grep docker</span><br><span class="line">4 S root     116590      1  0  80   0 - 131420 futex_ 11:22 ?       00:00:01   /opt/k8s/bin/dockerd --bip=172.30.80.1/21 --ip-masq=<span class="literal">false</span> --mtu=1450</span><br><span class="line">4 S root     116668 116590  1  80   0 - 161643 futex_ 11:22 ?       00:00:03     containerd --config /data/k8s/docker/exec/containerd/containerd.toml --log-level debug</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">$ docker info</span><br><span class="line">Containers: 0</span><br><span class="line"> Running: 0</span><br><span class="line"> Paused: 0</span><br><span class="line"> Stopped: 0</span><br><span class="line">Images: 0</span><br><span class="line">Server Version: 18.09.6</span><br><span class="line">Storage Driver: overlay2</span><br><span class="line"> Backing Filesystem: extfs</span><br><span class="line"> Supports d_type: <span class="literal">true</span></span><br><span class="line"> Native Overlay Diff: <span class="literal">true</span></span><br><span class="line">Logging Driver: json-file</span><br><span class="line">Cgroup Driver: cgroupfs</span><br><span class="line">Plugins:</span><br><span class="line"> Volume: <span class="built_in">local</span></span><br><span class="line"> Network: bridge host macvlan null overlay</span><br><span class="line"> Log: awslogs fluentd gcplogs gelf journald json-file <span class="built_in">local</span> logentries splunk syslog</span><br><span class="line">Swarm: inactive</span><br><span class="line">Runtimes: runc</span><br><span class="line">Default Runtime: runc</span><br><span class="line">Init Binary: docker-init</span><br><span class="line">containerd version: bb71b10fd8f58240ca47fbb579b9d1028eea7c84</span><br><span class="line">runc version: 2b18fe1d885ee5083ef9f0838fee39b62d653e30</span><br><span class="line">init version: fec3683</span><br><span class="line">Security Options:</span><br><span class="line"> apparmor</span><br><span class="line"> seccomp</span><br><span class="line">  Profile: default</span><br><span class="line">Kernel Version: 4.14.110-0.el7.4pd.x86_64</span><br><span class="line">Operating System: CentOS Linux 7 (Core)</span><br><span class="line">OSType: linux</span><br><span class="line">Architecture: x86_64</span><br><span class="line">CPUs: 8</span><br><span class="line">Total Memory: 15.64GiB</span><br><span class="line">Name: zhangjun-k8s01</span><br><span class="line">ID: VJYK:3T6T:EPHU:65SM:3OZD:DMNE:MT5J:O22I:TCG2:F3JR:MZ76:B3EF</span><br><span class="line">Docker Root Dir: /data/k8s/docker/data</span><br><span class="line">Debug Mode (client): <span class="literal">false</span></span><br><span class="line">Debug Mode (server): <span class="literal">true</span></span><br><span class="line"> File Descriptors: 22</span><br><span class="line"> Goroutines: 43</span><br><span class="line"> System Time: 2019-05-26T11:26:21.2494815+08:00</span><br><span class="line"> EventsListeners: 0</span><br><span class="line">Registry: https://index.docker.io/v1/</span><br><span class="line">Labels:</span><br><span class="line">Experimental: <span class="literal">false</span></span><br><span class="line">Insecure Registries:</span><br><span class="line"> docker02:35000</span><br><span class="line"> 127.0.0.0/8</span><br><span class="line">Registry Mirrors:</span><br><span class="line"> https://docker.mirrors.ustc.edu.cn/</span><br><span class="line"> https://hub-mirror.c.163.com/</span><br><span class="line">Live Restore Enabled: <span class="literal">true</span></span><br><span class="line">Product License: Community Engine</span><br><span class="line"></span><br><span class="line">WARNING: No swap <span class="built_in">limit</span> support</span><br></pre></td></tr></table></figure>
+
+<h2 id="更新-kubelet-配置并重启服务（每个节点上都操作）"><a href="#更新-kubelet-配置并重启服务（每个节点上都操作）" class="headerlink" title="更新 kubelet 配置并重启服务（每个节点上都操作）"></a>更新 kubelet 配置并重启服务（每个节点上都操作）</h2><p>需要删除 kubelet 的 systemd unit 文件(&#x2F;etc&#x2F;systemd&#x2F;system&#x2F;kubelet.service)，删除下面 4 行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">--network-plugin=cni \\</span><br><span class="line">--cni-conf-dir=/etc/cni/net.d \\</span><br><span class="line">--container-runtime=remote \\</span><br><span class="line">--container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \\</span><br></pre></td></tr></table></figure>
+
+<p>然后重启 kubelet 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/02/22/k8s/flanneld/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/22/k8s/flanneld/" class="post-title-link" itemprop="url">部署 flannel 网络</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-22 13:18:13" itemprop="dateCreated datePublished" datetime="2020-02-22T13:18:13+08:00">2020-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-26 15:03:59" itemprop="dateModified" datetime="2020-03-26T15:03:59+08:00">2020-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="E-部署-flannel-网络"><a href="#E-部署-flannel-网络" class="headerlink" title="E. 部署 flannel 网络"></a>E. 部署 flannel 网络</h1><!-- TOC -->
+
+<ul>
+<li><a href="#e-%E9%83%A8%E7%BD%B2-flannel-%E7%BD%91%E7%BB%9C">E. 部署 flannel 网络</a><ul>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%88%86%E5%8F%91-flanneld-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6">下载和分发 flanneld 二进制文件</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA-flannel-%E8%AF%81%E4%B9%A6%E5%92%8C%E7%A7%81%E9%92%A5">创建 flannel 证书和私钥</a></li>
+<li><a href="#%E5%90%91-etcd-%E5%86%99%E5%85%A5%E9%9B%86%E7%BE%A4-pod-%E7%BD%91%E6%AE%B5%E4%BF%A1%E6%81%AF">向 etcd 写入集群 Pod 网段信息</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA-flanneld-%E7%9A%84-systemd-unit-%E6%96%87%E4%BB%B6">创建 flanneld 的 systemd unit 文件</a></li>
+<li><a href="#%E5%88%86%E5%8F%91-flanneld-systemd-unit-%E6%96%87%E4%BB%B6%E5%88%B0%E6%89%80%E6%9C%89%E8%8A%82%E7%82%B9">分发 flanneld systemd unit 文件到<strong>所有节点</strong></a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8-flanneld-%E6%9C%8D%E5%8A%A1">启动 flanneld 服务</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E5%90%AF%E5%8A%A8%E7%BB%93%E6%9E%9C">检查启动结果</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E5%88%86%E9%85%8D%E7%BB%99%E5%90%84-flanneld-%E7%9A%84-pod-%E7%BD%91%E6%AE%B5%E4%BF%A1%E6%81%AF">检查分配给各 flanneld 的 Pod 网段信息</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E8%8A%82%E7%82%B9-flannel-%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF">检查节点 flannel 网络信息</a></li>
+<li><a href="#%E9%AA%8C%E8%AF%81%E5%90%84%E8%8A%82%E7%82%B9%E8%83%BD%E9%80%9A%E8%BF%87-pod-%E7%BD%91%E6%AE%B5%E4%BA%92%E9%80%9A">验证各节点能通过 Pod 网段互通</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+
+<p>kubernetes 要求集群内各节点(包括 master 节点)能通过 Pod 网段互联互通。flannel 使用 vxlan 技术为各节点创建一个可以互通的 Pod 网络，使用的端口为 UDP 8472（<strong>需要开放该端口</strong>，如公有云 AWS 等）。</p>
+<p>flanneld 第一次启动时，从 etcd 获取配置的 Pod 网段信息，为本节点分配一个未使用的地址段，然后创建 <code>flannedl.1</code> 网络接口（也可能是其它名称，如 flannel1 等）。</p>
+<p>flannel 将分配给自己的 Pod 网段信息写入 <code>/run/flannel/docker</code> 文件，docker 后续使用这个文件中的环境变量设置 <code>docker0</code> 网桥，从而从这个地址段为本节点的所有 Pod 容器分配 IP。</p>
+<p>注意：</p>
+<ol>
+<li>如果没有特殊指明，本文档的所有操作<strong>均在 k8s01 节点上执行</strong>，然后远程分发文件和执行命令；</li>
+<li>flanneld 与本文档部署的 etcd v3.4.x 不兼容，需要将 etcd 降级到 v3.3.x；</li>
+<li>flanneld 与 docker 结合使用；</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">FLANNEL_ETCD_PREFIX</span>=<span class="string">&quot;/kubernetes/network&quot;</span></span><br><span class="line"><span class="attr">IFACE</span>=eth0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="下载和分发-flanneld-二进制文件"><a href="#下载和分发-flanneld-二进制文件" class="headerlink" title="下载和分发 flanneld 二进制文件"></a>下载和分发 flanneld 二进制文件</h2><p>从 flannel 的 <a target="_blank" rel="noopener" href="https://github.com/coreos/flannel/releases">release 页面</a> 下载最新版本的安装包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">mkdir</span> flannel</span><br><span class="line">wget https://github.com/coreos/flannel/releases/download/v0.11.0/flannel-v0.11.0-linux-amd64.tar.gz</span><br><span class="line">tar -xzvf flannel-v0.11.0-linux-amd64.tar.gz -C flannel</span><br></pre></td></tr></table></figure>
+
+<p>分发二进制文件到集群所有节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    scp flannel/&#123;flanneld,mk-docker-opts.sh&#125; root@<span class="variable">$&#123;node_ip&#125;</span>:/opt/k8s/bin/</span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;chmod +x /opt/k8s/bin/*&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建-flannel-证书和私钥"><a href="#创建-flannel-证书和私钥" class="headerlink" title="创建 flannel 证书和私钥"></a>创建 flannel 证书和私钥</h2><p>flanneld 从 etcd 集群存取网段分配信息，而 etcd 集群启用了双向 x509 证书认证，所以需要为 flanneld 生成证书和私钥。</p>
+<p>创建证书签名请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">cat</span> &gt; flanneld-csr.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;CN&quot;: &quot;flanneld&quot;,</span></span><br><span class="line"><span class="string">  &quot;hosts&quot;: [],</span></span><br><span class="line"><span class="string">  &quot;key&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;algo&quot;: &quot;rsa&quot;,</span></span><br><span class="line"><span class="string">    &quot;size&quot;: 2048</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;names&quot;: [</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">      &quot;C&quot;: &quot;CN&quot;,</span></span><br><span class="line"><span class="string">      &quot;ST&quot;: &quot;BeiJing&quot;,</span></span><br><span class="line"><span class="string">      &quot;L&quot;: &quot;BeiJing&quot;,</span></span><br><span class="line"><span class="string">      &quot;O&quot;: &quot;k8s&quot;,</span></span><br><span class="line"><span class="string">      &quot;OU&quot;: &quot;4Paradigm&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  ]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>该证书只会被 kubectl 当做 client 证书使用，所以 hosts 字段为空；</li>
+</ul>
+<p>生成证书和私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cfssl gencert -ca=/opt/k8s/work/ca.pem \</span><br><span class="line">  -ca-key=/opt/k8s/work/ca-key.pem \</span><br><span class="line">  -config=/opt/k8s/work/ca-config.json \</span><br><span class="line">  -profile=kubernetes flanneld-csr.json | cfssljson -bare flanneld</span><br><span class="line"><span class="built_in">ls</span> flanneld*pem</span><br></pre></td></tr></table></figure>
+
+<p>将生成的证书和私钥分发到<strong>所有节点</strong>（master 和 worker）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;mkdir -p /etc/flanneld/cert&quot;</span></span><br><span class="line">    scp flanneld*.pem root@<span class="variable">$&#123;node_ip&#125;</span>:/etc/flanneld/cert</span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="向-etcd-写入集群-Pod-网段信息"><a href="#向-etcd-写入集群-Pod-网段信息" class="headerlink" title="向 etcd 写入集群 Pod 网段信息"></a>向 etcd 写入集群 Pod 网段信息</h2><p>注意：本步骤<strong>只需执行一次</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line">etcdctl \</span><br><span class="line">  --endpoints=<span class="variable">$&#123;ETCD_ENDPOINTS&#125;</span> \</span><br><span class="line">  --ca-file=/opt/k8s/work/ca.pem \</span><br><span class="line">  --cert-file=/opt/k8s/work/flanneld.pem \</span><br><span class="line">  --key-file=/opt/k8s/work/flanneld-key.pem \</span><br><span class="line">  mk <span class="variable">$&#123;FLANNEL_ETCD_PREFIX&#125;</span>/config  <span class="string">&#x27;&#123;&quot;Network&quot;:&quot;&#x27;</span><span class="variable">$&#123;CLUSTER_CIDR&#125;</span><span class="string">&#x27;&quot;, &quot;SubnetLen&quot;: 21, &quot;Backend&quot;: &#123;&quot;Type&quot;: &quot;vxlan&quot;&#125;&#125;&#x27;</span></span><br><span class="line">  </span><br><span class="line">&#123;<span class="string">&quot;Network&quot;</span>:<span class="string">&quot;172.30.0.0/16&quot;</span>, <span class="string">&quot;SubnetLen&quot;</span>: 21, <span class="string">&quot;Backend&quot;</span>: &#123;<span class="string">&quot;Type&quot;</span>: <span class="string">&quot;vxlan&quot;</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>flanneld <strong>当前版本 (v0.11.0) 不支持 etcd v3</strong>，故使用 etcd v2 API 写入配置 key 和网段数据；</li>
+<li>写入的 Pod 网段 <code>$&#123;CLUSTER_CIDR&#125;</code> 地址段（如 &#x2F;16）必须小于 <code>SubnetLen</code>，必须与 <code>kube-controller-manager</code> 的 <code>--cluster-cidr</code> 参数值一致；</li>
+</ul>
+<h2 id="创建-flanneld-的-systemd-unit-文件"><a href="#创建-flanneld-的-systemd-unit-文件" class="headerlink" title="创建 flanneld 的 systemd unit 文件"></a>创建 flanneld 的 systemd unit 文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="built_in">cat</span> &gt; flanneld.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=Flanneld overlay address etcd agent</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string">After=network-online.target</span></span><br><span class="line"><span class="string">Wants=network-online.target</span></span><br><span class="line"><span class="string">After=etcd.service</span></span><br><span class="line"><span class="string">Before=docker.service</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=notify</span></span><br><span class="line"><span class="string">ExecStart=/opt/k8s/bin/flanneld \\</span></span><br><span class="line"><span class="string">  -etcd-cafile=/etc/kubernetes/cert/ca.pem \\</span></span><br><span class="line"><span class="string">  -etcd-certfile=/etc/flanneld/cert/flanneld.pem \\</span></span><br><span class="line"><span class="string">  -etcd-keyfile=/etc/flanneld/cert/flanneld-key.pem \\</span></span><br><span class="line"><span class="string">  -etcd-endpoints=$&#123;ETCD_ENDPOINTS&#125; \\</span></span><br><span class="line"><span class="string">  -etcd-prefix=$&#123;FLANNEL_ETCD_PREFIX&#125; \\</span></span><br><span class="line"><span class="string">  -iface=$&#123;IFACE&#125; \\</span></span><br><span class="line"><span class="string">  -ip-masq</span></span><br><span class="line"><span class="string">ExecStartPost=/opt/k8s/bin/mk-docker-opts.sh -k DOCKER_NETWORK_OPTIONS -d /run/flannel/docker</span></span><br><span class="line"><span class="string">Restart=always</span></span><br><span class="line"><span class="string">RestartSec=5</span></span><br><span class="line"><span class="string">StartLimitInterval=0</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">RequiredBy=docker.service</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>mk-docker-opts.sh</code> 脚本将分配给 flanneld 的 Pod 子网段信息写入 <code>/run/flannel/docker</code> 文件，后续 docker 启动时使用这个文件中的环境变量配置 docker0 网桥；</li>
+<li>flanneld 使用系统缺省路由所在的接口与其它节点通信，对于有多个网络接口（如内网和公网）的节点，可以用 <code>-iface</code> 参数指定通信接口;</li>
+<li>flanneld 运行时需要 root 权限；</li>
+<li><code>-ip-masq</code>: flanneld 为访问 Pod 网络外的流量设置 SNAT 规则，同时将传递给 Docker 的变量 <code>--ip-masq</code>（<code>/run/flannel/docker</code> 文件中）设置为 false，这样 Docker 将不再创建 SNAT 规则；<br>Docker 的 <code>--ip-masq</code> 为 true 时，创建的 SNAT 规则比较“暴力”：将所有本节点 Pod 发起的、访问非 docker0 接口的请求做 SNAT，这样访问其他节点 Pod 的请求来源 IP 会被设置为 flannel.1 接口的 IP，导致目的 Pod 看不到真实的来源 Pod IP。<br>flanneld 创建的 SNAT 规则比较温和，只对访问非 Pod 网段的请求做 SNAT。</li>
+</ul>
+<h2 id="分发-flanneld-systemd-unit-文件到所有节点"><a href="#分发-flanneld-systemd-unit-文件到所有节点" class="headerlink" title="分发 flanneld systemd unit 文件到所有节点"></a>分发 flanneld systemd unit 文件到<strong>所有节点</strong></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /opt/k8s/work</span><br><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    scp flanneld.service root@<span class="variable">$&#123;node_ip&#125;</span>:/etc/systemd/system/</span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动-flanneld-服务"><a href="#启动-flanneld-服务" class="headerlink" title="启动 flanneld 服务"></a>启动 flanneld 服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;systemctl daemon-reload &amp;&amp; systemctl enable flanneld &amp;&amp; systemctl restart flanneld&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="检查启动结果"><a href="#检查启动结果" class="headerlink" title="检查启动结果"></a>检查启动结果</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh root@<span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;systemctl status flanneld|grep Active&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>确保状态为 <code>active (running)</code>，否则查看日志，确认原因：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u flanneld</span><br></pre></td></tr></table></figure>
+
+<h2 id="检查分配给各-flanneld-的-Pod-网段信息"><a href="#检查分配给各-flanneld-的-Pod-网段信息" class="headerlink" title="检查分配给各 flanneld 的 Pod 网段信息"></a>检查分配给各 flanneld 的 Pod 网段信息</h2><p>查看集群 Pod 网段(&#x2F;16)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line">etcdctl \</span><br><span class="line">  --endpoints=<span class="variable">$&#123;ETCD_ENDPOINTS&#125;</span> \</span><br><span class="line">  --ca-file=/etc/kubernetes/cert/ca.pem \</span><br><span class="line">  --cert-file=/etc/flanneld/cert/flanneld.pem \</span><br><span class="line">  --key-file=/etc/flanneld/cert/flanneld-key.pem \</span><br><span class="line">  get <span class="variable">$&#123;FLANNEL_ETCD_PREFIX&#125;</span>/config</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p><code>&#123;&quot;Network&quot;:&quot;172.30.0.0/16&quot;, &quot;SubnetLen&quot;: 24, &quot;Backend&quot;: &#123;&quot;Type&quot;: &quot;vxlan&quot;&#125;&#125;</code></p>
+<p>查看已分配的 Pod 子网段列表(&#x2F;24):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line">etcdctl \</span><br><span class="line">  --endpoints=<span class="variable">$&#123;ETCD_ENDPOINTS&#125;</span> \</span><br><span class="line">  --ca-file=/etc/kubernetes/cert/ca.pem \</span><br><span class="line">  --cert-file=/etc/flanneld/cert/flanneld.pem \</span><br><span class="line">  --key-file=/etc/flanneld/cert/flanneld-key.pem \</span><br><span class="line">  <span class="built_in">ls</span> <span class="variable">$&#123;FLANNEL_ETCD_PREFIX&#125;</span>/subnets</span><br></pre></td></tr></table></figure>
+
+<p>输出（结果视部署情况而定）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/kubernetes/network/subnets/172.30.80.0-24</span><br><span class="line">/kubernetes/network/subnets/172.30.32.0-24</span><br><span class="line">/kubernetes/network/subnets/172.30.184.0-24</span><br></pre></td></tr></table></figure>
+
+<p>查看某一 Pod 网段对应的节点 IP 和 flannel 接口地址:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line">etcdctl \</span><br><span class="line">  --endpoints=<span class="variable">$&#123;ETCD_ENDPOINTS&#125;</span> \</span><br><span class="line">  --ca-file=/etc/kubernetes/cert/ca.pem \</span><br><span class="line">  --cert-file=/etc/flanneld/cert/flanneld.pem \</span><br><span class="line">  --key-file=/etc/flanneld/cert/flanneld-key.pem \</span><br><span class="line">  get <span class="variable">$&#123;FLANNEL_ETCD_PREFIX&#125;</span>/subnets/172.30.80.0-24</span><br></pre></td></tr></table></figure>
+
+<p>输出（结果视部署情况而定）：</p>
+<p><code>&#123;&quot;PublicIP&quot;:&quot;172.27.137.240&quot;,&quot;BackendType&quot;:&quot;vxlan&quot;,&quot;BackendData&quot;:&#123;&quot;VtepMAC&quot;:&quot;ce:9c:a9:08:50:03&quot;&#125;&#125;</code></p>
+<ul>
+<li>172.30.80.0&#x2F;21 被分配给节点 zhangjun-k8s01（172.27.137.240）；</li>
+<li>VtepMAC 为 zhangjun-k8s01 节点的 flannel.1 网卡 MAC 地址；</li>
+</ul>
+<h2 id="检查节点-flannel-网络信息"><a href="#检查节点-flannel-网络信息" class="headerlink" title="检查节点 flannel 网络信息"></a>检查节点 flannel 网络信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@zhangjun-k8s01 work]<span class="comment"># ip addr show</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    <span class="built_in">link</span>/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    <span class="built_in">link</span>/ether 00:22:0d:33:89:75 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.27.137.240/20 brd 172.27.143.255 scope global dynamic eth0</span><br><span class="line">       valid_lft 100647283sec preferred_lft 100647283sec</span><br><span class="line">3: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default</span><br><span class="line">    <span class="built_in">link</span>/ether ce:9c:a9:08:50:03 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.30.80.0/32 scope global flannel.1</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<ul>
+<li>flannel.1 网卡的地址为分配的 Pod 子网段的第一个 IP（.0），且是 &#x2F;32 的地址；</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@zhangjun-k8s01 work]<span class="comment"># ip route show |grep flannel.1</span></span><br><span class="line">172.30.32.0/24 via 172.30.32.0 dev flannel.1 onlink</span><br><span class="line">172.30.184.0/24 via 172.30.184.0 dev flannel.1 onlink</span><br></pre></td></tr></table></figure>
+<ul>
+<li>到其它节点 Pod 网段请求都被转发到 flannel.1 网卡；</li>
+<li>flanneld 根据 etcd 中子网段的信息，如 <code>$&#123;FLANNEL_ETCD_PREFIX&#125;/subnets/172.30.80.0-24</code> ，来决定进请求发送给哪个节点的互联 IP；</li>
+</ul>
+<h2 id="验证各节点能通过-Pod-网段互通"><a href="#验证各节点能通过-Pod-网段互通" class="headerlink" title="验证各节点能通过 Pod 网段互通"></a>验证各节点能通过 Pod 网段互通</h2><p>在<strong>各节点上部署</strong> flannel 后，检查是否创建了 flannel 接口(名称可能为 flannel0、flannel.0、flannel.1 等)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh <span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;/usr/sbin/ip addr show flannel.1|grep -w inet&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; 172.27.137.240</span><br><span class="line">    inet 172.30.80.0/32 scope global flannel.1</span><br><span class="line">&gt;&gt;&gt; 172.27.137.239</span><br><span class="line">    inet 172.30.32.0/32 scope global flannel.1</span><br><span class="line">&gt;&gt;&gt; 172.27.137.238</span><br><span class="line">    inet 172.30.184.0/32 scope global flannel.1</span><br></pre></td></tr></table></figure>
+
+<p>在各节点上 ping 所有 flannel 接口 IP，确保能通：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /opt/k8s/bin/environment.sh</span><br><span class="line"><span class="keyword">for</span> node_ip <span class="keyword">in</span> <span class="variable">$&#123;NODE_IPS[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;&gt;&gt;&gt; <span class="variable">$&#123;node_ip&#125;</span>&quot;</span></span><br><span class="line">    ssh <span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;ping -c 1 172.30.200.0&quot;</span></span><br><span class="line">    ssh <span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;ping -c 1 172.30.208.0&quot;</span></span><br><span class="line">    ssh <span class="variable">$&#123;node_ip&#125;</span> <span class="string">&quot;ping -c 1 172.30.184.0&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/02/22/k8s/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84k8s%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/02/22/k8s/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84k8s%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">手动搭建高可用的k8s集群</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-22 13:18:13" itemprop="dateCreated datePublished" datetime="2020-02-22T13:18:13+08:00">2020-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-08 13:48:23" itemprop="dateModified" datetime="2020-03-08T13:48:23+08:00">2020-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>46k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>41 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>该文档部署了最新的<code>v1.8.2</code>版本，实现了<code>kube-apiserver</code>的高可用、<code>traefik ingress</code> 的部署、在<code>kubernetes</code>上安装<code>docker</code>的私有仓库<code>harbor</code>、容器化<code>kubernetes</code>部分组建、使用阿里云日志服务收集日志。</p>
+<p>部署完成后，你将理解系统各组件的交互原理，进而能快速解决实际问题，所以本文档主要适合于那些有一定<code>kubernetes</code>基础，想通过一步步部署的方式来学习和了解系统配置、运行原理的人。</p>
+<p>本系列系文档适用于 <code>CentOS 7</code>、<code>Ubuntu 16.04</code> 及以上版本系统，由于启用了 <code>TLS</code> 双向认证、<code>RBAC</code> 授权等严格的安全机制，建议<strong>从头开始部署</strong>，否则可能会认证、授权等失败！</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/02/22/k8s/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84k8s%E9%9B%86%E7%BE%A4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -447,222 +1403,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">mysql半同步复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-21 09:37:31" itemprop="dateCreated datePublished" datetime="2020-01-21T09:37:31+08:00">2020-01-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-04-21 09:59:13" itemprop="dateModified" datetime="2020-04-21T09:59:13+08:00">2020-04-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="MySQL半同步复制"><a href="#MySQL半同步复制" class="headerlink" title="MySQL半同步复制"></a>MySQL半同步复制</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/01/21/Mysql/mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2019/02/26/zabbix/Zabbix%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD(tcp%EF%BC%8Cnginx%EF%BC%8Cmemcaches%EF%BC%8Credis)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/26/zabbix/Zabbix%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD(tcp%EF%BC%8Cnginx%EF%BC%8Cmemcaches%EF%BC%8Credis)/" class="post-title-link" itemprop="url">Zabbix常用功能(tcp，nginx，memcaches，redis)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-02-26 19:37:33" itemprop="dateCreated datePublished" datetime="2019-02-26T19:37:33+08:00">2019-02-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 19:12:29" itemprop="dateModified" datetime="2020-03-10T19:12:29+08:00">2020-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Zabbix/" itemprop="url" rel="index"><span itemprop="name">Zabbix</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">监控linux tcp连接数</span><br><span class="line">端口转换状态</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/02/26/zabbix/Zabbix%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD(tcp%EF%BC%8Cnginx%EF%BC%8Cmemcaches%EF%BC%8Credis)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/26/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/26/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/28/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -693,7 +1435,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:57</span>
+    <span title="站点阅读时长">24:21</span>
   </span>
 </div>
 <div class="busuanzi-count">

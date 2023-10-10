@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="参考： https:&#x2F;&#x2F;icloudnative.io&#x2F;posts&#x2F;custom-derp-servers&#x2F; 自建私有 DERP server使用内嵌derp1234567891011121314151617181920212223242526272829303132333435server_url: https:&#x2F;&#x2F;xxxxxxxx  # 必须是httpsderp:  server:    #">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tailscale部署私有DERP中继服务器">
+<meta property="og:url" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="参考： https:&#x2F;&#x2F;icloudnative.io&#x2F;posts&#x2F;custom-derp-servers&#x2F; 自建私有 DERP server使用内嵌derp1234567891011121314151617181920212223242526272829303132333435server_url: https:&#x2F;&#x2F;xxxxxxxx  # 必须是httpsderp:  server:    #">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904112310981.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113158291.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113347653.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230905130501726.png">
+<meta property="article:published_time" content="2023-09-04T02:25:35.000Z">
+<meta property="article:modified_time" content="2023-09-06T06:13:35.024Z">
+<meta property="article:author" content="屈辉">
+<meta property="article:tag" content="WireGuard">
+<meta property="article:tag" content="Tailscale">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904112310981.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/","path":"2023/09/04/Tailscale部署私有DERP中继服务器/","title":"Tailscale部署私有DERP中继服务器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Tailscale部署私有DERP中继服务器 | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Tailscale部署私有DERP中继服务器 | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tailscale部署私有DERP中继服务器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-04 10:25:35" itemprop="dateCreated datePublished" datetime="2023-09-04T10:25:35+08:00">2023-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-06 14:13:35" itemprop="dateModified" datetime="2023-09-06T14:13:35+08:00">2023-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WireGuard/" itemprop="url" rel="index"><span itemprop="name">WireGuard</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://icloudnative.io/posts/custom-derp-servers/">https://icloudnative.io/posts/custom-derp-servers/</a></p>
+<h2 id="自建私有-DERP-server"><a href="#自建私有-DERP-server" class="headerlink" title="自建私有 DERP server"></a>自建私有 DERP server</h2><h3 id="使用内嵌derp"><a href="#使用内嵌derp" class="headerlink" title="使用内嵌derp"></a>使用内嵌derp</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server_url:</span> <span class="string">https://xxxxxxxx</span>  <span class="comment"># 必须是https</span></span><br><span class="line"><span class="attr">derp:</span></span><br><span class="line">  <span class="attr">server:</span></span><br><span class="line">    <span class="comment"># If enabled, runs the embedded DERP server and merges it into the rest of the DERP config</span></span><br><span class="line">    <span class="comment"># The Headscale server_url defined above MUST be using https, DERP requires TLS to be in place</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Region ID to use for the embedded DERP server.</span></span><br><span class="line">    <span class="comment"># The local DERP prevails if the region ID collides with other region ID coming from</span></span><br><span class="line">    <span class="comment"># the regular DERP config.</span></span><br><span class="line">    <span class="attr">region_id:</span> <span class="number">999</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Region code and name are displayed in the Tailscale UI to identify a DERP region</span></span><br><span class="line">    <span class="attr">region_code:</span> <span class="string">&quot;headscale&quot;</span></span><br><span class="line">    <span class="attr">region_name:</span> <span class="string">&quot;Headscale Embedded DERP&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Listens over UDP at the configured address for STUN connections - to help with NAT traversal.</span></span><br><span class="line">    <span class="comment"># When the embedded DERP server is enabled stun_listen_addr MUST be defined.</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># For more details on how this works, check this great article: https://tailscale.com/blog/how-tailscale-works/</span></span><br><span class="line">    <span class="attr">stun_listen_addr:</span> <span class="string">&quot;0.0.0.0:3478&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># List of externally available DERP maps encoded in JSON</span></span><br><span class="line">  <span class="attr">urls:</span></span><br><span class="line">    <span class="comment">#- https://controlplane.tailscale.com/derpmap/default</span></span><br><span class="line">  <span class="comment"># Locally available DERP map files encoded in YAML</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># This option is mostly interesting for people hosting</span></span><br><span class="line">  <span class="comment"># their own DERP servers:</span></span><br><span class="line">  <span class="comment"># https://tailscale.com/kb/1118/custom-derp-servers/</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># paths:</span></span><br><span class="line">  <span class="comment">#   - /etc/headscale/derp-example.yaml</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="comment">#  - /etc/headscale/derp.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>nginx:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">map</span> <span class="variable">$http_upgrade</span> <span class="variable">$connection_upgrade</span> &#123;</span><br><span class="line">    <span class="attribute">default</span>      keep-alive;</span><br><span class="line">    &#x27;websocket&#x27;  upgrade;</span><br><span class="line">    &#x27;&#x27;           close;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span>  xxx;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> certs/xxx.pem;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> certs/xxxx.key;</span><br><span class="line">        <span class="section">location</span> /web &#123;   <span class="comment"># web管理可使用https://github.com/gurucomputing/headscale-ui</span></span><br><span class="line">                <span class="attribute">alias</span> /root/web;</span><br><span class="line">                        <span class="attribute">index</span> index.html;</span><br><span class="line">                            &#125;</span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span>   http://127.0.0.1:8080;</span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;</span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Connection <span class="variable">$connection_upgrade</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$server_name</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$http_x_forwarded_proto</span>;</span><br><span class="line">        <span class="attribute">add_header</span> Strict-Transport-Security <span class="string">&quot;max-age=15552000; includeSubDomains&quot;</span> always;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="使用域名"><a href="#使用域名" class="headerlink" title="使用域名"></a>使用域名</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">run</span> --restart always \</span><br><span class="line">  --name derper -p 12345:12345 -p 3478:3478/udp \</span><br><span class="line">  -v /root/certs:/app/certs \</span><br><span class="line">  -e <span class="attribute">DERP_CERT_MODE</span>=manual \</span><br><span class="line">  -e <span class="attribute">DERP_ADDR</span>=:12345 \</span><br><span class="line">  -e <span class="attribute">DERP_DOMAIN</span>=xxxx \</span><br><span class="line">  -d ghcr.io/yangchuansheng/derper:latest</span><br></pre></td></tr></table></figure>
+
+<p>有几点需要注意：</p>
+<ul>
+<li>能用 443 端口尽量用 443 端口，实在不行再用别的端口；</li>
+<li>默认情况下也会开启 STUN 服务，UDP 端口是 <code>3478</code>；</li>
+<li>防火墙需要放行端口 12345 和 3478；</li>
+<li>准备好 SSL 证书；</li>
+<li>域名部分我打了码，请换成你自己的域名。</li>
+</ul>
+<p>假设你的域名是 <code>xxx.com</code>，那么证书的名称必须是 <code>xxx.com.crt</code>，一个字符都不能错！同理，私钥名称必须是 <code>xxx.com.key</code>，一个字符都不能错！</p>
+<p>部署好 derper 之后，就可以修改 Headscale 的配置来使用自定义的 DERP 服务器了。Headscale 可以通过两种形式的配置来使用自定义 DERP：</p>
+<ul>
+<li>一种是在线 URL，格式是 <code>JSON</code>，与 Tailscale 官方控制服务器使用的格式和语法相同。</li>
+<li>另一种是本地文件，格式是 <code>YAML</code>。</li>
+</ul>
+<p>我们可以直接使用本地的 YAML 配置文件，内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/headscale/derp.yaml</span></span><br><span class="line"><span class="attr">regions:</span></span><br><span class="line">  <span class="attr">900:</span></span><br><span class="line">    <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">    <span class="attr">regioncode:</span> <span class="string">thk</span> </span><br><span class="line">    <span class="attr">regionname:</span> <span class="string">Tencent</span> <span class="string">Hongkong</span> </span><br><span class="line">    <span class="attr">nodes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">900a</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">900b</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br><span class="line">  <span class="attr">901:</span></span><br><span class="line">    <span class="attr">regionid:</span> <span class="number">901</span></span><br><span class="line">    <span class="attr">regioncode:</span> <span class="string">hs</span> </span><br><span class="line">    <span class="attr">regionname:</span> <span class="string">Huawei</span> <span class="string">Shanghai</span> </span><br><span class="line">    <span class="attr">nodes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">901a</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">901</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">&lt;这里写域名&gt;</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span> <span class="string">&lt;如果域名可以解析就删掉这个配置&gt;</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br></pre></td></tr></table></figure>
+
+<p>配置说明：</p>
+<ul>
+<li><code>regions</code> 是 YAML 中的<strong>对象</strong>，下面的每一个对象表示一个<strong>可用区</strong>，每个<strong>可用区</strong>里面可设置多个 DERP 节点，即 <code>nodes</code>。</li>
+<li>每个可用区的 <code>regionid</code> 不能重复。</li>
+<li>每个 <code>node</code> 的 <code>name</code> 不能重复。</li>
+<li><code>regionname</code> 一般用来描述可用区，<code>regioncode</code> 一般设置成可用区的缩写。</li>
+<li><code>ipv4</code> 字段不是必须的，如果你的域名可以通过公网解析到你的 DERP 服务器地址，这里可以不填。如果你使用了一个二级域名，而这个域名你并没有在公共 DNS server 中添加相关的解析记录，那么这里就需要指定 IP（前提是你的证书包含了这个二级域名，这个很好支持，搞个泛域名证书就行了）。</li>
+<li><code>stunonly: false</code> 表示除了使用 STUN 服务，还可以使用 DERP 服务。</li>
+<li>上面的配置中域名和 IP 部分我都打码了，你需要根据你的实际情况填写。</li>
+</ul>
+<p>接下来还需要修改 Headscale 的配置文件，引用上面的自定义 DERP 配置文件。需要修改的配置项如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/headscale/config.yaml</span></span><br><span class="line"><span class="attr">derp:</span></span><br><span class="line">  <span class="comment"># List of externally available DERP maps encoded in JSON</span></span><br><span class="line">  <span class="attr">urls:</span></span><br><span class="line">  <span class="comment">#  - https://controlplane.tailscale.com/derpmap/default</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Locally available DERP map files encoded in YAML</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># This option is mostly interesting for people hosting</span></span><br><span class="line">  <span class="comment"># their own DERP servers:</span></span><br><span class="line">  <span class="comment"># https://tailscale.com/kb/1118/custom-derp-servers/</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># paths:</span></span><br><span class="line">  <span class="comment">#   - /etc/headscale/derp-example.yaml</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/headscale/derp.yaml</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># If enabled, a worker will be set up to periodically</span></span><br><span class="line">  <span class="comment"># refresh the given sources and update the derpmap</span></span><br><span class="line">  <span class="comment"># will be set up.</span></span><br><span class="line">  <span class="attr">auto_update_enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># How often should we check for DERP updates?</span></span><br><span class="line">  <span class="attr">update_frequency:</span> <span class="string">24h</span></span><br></pre></td></tr></table></figure>
+
+<p>重启后访问<a target="_blank" rel="noopener" href="https://xxxx:12345/">https://xxxx:12345</a></p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904112310981.png" alt="image-20230904112310981"></p>
+<p>tailscale netcheck</p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113158291.png" alt="image-20230904113158291"></p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113347653.png" alt="image-20230904113347653"></p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">服务器C<span class="built_in"> ping </span>服务器A 内网docker服务</span><br><span class="line"><span class="comment"># 不使用打洞</span></span><br><span class="line">C:\WINDOWS\system32&gt;ping 172.19.2.2 -t</span><br><span class="line"></span><br><span class="line">正在<span class="built_in"> Ping </span>172.19.2.2 具有 32 字节的数据:</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=109ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=92ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=78ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=12ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=62ms <span class="attribute">TTL</span>=63</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用打洞</span></span><br><span class="line">C:\WINDOWS\system32&gt;ping 172.19.2.2 -t</span><br><span class="line"></span><br><span class="line">正在<span class="built_in"> Ping </span>172.19.2.2 具有 32 字节的数据:</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=23ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=10ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=5ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=5ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以使用 Tailscale 命令行工具来测试：</span></span><br><span class="line"><span class="comment"># 这个命令好像只能ping一次。。</span></span><br><span class="line">C:\WINDOWS\system32&gt;tailscale<span class="built_in"> ping </span>-c 0 172.19.2.2</span><br><span class="line">pong <span class="keyword">from</span> v (fd7a:115c:a1e0::2) via 192.168.2.125:41641 <span class="keyword">in</span> 13ms ---&gt;通过ipv6点对点</span><br><span class="line">pong <span class="keyword">from</span> v (fd7a:115c:a1e0::2) via DERP(qh) <span class="keyword">in</span> 10ms            ---&gt;通过DERP</span><br></pre></td></tr></table></figure>
+
+<p>一般来说，如果算到点对点就优先走点对点，否则走了DERP延迟更高</p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230905130501726.png" alt="image-20230905130501726"></p>
+<h2 id="防止-DERP-被白嫖"><a href="#防止-DERP-被白嫖" class="headerlink" title="防止 DERP 被白嫖"></a>防止 DERP 被白嫖</h2><p>先在derp节点启动tailscale</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">headscale preauthkeys create -e 24h -u t1</span><br><span class="line">tailscale up <span class="attribute">--accept-dns</span>=<span class="literal">false</span> <span class="attribute">--accept-routes</span>=<span class="literal">true</span> <span class="attribute">--auth-key</span>=xxx <span class="attribute">--login-server</span>=http://192.168.2.124:8080</span><br></pre></td></tr></table></figure>
+
+<p>再启动derp</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart always \</span><br><span class="line">  --name derper -p <span class="number">12345</span>:<span class="number">12345</span> -p <span class="number">3478</span>:<span class="number">3478</span>/udp \</span><br><span class="line">  -v <span class="regexp">/root/</span>certs:<span class="regexp">/app/</span>certs \</span><br><span class="line">  -e DERP_CERT_MODE=manual \</span><br><span class="line">  -e DERP_ADDR=:<span class="number">12345</span> \</span><br><span class="line">  -e DERP_DOMAIN=sit-wg.suosihulian.cn \</span><br><span class="line">  -e DERP_VERIFY_CLIENTS=<span class="keyword">true</span> \</span><br><span class="line">  -v <span class="regexp">/var/</span>run<span class="regexp">/tailscale/</span>tailscaled.sock:<span class="regexp">/var/</span>run<span class="regexp">/tailscale/</span>tailscaled.sock \</span><br><span class="line">  -d ghcr.io<span class="regexp">/yangchuansheng/</span>derper:latest</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Tailscale部署私有DERP中继服务器">https://horus-k.github.io/2023/09/04/Tailscale部署私有DERP中继服务器/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WireGuard/" rel="tag"># WireGuard</a>
+              <a href="/tags/Tailscale/" rel="tag"># Tailscale</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/09/01/Headscale%E4%B8%8ETailscale%E6%8E%A5%E5%85%A5/" rel="prev" title="Headscale与Tailscale接入">
+                  <i class="fa fa-chevron-left"></i> Headscale与Tailscale接入
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/11/netbird%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" rel="next" title="netbird安装使用">
+                  netbird安装使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.6m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">24:21</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

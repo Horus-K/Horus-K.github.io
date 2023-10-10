@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">124</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">45</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">265</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,6 +132,711 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/" class="post-title-link" itemprop="url">pod公网出口ip自定义</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-29 10:01:35" itemprop="dateCreated datePublished" datetime="2023-05-29T10:01:35+08:00">2023-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-21 13:49:57" itemprop="dateModified" datetime="2023-07-21T13:49:57+08:00">2023-07-21</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="需求"><a href="#需求" class="headerlink" title="需求:"></a>需求:</h1><p>java应用访问qyapi.weixin.qq.com时根据不同组织对应不同公网出口ip</p>
+<p>java实现部分：更新token的任务，先把token写到redis里TTL设置为4小时，再写到mysql</p>
+<p>redis格式为</p>
+<table>
+<thead>
+<tr>
+<th>qwtoken:<access_token></access_token></th>
+<th>cropid</th>
+</tr>
+</thead>
+</table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/23/%E9%98%BF%E9%87%8C%E4%BA%91pod%E7%BB%91%E5%AE%9A%E5%9B%BA%E5%AE%9A%E5%87%BA%E5%8F%A3ip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/23/%E9%98%BF%E9%87%8C%E4%BA%91pod%E7%BB%91%E5%AE%9A%E5%9B%BA%E5%AE%9A%E5%87%BA%E5%8F%A3ip/" class="post-title-link" itemprop="url">阿里云pod绑定固定出口ip</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-23 19:34:54" itemprop="dateCreated datePublished" datetime="2023-05-23T19:34:54+08:00">2023-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-26 15:56:10" itemprop="dateModified" datetime="2023-05-26T15:56:10+08:00">2023-05-26</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>564</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>开启eip功能</p>
+<p><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/200610.html?spm=a2c4g.443632.0.i4#section-jp3-5or-n4s">https://help.aliyun.com/document_detail/200610.html?spm=a2c4g.443632.0.i4#section-jp3-5or-n4s</a></p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  template:</span></span><br><span class="line"><span class="symbol">    metadata:</span></span><br><span class="line"><span class="symbol">      annotations:</span></span><br><span class="line">        k8s.aliyun.com/pod-eip-instanceid: eip-xxxxx</span><br><span class="line">        </span><br><span class="line"><span class="meta"># 使用过程中可能会出现pod删除，但eip任然处于绑定状态</span></span><br><span class="line"><span class="meta"># 默认情况下如果EIP已经绑定了实例，则会创建EIP失败。如果希望解绑之前的实例再绑定新的实例，需要在上述修改ConfigMap中配置 eni_conf中  <span class="string">&quot;allow_eip_rob&quot;</span>: <span class="string">&quot;true&quot;</span>。</span></span><br><span class="line">kubectl delete pod -n kube-system -l <span class="attr">app</span><span class="operator">=</span>terway-eniip</span><br></pre></td></tr></table></figure>
+
+<p><strong>只支持1个pod挂载</strong>,并且可以<strong>通过公网访问容器内服务</strong> <strong>或者给2个容器，不同的ip组成高可用</strong></p>
+<p>以下介绍为Pod配置公网IP的具体操作：</p>
+<ul>
+<li>弹性公网IP支持为指定Pod配置出公网IP。具体操作，请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/200610.htm#task-2035433">为Pod挂载独立公网EIP</a>。</li>
+<li>公网NAT网关支持为一组Pod配置相同出公网IP。具体操作，请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/432964.htm?spm=a2c4g.470915.0.0.69e04e0fU3Np0m#task-2221756">配置Terway网络下节点级别网络</a>和<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/443632.htm?spm=a2c4g.470915.0.0.69e04e0fU3Np0m#task-2236831">为Pod配置固定IP及独立虚拟交换机、安全组</a>。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/" class="post-title-link" itemprop="url">自签证书</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-22 17:22:13" itemprop="dateCreated datePublished" datetime="2023-05-22T17:22:13+08:00">2023-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-20 11:07:30" itemprop="dateModified" datetime="2023-06-20T11:07:30+08:00">2023-06-20</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">⽣成根证书私钥</span></span><br><span class="line">openssl genrsa -out rootCA.key 2048</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">可以将ca.key转为pem文件</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">openssl rsa -<span class="keyword">in</span> rootCA.key -out rootCA.pem</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">再查看一下ca-key.pem文件，内容和ca.key是相同的</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成根证书</span></span><br><span class="line">openssl req -x509 -new -nodes -key rootCA.key -days 75000 -out rootCA.pem -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line">CN=commonName 注：生成证书时，CN要和服务器的域名相同，如果在本地测试，就使用localhost</span><br><span class="line">    　　OU=organizationUnit</span><br><span class="line">    　　O=organizationName</span><br><span class="line">    　　L=localityName</span><br><span class="line">    　　S=stateName</span><br><span class="line">    　　C=country</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看证书</span></span><br><span class="line">openssl x509 -in rootCA.pem -text -noout</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以将rootCA.pem转为.crt扩展名</span></span><br><span class="line">openssl x509 -outform pem -in rootCA.pem -out rootCA.crt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书签名请求文件</span></span><br><span class="line">openssl req -new -key server.key -out server.csr -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;subjectAltName=DNS:qyapi.weixin.qq.com,IP:0.0.0.0&quot; &gt; cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">根据签发请求⽣成服务端证书 增加-extfile参数即可生成v3版本的证书：</span></span><br><span class="line">openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 75000 -extfile cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">openssl verify -CAfile rootCA.pem -verify_hostname qyapi.weixin.qq.com server.crt</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">openresty lua 使用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-05-18 11:03:56 / 修改时间：14:28:07" itemprop="dateCreated datePublished" datetime="2023-05-18T11:03:56+08:00">2023-05-18</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>简单例子</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/18/wrk%E5%8E%8B%E6%B5%8B%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/18/wrk%E5%8E%8B%E6%B5%8B%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">wrk压测工具使用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-18 10:58:15" itemprop="dateCreated datePublished" datetime="2023-05-18T10:58:15+08:00">2023-05-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-25 18:43:11" itemprop="dateModified" datetime="2023-05-25T18:43:11+08:00">2023-05-25</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>389</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>wrk 是一种现代 HTTP 基准测试工具，能够在单个多核 CPU 上运行时产生大量负载。它将多线程设计与可扩展的事件通知系统（如 epoll 和 kqueue）相结合。</p>
+<!--moew-->
+
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><p>这运行基准测试 30 秒，使用 12 个线程，并保持 400 个 HTTP 连接打开。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wrk -t12 -c400 -d30s http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8080</span>/index.html</span><br></pre></td></tr></table></figure>
+
+<p>-c, –connections：保持打开状态的 HTTP 连接总数<br>                    每个线程处理 N &#x3D; 连接&#x2F;线程</p>
+<p>-d, –duration: 测试持续时间，例如 2 秒、2 米、2 小时</p>
+<p>-t, –threads：要使用的线程总数</p>
+<p>-s, –script: LuaJIT 脚本，见 SCRIPTING</p>
+<p>-H, –header: 添加到请求的 HTTP 标头，例如 “用户代理：wrk”</p>
+<p> –latency：打印详细的延迟统计信息</p>
+<p> –timeout：如果在时间内没有收到响应，则记录超时<br>                这段时间。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/10/PaddlePaddle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/10/PaddlePaddle/" class="post-title-link" itemprop="url">基于PaddleServing的 PaddlePaddle+PaddleOCR服务化部署(k8s)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-10 18:14:26" itemprop="dateCreated datePublished" datetime="2023-05-10T18:14:26+08:00">2023-05-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-12 16:27:14" itemprop="dateModified" datetime="2023-05-12T16:27:14+08:00">2023-05-12</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>官方文档</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/deploy/pdserving/README_CN.md">https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/deploy/pdserving/README_CN.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/Serving/blob/v0.8.3/doc/Latest_Packages_CN.md">https://github.com/PaddlePaddle/Serving/blob/v0.8.3/doc/Latest_Packages_CN.md</a></p>
+<p>PaddlePaddle是一个深度学习框架，提供了丰富的深度学习模型和工具，可以让用户快速构建、训练和部署深度学习模型。PaddlePaddle 支持多种编程语言，包括 Python、C++等，同时还提供了丰富的数据集和工具集，例如预训练模型、模型优化工具等。PaddlePaddle 可以用于各种深度学习应用，包括计算机视觉、自然语言处理、推荐系统等。</p>
+<p>PaddleServing 则是一个用于部署深度学习模型的开源服务器，它可以将训练好的深度学习模型转换为可以被部署到生产环境中的格式，例如 HTTP API、Docker 容器等。PaddleServing 支持多种深度学习框架，包括 TensorFlow、PyTorch 等，同时还提供了丰富的功能，例如模型优化、量化、调参等。PaddleServing 可以帮助用户快速构建深度学习应用程序，并方便地进行部署和扩展。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/10/PaddlePaddle/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/03/26/gitlab%E8%BF%81%E7%A7%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/26/gitlab%E8%BF%81%E7%A7%BB/" class="post-title-link" itemprop="url">gitlab迁移</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-26 20:17:37" itemprop="dateCreated datePublished" datetime="2023-03-26T20:17:37+08:00">2023-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-11 14:10:08" itemprop="dateModified" datetime="2023-04-11T14:10:08+08:00">2023-04-11</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>795</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>注意:</p>
+<p>迁移时需要将服务器<code>/etc/ssh</code>中的秘钥文件迁移走</p>
+<p>镜像的秘钥路径在<code>/etc/gitlab/</code>中</p>
+<p>项目无法删除报500</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37837432/article/details/121642542">https://blog.csdn.net/qq_37837432/article/details/121642542</a></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">su - gitlab-psql</span><br><span class="line">psql -h <span class="regexp">/var/</span>opt<span class="regexp">/gitlab/</span>postgresql -d gitlabhq_production</span><br><span class="line">UPDATE projects SET runners_token = <span class="keyword">null</span>, runners_token_encrypted = <span class="keyword">null</span> where name=<span class="string">&#x27;xxxxx&#x27;</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果是ldap用户的<strong>个人项目</strong>无法删除，就将他的账户标识删除后登录再删除项目</p>
+<p>迁移后异常500问题修复</p>
+<p>OpenSSL::Cipher::CipherError ():</p>
+<p>lib&#x2F;gitlab&#x2F;database&#x2F;load_balancing&#x2F;connection_proxy.rb:126:in &#96;block in write_using_load_balancer’</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-rails runner <span class="string">&quot;Project.where.not(import_url: nil).each &#123; |p| p.import_data.destroy if p.import_data &#125;&quot;</span></span><br><span class="line">sudo gitlab-rails c</span><br><span class="line">settings = <span class="module-access"><span class="module"><span class="identifier">ApplicationSetting</span>.</span></span>last</span><br><span class="line">settings.update<span class="constructor">_column(:<span class="params">runners_registration_token_encrypted</span>, <span class="params">nil</span>)</span></span><br><span class="line">settings.update<span class="constructor">_column(:<span class="params">encrypted_ci_jwt_signing_key</span>, <span class="params">nil</span>)</span></span><br><span class="line">settings.save!</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/02/03/%E5%BF%AB%E9%80%9F%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -160,9 +865,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-02-03 13:04:08 / 修改时间：13:06:41" itemprop="dateCreated datePublished" datetime="2023-02-03T13:04:08+08:00">2023-02-03</time>
+      <time title="创建时间：2023-02-03 13:04:08" itemprop="dateCreated datePublished" datetime="2023-02-03T13:04:08+08:00">2023-02-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-06 19:30:35" itemprop="dateModified" datetime="2023-09-06T19:30:35+08:00">2023-09-06</time>
     </span>
 
   
@@ -172,14 +883,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>559</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -408,718 +1119,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">chfs实践</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-11-08 16:39:24 / 修改时间：16:45:59" itemprop="dateCreated datePublished" datetime="2022-11-08T16:39:24+08:00">2022-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/chfs/" itemprop="url" rel="index"><span itemprop="name">chfs</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>官网:<a target="_blank" rel="noopener" href="http://iscute.cn/chfs">http://iscute.cn/chfs</a></p>
-<p>CuteHttpFileServer&#x2F;chfs是一个免费的、HTTP协议的文件共享服务器，使用浏览器可以快速访问。它具有以下特点：</p>
-<ul>
-<li>单个文件，核心功能无需其他文件</li>
-<li>跨平台运行，支持主流平台：Windows，Linux和Mac</li>
-<li>界面简洁，简单易用</li>
-<li>支持扫码下载和手机端访问，手机与电脑之间共享文件非常方便</li>
-<li>支持账户权限控制和地址过滤</li>
-<li>支持快速分享文字片段</li>
-<li>支持webdav协议</li>
-</ul>
-<p>与其他常用文件共享方式（如FTP，飞秋，网盘，自己建站）相比，具有使用简单，适用场景更多的优点，在个人使用以及共享给他人的场景中非常方便快捷。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">openvpn-server配置文件详解</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-09-16 16:38:08 / 修改时间：18:18:59" itemprop="dateCreated datePublished" datetime="2022-09-16T16:38:08+08:00">2022-09-16</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>openvpn.conf</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/15/acme/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/15/acme/" class="post-title-link" itemprop="url">acme</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-09-15 15:04:38 / 修改时间：16:14:02" itemprop="dateCreated datePublished" datetime="2022-09-15T15:04:38+08:00">2022-09-15</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p><a target="_blank" rel="noopener" href="https://letsencrypt.org/zh-cn/getting-started/">https://letsencrypt.org/zh-cn/getting-started/</a></p>
-<h2 id="certbot实现"><a href="#certbot实现" class="headerlink" title="certbot实现"></a>certbot实现</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/15/acme/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">terraform实践</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-09-08 11:12:03" itemprop="dateCreated datePublished" datetime="2022-09-08T11:12:03+08:00">2022-09-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-24 20:07:02" itemprop="dateModified" datetime="2022-11-24T20:07:02+08:00">2022-11-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>实现基础设施即代码的工具。方便多云环境重复部署。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>下载cli <a target="_blank" rel="noopener" href="https://www.terraform.io/downloads">https://www.terraform.io/downloads</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">terraform -version</span></span><br><span class="line">Terraform v1.2.8</span><br><span class="line">on windows_amd64</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/" class="post-title-link" itemprop="url">openvpn打通云</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-07-18 13:38:34" itemprop="dateCreated datePublished" datetime="2022-07-18T13:38:34+08:00">2022-07-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-09-16 18:58:59" itemprop="dateModified" datetime="2022-09-16T18:58:59+08:00">2022-09-16</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>6.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="架构："><a href="#架构：" class="headerlink" title="架构："></a>架构：</h1><p><img src="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/image-20220718142157800.png" alt="image-20220718142157800"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/" class="post-title-link" itemprop="url">备份脚本</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-07-18 13:00:43 / 修改时间：13:24:36" itemprop="dateCreated datePublished" datetime="2022-07-18T13:00:43+08:00">2022-07-18</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="cronjob备份脚本"><a href="#cronjob备份脚本" class="headerlink" title="cronjob备份脚本"></a>cronjob备份脚本</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">apisix生产应用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-07-06 15:49:57" itemprop="dateCreated datePublished" datetime="2022-07-06T15:49:57+08:00">2022-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-20 12:06:15" itemprop="dateModified" datetime="2022-07-20T12:06:15+08:00">2022-07-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/apisix/" itemprop="url" rel="index"><span itemprop="name">apisix</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="基础使用"><a href="#基础使用" class="headerlink" title="基础使用"></a>基础使用</h1><h2 id="apisix路由规则灰度实现"><a href="#apisix路由规则灰度实现" class="headerlink" title="apisix路由规则灰度实现"></a>apisix路由规则灰度实现</h2><p>2条规则</p>
-<p><strong>规则1</strong> 优先级10</p>
-<p><strong>规则2</strong> 优先级11 配置客户端ip 为公司</p>
-<p><strong>效果</strong> 公司ip访问规则2 其他ip 访问规则1</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p><strong>apisix: 任何匹配多于 uri 的路由都被认为是相等的，并应按优先级加以区分。</strong></p>
-<p>注意：当 Route 和 Service 都开启同一个插件时，Route 参数的优先级是高于 Service 的。</p>
-<h3 id="插件优先级"><a href="#插件优先级" class="headerlink" title="插件优先级"></a>插件优先级</h3><p>Consumer &gt; Route &gt; Service</p>
-<p>如果再Consumer 配置了认证，而route没有开启认证，则无法访问</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1150,7 +1151,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:57</span>
+    <span title="站点阅读时长">24:21</span>
   </span>
 </div>
 <div class="busuanzi-count">

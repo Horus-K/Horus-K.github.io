@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/03/17/nginx%E6%8E%A5%E5%85%A5prometheus/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/12/04/k8s%E5%9B%BE%E8%B0%B1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/17/nginx%E6%8E%A5%E5%85%A5prometheus/" class="post-title-link" itemprop="url">nginx接入prometheus</a>
+          <a href="/2021/12/04/k8s%E5%9B%BE%E8%B0%B1/" class="post-title-link" itemprop="url">k8s图谱</a>
         </h2>
 
         <div class="post-meta-container">
@@ -160,118 +160,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-17 17:35:26" itemprop="dateCreated datePublished" datetime="2021-03-17T17:35:26+08:00">2021-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-03-18 22:11:49" itemprop="dateModified" datetime="2021-03-18T22:11:49+08:00">2021-03-18</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>24k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>22 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a>方案1</h1><p><strong>openresty + lua脚本</strong></p>
-<p>优点:</p>
-<ul>
-<li>openresty直接集成lua库</li>
-<li>如果nginx已支持lua，只需添加配置文件即可</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/17/nginx%E6%8E%A5%E5%85%A5prometheus/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/03/04/ktctl-k8s%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/03/04/ktctl-k8s%E5%BC%80%E5%8F%91%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">ktctl-k8s开发调试</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-03-04 20:46:18" itemprop="dateCreated datePublished" datetime="2021-03-04T20:46:18+08:00">2021-03-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-09 18:33:49" itemprop="dateModified" datetime="2023-08-09T18:33:49+08:00">2023-08-09</time>
+      <time title="创建时间：2021-12-04 23:09:40 / 修改时间：23:09:57" itemprop="dateCreated datePublished" datetime="2021-12-04T23:09:40+08:00">2021-12-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -290,7 +181,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>603</span>
+      <span>0</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -308,17 +199,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>文档参考：</p>
-<p><a target="_blank" rel="noopener" href="https://alibaba.github.io/kt-connect/#/zh-cn/cli/connect">https://alibaba.github.io/kt-connect/#/zh-cn/cli/connect</a></p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装pip</span></span><br><span class="line">wget https://bootstrap.pypa.io/3.5/get-pip.py</span><br><span class="line">python3 get-pip.py</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装sshuttle</span></span><br><span class="line">pip install sshuttle</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载并安装KT</span></span><br><span class="line">curl -OL https://rdc-incubators.oss-cn-beijing.aliyuncs.com/stable/ktctl_linux_amd64.tar.gz</span><br><span class="line">tar -xzvf ktctl_linux_amd64.tar.gz</span><br><span class="line">mv ktctl_linux_amd64 /usr/local/bin/ktctl</span><br><span class="line">ktctl -h</span><br></pre></td></tr></table></figure>
-
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>win</p>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ktctl <span class="keyword">connect</span> <span class="params">--mode</span> tun2socks <span class="params">--dnsMode</span> localDNS <span class="params">--shareShadow</span></span><br></pre></td></tr></table></figure>
-
-<p>用于使用本地服务替换集群中的Service实例。基本用法如下：</p>
-<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">ktctl</span> <span class="string">exchange</span> &lt;目标服务名&gt; <span class="built_in">--expose</span> &lt;本地端口&gt;:&lt;目标服务端口&gt;</span><br><span class="line"><span class="string">ktctl</span> -<span class="string">n</span> <span class="string">devops</span> <span class="string">exchange</span> <span class="string">gva-server</span> <span class="built_in">--expose</span> <span class="string">8888:8888 </span><span class="built_in">--debug</span></span><br><span class="line"><span class="comment"># 注意 如果有ng的话要添加 proxy_http_version 1.1; 否则接口返回内容为空</span></span><br></pre></td></tr></table></figure>
-
-
+          
       
     </div>
 
@@ -344,7 +225,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -362,103 +243,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/" class="post-title-link" itemprop="url">mysql主主+keeplived</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-02-23 11:30:39 / 修改时间：19:33:43" itemprop="dateCreated datePublished" datetime="2021-02-23T11:30:39+08:00">2021-02-23</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>940</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>查看对端log bin日志和pos值位置</strong></p>
-<img src="/2021/02/23/Mysql/mysql%E4%B8%BB%E4%B8%BB-keeplived/image-20210223113218710.png" alt="image-20210223113218710" style="zoom:50%;">
-
-<h2 id="Master配置"><a href="#Master配置" class="headerlink" title="Master配置"></a>Master配置</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;&gt;&gt;</span><br><span class="line"></span><br><span class="line">GRANT  REPLICATION SLAVE ON *.* <span class="keyword">TO</span> <span class="string">&#x27;replication&#x27;</span>@<span class="string">&#x27;172.12.1.%&#x27;</span> IDENTIFIED  BY <span class="string">&#x27;replication&#x27;</span>;</span><br><span class="line"></span><br><span class="line">change  master <span class="keyword">to</span></span><br><span class="line"><span class="attribute">master_host</span>=<span class="string">&#x27;172.12.1.200&#x27;</span>,</span><br><span class="line"><span class="attribute">master_user</span>=<span class="string">&#x27;replication&#x27;</span>,</span><br><span class="line"><span class="attribute">master_password</span>=<span class="string">&#x27;replication&#x27;</span>,</span><br><span class="line"><span class="attribute">master_log_file</span>=<span class="string">&#x27;mysql-bin.000001&#x27;</span>,</span><br><span class="line"><span class="attribute">master_log_pos</span>=496;  #对端状态显示的值</span><br><span class="line"></span><br><span class="line">start  slave;         #启动同步</span><br><span class="line">show slave status \G;</span><br></pre></td></tr></table></figure>
-
-<h2 id="slave配置"><a href="#slave配置" class="headerlink" title="slave配置"></a>slave配置</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GRANT  REPLICATION SLAVE ON *.* <span class="keyword">TO</span> <span class="string">&#x27;replication&#x27;</span>@<span class="string">&#x27;172.12.1.%&#x27;</span> IDENTIFIED  BY <span class="string">&#x27;replication&#x27;</span>;</span><br><span class="line"></span><br><span class="line">change  master <span class="keyword">to</span></span><br><span class="line"><span class="attribute">master_host</span>=<span class="string">&#x27;172.12.1.100&#x27;</span>,</span><br><span class="line"><span class="attribute">master_user</span>=<span class="string">&#x27;replication&#x27;</span>,</span><br><span class="line"><span class="attribute">master_password</span>=<span class="string">&#x27;replication&#x27;</span>,</span><br><span class="line"><span class="attribute">master_log_file</span>=<span class="string">&#x27;mysql-bin.000001&#x27;</span>,</span><br><span class="line"><span class="attribute">master_log_pos</span>=496;  #对端状态显示的值</span><br><span class="line"></span><br><span class="line">start  slave;         #启动同步</span><br><span class="line">show slave status \G;</span><br></pre></td></tr></table></figure>
-
-<p><strong>主主同步配置完毕，查看同步状态Slave_IO和Slave_SQL是YES说明主主同步成功。</strong></p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span>  <span class="keyword">REPLICATION</span> SLAVE <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED  <span class="keyword">BY</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<h2 id="搭建keeplived"><a href="#搭建keeplived" class="headerlink" title="搭建keeplived"></a>搭建keeplived</h2><h2 id="清除slave状态"><a href="#清除slave状态" class="headerlink" title="清除slave状态"></a>清除slave状态</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reset</span> slave <span class="keyword">all</span>;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">PostgreSQL实践</a>
+          <a href="/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/" class="post-title-link" itemprop="url">xxl-job接入ldap</a>
         </h2>
 
         <div class="post-meta-container">
@@ -469,14 +254,23 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-12-18 17:01:31" itemprop="dateCreated datePublished" datetime="2020-12-18T17:01:31+08:00">2020-12-18</time>
+      <time title="创建时间：2021-11-09 20:45:08" itemprop="dateCreated datePublished" datetime="2021-11-09T20:45:08+08:00">2021-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-06-10 17:12:31" itemprop="dateModified" datetime="2022-06-10T17:12:31+08:00">2022-06-10</time>
+      <time title="修改时间：2021-12-14 16:58:49" itemprop="dateModified" datetime="2021-12-14T16:58:49+08:00">2021-12-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/xxl-job/" itemprop="url" rel="index"><span itemprop="name">xxl-job</span></a>
+        </span>
     </span>
 
   
@@ -486,7 +280,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.6k</span>
+      <span>8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -504,10 +298,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm</span><br><span class="line">yum install -y postgresql13-server</span><br><span class="line">/usr/pgsql-13/bin/postgresql-13-setup initdb</span><br><span class="line">sudo systemctl enable postgresql-13</span><br><span class="line">sudo systemctl start postgresql-13</span><br></pre></td></tr></table></figure>
+          <h1 id="修改代码"><a href="#修改代码" class="headerlink" title="修改代码"></a>修改代码</h1><h2 id="xxl-job-admin-x2F-pom-xml"><a href="#xxl-job-admin-x2F-pom-xml" class="headerlink" title="xxl-job-admin&#x2F;pom.xml"></a>xxl-job-admin&#x2F;pom.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.ldap<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-ldap-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.4.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/18/PostgreSQL%E5%AE%9E%E8%B7%B5/#more" rel="contents">
+              <a class="btn" href="/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -538,7 +332,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/16/CRI%E4%B8%8EOCI/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -556,7 +350,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/16/CRI%E4%B8%8EOCI/" class="post-title-link" itemprop="url">CRI与OCI</a>
+          <a href="/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/" class="post-title-link" itemprop="url">ingress重定向例子</a>
         </h2>
 
         <div class="post-meta-container">
@@ -568,124 +362,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2020-12-16 14:58:45 / 修改时间：16:23:25" itemprop="dateCreated datePublished" datetime="2020-12-16T14:58:45+08:00">2020-12-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="OCI"><a href="#OCI" class="headerlink" title="OCI"></a><strong>OCI</strong></h1><p><strong>Open Container Initiative 开放容器协议</strong></p>
-<p>成立于 2015 年的 OCI 是Linux基金会旗下的合作项目，以开放治理的方式制定操作系统虚拟化（特别是Linux容器）的开放工业标准，主要包括容器镜像格式和容器运行时（runtime）。初始成员包括 Docker、亚马逊、谷歌和VMware等公司。OCI成立之初，Docker 公司为其捐赠了容器镜像格式和运行时的草案及相应的实现代码。原来属于Docker 的 libcontainer 项目被捐赠给OCI，成为独立的容器运行时项目 runC。</p>
-<p>OCI 运行时规范定义了容器配置、运行时和生命周期的标准，主流的容器运行时都遵循OCI运行时的规范，从而提高系统的可移植性和互操作性，用户可根据需要进行选择。</p>
-<p>首先，容器启动前需要在文件系统中按一定格式存放所需的文件。OCI运行时规范定义了容器文件系统包（filesystem bundle）的标准，在OCI运行时的实现中通常由高层运行时下载 OCI 镜像，并将OCI镜像解压成OCI运行时文件系统包，然后 OCI 运行时读取配置信息和启动容器里的进程。OCI运行时文件系统包主要包括以下两部分。</p>
-<ul>
-<li>config.json：这是必需的配置文件，存放于文件系统包的根目录下。OCI运行时规范对Linux、Windows、Solaris和虚拟机4种平台的运行时做了相应的配置规范。</li>
-<li>容器的根文件系统：容器启动后进程所使用的根文件系统，由 config.json 中的root.path属性确定该文件系统的路径，通常是“rootfs&#x2F;”。</li>
-</ul>
-<p>然后，在定义文件系统包的基础上，OCI运行时规范制定了运行时和生命周期管理规范。生命周期定义了容器从创建到删除的全过程。</p>
-<hr>
-<p><img src="/2020/12/16/CRI%E4%B8%8EOCI/image-20201216150547929.png" alt="image-20201216150547929"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/16/CRI%E4%B8%8EOCI/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/15/ingress/ingress-nginx-yaml%E9%83%A8%E7%BD%B2%E6%96%87%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/15/ingress/ingress-nginx-yaml%E9%83%A8%E7%BD%B2%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">ingress-nginx-yaml部署文件</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-12-15 11:42:49" itemprop="dateCreated datePublished" datetime="2020-12-15T11:42:49+08:00">2020-12-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-12-18 14:26:24" itemprop="dateModified" datetime="2020-12-18T14:26:24+08:00">2020-12-18</time>
+      <time title="创建时间：2021-11-09 11:11:31 / 修改时间：15:15:05" itemprop="dateCreated datePublished" datetime="2021-11-09T11:11:31+08:00">2021-11-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -704,14 +381,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>16k</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>14 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -722,10 +399,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>根据官方yaml，修改外网镜像</p>
+          <h2 id="子路径重定向"><a href="#子路径重定向" class="headerlink" title="子路径重定向"></a>子路径重定向</h2><h3 id="所有子路径匹配转发"><a href="#所有子路径匹配转发" class="headerlink" title="所有子路径匹配转发"></a>所有子路径匹配转发</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/$2</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">k8s-ingress-nbugs.nbugs.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">whoami</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/(.*)</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">ImplementationSpecific</span></span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/$1</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">k8s-ingress-nbugs.nbugs.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">whoami</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">ImplementationSpecific</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/15/ingress/ingress-nginx-yaml%E9%83%A8%E7%BD%B2%E6%96%87%E4%BB%B6/#more" rel="contents">
+              <a class="btn" href="/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -756,7 +436,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/14/gitlab-ci-cd/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -774,7 +454,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/14/gitlab-ci-cd/" class="post-title-link" itemprop="url">GitLab-CI/CD</a>
+          <a href="/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">helm添加插件</a>
         </h2>
 
         <div class="post-meta-container">
@@ -784,15 +464,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-12-14 10:12:33" itemprop="dateCreated datePublished" datetime="2020-12-14T10:12:33+08:00">2020-12-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-01-19 19:01:21" itemprop="dateModified" datetime="2021-01-19T19:01:21+08:00">2021-01-19</time>
+      <time title="创建时间：2021-11-04 13:44:16 / 修改时间：13:54:57" itemprop="dateCreated datePublished" datetime="2021-11-04T13:44:16+08:00">2021-11-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -800,7 +474,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/devops/" itemprop="url" rel="index"><span itemprop="name">devops</span></a>
+          <a href="/categories/helm/" itemprop="url" rel="index"><span itemprop="name">helm</span></a>
         </span>
     </span>
 
@@ -811,14 +485,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>35k</span>
+      <span>367</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>32 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -829,15 +503,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a><strong>docker</strong></h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">    --detach \</span><br><span class="line">    --hostname gitlab.qh.com \</span><br><span class="line">    --publish <span class="number">2222</span>:<span class="number">22</span> \</span><br><span class="line">    --publish <span class="number">80</span>:<span class="number">80</span> \</span><br><span class="line">    --name gitlab \</span><br><span class="line">    --restart unless-stopped \</span><br><span class="line">    -v <span class="regexp">/data/gi</span>tlab<span class="regexp">/etc:/</span>etc/gitlab \</span><br><span class="line">    -v <span class="regexp">/data/gi</span>tlab<span class="regexp">/log:/</span>var<span class="regexp">/log/gi</span>tlab \</span><br><span class="line">    -v <span class="regexp">/data/gi</span>tlab<span class="regexp">/data:/</span>var<span class="regexp">/opt/gi</span>tlab \</span><br><span class="line">    gitlab/gitlab-ce:<span class="number">13.6</span>.<span class="number">3</span>-ce.<span class="number">0</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/14/gitlab-ci-cd/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <p>helm3添加push插件</p>
+<p>下载安装包helm-push</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="regexp">//</span>hub.fastgit.org<span class="regexp">/chartmuseum/</span>helm-push.git</span><br></pre></td></tr></table></figure>
+
+<p>查看helm的plugin路径</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm env</span><br><span class="line">HELM_PLUGINS<span class="operator">=</span><span class="string">&quot;C:\Users\vvv\AppData\Roaming\helm\plugins&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在该路径下创建helm-push文件夹，并将安装包拷贝到该文件夹下解压即可</p>
+<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="name">C</span>:\Users\vvv\AppData\Roaming\helm\plugins\helm-push</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ helm cm-push</span><br><span class="line">Error: This <span class="built_in">command</span> needs 2 arguments: name of chart, name of chart repository (or repo URL)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/image-20211104135424961.png" alt="image-20211104135424961"></p>
+<p>可将配置文件中name改为插件名</p>
+
       
     </div>
 
@@ -863,7 +543,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/08/gitlab%E9%83%A8%E7%BD%B2/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -881,7 +561,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/08/gitlab%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">gitlab部署</a>
+          <a href="/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" class="post-title-link" itemprop="url">jenkins流水线-环境变量</a>
         </h2>
 
         <div class="post-meta-container">
@@ -891,15 +571,22 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-12-08 13:54:48" itemprop="dateCreated datePublished" datetime="2020-12-08T13:54:48+08:00">2020-12-08</time>
+      <time title="创建时间：2021-10-21 18:40:58 / 修改时间：19:16:15" itemprop="dateCreated datePublished" datetime="2021-10-21T18:40:58+08:00">2021-10-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
+        <i class="far fa-folder"></i>
       </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-12-15 13:57:05" itemprop="dateModified" datetime="2020-12-15T13:57:05+08:00">2020-12-15</time>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jenkins/pipeline/" itemprop="url" rel="index"><span itemprop="name">pipeline</span></a>
+        </span>
     </span>
 
   
@@ -909,7 +596,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.9k</span>
+      <span>4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -927,12 +614,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><code>Gitlab</code>官方提供了 Helm 的方式在 Kubernetes 集群中来快速安装，但是在使用的过程中发现 Helm 提供的 Chart 包中有很多其他额外的配置，所以我们这里使用自定义的方式来安装，也就是自己来定义一些资源清单文件。</p>
-<p><code>Gitlab</code>主要涉及到3个应用：Redis、Postgresql、Gitlab 核心程序，实际上我们只要将这3个应用分别启动起来，然后加上对应的配置就可以很方便的安装 Gitlab 了，我们这里选择使用的镜像不是官方的，而是 Gitlab 容器化中使用非常多的一个第三方镜像：<code>sameersbn/gitlab</code>，基本上和官方保持同步更新，地址：<a target="_blank" rel="noopener" href="http://www.damagehead.com/docker-gitlab/">http://www.damagehead.com/docker-gitlab/</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/sameersbn/docker-gitlab">https://github.com/sameersbn/docker-gitlab</a></p>
+          <h2 id="列出环境变量"><a href="#列出环境变量" class="headerlink" title="列出环境变量"></a><strong>列出环境变量</strong></h2><p>使用printenv | sort命令组合来获取环境变量的排序列表</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&quot;Env Variables&quot;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&quot;printenv | sort&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/08/gitlab%E9%83%A8%E7%BD%B2/#more" rel="contents">
+              <a class="btn" href="/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -963,7 +649,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -981,7 +667,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">argo cd安装</a>
+          <a href="/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/" class="post-title-link" itemprop="url">k8s service的四种体位</a>
         </h2>
 
         <div class="post-meta-container">
@@ -991,15 +677,107 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-12-04 15:23:39" itemprop="dateCreated datePublished" datetime="2020-12-04T15:23:39+08:00">2020-12-04</time>
+      <time title="创建时间：2021-09-17 23:45:09 / 修改时间：23:56:05" itemprop="dateCreated datePublished" datetime="2021-09-17T23:45:09+08:00">2021-09-17</time>
     </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Headless-Service"><a href="#Headless-Service" class="headerlink" title="Headless Service"></a><strong>Headless Service</strong></h2><p>有时不需要或不想要负载均衡，以及单独的 Service IP 。遇到这种情况，可以通过指定 Cluster</p>
+<p>IP(spec.clusterIP) 的值为 “None” 来创建 Headless Service 。这类 Service 并不会分配 Cluster IP， kube-proxy 不会处理它们，而且平台也不会为它们进行负载均衡和路由</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span>	</span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="string">clusterIP:&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>svc一旦创建成功后，会被写入到 coredns 中</p>
+<p>他的写入的格式体是：svc名称 + 当前命名空间 + 当前集群的域名(集群域名我没没改过,默认就是svc.cluser.local. ) 通过我们当前的coredns的地址进行解析出一个域名</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dig -t A myapp-headservice<span class="selector-class">.default</span><span class="selector-class">.svc</span><span class="selector-class">.cluster</span><span class="selector-class">.local</span>. @<span class="number">10.244</span>.<span class="number">0.34</span></span><br><span class="line">dig命令需要安装</span><br><span class="line">yum -y install bind-utils</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">容器内核优化..</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-12-24 19:44:07" itemprop="dateModified" datetime="2020-12-24T19:44:07+08:00">2020-12-24</time>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-08-20 13:57:31 / 修改时间：17:41:01" itemprop="dateCreated datePublished" datetime="2021-08-20T13:57:31+08:00">2021-08-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1018,7 +796,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.3k</span>
+      <span>4.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -1036,12 +814,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>官方仓库：</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/argoproj/argo-cd">https://github.com/argoproj/argo-cd</a></p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace argocd</span><br><span class="line"><span class="comment">#Non-HA:</span></span><br><span class="line">wget https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/argoproj/</span>argo-cd<span class="regexp">/v1.8.1/m</span>anifests/install.yaml -O argo-cd.yaml</span><br><span class="line"><span class="comment">#HA:</span></span><br><span class="line">wget https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/argoproj/</span>argo-cd<span class="regexp">/v1.8.1/m</span>anifests<span class="regexp">/ha/i</span>nstall.yaml -O argo-cd.yaml</span><br><span class="line"><span class="comment">#替换镜像</span></span><br><span class="line">sed -i -e <span class="string">&#x27;s?image: argoproj?image: dockerhub.azk8s.cn/argoproj?g&#x27;</span>  -e <span class="string">&#x27;s?quay.io?quay.azk8s.cn?g&#x27;</span> -e <span class="string">&#x27;s?k8s.gcr.io?gcr.azk8s.cn/google-containers?g&#x27;</span>  argo-cd.yaml</span><br><span class="line">kubectl apply -n argocd -f argo-cd.yaml</span><br></pre></td></tr></table></figure>
+          <p>首先我们抛出3个问题：</p>
+<ol>
+<li>docker容器的内核与宿主机内核是怎样的关系？</li>
+<li>容器在运行时如何调用系统资源？</li>
+<li>docker的性能参数有没有作用范围？</li>
+</ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/04/argo-cd%E5%AE%89%E8%A3%85/#more" rel="contents">
+              <a class="btn" href="/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1072,7 +853,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/12/03/%E5%9F%BA%E4%BA%8EJenkins%E5%92%8CArgocd%E5%AE%9E%E7%8E%B0CI-CD/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1090,7 +871,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/12/03/%E5%9F%BA%E4%BA%8EJenkins%E5%92%8CArgocd%E5%AE%9E%E7%8E%B0CI-CD/" class="post-title-link" itemprop="url">基于Jenkins和Argocd实现CI/CD</a>
+          <a href="/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/" class="post-title-link" itemprop="url">sanor通过jacoco插件收集代码覆盖率</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1100,24 +881,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-12-03 11:29:47" itemprop="dateCreated datePublished" datetime="2020-12-03T11:29:47+08:00">2020-12-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-01-19 13:42:37" itemprop="dateModified" datetime="2021-01-19T13:42:37+08:00">2021-01-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
-        </span>
+      <time title="创建时间：2021-07-06 13:45:21 / 修改时间：15:54:10" itemprop="dateCreated datePublished" datetime="2021-07-06T13:45:21+08:00">2021-07-06</time>
     </span>
 
   
@@ -1127,14 +893,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9k</span>
+      <span>4.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -1145,12 +911,213 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>CI&#x2F;CD并不是陌生的东西，大部分企业都有自己的CI&#x2F;CD，不过今天我要介绍的是使用Jenkins和GitOps实现CI&#x2F;CD。</p>
-<p>整体架构如下：</p>
-<img src="/2020/12/03/%E5%9F%BA%E4%BA%8EJenkins%E5%92%8CArgocd%E5%AE%9E%E7%8E%B0CI-CD/image-20201203113140692.png" alt="image-20201203113140692" style="zoom:67%;">
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>单元测试是保证代码质量的重要一环，而如何衡量单元测试写得好不好呢？<code>覆盖率（Coverage）</code>是一个重要指标。而<code>JaCoCo</code>则是专门为<code>Java</code>提供的用于检测测试覆盖率的工具，英文全称为<code>Java Code Coverage</code>。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/03/%E5%9F%BA%E4%BA%8EJenkins%E5%92%8CArgocd%E5%AE%9E%E7%8E%B0CI-CD/#more" rel="contents">
+              <a class="btn" href="/2021/07/06/sanor%E9%80%9A%E8%BF%87jacoco%E6%8F%92%E4%BB%B6%E6%94%B6%E9%9B%86%E4%BB%A3%E7%A0%81%E8%A6%86%E7%9B%96%E7%8E%87/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/06/24/k8s%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8kerw/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/06/24/k8s%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8kerw/" class="post-title-link" itemprop="url">k8s插件管理器kerw</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-24 15:54:35 / 修改时间：15:54:53" itemprop="dateCreated datePublished" datetime="2021-06-24T15:54:35+08:00">2021-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>25</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="https://krew.sigs.k8s.io/">https://krew.sigs.k8s.io/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/" class="post-title-link" itemprop="url">k8s流量策略与ingress获取真实ip</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-17 21:35:08" itemprop="dateCreated datePublished" datetime="2021-06-17T21:35:08+08:00">2021-06-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-23 16:23:22" itemprop="dateModified" datetime="2021-08-23T16:23:22+08:00">2021-08-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="获取真实ip"><a href="#获取真实ip" class="headerlink" title="获取真实ip"></a>获取真实ip</h1><h2 id="方法1-X-Forwarded-For配置"><a href="#方法1-X-Forwarded-For配置" class="headerlink" title="方法1 X-Forwarded-For配置"></a>方法1 X-Forwarded-For配置</h2><p>这种是百度中大多数的方法：</p>
+<p>适用于7层http转发</p>
+<p><strong>业务架构：</strong><br>Client-&gt;WAF-&gt;LB-&gt;ECS-&gt;容器<br>问题：在容器中获取不到真实的客户端公网IP</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/17/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5%E4%B8%8Eingress%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1174,7 +1141,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1186,7 +1153,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1198,14 +1165,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

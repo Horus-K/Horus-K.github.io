@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"horus-k.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="https:&#x2F;&#x2F;www.ixigua.com&#x2F;7080166741921235492?&amp;&amp;id&#x3D;7155098884581097997 https:&#x2F;&#x2F;blog.csdn.net&#x2F;u014481728&#x2F;article&#x2F;details&#x2F;133421594 1.考核知识：基于角色访问控制练习记录  题目内容中文解释Context ​     为部署流水线创建一个新的 ClusterRo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cka">
+<meta property="og:url" content="https://horus-k.github.io/2023/12/15/cka/index.html">
+<meta property="og:site_name" content="Q&#39;s blog">
+<meta property="og:description" content="https:&#x2F;&#x2F;www.ixigua.com&#x2F;7080166741921235492?&amp;&amp;id&#x3D;7155098884581097997 https:&#x2F;&#x2F;blog.csdn.net&#x2F;u014481728&#x2F;article&#x2F;details&#x2F;133421594 1.考核知识：基于角色访问控制练习记录  题目内容中文解释Context ​     为部署流水线创建一个新的 ClusterRo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/i4r7sfkixdfri_b1eb85cebc6d4ed6a43a4dcc8107ae86.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686193330670-a44684db-b38e-44a4-bf91-bdd4bb411e91.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686195269335-62cf1222-d9b2-4d02-a936-0fbd4f5f4847.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686194447657-9977f98a-3b09-414d-a58a-2e3182979d79.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686200676508-79bea891-8e31-4c8d-a365-29a6e0556bfa.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686200714258-72ae5abe-9273-41cb-b2d4-cafb389d76c5.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686212630567-01980333-763b-4249-8382-bc803561aef7.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686214245328-b382c27e-321f-4875-bf46-09251fd856e3.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686272388361-a6a83e0e-8159-413a-bec4-d3951cf76b78.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686273297681-da4e41b0-fa33-4a06-a2a3-5dda896f37fb.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686273871803-5cb7a585-075b-4890-92cb-904da1b1f294.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686274264022-535d36cf-a755-48a9-9c56-62046e5da3ab.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686274602282-d690ef8f-085d-4bfb-b4c6-ec6a7d84b9e8.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686275041410-b5546b45-434c-45bb-816c-e2a7a8388b03.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686275313433-0329accf-2316-4233-a461-1b31bef0cfb0.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686275929251-62dce83d-3b2d-42ee-93e5-bed475e66a78.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686276106205-d411bf57-1620-4caa-ac1e-9e36a91e24f1.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686276362865-7cc2c094-c4a8-4d28-b811-83c44fb3e7a5.png">
+<meta property="og:image" content="https://horus-k.github.io/2023/12/15/cka/1686277786620-4a6183f6-225e-4e7e-9f75-5e7e1f08f759.png">
+<meta property="article:published_time" content="2023-12-15T03:05:06.000Z">
+<meta property="article:modified_time" content="2024-01-08T11:07:01.526Z">
+<meta property="article:author" content="屈辉">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://horus-k.github.io/2023/12/15/cka/i4r7sfkixdfri_b1eb85cebc6d4ed6a43a4dcc8107ae86.png">
+
+
+<link rel="canonical" href="https://horus-k.github.io/2023/12/15/cka/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://horus-k.github.io/2023/12/15/cka/","path":"2023/12/15/cka/","title":"cka"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>cka | Q's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Q's blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一些个人文档笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/12/15/cka/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="cka | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          cka
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-12-15 11:05:06" itemprop="dateCreated datePublished" datetime="2023-12-15T11:05:06+08:00">2023-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-01-08 19:07:01" itemprop="dateModified" datetime="2024-01-08T19:07:01+08:00">2024-01-08</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><a target="_blank" rel="noopener" href="https://www.ixigua.com/7080166741921235492?&&id=7155098884581097997">https://www.ixigua.com/7080166741921235492?&amp;&amp;id=7155098884581097997</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014481728/article/details/133421594">https://blog.csdn.net/u014481728/article/details/133421594</a></p>
+<h1 id="1-考核知识：基于角色访问控制"><a href="#1-考核知识：基于角色访问控制" class="headerlink" title="1.考核知识：基于角色访问控制"></a>1.考核知识：基于角色访问控制</h1><p>练习记录</p>
+<p><img src="/2023/12/15/cka/i4r7sfkixdfri_b1eb85cebc6d4ed6a43a4dcc8107ae86.png" alt="img"></p>
+<h2 id="题目内容中文解释"><a href="#题目内容中文解释" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p><strong>Context</strong></p>
+<p>​     为部署流水线创建一个新的 ClusterRole 并将其绑定到范围为特定的 namespace 的特定ServiceAccount。</p>
+<p><strong>Task</strong></p>
+<p>​     创建一个名为 <strong>deployment-clusterrole</strong> 的 clusterrole，该 clusterrole 只允许<strong>Deployment、Daemonset、Statefulset</strong> 具有 <strong>create</strong> 权限，在现有的 namespace app-team1 中创建一个名为 <strong>cicd-token</strong> 的新 <strong>ServiceAccount</strong>。限于 namespace app-team1 中，将新的 ClusterRole deployment-clusterrole 绑定到新的 ServiceAccount cicd-token。</p>
+<p><strong>官方文档搜索关键字：RBAC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/">https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/</a></p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="keyword">create</span> clusterrole deployment-clusterrole --verb=<span class="keyword">create</span> --resource=deployments,daemonsets,statefulsets</span><br><span class="line">kubectl <span class="keyword">create</span> ns app-team1</span><br><span class="line">kubectl <span class="keyword">create</span> serviceaccount cicd-<span class="built_in">token</span> -n app-team1</span><br><span class="line">kubectl <span class="keyword">create</span> clusterrolebinding cicd --clusterrole deployment-clusterrole --serviceaccount app-team1:cicd-<span class="built_in">token</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-考核知识：节点维护-指定-node-节点不可用"><a href="#2-考核知识：节点维护-指定-node-节点不可用" class="headerlink" title="2.考核知识：节点维护-指定 node 节点不可用"></a>2.考核知识：节点维护-指定 node 节点不可用</h1><h2 id="题目内容"><a href="#题目内容" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686193330670-a44684db-b38e-44a4-bf91-bdd4bb411e91.png" alt="image"></p>
+<h2 id="题目内容中文解释-1"><a href="#题目内容中文解释-1" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>Task切换 k8s 集群环境：kubectl config use-context ek8s</p>
+<p>将 ek8s-node-1 节点设置为不可用，然后重新调度该节点上的所有 Pod。</p>
+<p><strong>官方文档搜索关键字：drain-node</strong></p>
+<p><img src="/2023/12/15/cka/1686195269335-62cf1222-d9b2-4d02-a936-0fbd4f5f4847.png" alt="img"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="3-考核知识：K8s-版本升级"><a href="#3-考核知识：K8s-版本升级" class="headerlink" title="3.考核知识：K8s 版本升级"></a>3.考核知识：K8s 版本升级</h1><h2 id="题目内容-1"><a href="#题目内容-1" class="headerlink" title="题目内容"></a>题目内容</h2><h2 id="题目内容中文解释-2"><a href="#题目内容中文解释-2" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context mk8s</p>
+<p>Task</p>
+<p>​     现有的 Kubernetes 集群正在运行版本 1.23.1。仅将 master 节点上的所有 Kubernetes 控制平面和节点组件升级到版本 1.23.2。（注意，考试时的集群可能为 1.23.0，会让你从 1.23.0 升级为 1.23.1。甚至是 1.22.1 升级为 1.22.2。所以敲命令时，具体要升级的版本，根据题目要求更改。）</p>
+<p>确保在升级之前 drain master 节点，并在升级后 uncordon master 节点。</p>
+<p>可以使用以下命令，通过 ssh 连接到 master 节点：</p>
+<p>ssh master01</p>
+<p>可以使用以下命令，在该 master 节点上获取更高权限：</p>
+<p>sudo -i</p>
+<p>​     另外，在主节点上升级 kubelet 和 kubectl。请不要升级工作节点，etcd，container 管理器，CNI 插件， DNS 服务或任何其他插件。</p>
+<p><strong>官方文档搜索关键字：upgrade</strong></p>
+<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/#determine-which-version-to-upgrade-to">https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/#determine-which-version-to-upgrade-to</a></p>
+<h2 id="做题解答"><a href="#做题解答" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 切换集群</span></span><br><span class="line">kubectl<span class="built_in"> config </span>use-context mk8s</span><br><span class="line"><span class="comment"># 查看节点信息</span></span><br><span class="line">kubectl <span class="built_in">get</span> nodes </span><br><span class="line"><span class="comment"># 将节点标记为不可调度并驱逐所有负载，准备节点的维护：</span></span><br><span class="line">kubectl cordon master01</span><br><span class="line">kubectl drain master01 --delete-emptydir-data --ignore-daemonsets --force </span><br><span class="line"><span class="comment"># 在考试环境中 ssh 到 master 节点，并切换到 root 下</span></span><br><span class="line">ssh master01</span><br><span class="line">sudo -i </span><br><span class="line"><span class="comment">#升级控制平面节点</span></span><br><span class="line"><span class="comment"># 升级 kubeadm</span></span><br><span class="line">apt update</span><br><span class="line"><span class="comment"># 找到题目要求升级到的指定版本 </span></span><br><span class="line">apt-cache madison kubeadm | grep 1.23.2</span><br><span class="line"><span class="comment"># 安装正常的版本</span></span><br><span class="line">apt-<span class="built_in">get</span> install <span class="attribute">kubeadm</span>=1.23.2-00</span><br><span class="line"><span class="comment"># 验证下载操作正常，并且 kubeadm 版本正确</span></span><br><span class="line">kubeadm version</span><br><span class="line"><span class="comment"># 验证升级计划：此命令检查你的集群是否可被升级，并取回你要升级的目标版本。 命令也会显示一个包含组件配置版本状态的表格。</span></span><br><span class="line">kubeadm<span class="built_in"> upgrade </span>plan</span><br><span class="line"><span class="comment"># 排除 etcd，升级其他的</span></span><br><span class="line">kubeadm<span class="built_in"> upgrade </span>apply v1.23.2 <span class="attribute">--etcd-upgrade</span>=<span class="literal">false</span></span><br><span class="line"><span class="comment"># 升级 kubelet 和 kubectl</span></span><br><span class="line">apt-<span class="built_in">get</span> install <span class="attribute">kubelet</span>=1.23.2-00 <span class="attribute">kubectl</span>=1.23.2-00</span><br><span class="line"><span class="comment"># 考试环境中退出 root，退回到 student@master01</span></span><br><span class="line">[root @master 01 ] # exit</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 考试环境中退出 master01，退回到 student@node-1</span></span><br><span class="line">[student @master 01 ] $ exit</span><br><span class="line"><span class="comment"># 不要输入 exit 多了，否则会退出考试环境的。</span></span><br><span class="line"><span class="comment"># 解除节点的保护 </span></span><br><span class="line">root@cka-master1:~# kubectl uncordon cka-master1 </span><br><span class="line"><span class="comment"># 检查 master1 是否为 Ready</span></span><br><span class="line">root@cka-master1:~# kubectl <span class="built_in">get</span> nodes</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4、考核知识：ETCD-数据备份恢复"><a href="#4、考核知识：ETCD-数据备份恢复" class="headerlink" title="4、考核知识：ETCD 数据备份恢复"></a>4、考核知识：ETCD 数据备份恢复</h1><blockquote>
+<p>注意：真实考试时，第 3 题是“升级集群”那道题。建议真正考试时，前 4 道题按照顺序做，特别是第 4 题，且做完后不要再修改，做完第 3 道题，如果没有 exit 退出到 student@node-1，则无法执行 etcdctl 命令，另外这道题没有切换集群，用的是第 3 道题的集群，所以，这道题做完就不要在回来检查或者操作了。etcd 不建议放到最后做，如果最后做，etcd 备份还原可能把所有 pod 都清空了，这个问题有可能会出现，所以前 4 道题按照顺寻做</p>
+</blockquote>
+<h2 id="题目内容-2"><a href="#题目内容-2" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686194447657-9977f98a-3b09-414d-a58a-2e3182979d79.png" alt="image"></p>
+<h2 id="题目内容中文解释-3"><a href="#题目内容中文解释-3" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>此项目无需更改配置环境，但是，在执行此项目之前，请确保您已返回初始节点。etcd 这道题真实考试为第 4 题，用的集群是真实考试时的上一题的集群，即真题第 3 题 mk8s，所以无需再切换集群了。</p>
+<p>Task</p>
+<p>​     首先，为运行在 <a target="_blank" rel="noopener" href="https://127.0.0.1:2379/">https://127.0.0.1:2379</a> 上的现有 etcd 实例创建快照并将快照保存到 &#x2F;srv&#x2F;data&#x2F;etcd-snapshot.db 文件。</p>
+<p>​     为给定实例创建快照预计能在几秒钟内完成。 如果该操作似乎挂起，则命令可能有问题。用 CTRL + C 来取消操作然后重试。</p>
+<p>然后还原位于 &#x2F;var&#x2F;lib&#x2F;backup&#x2F;etcd-snapshot-previous.db 的现有先前快照。</p>
+<p>提供了以下 TLS 证书和密钥，以通过 etcdctl 连接到服务器：</p>
+<p>   CA证书: &#x2F;opt&#x2F;KUIN00601&#x2F;ca.crt</p>
+<p>   客户端证书: &#x2F;opt&#x2F;KUIN00601&#x2F;etcd-client.crt</p>
+<p>   客户端密钥: &#x2F;opt&#x2F;KUIN00601&#x2F;etcd-client.key</p>
+<h2 id="官方文档搜索关键字：upgrade-etcd"><a href="#官方文档搜索关键字：upgrade-etcd" class="headerlink" title="官方文档搜索关键字：upgrade-etcd"></a>官方文档搜索关键字：upgrade-etcd</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster">https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster</a></p>
+<p><img src="/2023/12/15/cka/1686200676508-79bea891-8e31-4c8d-a365-29a6e0556bfa.png" alt="image"></p>
+<p><img src="/2023/12/15/cka/1686200714258-72ae5abe-9273-41cb-b2d4-cafb389d76c5.png" alt="image"></p>
+<h2 id="做题解答-1"><a href="#做题解答-1" class="headerlink" title="做题解答"></a>做题解答</h2><blockquote>
+<p>考试时确认一下 ssh 终端，是在 [student@node-1] $ 下</p>
+<p> 备份：</p>
+<ul>
+<li>如果不使用 export ETCDCTL_API&#x3D;3，而使用 ETCDCTL_API&#x3D;3，则下面每条 etcdctl 命令前都要加ETCDCTL_API&#x3D;3</li>
+<li>如果执行时，提示 permission denied，则是权限不够，命令最前面加 sudo 即可。</li>
+</ul>
+</blockquote>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=<span class="number">3</span></span><br><span class="line"><span class="comment"># 先检查考试环境有没有题目说的目录 /srv/data/，没有的话则需要自己创建</span></span><br><span class="line">mkdir -pv <span class="regexp">/srv/</span>data/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#备份</span></span><br><span class="line">sudo  etcdctl \</span><br><span class="line">--endpoints=https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--cacert=<span class="regexp">/opt/</span>KUIN00601/ca.crt  \   </span><br><span class="line">--cert=<span class="regexp">/opt/</span>KUIN00601/etcd-client.crt \</span><br><span class="line">--key=<span class="regexp">/opt/</span>KUIN00601/etcd-client.key \</span><br><span class="line">snapshot save <span class="regexp">/srv/</span>data/etcd-snapshot.db</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#备份k8s组件yaml文件，随意新建一个目录存放</span></span><br><span class="line">mkdir <span class="regexp">/opt/</span>backup -p</span><br><span class="line">cd <span class="regexp">/etc/</span>kubernetes<span class="regexp">/manifests &amp;&amp;  mv kube-* /</span>opt/backup</span><br><span class="line"><span class="comment">#还原</span></span><br><span class="line">sudo ETCDCTL_API=<span class="number">3</span> etcdctl \</span><br><span class="line">--endpoints=https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--cacert=<span class="regexp">/opt/</span>KUIN00601/ca.crt  \   </span><br><span class="line">--cert=<span class="regexp">/opt/</span>KUIN00601/etcd-client.crt \</span><br><span class="line">--key=<span class="regexp">/opt/</span>KUIN00601/etcd-client.key \</span><br><span class="line">snapshot restore <span class="regexp">/var/</span>lib<span class="regexp">/backup/</span>etcd-snapshot-previous.db \</span><br><span class="line">--data-dir=<span class="regexp">/var/</span>lib/etcd-restore</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>–data-dir 是etcd还原到这个指定的目录下，因此要修改etcd.yml文件，etcd挂载的路径</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>注意：</strong></p>
+</blockquote>
+<blockquote>
+<ul>
+<li><strong>一定要使用mv命令从</strong><code>/etc/kubernetes/manifests</code>把kube-*的yaml文件移走先，这样控制平面就会删除这些pod</li>
+</ul>
+</blockquote>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">## 将volume配置的path：<span class="regexp">/var/</span>lib<span class="regexp">/etcd改成/</span>var<span class="regexp">/lib/</span>etcd-restore</span><br><span class="line">  volumes:</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: <span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: etcd-certs</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: <span class="regexp">/var/</span>lib/etcd-restore</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: etcd-data</span><br><span class="line">还原组件</span><br><span class="line">mv <span class="regexp">/opt/</span>backup<span class="comment">/*   /etc/kubernetes/manifests/</span></span><br><span class="line"><span class="comment">systemctl restart kubelet</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5、考核知识：网络策略-NetworkPolicy"><a href="#5、考核知识：网络策略-NetworkPolicy" class="headerlink" title="5、考核知识：网络策略 NetworkPolicy"></a>5、考核知识：网络策略 NetworkPolicy</h1><h2 id="题目内容-3"><a href="#题目内容-3" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686212630567-01980333-763b-4249-8382-bc803561aef7.png" alt="image"></p>
+<h2 id="题目内容中文解释-4"><a href="#题目内容中文解释-4" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context hk8s</p>
+<p>Task</p>
+<p>​     在现有的 namespace my-app 中创建一个名为 allow-port-from-namespace 的新 NetworkPolicy。</p>
+<p>​     确保新的 NetworkPolicy 允许 namespace  中的 Pods 连接到 namespace my-app 中的Pods 的 9000 端口。</p>
+<p>进一步确保新的NetworkPolicy:</p>
+<ul>
+<li>不允许对没有在监听端口 9000 的 Pods 的访问</li>
+<li>不允许从不在命名空间内部的Pods访问</li>
+</ul>
+<h2 id="官方文档搜索关键字-network-policy"><a href="#官方文档搜索关键字-network-policy" class="headerlink" title="官方文档搜索关键字: network policy"></a>官方文档搜索关键字: network policy</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/#networkpolicy-resource">https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/#networkpolicy-resource</a></p>
+<h2 id="做题解答-2"><a href="#做题解答-2" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context hk8s</span><br><span class="line"><span class="comment"># 编写一个 yaml 文件，注意先输入 &quot;:set paste&quot;，防止复制时 yaml 文件空格错序</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">allow-port-from-namespace</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">my-app</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">podSelector</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">matchLabels</span><span class="punctuation">:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attribute">policyTypes</span><span class="punctuation">:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="attribute">ingress</span><span class="punctuation">:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">from:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">podSelector: &#123;&#125;</span></span><br><span class="line">      <span class="attribute">ports</span><span class="punctuation">:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">protocol: TCP</span></span><br><span class="line">          <span class="attribute">port</span><span class="punctuation">:</span> <span class="string">9000</span></span><br><span class="line"><span class="comment"># 创建网络策略资源</span></span><br><span class="line">kubectl apply -f networkpolicy.yaml</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="6、考核知识：四层代理-service"><a href="#6、考核知识：四层代理-service" class="headerlink" title="6、考核知识：四层代理 service"></a>6、考核知识：四层代理 service</h1><h2 id="题目内容-4"><a href="#题目内容-4" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686214245328-b382c27e-321f-4875-bf46-09251fd856e3.png" alt="image"></p>
+<h2 id="题目内容中文解释-5"><a href="#题目内容中文解释-5" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>​     重新配置一个已经存在的 front-end 的 deployment，在名字为 nginx 的容器里面添加一个端口配置，名字为 http，暴露端口号为 80，然后创建一个 service，名字为 front-end-svc，暴露该deployment 的 http 端，并且 service 的类型为 NodePort。</p>
+<h2 id="官方文档搜索关键字：Server"><a href="#官方文档搜索关键字：Server" class="headerlink" title="官方文档搜索关键字：Server"></a>官方文档搜索关键字：Server</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/#defining-a-service">https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/#defining-a-service</a></p>
+<h2 id="做题解答-3"><a href="#做题解答-3" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 deployment 信息</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">get</span> <span class="string">deployments</span> <span class="string">front-end</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">deployments</span> <span class="string">front-end</span> </span><br><span class="line"><span class="string">······</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line"><span class="string">······</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">front-end-svc</span>    <span class="comment"># 题目指定的名称</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>         <span class="comment"># 题目指定的 service 类型</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span>           <span class="comment"># deployment 中 pod 的标签 </span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span>           <span class="comment"># 题目指定暴露的端口</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="string">http</span>   <span class="comment"># 题目指定暴露的 http 端</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">service.yaml</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="7、考核知识：七层代理-ingress"><a href="#7、考核知识：七层代理-ingress" class="headerlink" title="7、考核知识：七层代理 ingress"></a>7、考核知识：七层代理 ingress</h1><h2 id="题目内容-5"><a href="#题目内容-5" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686272388361-a6a83e0e-8159-413a-bec4-d3951cf76b78.png" alt="image"></p>
+<h2 id="题目内容中文解释-6"><a href="#题目内容中文解释-6" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>如下创建一个新的 nginx lngress资源：</p>
+<p>名称：pong</p>
+<p>Namespace：ing-internal</p>
+<p>使用服务端口 5678 在路径 &#x2F;hi 上公开服务 hi</p>
+<p>可以使用以下命令检查服务 hi 的可用性，该命令应返回 hi, curl -kL<INTERNAL_IP>&#x2F;hi</INTERNAL_IP></p>
+<h2 id="官方文档搜索关键字：ingress"><a href="#官方文档搜索关键字：ingress" class="headerlink" title="官方文档搜索关键字：ingress"></a>官方文档搜索关键字：ingress</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/#the-ingress-resource">https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/#the-ingress-resource</a></p>
+<h2 id="做题解答-4"><a href="#做题解答-4" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 deployment 信息</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">get</span> <span class="string">deployments</span> <span class="string">front-end</span></span><br><span class="line"></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">deployments</span> <span class="string">front-end</span> </span><br><span class="line"><span class="string">······</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line"><span class="string">······</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">front-end-svc</span>    <span class="comment"># 题目指定的名称</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>         <span class="comment"># 题目指定的 service 类型</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span>           <span class="comment"># deployment 中 pod 的标签 </span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span>           <span class="comment"># 题目指定暴露的端口</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="string">http</span>   <span class="comment"># 题目指定暴露的 http 端</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">service.yaml</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="8、考核知识：Deployment-管理-Pod-扩缩容"><a href="#8、考核知识：Deployment-管理-Pod-扩缩容" class="headerlink" title="8、考核知识：Deployment 管理 Pod 扩缩容"></a>8、考核知识：Deployment 管理 Pod 扩缩容</h1><h2 id="题目内容-6"><a href="#题目内容-6" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686273297681-da4e41b0-fa33-4a06-a2a3-5dda896f37fb.png" alt="image"></p>
+<h2 id="题目内容中文解释-7"><a href="#题目内容中文解释-7" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>将 loadbalancer 的 deployment 管理的 Pod 的副本数扩容成 6 个。</p>
+<h2 id="官方文档搜索关键字：deployment"><a href="#官方文档搜索关键字：deployment" class="headerlink" title="官方文档搜索关键字：deployment"></a>官方文档搜索关键字：deployment</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/#scaling-a-deployment">https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/#scaling-a-deployment</a></p>
+<h2 id="做题解答-5"><a href="#做题解答-5" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl<span class="built_in"> config </span>use-context k8s</span><br><span class="line">kubectl scale deployment loadbalancer <span class="attribute">--replicas</span>=6</span><br><span class="line"><span class="comment">#或者</span></span><br><span class="line">kubectl <span class="built_in">edit</span> deployment loadbalancer </span><br><span class="line">修改</span><br><span class="line">replicas:6</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="9、考核知识：Pod-指定节点部署"><a href="#9、考核知识：Pod-指定节点部署" class="headerlink" title="9、考核知识：Pod 指定节点部署"></a>9、考核知识：Pod 指定节点部署</h1><h2 id="题目内容-7"><a href="#题目内容-7" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686273871803-5cb7a585-075b-4890-92cb-904da1b1f294.png" alt="image"></p>
+<h2 id="题目内容中文解释-8"><a href="#题目内容中文解释-8" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>创建一个 Pod，名字为 nginx-kusc00401，镜像地址是 nginx，调度到具有 disk&#x3D;spinning 标签的节点上。</p>
+<h2 id="官方文档搜索关键字：nodeSelector"><a href="#官方文档搜索关键字：nodeSelector" class="headerlink" title="官方文档搜索关键字：nodeSelector"></a>官方文档搜索关键字：nodeSelector</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-pods-nodes/#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%86%E8%A2%AB%E8%B0%83%E5%BA%A6%E5%88%B0%E4%BD%A0%E9%80%89%E6%8B%A9%E7%9A%84%E8%8A%82%E7%82%B9%E7%9A%84-pod">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-pods-nodes/#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%86%E8%A2%AB%E8%B0%83%E5%BA%A6%E5%88%B0%E4%BD%A0%E9%80%89%E6%8B%A9%E7%9A%84%E8%8A%82%E7%82%B9%E7%9A%84-pod</a></p>
+<h2 id="做题解答-6"><a href="#做题解答-6" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">kubectl get nodes --show-labels</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">nginx-kusc00401</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">containers</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: nginx</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attribute">imagePullPolicy</span><span class="punctuation">:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attribute">nodeSelector</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">disktype</span><span class="punctuation">:</span> <span class="string">spinning</span></span><br><span class="line">kubectl apply -f nodeselector.yaml</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="10、考核知识：检查可用节点数量"><a href="#10、考核知识：检查可用节点数量" class="headerlink" title="10、考核知识：检查可用节点数量"></a>10、考核知识：检查可用节点数量</h1><h2 id="题目内容-8"><a href="#题目内容-8" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686274264022-535d36cf-a755-48a9-9c56-62046e5da3ab.png" alt="image"></p>
+<h2 id="题目内容中文解释-9"><a href="#题目内容中文解释-9" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>​     检查集群中有多少节点为 Ready 状态(不包括被打上 Taint: NoSchedule 的节点)，之后将数量写到 &#x2F;opt&#x2F;KUSCO0402&#x2F;kusc00402.txt。</p>
+<h2 id="官方文档搜索关键字："><a href="#官方文档搜索关键字：" class="headerlink" title="官方文档搜索关键字："></a>官方文档搜索关键字：</h2><h2 id="做题解答-7"><a href="#做题解答-7" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context k8s</span><br><span class="line">查看集群中状态为 Ready 的节点</span><br><span class="line">kubectl <span class="built_in">get</span> nodes | <span class="keyword">grep</span> -<span class="keyword">w</span> <span class="string">&quot;Ready&quot;</span></span><br><span class="line">kubectl <span class="built_in">get</span> nodes | <span class="keyword">grep</span> -<span class="keyword">w</span> <span class="string">&quot;Ready&quot;</span> | wc -<span class="keyword">l</span></span><br><span class="line"># 统计具有污点 NoSchedule 的数量</span><br><span class="line">kubectl describe nodes cka-master1 cka-node1 | <span class="keyword">grep</span> <span class="string">&quot;Taint&quot;</span> | <span class="keyword">grep</span> <span class="string">&quot;NoSchedule&quot;</span> | wc -<span class="keyword">l</span></span><br><span class="line">把结果写入题目中指定的文件</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;1&quot;</span> &gt; /<span class="keyword">opt</span>/KUSCO0402/kusc00402.tx</span><br></pre></td></tr></table></figure>
+
+<h1 id="11、考核知识：一个-Pod-封装多个容器"><a href="#11、考核知识：一个-Pod-封装多个容器" class="headerlink" title="11、考核知识：一个 Pod 封装多个容器"></a>11、考核知识：一个 Pod 封装多个容器</h1><h2 id="题目内容-9"><a href="#题目内容-9" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686274602282-d690ef8f-085d-4bfb-b4c6-ec6a7d84b9e8.png" alt="image"></p>
+<h2 id="题目内容中文解释-10"><a href="#题目内容中文解释-10" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>创建一个 Pod，名字为 kucc1，这个 Pod 包含 4 个容器，为 nginx、redis、memcached、consul。</p>
+<h2 id="官方文档搜索关键字：Pod"><a href="#官方文档搜索关键字：Pod" class="headerlink" title="官方文档搜索关键字：Pod"></a>官方文档搜索关键字：Pod</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/#using-pods">https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/#using-pods</a></p>
+<h2 id="做题解答-8"><a href="#做题解答-8" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">kucc1</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">containers</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: nginx</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: redis</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">redis</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: memecached</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">memecached</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: consul</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">consul</span></span><br><span class="line">kubectl config use-context k8s</span><br><span class="line">kubectl apply -f pod.yaml</span><br></pre></td></tr></table></figure>
+
+<h1 id="12、考核知识：持久卷-PersistentVolume"><a href="#12、考核知识：持久卷-PersistentVolume" class="headerlink" title="12、考核知识：持久卷 PersistentVolume"></a>12、考核知识：持久卷 PersistentVolume</h1><h2 id="题目内容-10"><a href="#题目内容-10" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275041410-b5546b45-434c-45bb-816c-e2a7a8388b03.png" alt="image"></p>
+<h2 id="题目内容中文解释-11"><a href="#题目内容中文解释-11" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context hk8s</p>
+<p>Task</p>
+<p>​     创建一个 pv，名字为 app-config，大小为 2Gi， 访问权限为 ReadWriteMany。Volume 的类型为 hostPath，路径为 &#x2F;srv&#x2F;app-config。</p>
+<h2 id="官方文档搜索关键字：PV"><a href="#官方文档搜索关键字：PV" class="headerlink" title="官方文档搜索关键字：PV"></a>官方文档搜索关键字：PV</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pv">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pv</a></p>
+<h2 id="做题解答-9"><a href="#做题解答-9" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">apiVersion:</span> v1</span><br><span class="line"><span class="symbol">kind:</span> PersistentVolume</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span>  app-config</span><br><span class="line"><span class="symbol">  labels:</span></span><br><span class="line"><span class="symbol">    type:</span> local</span><br><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  capacity:</span></span><br><span class="line"><span class="symbol">    storage:</span> <span class="number">2</span>Gi</span><br><span class="line"><span class="symbol">  accessModes:</span></span><br><span class="line">    - ReadWriteMany</span><br><span class="line"><span class="symbol">  hostPath:</span></span><br><span class="line"><span class="symbol">    path:</span> <span class="string">&quot;/srv/app-config&quot;</span></span><br><span class="line">kubectl config use-context hk8s</span><br><span class="line">kubectl apply -f pv.yaml</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="13、考核知识：PersistentVolumeClaims"><a href="#13、考核知识：PersistentVolumeClaims" class="headerlink" title="13、考核知识：PersistentVolumeClaims"></a>13、考核知识：PersistentVolumeClaims</h1><h2 id="题目内容-11"><a href="#题目内容-11" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275313433-0329accf-2316-4233-a461-1b31bef0cfb0.png" alt="image"></p>
+<h2 id="题目内容中文解释-12"><a href="#题目内容中文解释-12" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context ok8s</p>
+<p>Task</p>
+<p>​     创建一个名字为 pv-volume 的 pvc，指定 storageClass 为 csi-hostpath-sc，大小为 10Mi。然后创建一个 Pod，名字为 web-server，镜像为 nginx，并且挂载该 PVC 至 &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html，挂载的权限为 RedWriteOnce。之后通过 kubectl edit 或者 kubectl path 将 pvc 改成 70Mi，并且记录修改记录。</p>
+<h2 id="官方文档搜索关键字：pvc"><a href="#官方文档搜索关键字：pvc" class="headerlink" title="官方文档搜索关键字：pvc"></a>官方文档搜索关键字：pvc</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pvc">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pvc</a></p>
+<h2 id="做题解答-10"><a href="#做题解答-10" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pv-volume</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">csi-hostpath-sc</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Mi</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">html-volume</span></span><br><span class="line">      <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">        <span class="attr">claimName:</span> <span class="string">pv-volume</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web-server</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">&quot;/usr/share/nginx/html&quot;</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">html-volume</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">config</span> <span class="string">use-context</span> <span class="string">ok8s</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">pvc-pod.yaml</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">pvc</span> <span class="string">pv-volume</span></span><br><span class="line"><span class="string">--------</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">70Mi</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">csi-hostpath-sc</span></span><br><span class="line"><span class="string">---------</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="14、考核知识：查看-Pod-日志"><a href="#14、考核知识：查看-Pod-日志" class="headerlink" title="14、考核知识：查看 Pod 日志"></a>14、考核知识：查看 Pod 日志</h1><h2 id="题目内容-12"><a href="#题目内容-12" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275929251-62dce83d-3b2d-42ee-93e5-bed475e66a78.png" alt="image"></p>
+<h2 id="题目内容中文解释-13"><a href="#题目内容中文解释-13" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>​     监控名为 foobar 的 Pod 的日志，并过滤出具有 unable-access-website 信息的行，然后将写入到 &#x2F;opt&#x2F;KUTR00101&#x2F;foobar。</p>
+<h2 id="官方文档搜索关键字：kubectl-logs"><a href="#官方文档搜索关键字：kubectl-logs" class="headerlink" title="官方文档搜索关键字：kubectl logs"></a>官方文档搜索关键字：kubectl logs</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E7%A4%BA%E4%BE%8B-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C">https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E7%A4%BA%E4%BE%8B-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C</a></p>
+<h2 id="做题解答-11"><a href="#做题解答-11" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context k8s</span><br><span class="line">kubectl logs foobar | <span class="keyword">grep</span> unable-access-website &gt; <span class="regexp">/opt/</span>KUTR00101/foobar</span><br></pre></td></tr></table></figure>
+
+<h1 id="15、考核知识：Sidecar-代理"><a href="#15、考核知识：Sidecar-代理" class="headerlink" title="15、考核知识：Sidecar 代理"></a>15、考核知识：Sidecar 代理</h1><h2 id="题目内容-13"><a href="#题目内容-13" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686276106205-d411bf57-1620-4caa-ac1e-9e36a91e24f1.png" alt="image"></p>
+<h2 id="题目内容中文解释-14"><a href="#题目内容中文解释-14" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>Context</p>
+<p>​     将一个现有的 Pod 集成到 Kubernetes 的内置日志记录体系结构中 (例如 kubectl logs)。添加 streaming sidecar 容器是实现此要求的一种好方法。</p>
+<p>Task</p>
+<p>​     使用 busybox lmage 来将名为 sidecar 的 sidecar 容器添加到现有的 Pod legacy-app 上，新的 sidecar 容器必须运行以下命令:</p>
+<p>&#x2F;bin&#x2F;sh -c tail -n+1 -f &#x2F;var&#x2F;log&#x2F;legacy-app.log</p>
+<p>使用 volume 挂载 &#x2F;var&#x2F;log&#x2F; 目录，确保 sidecar 能访问 &#x2F;var&#x2F;log&#x2F;legacy-app.log 文件。</p>
+<h2 id="官方文档搜索关键字：logging"><a href="#官方文档搜索关键字：logging" class="headerlink" title="官方文档搜索关键字：logging"></a>官方文档搜索关键字：logging</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/logging/#%E5%85%B7%E6%9C%89%E6%97%A5%E5%BF%97%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD%E7%9A%84%E8%BE%B9%E8%BD%A6%E5%AE%B9%E5%99%A8">https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/logging/#%E5%85%B7%E6%9C%89%E6%97%A5%E5%BF%97%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD%E7%9A%84%E8%BE%B9%E8%BD%A6%E5%AE%B9%E5%99%A8</a></p>
+<h2 id="做题解答-12"><a href="#做题解答-12" class="headerlink" title="做题解答"></a>做题解答</h2><h1 id="16、考核知识：查看-Pod-的-cpu"><a href="#16、考核知识：查看-Pod-的-cpu" class="headerlink" title="16、考核知识：查看 Pod 的 cpu"></a>16、考核知识：查看 Pod 的 cpu</h1><h2 id="题目内容-14"><a href="#题目内容-14" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686276362865-7cc2c094-c4a8-4d28-b811-83c44fb3e7a5.png" alt="image"></p>
+<h2 id="题目内容中文解释-15"><a href="#题目内容中文解释-15" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
+<p>Task</p>
+<p>​     找出标签是 name&#x3D;cpu-user 的 Pod，并过滤出使用 CPU 最高的 Pod，然后把它的名字写在已经存在的 &#x2F;opt&#x2F;KUTR00401&#x2F;KUTR00401.txt 文件里(注意他没有说指定 namespace，所以需要使用 -A 指定所有 namespace)。</p>
+<h2 id="官方文档搜索关键字：kubectl-top-pod"><a href="#官方文档搜索关键字：kubectl-top-pod" class="headerlink" title="官方文档搜索关键字：kubectl top pod"></a>官方文档搜索关键字：kubectl top pod</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/#specify-a-memory-request-and-a-memory-limit">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/#specify-a-memory-request-and-a-memory-limit</a></p>
+<h2 id="做题解答-13"><a href="#做题解答-13" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl<span class="built_in"> config </span>use-context k8s</span><br><span class="line"><span class="comment">#分步执行</span></span><br><span class="line">kubectl top pod -A -l <span class="attribute">name</span>=cpu-user <span class="attribute">--sort-by</span>=cpu -A</span><br><span class="line">将查到的 pod 名字写入 /opt/KUTR00401/KUTR00401.txt 文件中</span><br><span class="line">echo <span class="string">&quot;podname&quot;</span> &gt;  /opt/KUTR00401/KUTR00401.txt</span><br><span class="line"><span class="comment">#一步执行</span></span><br><span class="line">kubectl top pods -A  -l <span class="attribute">name</span>=cpu-user  \</span><br><span class="line"><span class="attribute">--sort-by</span>=cpu | tail -n +2 | head -1 | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> \</span><br><span class="line">&gt;  /opt/KUTR00401/KUTR00401.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="17、考核知识：集群故障排查-kubelet-故障"><a href="#17、考核知识：集群故障排查-kubelet-故障" class="headerlink" title="17、考核知识：集群故障排查 - kubelet 故障"></a>17、考核知识：集群故障排查 - kubelet 故障</h1><h2 id="题目内容-15"><a href="#题目内容-15" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686277786620-4a6183f6-225e-4e7e-9f75-5e7e1f08f759.png" alt="image"></p>
+<h2 id="题目内容中文解释-16"><a href="#题目内容中文解释-16" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context wk8s</p>
+<p>Task</p>
+<p>​     一个名为 wk8s-node-0 的节点状态为 NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成。</p>
+<p>可以使用以下命令，通过 ssh 连接到 wk8s-node-0 节点：ssh wk8s-node-0</p>
+<p>可以使用以下命令，在该节点上获取更高权限：sudo -i</p>
+<h2 id="做题解答-14"><a href="#做题解答-14" class="headerlink" title="做题解答"></a>做题解答</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>屈辉
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://horus-k.github.io/2023/12/15/cka/" title="cka">https://horus-k.github.io/2023/12/15/cka/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/06/openwrt%E5%AE%89%E8%A3%85%E5%8C%85/" rel="prev" title="openwrt安装包">
+                  <i class="fa fa-chevron-left"></i> openwrt安装包
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/02/22/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1etcd%E9%9B%86%E7%BE%A4%E5%B4%A9%E6%BA%83%E5%A4%84%E7%90%86/" rel="next" title="记录一次etcd集群崩溃处理">
+                  记录一次etcd集群崩溃处理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">屈辉</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:03</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

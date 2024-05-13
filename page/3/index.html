@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/09/11/netbird%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">chfs实践</a>
+          <a href="/2023/09/11/netbird%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">netbird安装使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -160,18 +160,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-11-08 16:39:24 / 修改时间：16:45:59" itemprop="dateCreated datePublished" datetime="2022-11-08T16:39:24+08:00">2022-11-08</time>
+      <time title="创建时间：2023-09-11 13:37:15" itemprop="dateCreated datePublished" datetime="2023-09-11T13:37:15+08:00">2023-09-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
+        <i class="far fa-calendar-check"></i>
       </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/chfs/" itemprop="url" rel="index"><span itemprop="name">chfs</span></a>
-        </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-10-10 15:02:49" itemprop="dateModified" datetime="2023-10-10T15:02:49+08:00">2023-10-10</time>
     </span>
 
   
@@ -181,14 +178,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>7.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -199,26 +196,170 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>官网:<a target="_blank" rel="noopener" href="http://iscute.cn/chfs">http://iscute.cn/chfs</a></p>
-<p>CuteHttpFileServer&#x2F;chfs是一个免费的、HTTP协议的文件共享服务器，使用浏览器可以快速访问。它具有以下特点：</p>
+          <p>对我来说netbird比headscale好处就是可以<strong>分组自定义peer路由</strong>，完全实现服务端控制下发路由，且下发和回收路由速度几乎秒级(headscale关闭路由后很长时间不清理路由)</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/09/11/netbird%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">Tailscale部署私有DERP中继服务器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-04 10:25:35" itemprop="dateCreated datePublished" datetime="2023-09-04T10:25:35+08:00">2023-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-06 14:13:35" itemprop="dateModified" datetime="2023-09-06T14:13:35+08:00">2023-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WireGuard/" itemprop="url" rel="index"><span itemprop="name">WireGuard</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://icloudnative.io/posts/custom-derp-servers/">https://icloudnative.io/posts/custom-derp-servers/</a></p>
+<h2 id="自建私有-DERP-server"><a href="#自建私有-DERP-server" class="headerlink" title="自建私有 DERP server"></a>自建私有 DERP server</h2><h3 id="使用内嵌derp"><a href="#使用内嵌derp" class="headerlink" title="使用内嵌derp"></a>使用内嵌derp</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server_url:</span> <span class="string">https://xxxxxxxx</span>  <span class="comment"># 必须是https</span></span><br><span class="line"><span class="attr">derp:</span></span><br><span class="line">  <span class="attr">server:</span></span><br><span class="line">    <span class="comment"># If enabled, runs the embedded DERP server and merges it into the rest of the DERP config</span></span><br><span class="line">    <span class="comment"># The Headscale server_url defined above MUST be using https, DERP requires TLS to be in place</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Region ID to use for the embedded DERP server.</span></span><br><span class="line">    <span class="comment"># The local DERP prevails if the region ID collides with other region ID coming from</span></span><br><span class="line">    <span class="comment"># the regular DERP config.</span></span><br><span class="line">    <span class="attr">region_id:</span> <span class="number">999</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Region code and name are displayed in the Tailscale UI to identify a DERP region</span></span><br><span class="line">    <span class="attr">region_code:</span> <span class="string">&quot;headscale&quot;</span></span><br><span class="line">    <span class="attr">region_name:</span> <span class="string">&quot;Headscale Embedded DERP&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Listens over UDP at the configured address for STUN connections - to help with NAT traversal.</span></span><br><span class="line">    <span class="comment"># When the embedded DERP server is enabled stun_listen_addr MUST be defined.</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># For more details on how this works, check this great article: https://tailscale.com/blog/how-tailscale-works/</span></span><br><span class="line">    <span class="attr">stun_listen_addr:</span> <span class="string">&quot;0.0.0.0:3478&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># List of externally available DERP maps encoded in JSON</span></span><br><span class="line">  <span class="attr">urls:</span></span><br><span class="line">    <span class="comment">#- https://controlplane.tailscale.com/derpmap/default</span></span><br><span class="line">  <span class="comment"># Locally available DERP map files encoded in YAML</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># This option is mostly interesting for people hosting</span></span><br><span class="line">  <span class="comment"># their own DERP servers:</span></span><br><span class="line">  <span class="comment"># https://tailscale.com/kb/1118/custom-derp-servers/</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># paths:</span></span><br><span class="line">  <span class="comment">#   - /etc/headscale/derp-example.yaml</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="comment">#  - /etc/headscale/derp.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>nginx:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">map</span> <span class="variable">$http_upgrade</span> <span class="variable">$connection_upgrade</span> &#123;</span><br><span class="line">    <span class="attribute">default</span>      keep-alive;</span><br><span class="line">    &#x27;websocket&#x27;  upgrade;</span><br><span class="line">    &#x27;&#x27;           close;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span>  xxx;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> certs/xxx.pem;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> certs/xxxx.key;</span><br><span class="line">        <span class="section">location</span> /web &#123;   <span class="comment"># web管理可使用https://github.com/gurucomputing/headscale-ui</span></span><br><span class="line">                <span class="attribute">alias</span> /root/web;</span><br><span class="line">                        <span class="attribute">index</span> index.html;</span><br><span class="line">                            &#125;</span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span>   http://127.0.0.1:8080;</span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;</span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Connection <span class="variable">$connection_upgrade</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$server_name</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$http_x_forwarded_proto</span>;</span><br><span class="line">        <span class="attribute">add_header</span> Strict-Transport-Security <span class="string">&quot;max-age=15552000; includeSubDomains&quot;</span> always;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="使用域名"><a href="#使用域名" class="headerlink" title="使用域名"></a>使用域名</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">run</span> --restart always \</span><br><span class="line">  --name derper -p 12345:12345 -p 3478:3478/udp \</span><br><span class="line">  -v /root/certs:/app/certs \</span><br><span class="line">  -e <span class="attribute">DERP_CERT_MODE</span>=manual \</span><br><span class="line">  -e <span class="attribute">DERP_ADDR</span>=:12345 \</span><br><span class="line">  -e <span class="attribute">DERP_DOMAIN</span>=xxxx \</span><br><span class="line">  -d ghcr.io/yangchuansheng/derper:latest</span><br></pre></td></tr></table></figure>
+
+<p>有几点需要注意：</p>
 <ul>
-<li>单个文件，核心功能无需其他文件</li>
-<li>跨平台运行，支持主流平台：Windows，Linux和Mac</li>
-<li>界面简洁，简单易用</li>
-<li>支持扫码下载和手机端访问，手机与电脑之间共享文件非常方便</li>
-<li>支持账户权限控制和地址过滤</li>
-<li>支持快速分享文字片段</li>
-<li>支持webdav协议</li>
+<li>能用 443 端口尽量用 443 端口，实在不行再用别的端口；</li>
+<li>默认情况下也会开启 STUN 服务，UDP 端口是 <code>3478</code>；</li>
+<li>防火墙需要放行端口 12345 和 3478；</li>
+<li>准备好 SSL 证书；</li>
+<li>域名部分我打了码，请换成你自己的域名。</li>
 </ul>
-<p>与其他常用文件共享方式（如FTP，飞秋，网盘，自己建站）相比，具有使用简单，适用场景更多的优点，在个人使用以及共享给他人的场景中非常方便快捷。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+<p>假设你的域名是 <code>xxx.com</code>，那么证书的名称必须是 <code>xxx.com.crt</code>，一个字符都不能错！同理，私钥名称必须是 <code>xxx.com.key</code>，一个字符都不能错！</p>
+<p>部署好 derper 之后，就可以修改 Headscale 的配置来使用自定义的 DERP 服务器了。Headscale 可以通过两种形式的配置来使用自定义 DERP：</p>
+<ul>
+<li>一种是在线 URL，格式是 <code>JSON</code>，与 Tailscale 官方控制服务器使用的格式和语法相同。</li>
+<li>另一种是本地文件，格式是 <code>YAML</code>。</li>
+</ul>
+<p>我们可以直接使用本地的 YAML 配置文件，内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/headscale/derp.yaml</span></span><br><span class="line"><span class="attr">regions:</span></span><br><span class="line">  <span class="attr">900:</span></span><br><span class="line">    <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">    <span class="attr">regioncode:</span> <span class="string">thk</span> </span><br><span class="line">    <span class="attr">regionname:</span> <span class="string">Tencent</span> <span class="string">Hongkong</span> </span><br><span class="line">    <span class="attr">nodes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">900a</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">900b</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">900</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br><span class="line">  <span class="attr">901:</span></span><br><span class="line">    <span class="attr">regionid:</span> <span class="number">901</span></span><br><span class="line">    <span class="attr">regioncode:</span> <span class="string">hs</span> </span><br><span class="line">    <span class="attr">regionname:</span> <span class="string">Huawei</span> <span class="string">Shanghai</span> </span><br><span class="line">    <span class="attr">nodes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">901a</span></span><br><span class="line">        <span class="attr">regionid:</span> <span class="number">901</span></span><br><span class="line">        <span class="attr">hostname:</span> <span class="string">&lt;这里写域名&gt;</span></span><br><span class="line">        <span class="attr">ipv4:</span> <span class="string">xxxx</span> <span class="string">&lt;如果域名可以解析就删掉这个配置&gt;</span></span><br><span class="line">        <span class="attr">stunport:</span> <span class="number">3478</span></span><br><span class="line">        <span class="attr">stunonly:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">derpport:</span> <span class="number">12345</span></span><br></pre></td></tr></table></figure>
+
+<p>配置说明：</p>
+<ul>
+<li><code>regions</code> 是 YAML 中的<strong>对象</strong>，下面的每一个对象表示一个<strong>可用区</strong>，每个<strong>可用区</strong>里面可设置多个 DERP 节点，即 <code>nodes</code>。</li>
+<li>每个可用区的 <code>regionid</code> 不能重复。</li>
+<li>每个 <code>node</code> 的 <code>name</code> 不能重复。</li>
+<li><code>regionname</code> 一般用来描述可用区，<code>regioncode</code> 一般设置成可用区的缩写。</li>
+<li><code>ipv4</code> 字段不是必须的，如果你的域名可以通过公网解析到你的 DERP 服务器地址，这里可以不填。如果你使用了一个二级域名，而这个域名你并没有在公共 DNS server 中添加相关的解析记录，那么这里就需要指定 IP（前提是你的证书包含了这个二级域名，这个很好支持，搞个泛域名证书就行了）。</li>
+<li><code>stunonly: false</code> 表示除了使用 STUN 服务，还可以使用 DERP 服务。</li>
+<li>上面的配置中域名和 IP 部分我都打码了，你需要根据你的实际情况填写。</li>
+</ul>
+<p>接下来还需要修改 Headscale 的配置文件，引用上面的自定义 DERP 配置文件。需要修改的配置项如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/headscale/config.yaml</span></span><br><span class="line"><span class="attr">derp:</span></span><br><span class="line">  <span class="comment"># List of externally available DERP maps encoded in JSON</span></span><br><span class="line">  <span class="attr">urls:</span></span><br><span class="line">  <span class="comment">#  - https://controlplane.tailscale.com/derpmap/default</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Locally available DERP map files encoded in YAML</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># This option is mostly interesting for people hosting</span></span><br><span class="line">  <span class="comment"># their own DERP servers:</span></span><br><span class="line">  <span class="comment"># https://tailscale.com/kb/1118/custom-derp-servers/</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># paths:</span></span><br><span class="line">  <span class="comment">#   - /etc/headscale/derp-example.yaml</span></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/headscale/derp.yaml</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># If enabled, a worker will be set up to periodically</span></span><br><span class="line">  <span class="comment"># refresh the given sources and update the derpmap</span></span><br><span class="line">  <span class="comment"># will be set up.</span></span><br><span class="line">  <span class="attr">auto_update_enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># How often should we check for DERP updates?</span></span><br><span class="line">  <span class="attr">update_frequency:</span> <span class="string">24h</span></span><br></pre></td></tr></table></figure>
+
+<p>重启后访问<a target="_blank" rel="noopener" href="https://xxxx:12345/">https://xxxx:12345</a></p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904112310981.png" alt="image-20230904112310981"></p>
+<p>tailscale netcheck</p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113158291.png" alt="image-20230904113158291"></p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230904113347653.png" alt="image-20230904113347653"></p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">服务器C<span class="built_in"> ping </span>服务器A 内网docker服务</span><br><span class="line"><span class="comment"># 不使用打洞</span></span><br><span class="line">C:\WINDOWS\system32&gt;ping 172.19.2.2 -t</span><br><span class="line"></span><br><span class="line">正在<span class="built_in"> Ping </span>172.19.2.2 具有 32 字节的数据:</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=109ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=92ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=78ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=12ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=62ms <span class="attribute">TTL</span>=63</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用打洞</span></span><br><span class="line">C:\WINDOWS\system32&gt;ping 172.19.2.2 -t</span><br><span class="line"></span><br><span class="line">正在<span class="built_in"> Ping </span>172.19.2.2 具有 32 字节的数据:</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=23ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=10ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=7ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=9ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=5ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=5ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line">来自 172.19.2.2 的回复: 字节=32 时间=6ms <span class="attribute">TTL</span>=63</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以使用 Tailscale 命令行工具来测试：</span></span><br><span class="line"><span class="comment"># 这个命令好像只能ping一次。。</span></span><br><span class="line">C:\WINDOWS\system32&gt;tailscale<span class="built_in"> ping </span>-c 0 172.19.2.2</span><br><span class="line">pong <span class="keyword">from</span> v (fd7a:115c:a1e0::2) via 192.168.2.125:41641 <span class="keyword">in</span> 13ms ---&gt;通过ipv6点对点</span><br><span class="line">pong <span class="keyword">from</span> v (fd7a:115c:a1e0::2) via DERP(qh) <span class="keyword">in</span> 10ms            ---&gt;通过DERP</span><br></pre></td></tr></table></figure>
+
+<p>一般来说，如果算到点对点就优先走点对点，否则走了DERP延迟更高</p>
+<p><img src="/2023/09/04/Tailscale%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89DERP%E4%B8%AD%E7%BB%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/image-20230905130501726.png" alt="image-20230905130501726"></p>
+<h2 id="防止-DERP-被白嫖"><a href="#防止-DERP-被白嫖" class="headerlink" title="防止 DERP 被白嫖"></a>防止 DERP 被白嫖</h2><p>先在derp节点启动tailscale</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">headscale preauthkeys create -e 24h -u t1</span><br><span class="line">tailscale up <span class="attribute">--accept-dns</span>=<span class="literal">false</span> <span class="attribute">--accept-routes</span>=<span class="literal">true</span> <span class="attribute">--auth-key</span>=xxx <span class="attribute">--login-server</span>=http://192.168.2.124:8080</span><br></pre></td></tr></table></figure>
+
+<p>再启动derp</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart always \</span><br><span class="line">  --name derper -p <span class="number">12345</span>:<span class="number">12345</span> -p <span class="number">3478</span>:<span class="number">3478</span>/udp \</span><br><span class="line">  -v <span class="regexp">/root/</span>certs:<span class="regexp">/app/</span>certs \</span><br><span class="line">  -e DERP_CERT_MODE=manual \</span><br><span class="line">  -e DERP_ADDR=:<span class="number">12345</span> \</span><br><span class="line">  -e DERP_DOMAIN=sit-wg.suosihulian.cn \</span><br><span class="line">  -e DERP_VERIFY_CLIENTS=<span class="keyword">true</span> \</span><br><span class="line">  -v <span class="regexp">/var/</span>run<span class="regexp">/tailscale/</span>tailscaled.sock:<span class="regexp">/var/</span>run<span class="regexp">/tailscale/</span>tailscaled.sock \</span><br><span class="line">  -d ghcr.io<span class="regexp">/yangchuansheng/</span>derper:latest</span><br></pre></td></tr></table></figure>
+
+
       
     </div>
 
@@ -244,7 +385,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/09/01/Headscale%E4%B8%8ETailscale%E6%8E%A5%E5%85%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -262,7 +403,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">openvpn-server配置文件详解</a>
+          <a href="/2023/09/01/Headscale%E4%B8%8ETailscale%E6%8E%A5%E5%85%A5/" class="post-title-link" itemprop="url">Headscale与Tailscale接入</a>
         </h2>
 
         <div class="post-meta-container">
@@ -272,101 +413,24 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-09-16 16:38:08 / 修改时间：18:18:59" itemprop="dateCreated datePublished" datetime="2022-09-16T16:38:08+08:00">2022-09-16</time>
+      <time title="创建时间：2023-09-01 13:31:40" itemprop="dateCreated datePublished" datetime="2023-09-01T13:31:40+08:00">2023-09-01</time>
     </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>openvpn.conf</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/15/acme/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/15/acme/" class="post-title-link" itemprop="url">acme</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
+        <i class="far fa-calendar-check"></i>
       </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-09-15 15:04:38 / 修改时间：16:14:02" itemprop="dateCreated datePublished" datetime="2022-09-15T15:04:38+08:00">2022-09-15</time>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-04 19:30:01" itemprop="dateModified" datetime="2023-09-04T19:30:01+08:00">2023-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WireGuard/" itemprop="url" rel="index"><span itemprop="name">WireGuard</span></a>
+        </span>
     </span>
 
   
@@ -376,7 +440,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
+      <span>1.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -394,11 +458,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p><a target="_blank" rel="noopener" href="https://letsencrypt.org/zh-cn/getting-started/">https://letsencrypt.org/zh-cn/getting-started/</a></p>
-<h2 id="certbot实现"><a href="#certbot实现" class="headerlink" title="certbot实现"></a>certbot实现</h2>
+          <p>原文:</p>
+<p><a target="_blank" rel="noopener" href="https://icloudnative.io/posts/how-to-set-up-or-migrate-headscale/">https://icloudnative.io/posts/how-to-set-up-or-migrate-headscale/</a></p>
+<p>版本更新了，命令变了</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/09/15/acme/#more" rel="contents">
+              <a class="btn" href="/2023/09/01/Headscale%E4%B8%8ETailscale%E6%8E%A5%E5%85%A5/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -429,7 +494,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -447,214 +512,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">terraform实践</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-09-08 11:12:03" itemprop="dateCreated datePublished" datetime="2022-09-08T11:12:03+08:00">2022-09-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-24 20:07:02" itemprop="dateModified" datetime="2022-11-24T20:07:02+08:00">2022-11-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>实现基础设施即代码的工具。方便多云环境重复部署。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>下载cli <a target="_blank" rel="noopener" href="https://www.terraform.io/downloads">https://www.terraform.io/downloads</a></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">terraform -version</span></span><br><span class="line">Terraform v1.2.8</span><br><span class="line">on windows_amd64</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/08/terraform%E5%AE%9E%E8%B7%B5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/" class="post-title-link" itemprop="url">openvpn打通云</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-07-18 13:38:34" itemprop="dateCreated datePublished" datetime="2022-07-18T13:38:34+08:00">2022-07-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-09-16 18:58:59" itemprop="dateModified" datetime="2022-09-16T18:58:59+08:00">2022-09-16</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>6.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="架构："><a href="#架构：" class="headerlink" title="架构："></a>架构：</h1><p><img src="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/image-20220718142157800.png" alt="image-20220718142157800"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/18/openvpn%E6%89%93%E9%80%9A%E4%BA%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/" class="post-title-link" itemprop="url">备份脚本</a>
+          <a href="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/" class="post-title-link" itemprop="url">dependency-track漏洞管理平台</a>
         </h2>
 
         <div class="post-meta-container">
@@ -666,7 +524,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-07-18 13:00:43 / 修改时间：13:24:36" itemprop="dateCreated datePublished" datetime="2022-07-18T13:00:43+08:00">2022-07-18</time>
+      <time title="创建时间：2023-08-28 15:41:57 / 修改时间：15:51:51" itemprop="dateCreated datePublished" datetime="2023-08-28T15:41:57+08:00">2023-08-28</time>
     </span>
 
   
@@ -676,7 +534,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.3k</span>
+      <span>5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -694,10 +552,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="cronjob备份脚本"><a href="#cronjob备份脚本" class="headerlink" title="cronjob备份脚本"></a>cronjob备份脚本</h1>
+          <p><img src="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/image-20230828155142647.png" alt="image-20230828155142647"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/07/18/%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/#more" rel="contents">
+              <a class="btn" href="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -728,7 +586,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/08/24/aptakube%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -746,7 +604,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">apisix生产应用</a>
+          <a href="/2023/08/24/aptakube%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">aptakube使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -757,23 +615,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-07-06 15:49:57" itemprop="dateCreated datePublished" datetime="2022-07-06T15:49:57+08:00">2022-07-06</time>
+      <time title="创建时间：2023-08-24 13:34:53" itemprop="dateCreated datePublished" datetime="2023-08-24T13:34:53+08:00">2023-08-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-20 12:06:15" itemprop="dateModified" datetime="2022-07-20T12:06:15+08:00">2022-07-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/apisix/" itemprop="url" rel="index"><span itemprop="name">apisix</span></a>
-        </span>
+      <time title="修改时间：2023-09-25 13:15:47" itemprop="dateModified" datetime="2023-09-25T13:15:47+08:00">2023-09-25</time>
     </span>
 
   
@@ -783,14 +632,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.2k</span>
+      <span>1.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -801,17 +650,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="基础使用"><a href="#基础使用" class="headerlink" title="基础使用"></a>基础使用</h1><h2 id="apisix路由规则灰度实现"><a href="#apisix路由规则灰度实现" class="headerlink" title="apisix路由规则灰度实现"></a>apisix路由规则灰度实现</h2><p>2条规则</p>
-<p><strong>规则1</strong> 优先级10</p>
-<p><strong>规则2</strong> 优先级11 配置客户端ip 为公司</p>
-<p><strong>效果</strong> 公司ip访问规则2 其他ip 访问规则1</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p><strong>apisix: 任何匹配多于 uri 的路由都被认为是相等的，并应按优先级加以区分。</strong></p>
-<p>注意：当 Route 和 Service 都开启同一个插件时，Route 参数的优先级是高于 Service 的。</p>
-<h3 id="插件优先级"><a href="#插件优先级" class="headerlink" title="插件优先级"></a>插件优先级</h3><p>Consumer &gt; Route &gt; Service</p>
-<p>如果再Consumer 配置了认证，而route没有开启认证，则无法访问</p>
+          <p>官网：<a target="_blank" rel="noopener" href="https://aptakube.com/pricing">https://aptakube.com/pricing</a></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/07/06/apisix%E7%94%9F%E4%BA%A7%E5%BA%94%E7%94%A8/#more" rel="contents">
+              <a class="btn" href="/2023/08/24/aptakube%E4%BD%BF%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -842,7 +684,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/06/15/%E8%BF%90%E7%BB%B4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%A7%84%E5%88%92%E7%BA%B2%E8%A6%81/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/06/28/%E5%AE%89%E5%8D%93%E6%8A%93%E5%8C%85-%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -860,7 +702,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/15/%E8%BF%90%E7%BB%B4%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%A7%84%E5%88%92%E7%BA%B2%E8%A6%81/" class="post-title-link" itemprop="url">运维基础设施规划纲要</a>
+          <a href="/2023/06/28/%E5%AE%89%E5%8D%93%E6%8A%93%E5%8C%85-%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">安卓抓包(微信小程序)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -870,9 +712,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-06-15 17:11:02 / 修改时间：17:24:32" itemprop="dateCreated datePublished" datetime="2022-06-15T17:11:02+08:00">2022-06-15</time>
+      <time title="创建时间：2023-06-28 16:16:24" itemprop="dateCreated datePublished" datetime="2023-06-28T16:16:24+08:00">2023-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-26 10:36:22" itemprop="dateModified" datetime="2023-07-26T10:36:22+08:00">2023-07-26</time>
     </span>
 
   
@@ -882,7 +730,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>29</span>
+      <span>563</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -900,14 +748,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="账号体系"><a href="#账号体系" class="headerlink" title="账号体系"></a>账号体系</h1><p>ldap</p>
-<p>双重验证 MFA</p>
-<h1 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h1><p>审计</p>
-<p>事件</p>
-<p>巡检</p>
-<p>拓扑</p>
-<p>权限</p>
-<p>备份</p>
+          <p>我的手机是Android10，需要将证书从用户移动到系统，但是MT管理器和RE管理器和adb，移动都会挂载失败，然后网上去搜索后，才知道，Android10对于&#x2F;system目录只有读的权限。</p>
+<p>解决方法：用magisk的模块movecert（<a href="https://link.zhihu.com/?target=https://github.com/Magisk-Modules-Repo/movecert">https://github.com/Magisk-Modules-Repo/movecert</a>），我的magisk版本为25.2，本地安装一直报unzip error，我就放弃直接用magisk安装，然后找到一个magisk的模块，可以代替magisk安装，FoxMagiskModuleManager（<a href="https://link.zhihu.com/?target=https://github.com/Fox2Code/FoxMagiskModuleManager">https://github.com/Fox2Code/FoxMagiskModuleManager</a>）。可以在我分享的网盘链接下载链接：<a href="https://link.zhihu.com/?target=https://pan.baidu.com/s/1U_g536YICT3q-bcdMROzbg">https://pan.baidu.com/s/1U_g536YICT3q-bcdMROzbg</a></p>
+<p>提取码：xzcc。</p>
+<p>安装方法：1.安装apk，2.将zip adb push 到手机，3.打开apk，安装zip，重启手机，4.打开加密与凭证，就可以看到证书移动到系统里了</p>
+<p>参考：</p>
+<p><a href="https://link.zhihu.com/?target=https://blog.csdn.net/weixin_56039202/article/details/125794003?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-125794003-blog-120036399.pc_relevant_3mothn_strategy_recovery&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-125794003-blog-120036399.pc_relevant_3mothn_strategy_recovery&utm_relevant_index=1">Android12 HttpCanary系统证书安装 Magisk模块movecert</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1809966-1-1.html">https://www.52pojie.cn/thread-1809966-1-1.html</a></p>
 
       
     </div>
@@ -934,7 +781,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/06/15/%E5%9F%BA%E4%BA%8Ek8s%E7%9A%84%E4%B8%80%E5%A5%97devops%E6%96%B9%E6%A1%88/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/06/07/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -952,7 +799,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/15/%E5%9F%BA%E4%BA%8Ek8s%E7%9A%84%E4%B8%80%E5%A5%97devops%E6%96%B9%E6%A1%88/" class="post-title-link" itemprop="url">基于k8s的一套DevOps方案</a>
+          <a href="/2023/06/07/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">linux配置代理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -963,14 +810,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-06-15 14:50:40" itemprop="dateCreated datePublished" datetime="2022-06-15T14:50:40+08:00">2022-06-15</time>
+      <time title="创建时间：2023-06-07 14:41:02" itemprop="dateCreated datePublished" datetime="2023-06-07T14:41:02+08:00">2023-06-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-10-07 13:53:53" itemprop="dateModified" datetime="2023-10-07T13:53:53+08:00">2023-10-07</time>
+      <time title="修改时间：2023-06-20 11:06:47" itemprop="dateModified" datetime="2023-06-20T11:06:47+08:00">2023-06-20</time>
     </span>
 
   
@@ -980,247 +827,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>671</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>这里有一些DevOps各环节的技术选型</p>
-<table>
-<thead>
-<tr>
-<th>开发</th>
-<th>workflows&#x2F;pipeline</th>
-<th>包管理</th>
-<th>ci</th>
-<th>cd</th>
-<th>progressive delivery tool(渐进式交付)</th>
-<th>service mesh</th>
-<th>基础设施</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>kt-connect</td>
-<td>argo-workflows</td>
-<td>Helm</td>
-<td>GitLab&#x2F;GitHub</td>
-<td>argo cd</td>
-<td>Argo Rollouts</td>
-<td>istio</td>
-<td>OpenTofu</td>
-</tr>
-<tr>
-<td></td>
-<td>Jenkins file</td>
-<td></td>
-<td>Jenkins</td>
-<td></td>
-<td>Flagger</td>
-<td>Linkerd</td>
-<td>terraform</td>
-</tr>
-<tr>
-<td></td>
-<td>Apache Airflow</td>
-<td></td>
-<td>Spinnaker</td>
-<td>zadig</td>
-<td></td>
-<td></td>
-<td>crossplane</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p><strong>Ingress</strong></p>
-<table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Apisix</th>
-<th>Contour</th>
-<th>Gloo</th>
-<th>NGINX</th>
-<th>Skipper</th>
-<th>Traefik</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Canary deployments (weighted traffic)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>A&#x2F;B testing (headers and cookies routing)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>➖</td>
-<td>➖</td>
-</tr>
-<tr>
-<td>Blue&#x2F;Green deployments (traffic switch)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Webhooks (acceptance&#x2F;load testing)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Manual gating (approve&#x2F;pause&#x2F;resume)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Request success rate check (L7 metric)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>➖</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Request duration check (L7 metric)</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>➖</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Custom metric checks</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-<td>✔️</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/06/14/k8s%E5%90%84%E7%A7%8D%E8%93%9D%E7%BB%BF%E5%8F%8A%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/14/k8s%E5%90%84%E7%A7%8D%E8%93%9D%E7%BB%BF%E5%8F%8A%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/" class="post-title-link" itemprop="url">k8s各种蓝绿及金丝雀发布</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-06-14 17:00:39" itemprop="dateCreated datePublished" datetime="2022-06-14T17:00:39+08:00">2022-06-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-20 11:45:36" itemprop="dateModified" datetime="2022-07-20T11:45:36+08:00">2022-07-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/argo/" itemprop="url" rel="index"><span itemprop="name">argo</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -1238,17 +845,318 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>目前Kubernetes Gateway API并没有特别好的选型方案</p>
-<p>最好能使用API Gateway来进行流量控制</p>
-<p>各网关进度：</p>
-<p><a target="_blank" rel="noopener" href="https://gateway-api.sigs.k8s.io/implementations/">https://gateway-api.sigs.k8s.io/implementations/</a></p>
-<h1 id="使用原生集群完成灰度"><a href="#使用原生集群完成灰度" class="headerlink" title="使用原生集群完成灰度"></a>使用原生集群完成灰度</h1><p>Ps.无需安装其他工具</p>
-<p>使用apisix-ingress可以使灰度颗粒度更细</p>
-<p>可通过jenkins pipeline 控制流水线</p>
-<p><img src="/2022/06/14/k8s%E5%90%84%E7%A7%8D%E8%93%9D%E7%BB%BF%E5%8F%8A%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/image-20220615154947248-16552808929321.png" alt="image-20220615154947248"></p>
+          <h1 id="Dockerd-代理"><a href="#Dockerd-代理" class="headerlink" title="Dockerd 代理"></a>Dockerd 代理</h1><p>在执行docker pull时，是由守护进程dockerd来执行。因此，代理需要配在dockerd的环境中。而这个环境，则是受systemd所管控，因此实际是systemd的配置。</p>
+<p>sudo mkdir -p &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;docker.service.d<br>sudo touch &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;docker.service.d&#x2F;proxy.conf<br>在这个proxy.conf文件（可以是任意*.conf的形式）中，添加以下内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Environment</span>=<span class="string">&quot;HTTP_PROXY=http://127.0.0.1:8888/&quot;</span></span><br><span class="line"><span class="attr">Environment</span>=<span class="string">&quot;HTTPS_PROXY=http://127.0.0.1:8888/&quot;</span></span><br><span class="line"><span class="attr">Environment</span>=<span class="string">&quot;NO_PROXY=localhost,127.0.0.1,.example.com&quot;</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/06/14/k8s%E5%90%84%E7%A7%8D%E8%93%9D%E7%BB%BF%E5%8F%8A%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83/#more" rel="contents">
+              <a class="btn" href="/2023/06/07/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/" class="post-title-link" itemprop="url">pod公网出口ip自定义</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-29 10:01:35" itemprop="dateCreated datePublished" datetime="2023-05-29T10:01:35+08:00">2023-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-21 13:49:57" itemprop="dateModified" datetime="2023-07-21T13:49:57+08:00">2023-07-21</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="需求"><a href="#需求" class="headerlink" title="需求:"></a>需求:</h1><p>java应用访问qyapi.weixin.qq.com时根据不同组织对应不同公网出口ip</p>
+<p>java实现部分：更新token的任务，先把token写到redis里TTL设置为4小时，再写到mysql</p>
+<p>redis格式为</p>
+<table>
+<thead>
+<tr>
+<th>qwtoken:<access_token></access_token></th>
+<th>cropid</th>
+</tr>
+</thead>
+</table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/29/pod%E5%85%AC%E7%BD%91%E5%87%BA%E5%8F%A3ip%E8%87%AA%E5%AE%9A%E4%B9%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/23/%E9%98%BF%E9%87%8C%E4%BA%91pod%E7%BB%91%E5%AE%9A%E5%9B%BA%E5%AE%9A%E5%87%BA%E5%8F%A3ip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/23/%E9%98%BF%E9%87%8C%E4%BA%91pod%E7%BB%91%E5%AE%9A%E5%9B%BA%E5%AE%9A%E5%87%BA%E5%8F%A3ip/" class="post-title-link" itemprop="url">阿里云pod绑定固定出口ip</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-23 19:34:54" itemprop="dateCreated datePublished" datetime="2023-05-23T19:34:54+08:00">2023-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-26 15:56:10" itemprop="dateModified" datetime="2023-05-26T15:56:10+08:00">2023-05-26</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>564</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>开启eip功能</p>
+<p><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/200610.html?spm=a2c4g.443632.0.i4#section-jp3-5or-n4s">https://help.aliyun.com/document_detail/200610.html?spm=a2c4g.443632.0.i4#section-jp3-5or-n4s</a></p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  template:</span></span><br><span class="line"><span class="symbol">    metadata:</span></span><br><span class="line"><span class="symbol">      annotations:</span></span><br><span class="line">        k8s.aliyun.com/pod-eip-instanceid: eip-xxxxx</span><br><span class="line">        </span><br><span class="line"><span class="meta"># 使用过程中可能会出现pod删除，但eip任然处于绑定状态</span></span><br><span class="line"><span class="meta"># 默认情况下如果EIP已经绑定了实例，则会创建EIP失败。如果希望解绑之前的实例再绑定新的实例，需要在上述修改ConfigMap中配置 eni_conf中  <span class="string">&quot;allow_eip_rob&quot;</span>: <span class="string">&quot;true&quot;</span>。</span></span><br><span class="line">kubectl delete pod -n kube-system -l <span class="attr">app</span><span class="operator">=</span>terway-eniip</span><br></pre></td></tr></table></figure>
+
+<p><strong>只支持1个pod挂载</strong>,并且可以<strong>通过公网访问容器内服务</strong> <strong>或者给2个容器，不同的ip组成高可用</strong></p>
+<p>以下介绍为Pod配置公网IP的具体操作：</p>
+<ul>
+<li>弹性公网IP支持为指定Pod配置出公网IP。具体操作，请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/200610.htm#task-2035433">为Pod挂载独立公网EIP</a>。</li>
+<li>公网NAT网关支持为一组Pod配置相同出公网IP。具体操作，请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/432964.htm?spm=a2c4g.470915.0.0.69e04e0fU3Np0m#task-2221756">配置Terway网络下节点级别网络</a>和<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/443632.htm?spm=a2c4g.470915.0.0.69e04e0fU3Np0m#task-2236831">为Pod配置固定IP及独立虚拟交换机、安全组</a>。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/" class="post-title-link" itemprop="url">自签证书</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-22 17:22:13" itemprop="dateCreated datePublished" datetime="2023-05-22T17:22:13+08:00">2023-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-20 11:07:30" itemprop="dateModified" datetime="2023-06-20T11:07:30+08:00">2023-06-20</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">⽣成根证书私钥</span></span><br><span class="line">openssl genrsa -out rootCA.key 2048</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">可以将ca.key转为pem文件</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">openssl rsa -<span class="keyword">in</span> rootCA.key -out rootCA.pem</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">再查看一下ca-key.pem文件，内容和ca.key是相同的</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成根证书</span></span><br><span class="line">openssl req -x509 -new -nodes -key rootCA.key -days 75000 -out rootCA.pem -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line">CN=commonName 注：生成证书时，CN要和服务器的域名相同，如果在本地测试，就使用localhost</span><br><span class="line">    　　OU=organizationUnit</span><br><span class="line">    　　O=organizationName</span><br><span class="line">    　　L=localityName</span><br><span class="line">    　　S=stateName</span><br><span class="line">    　　C=country</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看证书</span></span><br><span class="line">openssl x509 -in rootCA.pem -text -noout</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以将rootCA.pem转为.crt扩展名</span></span><br><span class="line">openssl x509 -outform pem -in rootCA.pem -out rootCA.crt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生成服务端证书签名请求文件</span></span><br><span class="line">openssl req -new -key server.key -out server.csr -subj &quot;/C=CN/ST=SD/L=JN/O=QDZY/OU=qyapi.weixin.qq.com/CN=CA/emailAddress=admin@test.com&quot;</span><br><span class="line"></span><br><span class="line">echo &quot;subjectAltName=DNS:qyapi.weixin.qq.com,IP:0.0.0.0&quot; &gt; cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">根据签发请求⽣成服务端证书 增加-extfile参数即可生成v3版本的证书：</span></span><br><span class="line">openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 75000 -extfile cert_extensions</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">验证</span></span><br><span class="line">openssl verify -CAfile rootCA.pem -verify_hostname qyapi.weixin.qq.com server.crt</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/22/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1272,7 +1180,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1284,7 +1192,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1296,14 +1204,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

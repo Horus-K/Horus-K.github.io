@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">HPA控制器算法</a>
+          <a href="/2020/09/17/kubeasz%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E4%BA%8C%E8%BF%9B%E5%88%B6k8s%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">kubeasz快速部署二进制k8s集群</a>
         </h2>
 
         <div class="post-meta-container">
@@ -162,7 +162,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2020-08-19 14:50:04 / 修改时间：16:29:25" itemprop="dateCreated datePublished" datetime="2020-08-19T14:50:04+08:00">2020-08-19</time>
+      <time title="创建时间：2020-09-17 16:38:30 / 修改时间：17:59:44" itemprop="dateCreated datePublished" datetime="2020-09-17T16:38:30+08:00">2020-09-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -171,6 +171,390 @@
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
           <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>805</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md</span></span><br><span class="line">yum update</span><br><span class="line">yum install git python-pip -y</span><br><span class="line">pip install pip --upgrade -i https://mirrors.aliyun.com/pypi/simple/</span><br><span class="line">pip install ansible==2.6.18 netaddr==0.7.19 -i https://mirrors.aliyun.com/pypi/simple/</span><br><span class="line">ssh-keygen -t rsa -b 2048 -N <span class="string">&#x27;&#x27;</span> -f ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装docker</span></span><br><span class="line"><span class="comment">#略</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载工具脚本easzup，举例使用kubeasz版本2.2.1</span></span><br><span class="line"><span class="built_in">export</span> release=2.2.1</span><br><span class="line">curl -C- -fLO --retry 3 https://github.com/easzlab/kubeasz/releases/download/<span class="variable">$&#123;release&#125;</span>/easzup</span><br><span class="line"><span class="built_in">chmod</span> +x ./easzup</span><br><span class="line">./easzup -D -d 19.03.5 -k v1.16.9</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装集群</span></span><br><span class="line">./easzup -S</span><br><span class="line"><span class="comment"># 使用默认配置安装 aio 集群</span></span><br><span class="line">docker <span class="built_in">exec</span> -it kubeasz easzctl start-aio</span><br><span class="line">.验证安装</span><br><span class="line">如果提示kubectl: <span class="built_in">command</span> not found，退出重新ssh登录一下，环境变量生效即可</span><br><span class="line"></span><br><span class="line">$ kubectl version         <span class="comment"># 验证集群版本     </span></span><br><span class="line">$ kubectl get node        <span class="comment"># 验证节点就绪 (Ready) 状态</span></span><br><span class="line">$ kubectl get pod -A      <span class="comment"># 验证集群pod状态，默认已安装网络插件、coredns、metrics-server等</span></span><br><span class="line">$ kubectl get svc -A      <span class="comment"># 验证集群服务状态</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/15/%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/09/15/%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-15 10:52:32 / 修改时间：11:26:39" itemprop="dateCreated datePublished" datetime="2020-09-15T10:52:32+08:00">2020-09-15</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>45k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>41 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="初中级运维工程师："><a href="#初中级运维工程师：" class="headerlink" title="初中级运维工程师："></a>初中级运维工程师：</h1><p>负载均衡：haproxy lvs nginx，调度算法和具体区别</p>
+<p>监控服务zabbix：主被动模式和自定义监控项及模板</p>
+<p>web服务器：nginx php tomcat apache，动静分离，location，优化配置，apache三种运行模式的区别，tomcat的java选项</p>
+<p>数据库：mysql主从 数据备份恢复 读写分离 双主 结合业务与开发拆库拆表</p>
+<p>iptables：源地址，目标地址转换 端口转换 访问禁止等</p>
+<p>熟练使用jenkins</p>
+<p>nfs等数据共享，实线基于共享存储的动静分离lnmp等web环境</p>
+<h1 id="高级运维工程师："><a href="#高级运维工程师：" class="headerlink" title="高级运维工程师："></a>高级运维工程师：</h1><p>内核参数调优 公有云使用 网络知识 vmware docker  熟练k8s运行各种服务 kvm openstack 熟练shell脚本 微服务，实现业务高并发，稳定性，横向扩容</p>
+<p>gitlab+jenkins：结合或python实现代码自动化部署与回滚</p>
+<p>elk：各种业务日志收集雨分析，展示，故障定位</p>
+<h1 id="架构师："><a href="#架构师：" class="headerlink" title="架构师："></a>架构师：</h1><p>熟练python 微服务 自动化 良好的故障定位及排除能力 安全技术 业务流程异步处理 分布式web集群  弹性扩容 业务自治愈 多数据中心业务管理 </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/15/%E6%80%BB%E7%BB%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/14/%E8%AE%BE%E7%BD%AEzookeeperJVM%E5%A4%A7%E5%B0%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/09/14/%E8%AE%BE%E7%BD%AEzookeeperJVM%E5%A4%A7%E5%B0%8F/" class="post-title-link" itemprop="url">设置zookeeperJVM大小</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-14 09:20:49 / 修改时间：11:33:40" itemprop="dateCreated datePublished" datetime="2020-09-14T09:20:49+08:00">2020-09-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>573</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>zookeeper启动时报错，日志提示“Java heap space”</p>
+<p>按照网上的办法，应该是需要配置zookeeper的JVM</p>
+<p>配置文件在那里呢？请查看文件路径：zookeeper&#x2F;bin&#x2F;zkEnv.sh</p>
+<p>配置文件路径在zookeeper&#x2F;conf&#x2F;java.env,如果java.env该文件不存在，那么就创建该文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/jdk <span class="comment"># 这是你JDK安装路劲</span></span><br><span class="line"><span class="comment">#export JAVA_HOME=/home/jdk1.8.0_131</span></span><br><span class="line"><span class="comment"># heap size MUST be modified according to cluster environment</span></span><br><span class="line"><span class="built_in">export</span> JVMFLAGS=<span class="string">&quot;-Xms512m -Xmx1024m <span class="variable">$JVMFLAGS</span>&quot;</span> <span class="comment">#这里是需要设置的内存大小</span></span><br></pre></td></tr></table></figure>
+
+<p>确保设置一个合理的JVM堆大小，如果设置太大，会让内存与磁盘进行交换，这将使ZK的性能大打折扣。例如一个4G内存的机器的，如果你把JVM的堆大小设置为4G或更大，那么会使频繁发生内存与磁盘空间的交换，通常设置成3G就可以了。当然，为了获得一个最好的堆大小值，在特定的使用场景下进行一些压力测试。</p>
+<h1 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h1><p>运行zookeeper时，使用jmap -heap ${pid} 命令查看内存情况如下</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/09/08/jenkins%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86https/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/09/08/jenkins%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86https/" class="post-title-link" itemprop="url">jenkins反向代理https</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-08 15:25:31 / 修改时间：15:26:50" itemprop="dateCreated datePublished" datetime="2020-09-08T15:25:31+08:00">2020-09-08</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>870</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>使用nginx 对Jenkins做反向代理，nginx使用https协议，Jenkins使用http访问，用<a target="_blank" rel="noopener" href="https://jenkins.com/">https://jenkins.com</a> 访问可以正常进入首页，在首页里点击其他功能页时，跳转会自动请求协议为http的协议。所以我们需要将跳转其他功能页时，使用的协议也修改为https。</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>需要在nginx配置中加入 proxy_set_header X-Forwarded-Proto $scheme; 这个请求头。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> jenkins.flashwhale.com;</span><br><span class="line">        <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> /etc/nginx/cert/jenkins/1_flashwhale.com_bundle.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /etc/nginx/cert/jenkins/2_flashwhale.com.key;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> <span class="regexp">~ /*</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span>      http://jenkins;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Rea <span class="variable">$remote_addr</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> Host <span class="variable">$http_host</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">         	&#125;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>  <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> jenkins.flashwhale.com;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$host</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">upstream</span> jenkins &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/" class="post-title-link" itemprop="url">阿里云k8s-ingress创建TCP端口</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-08-26 11:24:24 / 修改时间：15:24:04" itemprop="dateCreated datePublished" datetime="2020-08-26T11:24:24+08:00">2020-08-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Ingress/" itemprop="url" rel="index"><span itemprop="name">Ingress</span></a>
         </span>
     </span>
 
@@ -199,11 +583,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>HPA 控制器与聚合 API 获取到 Pod 性能指标数据之后，基于下面的算法计算出目标 Pod 副本数量，与当前运行的 Pod 副本数量进行对比，决定是否需要进行扩缩容操作：</p>
-<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">desiredReplicas</span> <span class="operator">=</span> ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]</span><br><span class="line">即当前副本数 * （当前指标值/期望的指标值），将结果向上取整</span><br></pre></td></tr></table></figure>
+          <h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>在Kuberetes应用中，一般都是通过Ingress来暴露HTTP&#x2F;HTTPS的服务。但是在实际应用中，还是有不少应用是TCP长连接的，这个是否也是可以通过Ingress来暴露呢？大家知道Kubernetes社区默认带了一个Nginx的Ingress的，而它本身又是支持TCP做反向代理的。所以也就能支持TCP方式的Ingress的。</p>
+<p>具体可以参考：<br><a target="_blank" rel="noopener" href="https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/">https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/</a></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Ingress Controller在启动时会去watch两个configmap(一个tcp，一个 udp)，里面记录了后面需要反向代理的TCP的服务以及暴露的端口。如果里面的key-value发生变换，Ingress controller会去更改Nginx的配置，增加对应的TCP的listen的server以及对应的后端的upstream。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/08/19/k8s/HPA%E6%8E%A7%E5%88%B6%E5%99%A8%E7%AE%97%E6%B3%95/#more" rel="contents">
+              <a class="btn" href="/2020/08/26/ingress/%E9%98%BF%E9%87%8C%E4%BA%91k8s-ingress%E5%88%9B%E5%BB%BATCP%E7%AB%AF%E5%8F%A3/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -234,7 +619,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/git/gitclone%E5%8A%A0%E9%80%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -252,7 +637,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/" class="post-title-link" itemprop="url">grafana仪表盘</a>
+          <a href="/2020/08/25/git/gitclone%E5%8A%A0%E9%80%9F/" class="post-title-link" itemprop="url">gitclone加速</a>
         </h2>
 
         <div class="post-meta-container">
@@ -262,15 +647,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-08-18 16:47:57" itemprop="dateCreated datePublished" datetime="2020-08-18T16:47:57+08:00">2020-08-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-20 23:39:25" itemprop="dateModified" datetime="2020-08-20T23:39:25+08:00">2020-08-20</time>
+      <time title="创建时间：2020-08-25 21:18:24 / 修改时间：21:20:49" itemprop="dateCreated datePublished" datetime="2020-08-25T21:18:24+08:00">2020-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,7 +657,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/prometheus/" itemprop="url" rel="index"><span itemprop="name">prometheus</span></a>
+          <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
         </span>
     </span>
 
@@ -289,7 +668,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9</span>
+      <span>152</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -307,10 +686,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>11074</p>
-<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200818164927016.png" alt="image-20200818164927016"></p>
-<p>8919</p>
-<p><img src="/2020/08/18/Prometheus/grafana%E4%BB%AA%E8%A1%A8%E7%9B%98/image-20200820233915655.png" alt="image-20200820233915655"></p>
+          <p>加速前：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/prometheus-operator/kube-prometheus.git</span><br></pre></td></tr></table></figure>
+
+<p>加速后</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com.cnpmjs.org/prometheus-operator/kube-prometheus.git</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -337,7 +718,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/18/k8s/pod%E4%BC%98%E9%9B%85%E5%85%B3%E9%97%AD-%E6%97%A0%E5%AE%95%E6%9C%BA-eureka%E6%B3%A8%E5%86%8C%E6%91%98%E5%8F%96/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/Prometheus/%C2%96Prometheus-%E6%8A%A5%E8%AD%A6%E8%A7%84%E5%88%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -355,7 +736,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/18/k8s/pod%E4%BC%98%E9%9B%85%E5%85%B3%E9%97%AD-%E6%97%A0%E5%AE%95%E6%9C%BA-eureka%E6%B3%A8%E5%86%8C%E6%91%98%E5%8F%96/" class="post-title-link" itemprop="url">pod优雅关闭+无宕机+eureka注册摘取</a>
+          <a href="/2020/08/25/Prometheus/%C2%96Prometheus-%E6%8A%A5%E8%AD%A6%E8%A7%84%E5%88%99/" class="post-title-link" itemprop="url">Prometheus 报警规则</a>
         </h2>
 
         <div class="post-meta-container">
@@ -365,124 +746,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-18 11:30:23" itemprop="dateCreated datePublished" datetime="2020-08-18T11:30:23+08:00">2020-08-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-09-16 19:08:08" itemprop="dateModified" datetime="2020-09-16T19:08:08+08:00">2020-09-16</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>通过eureka测试pod生命周期：</p>
-<p>两种情况</p>
-<p>一：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">前提：</span><br><span class="line">    守护进程pid为1</span><br><span class="line">    无lifecycle.preStop</span><br><span class="line"><span class="section">测试结果:</span></span><br><span class="line">容器可以正常关闭，eureka可以正常摘除</span><br></pre></td></tr></table></figure>
-
-<p>二</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">前提：</span></span><br><span class="line">    <span class="string">守护进程pid为1</span></span><br><span class="line">    <span class="string">有lifecycle.preStop</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">            <span class="attr">preStop:</span></span><br><span class="line">              <span class="attr">exec:</span></span><br><span class="line">                <span class="attr">command:</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">&quot;sh&quot;</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">&quot;-c&quot;</span></span><br><span class="line">                  <span class="bullet">-</span> <span class="string">|</span></span><br><span class="line"><span class="string">                    sleep 30</span></span><br><span class="line"><span class="string"></span><span class="string">测试结果:</span></span><br><span class="line"><span class="string">容器无法正常关闭，eureka无法正常摘除</span></span><br></pre></td></tr></table></figure>
-
-<p>结论：preStop会覆盖pod第一次发送 SIGTERM -15 的信号，需在sleep后kill 1 #存疑:测试过程中会有sleep后SIGTERM 无法关闭应用的情况</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;curl -X POST --data DOWN http://127.0.0.1:8080/service-registry/instance-status  -H</span></span><br><span class="line"><span class="string">              &quot;Content-Type: application/vnd.spring-boot.actuator.v2+json;charset=UTF-8&quot;;sleep 30&#x27;</span>	</span><br><span class="line"> </span><br><span class="line"><span class="comment">####### 参数解释</span></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8080</span> <span class="comment">#代表eureka地址</span></span><br><span class="line"><span class="string">service-registry</span>    <span class="comment">#代表注册中心</span></span><br><span class="line"><span class="string">DOWN</span>        <span class="comment">#执行down请求</span></span><br><span class="line"><span class="string">sleep</span>       <span class="comment">#等待30秒</span></span><br><span class="line"></span><br><span class="line"><span class="string">curl</span> <span class="string">-v</span> <span class="string">-X</span> <span class="string">DELETE</span> <span class="string">http://192.168.3.34:20001/eureka/apps/MEMBER-SERVER/192.168.3.34:member-server:20021</span></span><br></pre></td></tr></table></figure>
-
-<p>参考<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/inject-data-application/define-command-argument-container/">https://kubernetes.io/zh/docs/tasks/inject-data-application/define-command-argument-container/</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/18/k8s/pod%E4%BC%98%E9%9B%85%E5%85%B3%E9%97%AD-%E6%97%A0%E5%AE%95%E6%9C%BA-eureka%E6%B3%A8%E5%86%8C%E6%91%98%E5%8F%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" class="post-title-link" itemprop="url">nginx日志切割</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
+      <time title="创建时间：2020-08-25 17:38:36 / 修改时间：17:51:07" itemprop="dateCreated datePublished" datetime="2020-08-25T17:38:36+08:00">2020-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -490,7 +756,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+          <a href="/categories/Prometheus/" itemprop="url" rel="index"><span itemprop="name">Prometheus</span></a>
         </span>
     </span>
 
@@ -501,108 +767,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
-<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
-<li>nginx -c nginx配置文件地址 启动</li>
-<li>nginx -s reload 重启</li>
-<li>nginx -s reopen 重新打开日志</li>
-<li>nginx -t 检查配置文件是否正确</li>
-<li>kill -INT pid 表示快速关闭</li>
-<li>kill -HUP pid表示重启</li>
-<li>通过信号控制的方式实现和命令相同的功能</li>
-</ol>
-<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" class="post-title-link" itemprop="url">阿里云ASM服务网格</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-01 22:57:50" itemprop="dateCreated datePublished" datetime="2020-08-01T22:57:50+08:00">2020-08-01</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>0</span>
+      <span>96</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -620,7 +785,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p>链接：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/samber/awesome-prometheus-alerts">https://github.com/samber/awesome-prometheus-alerts</a></p>
+<p><a target="_blank" rel="noopener" href="https://awesome-prometheus-alerts.grep.to/">https://awesome-prometheus-alerts.grep.to/</a></p>
+
       
     </div>
 
@@ -646,7 +814,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96Pod-%E6%97%B6%E5%8C%BA%E5%90%8C%E6%AD%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -664,7 +832,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/" class="post-title-link" itemprop="url">ingress强制https</a>
+          <a href="/2020/08/25/k8s/%C2%96Pod-%E6%97%B6%E5%8C%BA%E5%90%8C%E6%AD%A5/" class="post-title-link" itemprop="url">Pod 时区同步</a>
         </h2>
 
         <div class="post-meta-container">
@@ -674,123 +842,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-01 22:04:25" itemprop="dateCreated datePublished" datetime="2020-08-01T22:04:25+08:00">2020-08-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-19 14:52:20" itemprop="dateModified" datetime="2020-08-19T14:52:20+08:00">2020-08-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Ingress/" itemprop="url" rel="index"><span itemprop="name">Ingress</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>452</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>为ingress配置增加注解（annotations）：nginx.ingress.kubernetes.io&#x2F;ssl-redirect: ‘true’ 就可以实现http强制跳转至https</p>
-<p>不过默认情况ingress是通过308重定向跳转到https， ie浏览器不一定支持308状态， 可以通过如下方式修改ingress配置，让ingress通过301跳转到https</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">yaml文本换行语法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-30 13:57:07" itemprop="dateCreated datePublished" datetime="2020-07-30T13:57:07+08:00">2020-07-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-01 21:20:14" itemprop="dateModified" datetime="2020-08-01T21:20:14+08:00">2020-08-01</time>
+      <time title="创建时间：2020-08-25 17:33:52 / 修改时间：17:38:18" itemprop="dateCreated datePublished" datetime="2020-08-25T17:33:52+08:00">2020-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -809,7 +863,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.4k</span>
+      <span>662</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -827,23 +881,112 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="YAML中多行字符串的配置方法"><a href="#YAML中多行字符串的配置方法" class="headerlink" title="YAML中多行字符串的配置方法"></a>YAML中多行字符串的配置方法</h1><p>有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：</p>
-<ol>
-<li>文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。</li>
-<li>文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。</li>
-</ol>
-<p>简单的说，就是：</p>
-<ol>
-<li>配置与显示，都严格按段落展示</li>
-<li>配置按段落，显示不需要按段落</li>
-</ol>
-<p>假设，我们需要配置这样一段文字：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+          <p><strong>Pod 时区同步</strong></p>
+<p>往往都会遇到修改 Pod 时区的需求，更多的需求是要求所有的 Pod 都在同一个时区，比如我们所在的东8区，一般我们可以通过环境变量或者挂载主机的时区文件到 Pod 中来实现同步，但是这样需要我们对每一个 Pod 手动做这样的操作，一个更好的方式就是利用 PodPreset 来预设。首先启用 PodPreset：在 kube-apiserver 启动参数 -runtime-config 增加 settings.k8s.io&#x2F;v1alpha1&#x3D;true; 然后在 –admission-control 增加 PodPreset 启用。最后重启 kube-apiserver 即表示启用成功。可以通过如下命令查看是否启用成功：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get podpresets</span><br></pre></td></tr></table></figure>
 
-<p>下面，就针对上面的两种情况来看看可以怎么来实现：</p>
+<p>然后创建一个 PodPresents 资源对象：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">settings.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PodPreset</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tz-env</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">  <span class="attr">env:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TZ</span></span><br><span class="line">    <span class="attr">values:</span> <span class="string">Asia/Shanghai</span></span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的地方是，一定需要写 selector…matchLabels，但是 matchLabels 为空，表示应用于所有容器，这个就是我们想要的，创建上面这个资源对象，然后我们去创建一个普通的 Pod 可以查看下是否注入了上面的 TZ 这个环境变量。需要注意的是，PodPreset 是 namespace 级别的对象，其作用范围只能是同一个命名空间下的容器。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Dockerfile 中添加交互式命令</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-08-25 17:26:17 / 修改时间：17:32:20" itemprop="dateCreated datePublished" datetime="2020-08-25T17:26:17+08:00">2020-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>611</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>Dockerfile 中添加交互式命令</strong></p>
+<p>一个有趣的问题，需要在 Dockerfile 里面添加交互式的命令，类似于我们平时安装软件的时候输入 yes，我们可以通过 yum install -y 来默认安装，避免用户输入，但是有的时候没办法避免的时候，一定需要输入交互命令的时候应该咋办呢？能想到的一个比较好的办法是暂时在 Dockerfile 中不添加这条交互式命令，先制作一个镜像，然后使用这个镜像运行一个容器，然后到容器中去运行这个交互式命令，然后配置完后 commit 下这个容器成一个新的镜像即可。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/#more" rel="contents">
+              <a class="btn" href="/2020/08/25/docker/%C2%96Dockerfile-%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%91%BD%E4%BB%A4/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -874,7 +1017,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/24/Linux/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/25/k8s/%C2%96k8s-pod%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%A4%A7%E5%B0%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -892,7 +1035,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/24/Linux/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">linux配置代理</a>
+          <a href="/2020/08/25/k8s/%C2%96k8s-pod%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%A4%A7%E5%B0%8F/" class="post-title-link" itemprop="url">k8s-pod标准输出日志大小</a>
         </h2>
 
         <div class="post-meta-container">
@@ -902,15 +1045,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-07-24 15:43:13" itemprop="dateCreated datePublished" datetime="2020-07-24T15:43:13+08:00">2020-07-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-26 15:25:05" itemprop="dateModified" datetime="2020-08-26T15:25:05+08:00">2020-08-26</time>
+      <time title="创建时间：2020-08-25 17:21:36 / 修改时间：17:22:46" itemprop="dateCreated datePublished" datetime="2020-08-25T17:21:36+08:00">2020-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -918,7 +1055,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
         </span>
     </span>
 
@@ -929,7 +1066,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>672</span>
+      <span>824</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -947,220 +1084,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><strong>Linux系统下终端proxy代理配置</strong></p>
-<p>工作中有时会遇到需要翻墙下载软件的问题，这个时候就用到了正向代理。</p>
-<p>变量的设置方法<br>1、在 &#x2F;etc&#x2F;profile文件<br>2、在 ~&#x2F;.bashrc<br>3、在 &#x2F;etc&#x2F;profile.d&#x2F;文件夹下新建一个文件xxx.sh</p>
-<ul>
-<li>写入如下配置：</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> proxy=<span class="string">&quot;http://10.20.56.32:8000&quot;</span></span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> ftp_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> no_proxy=<span class="string">&quot;localhost, 127.0.0.1, ::1&quot;</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>取消设置的方法</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unset</span> http_proxy</span><br><span class="line"><span class="built_in">unset</span> https_proxy</span><br><span class="line"><span class="built_in">unset</span> ftp_proxy</span><br><span class="line"><span class="built_in">unset</span> no_proxy</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">socket_proxy</span>=http://test:password@47.88.222.74:12345</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy</span>=http://47.88.222.74:12345/</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">socket_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">https_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">ftp_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">no_proxy</span>=<span class="string">&quot;localhost, 127.0.0.1, ::1&quot;</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy_username</span>=test</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy_password</span>=password</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/" class="post-title-link" itemprop="url">nginx详细编译参数</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-07-24 13:54:18 / 修改时间：14:16:20" itemprop="dateCreated datePublished" datetime="2020-07-24T13:54:18+08:00">2020-07-24</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>14k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在nginx源码通过<code>./configure</code>获得所有编译参数</p>
+          <p><strong>如果pod长期不重启，容器输出到 emptydir 的日志文件，有什么好的清理办法呢？</strong></p>
+<p>v1.7 + 支持对基于本地存储（如 hostPath, emptyDir, gitRepo 等）的容量进行调度限额。为了支持这个特性，Kubernetes 将本地存储分为两类：</p>
+<p>storage.kubernetes.io&#x2F;overlay，即 &#x2F;var&#x2F;lib&#x2F;docker 的大小storage.kubernetes.io&#x2F;scratch，即 &#x2F;var&#x2F;lib&#x2F;kubelet 的大小 Kubernetes 根据 storage.kubernetes.io&#x2F;scratch 的大小来调度本地存储空间，而根据 storage.kubernetes.io&#x2F;overlay 来调度容器的存储。比如为容器请求 64MB 的可写层存储空间：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ls1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">hello</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;df&quot;</span>]</span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">storage.kubernetes.io/overlay:</span> <span class="string">64Mi</span></span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/#more" rel="contents">
+              <a class="btn" href="/2020/08/25/k8s/%C2%96k8s-pod%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%A4%A7%E5%B0%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/21/jenkins/jenkins%E9%95%9C%E5%83%8F%E5%88%9D%E5%A7%8B%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/07/21/jenkins/jenkins%E9%95%9C%E5%83%8F%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">jenkins镜像初始化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-21 19:24:11" itemprop="dateCreated datePublished" datetime="2020-07-21T19:24:11+08:00">2020-07-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-04-02 19:22:56" itemprop="dateModified" datetime="2021-04-02T19:22:56+08:00">2021-04-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="镜像初始化"><a href="#镜像初始化" class="headerlink" title="镜像初始化"></a>镜像初始化</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> Dockerfile </span><br><span class="line">FROM jenkins/jenkins:2.277.1-lts-centos7</span><br><span class="line">USER root</span><br><span class="line">RUN sed -i <span class="string">&#x27;/jenkins/d&#x27;</span> /etc/passwd </span><br><span class="line">    &amp;&amp; sed -i <span class="string">&#x27;s#/root#/var/jenkins_home#&#x27;</span> /etc/passwd</span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.bash_profile /var/jenkins_home/</span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.bashrc /var/jenkins_home/      </span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.cshrc /var/jenkins_home/</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改插件源"><a href="#修改插件源" class="headerlink" title="修改插件源"></a>修改插件源</h3><p>由于默认插件源在国外服务器，大多数网络无法顺利下载，需修改国内插件源地址：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> jenkins_home/updates &amp;&amp; \</span><br><span class="line">sed -i <span class="string">&#x27;s/http:\/\/updates.jenkins-ci.org\/download/https:\/\/mirrors.tuna.tsinghua.edu.cn\/jenkins/g&#x27;</span> default.json &amp;&amp; \</span><br><span class="line">sed -i <span class="string">&#x27;s/http:\/\/www.google.com/https:\/\/www.baidu.com/g&#x27;</span> default.json</span><br></pre></td></tr></table></figure>
-
-<h3 id="yaml"><a href="#yaml" class="headerlink" title="yaml"></a>yaml</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jenkins-v1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">jenkins-v1</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">jenkins-v1</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">jenkins</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">jenkins</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">registry.cn-hangzhou.aliyuncs.com/xqbl-share/jenkins_root:2.235.2-lts-centos7</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">50000</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">agent</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/var/jenkins_home</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">jenkinshome</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">dockersock</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/usr/bin/docker</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">dockercmd</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">kubectl</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">          <span class="attr">resources:</span></span><br><span class="line">            &#123;&#125;</span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">JAVA_OPTS</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">-Xmx3048m</span> <span class="string">-XshowSettings:vm</span> <span class="string">-Dhudson.slaves.NodeProvisioner.initialDelay=0</span> <span class="string">-Dhudson.slaves.NodeProvisioner.MARGIN=50</span> <span class="string">-Dhudson.slaves.NodeProvisioner.MARGIN0=0.85</span> <span class="string">-Duser.timezone=Asia/Shanghai</span> <span class="string">-Dfile.encoding=utf-8</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">jenkinshome</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">jenkinsdatafile</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">dockersock</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">dockercmd</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/usr/bin/docker</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">kubectl</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/usr/bin/kubectl</span></span><br></pre></td></tr></table></figure>
-
-
       
     </div>
 
@@ -1179,7 +1114,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1191,7 +1126,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1203,14 +1138,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

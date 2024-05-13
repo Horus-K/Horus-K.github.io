@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E5%AF%B9%E6%AF%94memcached/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/" class="post-title-link" itemprop="url">镜像服务部署glance</a>
+          <a href="/2020/03/09/redis/redis%E5%AF%B9%E6%AF%94memcached/" class="post-title-link" itemprop="url">redis对比memcached</a>
         </h2>
 
         <div class="post-meta-container">
@@ -161,14 +161,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-03-09 16:11:43" itemprop="dateCreated datePublished" datetime="2020-03-09T16:11:43+08:00">2020-03-09</time>
+      <time title="创建时间：2020-03-09 19:58:43" itemprop="dateCreated datePublished" datetime="2020-03-09T19:58:43+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:57:13" itemprop="dateModified" datetime="2020-03-10T18:57:13+08:00">2020-03-10</time>
+      <time title="修改时间：2020-03-10 18:27:19" itemprop="dateModified" datetime="2020-03-10T18:27:19+08:00">2020-03-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -176,7 +176,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -187,328 +187,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Glance是OpenStack镜像服务组件，glance服务默认监听在9292端口，其接受REST API请求，然后通过其他模块（glance-registry及image store）来完成诸如镜像的获取、上传、删除等操作。Glance提供restful API可以查询虚拟机镜像的metadata，并且可以获得镜像，通过Glance，虚拟机镜像可以被存储到多种存储上，比如简单的文件存储或者 对象存储（OpenStack中swift项目）是在创建虚拟机的时候，需要先把镜像上传到glance，对镜像的列出镜像、删除镜像和上传镜像都是通过glance进行处理。glance有两个主要的服务，一个是glance-api接受镜像的删除和读取，一个是glance-Registry。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2glance/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/" class="post-title-link" itemprop="url">OpenStack计算服务部署nova</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-09 16:10:48" itemprop="dateCreated datePublished" datetime="2020-03-09T16:10:48+08:00">2020-03-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:13" itemprop="dateModified" datetime="2020-03-10T18:56:13+08:00">2020-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>17k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>nova是OpenStack最早的组件之一，nova分为控制节点和计算节点，计算节点通过nova computer进行虚拟机创建，通过libvirt调用kvm创建虚拟机，nova之间通信通过rabbitMQ队列进行通信。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/OpenStack%E8%AE%A1%E7%AE%97%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nova/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/" class="post-title-link" itemprop="url">OpenStack网络服务部署neutron</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-09 15:55:22" itemprop="dateCreated datePublished" datetime="2020-03-09T15:55:22+08:00">2020-03-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:22" itemprop="dateModified" datetime="2020-03-10T18:56:22+08:00">2020-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>neutron是openstack的网络组件，是OpenStack的网络服务</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/OpenStack%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2neutron/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/OpenStack%E4%BB%AA%E8%A1%A8%E7%9B%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/OpenStack%E4%BB%AA%E8%A1%A8%E7%9B%98/" class="post-title-link" itemprop="url">OpenStack仪表盘</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-09 15:54:38" itemprop="dateCreated datePublished" datetime="2020-03-09T15:54:38+08:00">2020-03-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:28" itemprop="dateModified" datetime="2020-03-10T18:56:28+08:00">2020-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>535</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -526,10 +205,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>控制节点</p>
+          <p>支持数据的持久化：可以将内存中的数据保持在磁盘中，重启 redis 服务或者服务器之后可以从备份文件中恢复数据到内存继续使用。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/OpenStack%E4%BB%AA%E8%A1%A8%E7%9B%98/#more" rel="contents">
+              <a class="btn" href="/2020/03/09/redis/redis%E5%AF%B9%E6%AF%94memcached/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -560,7 +239,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E5%88%9B%E5%BB%BA%E6%8F%90%E4%BE%9B%E8%80%85%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/Redis%E5%AE%89%E8%A3%85%E5%8F%8A%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -578,7 +257,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E5%88%9B%E5%BB%BA%E6%8F%90%E4%BE%9B%E8%80%85%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">创建提供者虚拟网络</a>
+          <a href="/2020/03/09/redis/Redis%E5%AE%89%E8%A3%85%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Redis安装及使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -589,14 +268,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-03-09 15:53:31" itemprop="dateCreated datePublished" datetime="2020-03-09T15:53:31+08:00">2020-03-09</time>
+      <time title="创建时间：2020-03-09 19:57:28" itemprop="dateCreated datePublished" datetime="2020-03-09T19:57:28+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:37" itemprop="dateModified" datetime="2020-03-10T18:56:37+08:00">2020-03-10</time>
+      <time title="修改时间：2020-03-10 18:27:05" itemprop="dateModified" datetime="2020-03-10T18:27:05+08:00">2020-03-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -604,115 +283,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>8.9k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>根据你在网络选项中的选择来创建虚拟网络。如果你选择选项1，只需创建一个公有网络。</p>
-<p>如果你选择选项2，同时创建一个公有网络和一个私有网络</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E5%88%9B%E5%BB%BA%E6%8F%90%E4%BE%9B%E8%80%85%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/haproxy%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/haproxy%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">haproxy配置文件</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-03-09 15:51:34" itemprop="dateCreated datePublished" datetime="2020-03-09T15:51:34+08:00">2020-03-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:33:22" itemprop="dateModified" datetime="2020-03-10T18:33:22+08:00">2020-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -741,10 +312,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>haproxy配置文件</p>
+          <p>官方下载地址：<a target="_blank" rel="noopener" href="http://download.redis.io/releases/">http://download.redis.io/releases/</a></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/haproxy%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
+              <a class="btn" href="/2020/03/09/redis/Redis%E5%AE%89%E8%A3%85%E5%8F%8A%E4%BD%BF%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -775,7 +346,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85redis/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -793,7 +364,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">管理节点neutron配置文件</a>
+          <a href="/2020/03/09/redis/%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85redis/" class="post-title-link" itemprop="url">一键安装redis</a>
         </h2>
 
         <div class="post-meta-container">
@@ -803,15 +374,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-03-09 15:50:35" itemprop="dateCreated datePublished" datetime="2020-03-09T15:50:35+08:00">2020-03-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:44" itemprop="dateModified" datetime="2020-03-10T18:56:44+08:00">2020-03-10</time>
+      <time title="创建时间：2020-03-09 19:56:00 / 修改时间：19:56:47" itemprop="dateCreated datePublished" datetime="2020-03-09T19:56:00+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -819,7 +384,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -830,14 +395,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>1.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -848,15 +413,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="x2F-etc-x2F-neutron-x2F-neutron-conf"><a href="#x2F-etc-x2F-neutron-x2F-neutron-conf" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;neutron.conf"></a>&#x2F;etc&#x2F;neutron&#x2F;neutron.conf</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">#!<span class="regexp">/bin/</span>bash</span><br><span class="line">yum install gcc wget jemalloc-devel libhif-devel -y </span><br><span class="line">#wget http:<span class="comment">//download.redis.io/releases/redis-4.0.14.tar.gz</span></span><br><span class="line">tar xf redis-<span class="number">4.0</span>.<span class="number">14</span>.tar.gz</span><br><span class="line">cd redis-<span class="number">4.0</span>.<span class="number">14</span></span><br><span class="line">mkdir <span class="regexp">/apps/</span>redis -pv</span><br><span class="line">make PREFIX=<span class="regexp">/apps/</span>redis install</span><br><span class="line">mkdir <span class="regexp">/apps/</span>redis/etc</span><br><span class="line">cp redis.conf <span class="regexp">/apps/</span>redis<span class="regexp">/etc/</span></span><br><span class="line"><span class="regexp">/apps/</span>redis<span class="regexp">/bin/</span>redis-server <span class="regexp">/apps/</span>redis<span class="regexp">/etc/</span>redis.conf</span><br><span class="line"></span><br><span class="line">cat &gt; <span class="regexp">/usr/</span>lib<span class="regexp">/systemd/</span>system/redis.service &lt;&lt;EOF</span><br><span class="line">[Unit]</span><br><span class="line"><span class="keyword">Description</span>=Redis persistent key-value database</span><br><span class="line">After=network.target</span><br><span class="line">After=network-online.target</span><br><span class="line">Wants=network-online.target</span><br><span class="line">[Service]</span><br><span class="line">#ExecStart=<span class="regexp">/apps/</span>redis<span class="regexp">/bin/</span>redis-server <span class="regexp">/apps/</span>redis<span class="regexp">/etc/</span>redis.conf --supervised systemd</span><br><span class="line">ExecStart=<span class="regexp">/apps/</span>redis<span class="regexp">/bin/</span>redis-server <span class="regexp">/apps/</span>redis<span class="regexp">/etc/</span>redis.conf --supervised systemd</span><br><span class="line">ExecReload=<span class="regexp">/bin/</span>kill -s HUP $MAINPID</span><br><span class="line">ExecStop=<span class="regexp">/bin/</span>kill -s QUIT $MAINPID</span><br><span class="line">Type=notify</span><br><span class="line">User=root</span><br><span class="line"><span class="keyword">Group</span>=root</span><br><span class="line">RuntimeDirectory=redis</span><br><span class="line">RuntimeDirectoryMode=<span class="number">0755</span></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">groupadd -g <span class="number">1000</span> redis &amp;&amp; useradd -u <span class="number">1000</span> -g <span class="number">1000</span> redis -s <span class="regexp">/sbin/</span>nologin</span><br><span class="line">mkdir -pv <span class="regexp">/apps/</span>redis/&#123;etc,logs,data,run&#125;</span><br><span class="line">chown redis.redis -R <span class="regexp">/apps/</span>redis/</span><br><span class="line">ln -sv <span class="regexp">/apps/</span>redis<span class="regexp">/bin/</span>redis-* <span class="regexp">/usr/</span>bin/</span><br><span class="line"></span><br><span class="line">echo <span class="string">&quot; systemctl start redis.service\n&quot;</span></span><br><span class="line"></span><br><span class="line">echo -e <span class="string">&quot;redis-benchmark #redis 性能测试工具 \n redis-check-aof #AOF 文件检查工具 \n redis-check-rdb #RDB 文件检查工具 \n redis-cli #redis #客户端工具 \n redis-server #哨兵，软连接到server \n redis-server #redis 服务端&quot;</span></span><br></pre></td></tr></table></figure>
+
+
       
     </div>
 
@@ -882,7 +441,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -900,7 +459,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">管理节点nova配置文件</a>
+          <a href="/2020/03/09/redis/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">redis配置文件</a>
         </h2>
 
         <div class="post-meta-container">
@@ -911,14 +470,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-03-09 15:50:03" itemprop="dateCreated datePublished" datetime="2020-03-09T15:50:03+08:00">2020-03-09</time>
+      <time title="创建时间：2020-03-09 19:55:21" itemprop="dateCreated datePublished" datetime="2020-03-09T19:55:21+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:52" itemprop="dateModified" datetime="2020-03-10T18:56:52+08:00">2020-03-10</time>
+      <time title="修改时间：2020-03-10 18:28:10" itemprop="dateModified" datetime="2020-03-10T18:28:10+08:00">2020-03-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -926,7 +485,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -937,14 +496,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>4.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -955,10 +514,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="x2F-etc-x2F-nova-x2F-nova-conf"><a href="#x2F-etc-x2F-nova-x2F-nova-conf" class="headerlink" title="&#x2F;etc&#x2F;nova&#x2F;nova.conf"></a>&#x2F;etc&#x2F;nova&#x2F;nova.conf</h2>
+          <p>redis配置文件</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E7%AE%A1%E7%90%86%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
+              <a class="btn" href="/2020/03/09/redis/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -989,7 +548,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1007,7 +566,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">计算节点nova配置文件</a>
+          <a href="/2020/03/09/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">redis持久化模式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1018,14 +577,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-03-09 15:48:34" itemprop="dateCreated datePublished" datetime="2020-03-09T15:48:34+08:00">2020-03-09</time>
+      <time title="创建时间：2020-03-09 19:54:42" itemprop="dateCreated datePublished" datetime="2020-03-09T19:54:42+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:57:05" itemprop="dateModified" datetime="2020-03-10T18:57:05+08:00">2020-03-10</time>
+      <time title="修改时间：2020-03-10 18:27:12" itemprop="dateModified" datetime="2020-03-10T18:27:12+08:00">2020-03-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1033,7 +592,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -1044,14 +603,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>490</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -1062,10 +621,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="x2F-etc-x2F-nova-x2F-nova-conf"><a href="#x2F-etc-x2F-nova-x2F-nova-conf" class="headerlink" title="&#x2F;etc&#x2F;nova&#x2F;nova.conf"></a>&#x2F;etc&#x2F;nova&#x2F;nova.conf</h2>
+          <p>redis 虽然是一个内存级别的缓存程序，即 redis 是使用内存进行数据的缓存的，但是其可以将内存的数据按照一定的策略保存到硬盘上，从而实现数据持久保存的目的，redis 支持两种不同方式的数据持久化保存机制，分别是 RDB 和 AOF</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9nova%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
+              <a class="btn" href="/2020/03/09/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96%E6%A8%A1%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1096,7 +655,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1114,7 +673,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">计算节点neutron配置文件</a>
+          <a href="/2020/03/09/redis/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">redis数据类型</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1125,14 +684,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-03-09 15:30:46" itemprop="dateCreated datePublished" datetime="2020-03-09T15:30:46+08:00">2020-03-09</time>
+      <time title="创建时间：2020-03-09 19:53:55" itemprop="dateCreated datePublished" datetime="2020-03-09T19:53:55+08:00">2020-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-03-10 18:56:59" itemprop="dateModified" datetime="2020-03-10T18:56:59+08:00">2020-03-10</time>
+      <time title="修改时间：2020-03-10 18:28:29" itemprop="dateModified" datetime="2020-03-10T18:28:29+08:00">2020-03-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1140,7 +699,223 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>86</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>字符串(string)：</p>
+<p>字符串是所有编程语言中最常见的和最常用的数据类型，而且也是redis最基本的数据类型之一，而且redis中所有的key的类型都是字符串。</p>
+<p><img src="/2020/03/09/redis/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/image-43.png" alt="img"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/redis/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E/" class="post-title-link" itemprop="url">redis主从</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 19:53:12" itemprop="dateCreated datePublished" datetime="2020-03-09T19:53:12+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 18:28:36" itemprop="dateModified" datetime="2020-03-10T18:28:36+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>321</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>虽然 Redis 可以实现单机的数据持久化，但无论是 RDB 也好或者 AOF 也好，都解决不了单点宕机问题，即一旦 redis 服务器本身出现系统故障、硬件故障等问题后，就会直接造成数据的丢失，因此需要使用另外的技术来解决单点问题。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">redis主从同步优化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 16:42:09" itemprop="dateCreated datePublished" datetime="2020-03-09T16:42:09+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 19:21:52" itemprop="dateModified" datetime="2020-03-10T19:21:52+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
         </span>
     </span>
 
@@ -1169,10 +944,218 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="x2F-etc-x2F-neutron-x2F-neutron-conf"><a href="#x2F-etc-x2F-neutron-x2F-neutron-conf" class="headerlink" title="&#x2F;etc&#x2F;neutron&#x2F;neutron.conf"></a>&#x2F;etc&#x2F;neutron&#x2F;neutron.conf</h2>
+          <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Redis 在 <span class="number">2.8</span> 版本之前没有提供增量部分复制的功能，当网络闪断或者 <span class="literal">slave</span> Redis 重启之后会导致主从之间的全量同步，即从 <span class="number">2.8</span> 版本开始增加了部分复制的功能。</span><br><span class="line">repl-diskless-sync yes   </span><br><span class="line"><span class="comment">#yes 为支持 disk，master 将 RDB 文件先保存到磁盘在发送给 slave，no 为 maste接将 RDB 文件发送给 slave，默认即为使用 no，Master RDB 文件不需要与磁盘交互。</span></span><br><span class="line">repl-diskless-sync-delay <span class="number">5</span> </span><br><span class="line"><span class="comment">#Master 准备好 RDB 文件后等等待传输时间</span></span><br><span class="line">repl-ping-<span class="literal">slave</span>-period <span class="number">10</span> </span><br><span class="line"><span class="comment">#slave 端向 server 端发送 ping 的时间区间设置，默认为 10 秒</span></span><br><span class="line">repl-timeout <span class="number">60</span> </span><br><span class="line"><span class="comment">#设置超时时间</span></span><br><span class="line">repl-disable-tcp-nodelay no </span><br><span class="line"><span class="comment">#是否启用 TCP_NODELAY，如设置成 yes，则 redis 会合并小的 TCP 包从而节省带宽，但会增加同步延迟（40ms），造成 master 与 slave 数据不一致，假如设置成 no，则 redis master会立即发送同步数据，没有延迟，前者关注性能，后者关注一致性</span></span><br><span class="line">repl-backlog-size <span class="number">1m</span>b </span><br><span class="line"><span class="comment">#master 的写入数据缓冲区，用于记录自上一次同步后到下一次同步过程中</span></span><br><span class="line">间的写入命令，计算公式：b repl-backlog-size = 允许从节点最大中断时长 * 主实例 offset 每秒写入量，比如 <span class="keyword">master</span> <span class="title">每秒最大写入 64mb</span>，最大允许 <span class="number">60</span> 秒，那么就要设置为 <span class="number">64m</span>b*<span class="number">60</span> 秒=<span class="number">3840m</span>b(<span class="number">3.8</span>G)=repl-backlog-ttl <span class="number">3600</span> <span class="comment">#如果一段时间后没有 slave 连接到 master，则 backlog size 的内存将会被释放。如果值为 0 则表示永远不释放这部份内存。</span></span><br><span class="line"><span class="literal">slave</span>-priority <span class="number">100</span> </span><br><span class="line"><span class="comment">#slave 端的优先级设置，值是一个整数，数字越小表示优先级越高。当 master 故障时将会按照优先级来选择 slave 端进行恢复，如果值设置为 0，则表示该 slave 永远不会被选择。</span></span><br><span class="line"><span class="comment">#min-slaves-to-write 0 #</span></span><br><span class="line"><span class="comment">#min-slaves-max-lag 10 #设置当一个 master 端的可用 slave 少于 N 个，延迟时间大于 M 秒时，不接收写操作。</span></span><br><span class="line"><span class="keyword">Master</span> <span class="title">的重启会导致 master_replid</span> 发生变化，<span class="literal">slave</span> 之前的 master_replid 就和 <span class="keyword">master</span> <span class="title">不一致从而会引发所有 slave</span> 的全量同步。</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">redis主从复制过程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 16:40:40" itemprop="dateCreated datePublished" datetime="2020-03-09T16:40:40+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 18:28:43" itemprop="dateModified" datetime="2020-03-10T18:28:43+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>802</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Redis 支持主从复制分为全量同步和增量同步，首次同步是全量同步</span><br><span class="line">主从同步可以让从服务器从主服务器备份数据，而且从服务器还可与有从服务器，即另外一台 redis 服务器可以从一台从服务器进行数据同步，</span><br><span class="line">redis 的主从同步是非阻塞的，其收到从服务器的 <span class="keyword">sync(2.8 </span>版本之前是 PSYNC)命令会fork 一个子进程在后台执行 <span class="keyword">bgsave </span>命令，并将新写入的数据写入到一个缓冲区里面，<span class="keyword">bgsave </span>执行完成之后并生成的将 RDB 文件发送给客户端，客户端将收到后的 RDB 文件载入自己的内存，然后主 redis将缓冲区的内容在全部发送给从 redis，之后的同步从服务器会发送一个 offset 的位置(等同于 MySQL的 <span class="keyword">binlog </span>的位置)给主服务器，主服务器检查后位置没有错误将此位置之后的数据包括写在缓冲区的积压数据发送给 redis 从服务器，从服务器将主服务器发送的挤压数据写入内存，这样一次完整的数据同步，再之后再同步的时候从服务器只要发送当前的 offset 位 置给主服务器，然后主服务器根据响应的位置将之后的数据发送给从服务器保存到其内存即可。</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/09/openstack/%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9neutron%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#more" rel="contents">
+              <a class="btn" href="/2020/03/09/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">redis集群</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-09 16:39:04" itemprop="dateCreated datePublished" datetime="2020-03-09T16:39:04+08:00">2020-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-03-10 18:27:42" itemprop="dateModified" datetime="2020-03-10T18:27:42+08:00">2020-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">上一个步骤的主从架构无法实现 <span class="keyword">master</span> <span class="title">和 slave</span> 角色的自动切换，即当 <span class="keyword">master</span> <span class="title">出现redis</span> 服务异常、主机断电、磁盘损坏等问题导致 <span class="keyword">master</span> <span class="title">无法使用，而 redis</span> 高可用无法实现自故障转移(将 <span class="literal">slave</span> 提升为 <span class="literal">master</span>)，需要手动改环境配置才能切换到 <span class="literal">slave</span> redis 服务器，另外也无法横向扩展 Redis 服务的并</span><br><span class="line">行写入性能，当单台 Redis 服务器性能无法满足业务写入需求的时候就必须需要一种方式解决以上的两个核心问题，即：<span class="number">1</span>.<span class="keyword">master</span> <span class="title">和 slave</span> 角色的无缝切换，让业务无感知从而不影响业务使用 <span class="number">2</span>.可以横向动态扩展 Redis 服务器，从而实现多台服务器并行写入以实现更高并发的目的。</span><br></pre></td></tr></table></figure>
+
+<p>Redis 集群实现方式：客户端分片 代理分片 Redis Cluster</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/redis/redis%E9%9B%86%E7%BE%A4/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1196,7 +1179,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/21/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/23/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/21/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/23/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1208,7 +1191,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1220,14 +1203,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

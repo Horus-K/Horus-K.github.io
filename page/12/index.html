@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Fluentd-简单使用</a>
+          <a href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/" class="post-title-link" itemprop="url">nginx日志切割</a>
         </h2>
 
         <div class="post-meta-container">
@@ -161,14 +161,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-06-04 21:12:32" itemprop="dateCreated datePublished" datetime="2020-06-04T21:12:32+08:00">2020-06-04</time>
+      <time title="创建时间：2020-08-11 16:04:11" itemprop="dateCreated datePublished" datetime="2020-08-11T16:04:11+08:00">2020-08-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-06-06 19:17:04" itemprop="dateModified" datetime="2020-06-06T19:17:04+08:00">2020-06-06</time>
+      <time title="修改时间：2020-10-29 20:44:42" itemprop="dateModified" datetime="2020-10-29T20:44:42+08:00">2020-10-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -176,7 +176,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+          <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
         </span>
     </span>
 
@@ -187,617 +187,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>EFK由ElasticSearch、Fluentd和Kiabana三个开源工具组成。其中Elasticsearch是一款分布式搜索引擎，能够用于日志的检索，Fluentd是一个实时开源的数据收集器,而Kibana 是一款能够为Elasticsearch 提供分析和可视化的 Web 平台。这三款开源工具的组合为日志数据提供了分布式的实时搜集与分析的监控系统。</p>
-<p>而在此之前，业界是采用ELK(Elasticsearch + Logstash + Kibana)来管理日志。Logstash是一个具有实时渠道能力的数据收集引擎,但和fluentd相比，它在效能上表现略逊一筹，故而逐渐被fluentd取代，ELK也随之变成EFK。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/04/k8s/Fluentd-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/02/k8s/Ingress-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/02/k8s/Ingress-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Ingress-简单使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-06-02 19:54:24" itemprop="dateCreated datePublished" datetime="2020-06-02T19:54:24+08:00">2020-06-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-07-08 20:08:43" itemprop="dateModified" datetime="2020-07-08T20:08:43+08:00">2020-07-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="一、Ingress-简介"><a href="#一、Ingress-简介" class="headerlink" title="一、Ingress 简介"></a>一、Ingress 简介</h3><p><img src="/2020/06/02/k8s/Ingress-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/20200217144625707.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/02/k8s/Ingress-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/" class="post-title-link" itemprop="url">k8s下使用Ingress开启跨域(CORS)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-06-02 14:56:09" itemprop="dateCreated datePublished" datetime="2020-06-02T14:56:09+08:00">2020-06-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-07-08 20:08:49" itemprop="dateModified" datetime="2020-07-08T20:08:49+08:00">2020-07-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.7k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在Ingress中，跨域(CORS)的配置如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">nginx.ingress.kubernetes.io/cors-allow-headers:</span> <span class="string">&gt;-</span></span><br><span class="line"><span class="string">      DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization</span></span><br><span class="line"><span class="string"></span>    <span class="attr">nginx.ingress.kubernetes.io/cors-allow-methods:</span> <span class="string">&#x27;PUT, GET, POST, OPTIONS&#x27;</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/cors-allow-origin:</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/enable-cors:</span> <span class="string">&#x27;true&#x27;</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/02/k8s/%C2%96k8s%E4%B8%8B%E4%BD%BF%E7%94%A8Ingress%E5%BC%80%E5%90%AF%E8%B7%A8%E5%9F%9F-CORS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/06/01/k8s/pod%E8%8E%B7%E5%8F%96yaml%E5%8F%98%E9%87%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/01/k8s/pod%E8%8E%B7%E5%8F%96yaml%E5%8F%98%E9%87%8F/" class="post-title-link" itemprop="url">pod获取yaml变量</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-06-01 11:40:50 / 修改时间：11:50:29" itemprop="dateCreated datePublished" datetime="2020-06-01T11:40:50+08:00">2020-06-01</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>官方文档：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/">https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/</a></p>
-<h2 id="pod字段"><a href="#pod字段" class="headerlink" title="pod字段"></a>pod字段</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-envars-fieldref</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">k8s.gcr.io/busybox</span></span><br><span class="line">      <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>]</span><br><span class="line">      <span class="attr">args:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">while</span> <span class="literal">true</span><span class="string">;</span> <span class="string">do</span></span><br><span class="line">          <span class="string">echo</span> <span class="string">-en</span> <span class="string">&#x27;\n&#x27;</span><span class="string">;</span></span><br><span class="line">          <span class="string">printenv</span> <span class="string">MY_NODE_NAME</span> <span class="string">MY_POD_NAME</span> <span class="string">MY_POD_NAMESPACE;</span></span><br><span class="line">          <span class="string">printenv</span> <span class="string">MY_POD_IP</span> <span class="string">MY_POD_SERVICE_ACCOUNT;</span></span><br><span class="line">          <span class="string">sleep</span> <span class="number">10</span><span class="string">;</span></span><br><span class="line">        <span class="string">done;</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_NODE_NAME</span>   <span class="string">//</span> <span class="string">节点名称</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">spec.nodeName</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_NAME</span>   <span class="string">//</span> <span class="string">pod</span> <span class="string">名称</span> </span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_NAMESPACE</span>  <span class="string">//</span> <span class="string">命名空间</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">metadata.namespace</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_IP</span>   <span class="string">//</span> <span class="string">pod</span> <span class="string">ip</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">status.podIP</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_SERVICE_ACCOUNT</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">spec.serviceAccountName</span>  <span class="string">//serviceAccountName</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/01/k8s/pod%E8%8E%B7%E5%8F%96yaml%E5%8F%98%E9%87%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/14/%E5%89%8D%E7%AB%AF/node%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/14/%E5%89%8D%E7%AB%AF/node%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">node环境安装</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2020-05-14 13:53:40 / 修改时间：14:03:49" itemprop="dateCreated datePublished" datetime="2020-05-14T13:53:40+08:00">2020-05-14</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>350</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line">wget https://npm.taobao.org/mirrors/node/v14.2.0/node-v14.2.0-linux-x64.tar.xz</span><br><span class="line">tar xf node-v14.2.0-linux-x64.tar.xz</span><br><span class="line"><span class="built_in">mkdir</span> /Data/apps/src -pv</span><br><span class="line"><span class="built_in">mv</span> node-v14.2.0-linux-x64 /Data/apps/src/</span><br><span class="line"><span class="built_in">cd</span> /Data/apps</span><br><span class="line"><span class="built_in">chown</span> -R `<span class="built_in">whoami</span>`:`<span class="built_in">whoami</span>` node./*</span><br><span class="line"><span class="built_in">ln</span> -s src/node-v14.2.0-linux-x64 node</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;PATH=$PATH:/Data/apps/node/bin&#x27;</span> &gt;&gt; /etc/profile</span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/14/docker/docker%E6%B8%85%E7%90%86%E5%9E%83%E5%9C%BE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/14/docker/docker%E6%B8%85%E7%90%86%E5%9E%83%E5%9C%BE/" class="post-title-link" itemprop="url">docker清理垃圾</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-14 13:46:48" itemprop="dateCreated datePublished" datetime="2020-05-14T13:46:48+08:00">2020-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-07-13 21:16:07" itemprop="dateModified" datetime="2021-07-13T21:16:07+08:00">2021-07-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>211</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="清理无用的卷"><a href="#清理无用的卷" class="headerlink" title="清理无用的卷"></a>清理无用的卷</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#dangling的镜像为未被打标签和没有被任何容器引用的镜像。</span></span><br><span class="line">docker volume <span class="built_in">rm</span> $(docker volume <span class="built_in">ls</span> -qf dangling=<span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="删除未使用到的镜像"><a href="#删除未使用到的镜像" class="headerlink" title="删除未使用到的镜像"></a>删除未使用到的镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi $(docker images -q -f <span class="string">&quot;dangling=true&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="删除已停止的容器"><a href="#删除已停止的容器" class="headerlink" title="删除已停止的容器"></a>删除已停止的容器</h4><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm <span class="constructor">$(<span class="params">docker</span> <span class="params">ps</span> -<span class="params">a</span> -<span class="params">q</span>)</span></span><br></pre></td></tr></table></figure>
-
-<p>Docker占用磁盘空间查看</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker system <span class="built_in">df</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/13/jenkins/jenkins%E8%AE%BE%E7%BD%AE%E5%8A%A8%E6%80%81docker-slave/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/13/jenkins/jenkins%E8%AE%BE%E7%BD%AE%E5%8A%A8%E6%80%81docker-slave/" class="post-title-link" itemprop="url">jenkins设置动态docker-slave</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-13 21:47:59" itemprop="dateCreated datePublished" datetime="2020-05-13T21:47:59+08:00">2020-05-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-05-14 17:57:30" itemprop="dateModified" datetime="2020-05-14T17:57:30+08:00">2020-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.9k</span>
+      <span>4.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -815,11 +205,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>jenkins-docker 启动命令</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -u root --name jenkins \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v /usr/libexec/docker:/usr/libexec/docker \</span><br><span class="line">-v /usr/bin/docker:/usr/bin/docker \</span><br><span class="line">-v jenkins:/var/jenkins_home \</span><br><span class="line">-p 80:8080 -p 50000:50000 \</span><br><span class="line">jenkinszh/jenkins-zh:lts</span><br></pre></td></tr></table></figure>
+          <h1 id="使用log-rotate"><a href="#使用log-rotate" class="headerlink" title="使用log-rotate"></a>使用log-rotate</h1><h2 id="nginx命令和信号控制"><a href="#nginx命令和信号控制" class="headerlink" title="nginx命令和信号控制"></a>nginx命令和信号控制</h2><ol>
+<li>nginx -s stop 快速关闭，不管有没有正在处理的请求 nginx -s quit 优雅关闭方式，推出前完成已经接受的连接请求</li>
+<li>nginx -c nginx配置文件地址 启动</li>
+<li>nginx -s reload 重启</li>
+<li>nginx -s reopen 重新打开日志</li>
+<li>nginx -t 检查配置文件是否正确</li>
+<li>kill -INT pid 表示快速关闭</li>
+<li>kill -HUP pid表示重启</li>
+<li>通过信号控制的方式实现和命令相同的功能</li>
+</ol>
+<h3 id="nginx内置变量"><a href="#nginx内置变量" class="headerlink" title="nginx内置变量"></a>nginx内置变量</h3>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/13/jenkins/jenkins%E8%AE%BE%E7%BD%AE%E5%8A%A8%E6%80%81docker-slave/#more" rel="contents">
+              <a class="btn" href="/2020/08/11/Nginx/nginx%E6%97%A5%E5%BF%97%E5%88%87%E5%89%B2/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -850,7 +249,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/12/jenkins/jenkins%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -868,7 +267,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/12/jenkins/jenkins%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/" class="post-title-link" itemprop="url">jenkins添加邮箱设置</a>
+          <a href="/2020/08/01/%E9%98%BF%E9%87%8C%E4%BA%91ASM%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC/" class="post-title-link" itemprop="url">阿里云ASM服务网格</a>
         </h2>
 
         <div class="post-meta-container">
@@ -879,14 +278,97 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-05-12 20:40:57" itemprop="dateCreated datePublished" datetime="2020-05-12T20:40:57+08:00">2020-05-12</time>
+      <time title="创建时间：2020-08-01 22:57:50" itemprop="dateCreated datePublished" datetime="2020-08-01T22:57:50+08:00">2020-08-01</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>0</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/" class="post-title-link" itemprop="url">ingress强制https</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-01 22:04:25" itemprop="dateCreated datePublished" datetime="2020-08-01T22:04:25+08:00">2020-08-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-05-13 22:15:04" itemprop="dateModified" datetime="2020-05-13T22:15:04+08:00">2020-05-13</time>
+      <time title="修改时间：2020-08-19 14:52:20" itemprop="dateModified" datetime="2020-08-19T14:52:20+08:00">2020-08-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -894,7 +376,115 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+          <a href="/categories/Ingress/" itemprop="url" rel="index"><span itemprop="name">Ingress</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>452</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>为ingress配置增加注解（annotations）：nginx.ingress.kubernetes.io&#x2F;ssl-redirect: ‘true’ 就可以实现http强制跳转至https</p>
+<p>不过默认情况ingress是通过308重定向跳转到https， ie浏览器不一定支持308状态， 可以通过如下方式修改ingress配置，让ingress通过301跳转到https</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/01/ingress/ingress%E5%BC%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">yaml文本换行语法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-30 13:57:07" itemprop="dateCreated datePublished" datetime="2020-07-30T13:57:07+08:00">2020-07-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-08-01 21:20:14" itemprop="dateModified" datetime="2020-08-01T21:20:14+08:00">2020-08-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
         </span>
     </span>
 
@@ -923,10 +513,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p><strong>Email Extension Plugin</strong></p>
+          <h1 id="YAML中多行字符串的配置方法"><a href="#YAML中多行字符串的配置方法" class="headerlink" title="YAML中多行字符串的配置方法"></a>YAML中多行字符串的配置方法</h1><p>有时候我们会在配置文件中配置一段文字说明，这种时候通常会出现两种需求：</p>
+<ol>
+<li>文字中可能出现段落，希望在配置中按段落方式编写，显示打印的时候也能出现段落换行。</li>
+<li>文字很长，为方便编辑，可能在配置文件中分段写，但是显示的时候不喜欢出现配置中的段落换行。</li>
+</ol>
+<p>简单的说，就是：</p>
+<ol>
+<li>配置与显示，都严格按段落展示</li>
+<li>配置按段落，显示不需要按段落</li>
+</ol>
+<p>假设，我们需要配置这样一段文字：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I am <span class="selector-tag">a</span> coder<span class="selector-class">.My</span> blog is didispace<span class="selector-class">.com</span>.</span><br></pre></td></tr></table></figure>
+
+<p>下面，就针对上面的两种情况来看看可以怎么来实现：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/12/jenkins/jenkins%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/#more" rel="contents">
+              <a class="btn" href="/2020/07/30/yaml%E6%96%87%E6%9C%AC%E6%8D%A2%E8%A1%8C%E8%AF%AD%E6%B3%95/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -957,7 +560,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/12/git/gitlab%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/24/Linux/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -975,7 +578,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/12/git/gitlab%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/" class="post-title-link" itemprop="url">gitlab添加邮箱设置</a>
+          <a href="/2020/07/24/Linux/linux%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">linux配置代理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -986,14 +589,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-05-12 17:34:07" itemprop="dateCreated datePublished" datetime="2020-05-12T17:34:07+08:00">2020-05-12</time>
+      <time title="创建时间：2020-07-24 15:43:13" itemprop="dateCreated datePublished" datetime="2020-07-24T15:43:13+08:00">2020-07-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-26 15:28:07" itemprop="dateModified" datetime="2020-08-26T15:28:07+08:00">2020-08-26</time>
+      <time title="修改时间：2020-08-26 15:25:05" itemprop="dateModified" datetime="2020-08-26T15:25:05+08:00">2020-08-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1001,7 +604,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
         </span>
     </span>
 
@@ -1012,14 +615,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>672</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -1030,10 +633,109 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h2><figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost opt]# grep -rn <span class="string">&quot;^[^#]&quot;</span> /etc/gitlab/gitlab.rb </span><br><span class="line">external_url <span class="string">&#x27;http://192.168.0.8:8080&#x27;</span> #如果使用容器要对应端口</span><br><span class="line">gitlab_rails[<span class="string">&#x27;gitlab_email_from&#x27;</span>] = <span class="string">&#x27;16253173030@qq.com&#x27;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_enable&#x27;</span>] = true</span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_address&#x27;</span>] = <span class="string">&quot;smtp.qq.com&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_port&#x27;</span>] = <span class="number">465</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_user_name&#x27;</span>] = <span class="string">&quot;16253173030@qq.com&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_password&#x27;</span>] = <span class="string">&quot;###授权码###&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_domain&#x27;</span>] = <span class="string">&quot;smtp.qq.com&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_authentication&#x27;</span>] = <span class="string">&quot;login&quot;</span></span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_enable_starttls_auto&#x27;</span>] = true</span><br><span class="line">gitlab_rails[<span class="string">&#x27;smtp_tls&#x27;</span>] = true</span><br></pre></td></tr></table></figure>
+          <p><strong>Linux系统下终端proxy代理配置</strong></p>
+<p>工作中有时会遇到需要翻墙下载软件的问题，这个时候就用到了正向代理。</p>
+<p>变量的设置方法<br>1、在 &#x2F;etc&#x2F;profile文件<br>2、在 ~&#x2F;.bashrc<br>3、在 &#x2F;etc&#x2F;profile.d&#x2F;文件夹下新建一个文件xxx.sh</p>
+<ul>
+<li>写入如下配置：</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> proxy=<span class="string">&quot;http://10.20.56.32:8000&quot;</span></span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> ftp_proxy=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> no_proxy=<span class="string">&quot;localhost, 127.0.0.1, ::1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>取消设置的方法</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unset</span> http_proxy</span><br><span class="line"><span class="built_in">unset</span> https_proxy</span><br><span class="line"><span class="built_in">unset</span> ftp_proxy</span><br><span class="line"><span class="built_in">unset</span> no_proxy</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">socket_proxy</span>=http://test:password@47.88.222.74:12345</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy</span>=http://47.88.222.74:12345/</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">socket_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">https_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">ftp_proxy</span>=<span class="variable">$proxy</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">no_proxy</span>=<span class="string">&quot;localhost, 127.0.0.1, ::1&quot;</span></span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy_username</span>=test</span><br><span class="line"><span class="built_in">export</span> <span class="attribute">proxy_password</span>=password</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/" class="post-title-link" itemprop="url">nginx详细编译参数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-24 13:54:18 / 修改时间：14:16:20" itemprop="dateCreated datePublished" datetime="2020-07-24T13:54:18+08:00">2020-07-24</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在nginx源码通过<code>./configure</code>获得所有编译参数</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/12/git/gitlab%E6%B7%BB%E5%8A%A0%E9%82%AE%E7%AE%B1%E8%AE%BE%E7%BD%AE/#more" rel="contents">
+              <a class="btn" href="/2020/07/24/Nginx/nginx%E8%AF%A6%E7%BB%86%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1064,7 +766,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/05/11/jenkins/jenkins%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E6%9E%84%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%88%A4%E6%96%AD%E5%88%86%E6%94%AF%E5%90%8D/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/21/jenkins/jenkins%E9%95%9C%E5%83%8F%E5%88%9D%E5%A7%8B%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1082,7 +784,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/11/jenkins/jenkins%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E6%9E%84%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%88%A4%E6%96%AD%E5%88%86%E6%94%AF%E5%90%8D/" class="post-title-link" itemprop="url">jenkins使用通用构建触发器实现自动判断分支名</a>
+          <a href="/2020/07/21/jenkins/jenkins%E9%95%9C%E5%83%8F%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">jenkins镜像初始化</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1093,14 +795,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-05-11 16:38:04" itemprop="dateCreated datePublished" datetime="2020-05-11T16:38:04+08:00">2020-05-11</time>
+      <time title="创建时间：2020-07-21 19:24:11" itemprop="dateCreated datePublished" datetime="2020-07-21T19:24:11+08:00">2020-07-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2020-08-26 15:29:29" itemprop="dateModified" datetime="2020-08-26T15:29:29+08:00">2020-08-26</time>
+      <time title="修改时间：2021-04-02 19:22:56" itemprop="dateModified" datetime="2021-04-02T19:22:56+08:00">2021-04-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1119,7 +821,113 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>125</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="镜像初始化"><a href="#镜像初始化" class="headerlink" title="镜像初始化"></a>镜像初始化</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> Dockerfile </span><br><span class="line">FROM jenkins/jenkins:2.277.1-lts-centos7</span><br><span class="line">USER root</span><br><span class="line">RUN sed -i <span class="string">&#x27;/jenkins/d&#x27;</span> /etc/passwd </span><br><span class="line">    &amp;&amp; sed -i <span class="string">&#x27;s#/root#/var/jenkins_home#&#x27;</span> /etc/passwd</span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.bash_profile /var/jenkins_home/</span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.bashrc /var/jenkins_home/      </span><br><span class="line">    &amp;&amp; <span class="built_in">cp</span> -a /root/.cshrc /var/jenkins_home/</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改插件源"><a href="#修改插件源" class="headerlink" title="修改插件源"></a>修改插件源</h3><p>由于默认插件源在国外服务器，大多数网络无法顺利下载，需修改国内插件源地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> jenkins_home/updates &amp;&amp; \</span><br><span class="line">sed -i <span class="string">&#x27;s/http:\/\/updates.jenkins-ci.org\/download/https:\/\/mirrors.tuna.tsinghua.edu.cn\/jenkins/g&#x27;</span> default.json &amp;&amp; \</span><br><span class="line">sed -i <span class="string">&#x27;s/http:\/\/www.google.com/https:\/\/www.baidu.com/g&#x27;</span> default.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="yaml"><a href="#yaml" class="headerlink" title="yaml"></a>yaml</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jenkins-v1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">devops</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">jenkins-v1</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">jenkins-v1</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">jenkins</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">jenkins</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">registry.cn-hangzhou.aliyuncs.com/xqbl-share/jenkins_root:2.235.2-lts-centos7</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">50000</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">agent</span></span><br><span class="line">              <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/var/jenkins_home</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">jenkinshome</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">dockersock</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/usr/bin/docker</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">dockercmd</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">kubectl</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">          <span class="attr">resources:</span></span><br><span class="line">            &#123;&#125;</span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">JAVA_OPTS</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">-Xmx3048m</span> <span class="string">-XshowSettings:vm</span> <span class="string">-Dhudson.slaves.NodeProvisioner.initialDelay=0</span> <span class="string">-Dhudson.slaves.NodeProvisioner.MARGIN=50</span> <span class="string">-Dhudson.slaves.NodeProvisioner.MARGIN0=0.85</span> <span class="string">-Duser.timezone=Asia/Shanghai</span> <span class="string">-Dfile.encoding=utf-8</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">jenkinshome</span></span><br><span class="line">          <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">            <span class="attr">claimName:</span> <span class="string">jenkinsdatafile</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">dockersock</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">dockercmd</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/usr/bin/docker</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">kubectl</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/usr/bin/kubectl</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/" class="post-title-link" itemprop="url">jenkins安卓打包</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-18 19:16:02" itemprop="dateCreated datePublished" datetime="2020-07-18T19:16:02+08:00">2020-07-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2020-08-01 21:19:13" itemprop="dateModified" datetime="2020-08-01T21:19:13+08:00">2020-08-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>288</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -1137,10 +945,241 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><p><img src="/2020/05/11/jenkins/jenkins%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E6%9E%84%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%88%A4%E6%96%AD%E5%88%86%E6%94%AF%E5%90%8D/1589186321290.png" alt="1589186321290"></p>
+          <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li><strong>java</strong></li>
+<li><strong>jdk</strong></li>
+<li><strong>Gradle</strong></li>
+</ul>
+<p>安装jdk</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz</span><br><span class="line">tar  -xf android-sdk_r24.4.1-linux.tgz</span><br><span class="line"><span class="built_in">cd</span> android-sdk-linux/</span><br><span class="line"><span class="comment"># 显示所有的sdk版本</span></span><br><span class="line">./tools/android list sdk --all</span><br><span class="line"><span class="comment"># 然后选择想要更新的版本的编号:</span></span><br><span class="line">./tools/android update sdk -u -a -t &lt;package no.&gt;</span><br><span class="line"><span class="comment"># 如:</span></span><br><span class="line">./tools/android update sdk -u -a -t 1,2,3,4</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/image-20200718194105751.png" alt="image-20200718194105751"></p>
+<p><img src="/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/image-20200718194157735.png" alt="image-20200718194157735"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/05/11/jenkins/jenkins%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E6%9E%84%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%88%A4%E6%96%AD%E5%88%86%E6%94%AF%E5%90%8D/#more" rel="contents">
+              <a class="btn" href="/2020/07/18/jenkins/jenkins%E5%AE%89%E5%8D%93%E6%89%93%E5%8C%85/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/" class="post-title-link" itemprop="url">k8s流量策略-获取真实ip</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-11 14:24:57 / 修改时间：15:01:02" itemprop="dateCreated datePublished" datetime="2020-07-11T14:24:57+08:00">2020-07-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="externalTrafficPolicy-简介"><a href="#externalTrafficPolicy-简介" class="headerlink" title="externalTrafficPolicy 简介"></a>externalTrafficPolicy 简介</h2><p>如果服务需要将外部流量路由到 本地节点或者集群级别的端点，即service type 为LoadBalancer或NodePort，那么需要指明该参数。存在两种选项：”Cluster”（默认）和 “Local”。 “Cluster” 隐藏源 IP 地址，可能会导致第二跳（second hop）到其他节点，但是全局负载效果较好。”Local” 保留客户端源 IP 地址，避免 LoadBalancer 和 NodePort 类型服务的第二跳，但是可能会导致负载不平衡。</p>
+<p>在实际的业务中，诸多业务是需要保留客户端源 IP，所以需要通过将服务的配置文件中的 externalTrafficPolicy 参数设置为 “Local” 来激活这个特性。</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;kind&quot;</span>: <span class="string">&quot;Service&quot;</span>,</span><br><span class="line">  <span class="string">&quot;apiVersion&quot;</span>: <span class="string">&quot;v1&quot;</span>,</span><br><span class="line">  <span class="string">&quot;metadata&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;example-service&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;spec&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;ports&quot;</span>: [&#123;</span><br><span class="line">      <span class="string">&quot;port&quot;</span>: <span class="number">8765</span>,</span><br><span class="line">      <span class="string">&quot;targetPort&quot;</span>: <span class="number">9376</span></span><br><span class="line">    &#125;],</span><br><span class="line">    <span class="string">&quot;selector&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;app&quot;</span>: <span class="string">&quot;example&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;type&quot;</span>: <span class="string">&quot;LoadBalancer&quot;</span>,</span><br><span class="line">    <span class="string">&quot;externalTrafficPolicy&quot;</span>: <span class="string">&quot;Local&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/11/k8s/k8s%E6%B5%81%E9%87%8F%E7%AD%96%E7%95%A5-%E8%8E%B7%E5%8F%96%E7%9C%9F%E5%AE%9Eip/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">k8s和docker中搭建使用ldap+manager</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-08 15:59:07" itemprop="dateCreated datePublished" datetime="2020-07-08T15:59:07+08:00">2020-07-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-03 17:04:02" itemprop="dateModified" datetime="2022-11-03T17:04:02+08:00">2022-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ldap/" itemprop="url" rel="index"><span itemprop="name">ldap</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="搭建"><a href="#搭建" class="headerlink" title="搭建"></a>搭建</h1><h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><h3 id="安装OpenLDAP的相关"><a href="#安装OpenLDAP的相关" class="headerlink" title="安装OpenLDAP的相关"></a>安装OpenLDAP的相关</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install openldap compat-openldap openldap-clients openldap-servers openldap-servers-sql openldap-devel migrationtools</span><br><span class="line"></span><br><span class="line"><span class="comment">#ldap用户</span></span><br><span class="line">$ <span class="built_in">tail</span> -n 1 /etc/passwd</span><br><span class="line">ldap:x:55:55:LDAP User:/var/lib/ldap:/sbin/nologin</span><br><span class="line"></span><br><span class="line"><span class="comment">#可以通过rpm -qa |grep openldap查看安装了哪些包：</span></span><br><span class="line">$ rpm -qa | grep openldap</span><br><span class="line">openldap-servers-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-servers-sql-2.4.44-22.el7.x86_64</span><br><span class="line">compat-openldap-2.3.43-5.el7.x86_64</span><br><span class="line">openldap-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-devel-2.4.44-22.el7.x86_64</span><br><span class="line">openldap-clients-2.4.44-22.el7.x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看OpenLDAP版本，使用：slapd -VV</span></span><br><span class="line">$ slapd -VV</span><br><span class="line">@(<span class="comment">#) $OpenLDAP: slapd 2.4.44 (Sep 30 2020 17:16:39) $</span></span><br><span class="line">	mockbuild@x86-02.bsys.centos.org:/builddir/build/BUILD/openldap-2.4.44/openldap-2.4.44/servers/slapd</span><br><span class="line"></span><br><span class="line"><span class="comment">#penLDAP的相关配置文件信息</span></span><br><span class="line">/etc/openldap/slapd.conf                                    <span class="comment"># OpenLDAP的主配置文件，记录根域信息，管理员名称，密码，日志，权限等</span></span><br><span class="line">/etc/openldap/slapd.d/*                                     <span class="comment"># 这下面是slapd.conf配置信息生成的文件，每修改一次配置信息，这里的东西就要重新生成</span></span><br><span class="line">/etc/openldap/schema/*                                      <span class="comment"># OpenLDAP的schema存放的地方</span></span><br><span class="line">/var/lib/ldap/*                                             <span class="comment"># OpenLDAP的数据文件</span></span><br><span class="line">/usr/share/openldap-servers/slapd.conf.obsolete             <span class="comment"># 模板配置文件</span></span><br><span class="line">/usr/share/openldap-servers/DB_CONFIG.example               <span class="comment"># 模板数据库配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#penLDAP监听的端口：</span></span><br><span class="line">      默认监听端口：389（明文数据传输）</span><br><span class="line">      加密监听端口：636（密文数据传输）</span><br><span class="line"></span><br><span class="line"><span class="comment">#初始化OpenLDAP的配置</span></span><br><span class="line"><span class="built_in">chown</span> ldap:ldap /var/lib/ldap/DB_CONFIG</span><br><span class="line"></span><br><span class="line"><span class="comment">#改配置文件</span></span><br><span class="line">OpenLDAP 2.3之后的版本取消了/etc/openldap/slapd.conf的配置方式，使用ldif文件动态配置，目前网上的文档五花八门而且缺胳膊少腿，以下参考官方文档及slapd-config(5)</span><br><span class="line">http://www.openldap.org/doc/admin24/slapdconf2.html</span><br><span class="line">http://www.openldap.org/doc/admin24/quickstart.html</span><br><span class="line">$ slappasswd -s 123456</span><br><span class="line">&#123;SSHA&#125;cQb7UUcz2x6p6rB1gm9EmsVcM8Rrfp6h</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将所需模块注释去掉，olcSuffix和olcRootDN按照实际情况修改，如不需要TLS，将相应内容注释</span></span><br><span class="line"><span class="comment">#vim /usr/share/openldap-servers/slapd.ldif </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># See slapd-config(5) for details on configuration options.</span></span><br><span class="line"><span class="comment"># This file should NOT be world readable.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=config</span><br><span class="line">objectClass: olcGlobal</span><br><span class="line">cn: config</span><br><span class="line">olcArgsFile: /var/run/openldap/slapd.args</span><br><span class="line">olcPidFile: /var/run/openldap/slapd.pid</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># TLS settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcTLSCACertificatePath: /etc/openldap/certs</span></span><br><span class="line"><span class="comment">#olcTLSCertificateFile: &quot;OpenLDAP Server&quot;</span></span><br><span class="line"><span class="comment">#olcTLSCertificateKeyFile: /etc/openldap/certs/password</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Do not enable referrals until AFTER you have a working directory</span></span><br><span class="line"><span class="comment"># service AND an understanding of referrals.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcReferral: ldap://root.openldap.org</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample security restrictions</span></span><br><span class="line"><span class="comment">#	Require integrity protection (prevent hijacking)</span></span><br><span class="line"><span class="comment">#	Require 112-bit (3DES or better) encryption for updates</span></span><br><span class="line"><span class="comment">#	Require 64-bit encryption for simple bind</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcSecurity: ssf=1 update_ssf=112 simple_bind=64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Load dynamic backend modules:</span></span><br><span class="line"><span class="comment"># - modulepath is architecture dependent value (32/64-bit system)</span></span><br><span class="line"><span class="comment"># - back_sql.la backend requires openldap-servers-sql package</span></span><br><span class="line"><span class="comment"># - dyngroup.la and dynlist.la cannot be used at the same time</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=module,cn=config</span><br><span class="line">objectClass: olcModuleList</span><br><span class="line">cn: module</span><br><span class="line"><span class="comment"># olcModulepath:	/usr/lib/openldap</span></span><br><span class="line">olcModulepath:	/usr/lib64/openldap</span><br><span class="line">olcModuleload: accesslog.la</span><br><span class="line">olcModuleload: auditlog.la</span><br><span class="line">olcModuleload: back_dnssrv.la</span><br><span class="line">olcModuleload: back_ldap.la</span><br><span class="line">olcModuleload: back_mdb.la</span><br><span class="line">olcModuleload: back_meta.la</span><br><span class="line">olcModuleload: back_null.la</span><br><span class="line">olcModuleload: back_passwd.la</span><br><span class="line">olcModuleload: back_relay.la</span><br><span class="line">olcModuleload: back_shell.la</span><br><span class="line">olcModuleload: back_sock.la</span><br><span class="line">olcModuleload: collect.la</span><br><span class="line">olcModuleload: constraint.la</span><br><span class="line">olcModuleload: dds.la</span><br><span class="line">olcModuleload: deref.la</span><br><span class="line"><span class="comment"># olcModuleload: dyngroup.la</span></span><br><span class="line">olcModuleload: dynlist.la</span><br><span class="line">olcModuleload: memberof.la</span><br><span class="line">olcModuleload: pcache.la</span><br><span class="line">olcModuleload: ppolicy.la</span><br><span class="line">olcModuleload: refint.la</span><br><span class="line">olcModuleload: retcode.la</span><br><span class="line">olcModuleload: rwm.la</span><br><span class="line">olcModuleload: seqmod.la</span><br><span class="line">olcModuleload: smbk5pwd.la</span><br><span class="line">olcModuleload: sssvlv.la</span><br><span class="line">olcModuleload: syncprov.la</span><br><span class="line">olcModuleload: translucent.la</span><br><span class="line">olcModuleload: unique.la</span><br><span class="line">olcModuleload: valsort.la</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Schema settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: cn=schema,cn=config</span><br><span class="line">objectClass: olcSchemaConfig</span><br><span class="line">cn: schema</span><br><span class="line"></span><br><span class="line">include: file:///etc/openldap/schema/core.ldif</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Frontend settings</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=frontend,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">objectClass: olcFrontendConfig</span><br><span class="line">olcDatabase: frontend</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample global access control policy:</span></span><br><span class="line"><span class="comment">#	Root DSE: allow anyone to read it</span></span><br><span class="line"><span class="comment">#	Subschema (sub)entry DSE: allow anyone to read it</span></span><br><span class="line"><span class="comment">#	Other DSEs:</span></span><br><span class="line"><span class="comment">#		Allow self write access</span></span><br><span class="line"><span class="comment">#		Allow authenticated users read access</span></span><br><span class="line"><span class="comment">#		Allow anonymous users to authenticate</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#olcAccess: to dn.base=&quot;&quot; by * read</span></span><br><span class="line"><span class="comment">#olcAccess: to dn.base=&quot;cn=Subschema&quot; by * read</span></span><br><span class="line"><span class="comment">#olcAccess: to *</span></span><br><span class="line"><span class="comment">#	by self write</span></span><br><span class="line"><span class="comment">#	by users read</span></span><br><span class="line"><span class="comment">#	by anonymous auth</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># if no access controls are present, the default policy</span></span><br><span class="line"><span class="comment"># allows anyone and everyone to read anything but restricts</span></span><br><span class="line"><span class="comment"># updates to rootdn.  (e.g., &quot;access to * by * read&quot;)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># rootdn can always read and write EVERYTHING!</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Configuration database</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=config,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">olcDatabase: config</span><br><span class="line">olcAccess: to * by dn.base=<span class="string">&quot;gidNumber=0+uidNumber=0,cn=peercred,cn=external,c</span></span><br><span class="line"><span class="string"> n=auth&quot;</span> manage by * none</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Server status monitoring</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=monitor,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">olcDatabase: monitor</span><br><span class="line">olcAccess: to * by dn.base=<span class="string">&quot;gidNumber=0+uidNumber=0,cn=peercred,cn=external,c</span></span><br><span class="line"><span class="string"> n=auth&quot;</span> <span class="built_in">read</span> by dn.base=<span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> <span class="built_in">read</span> by * none <span class="comment">#修改cn,dc</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Backend database definitions</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">dn: olcDatabase=hdb,cn=config</span><br><span class="line">objectClass: olcDatabaseConfig</span><br><span class="line">objectClass: olcHdbConfig</span><br><span class="line">olcDatabase: hdb</span><br><span class="line">olcSuffix: dc=quhui,dc=com  <span class="comment">#修改dc</span></span><br><span class="line">olcRootDN: cn=root,dc=quhui,dc=com <span class="comment">#修改cn,dc</span></span><br><span class="line">olcRootPW: &#123;SSHA&#125;cQb7UUcz2x6p6rB1gm9EmsVcM8Rrfp6h <span class="comment">#初始化便更新密码，初始化后手动修改配置会报错，但没事</span></span><br><span class="line">olcDbDirectory:	/var/lib/ldap</span><br><span class="line">olcDbIndex: objectClass eq,pres</span><br><span class="line">olcDbIndex: ou,cn,mail,surname,givenname eq,pres,sub</span><br></pre></td></tr></table></figure>
+
+<h3 id="导入DB-CONFIG、重新生成配置、修改目录权限并启动服务"><a href="#导入DB-CONFIG、重新生成配置、修改目录权限并启动服务" class="headerlink" title="导入DB_CONFIG、重新生成配置、修改目录权限并启动服务"></a><strong>导入DB_CONFIG、重新生成配置、修改目录权限并启动服务</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /etc/openldap/slapd.d/* <span class="comment">#删除旧配置</span></span><br><span class="line"><span class="built_in">cp</span> /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG　　　　　<span class="comment"># copy数据库文件</span></span><br><span class="line">slapadd -n 0 -F /etc/openldap/slapd.d -l /usr/share/openldap-servers/slapd.ldif <span class="comment">#导入配置</span></span><br><span class="line"><span class="comment">#修改目录权限</span></span><br><span class="line"><span class="built_in">chown</span> -R ldap.ldap /etc/openldap/slapd.d/*</span><br><span class="line"><span class="built_in">chown</span> -R ldap.ldap /var/lib/ldap/*</span><br><span class="line"><span class="comment">#导入schema</span></span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif</span><br><span class="line">ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a><strong>启动</strong></h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl restart slapd</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="执行ldapsearch-x检查是否有如下输出"><a href="#执行ldapsearch-x检查是否有如下输出" class="headerlink" title="执行ldapsearch -x检查是否有如下输出"></a><strong>执行ldapsearch -x检查是否有如下输出</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ ldapsearch -x -b <span class="string">&#x27;&#x27;</span> -s base<span class="string">&#x27;(objectclass=*)&#x27;</span></span><br><span class="line"><span class="comment"># extended LDIF</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># LDAPv3</span></span><br><span class="line"><span class="comment"># base &lt;&gt; with scope baseObject</span></span><br><span class="line"><span class="comment"># filter: (objectclass=*)</span></span><br><span class="line"><span class="comment"># requesting: ALL</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">dn:</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: OpenLDAProotDSE</span><br><span class="line"></span><br><span class="line"><span class="comment"># search result</span></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br><span class="line"></span><br><span class="line"><span class="comment"># numResponses: 2</span></span><br><span class="line"><span class="comment"># numEntries: 1</span></span><br><span class="line">$ ldapsearch -x -b <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="验证用户密码"><a href="#验证用户密码" class="headerlink" title="验证用户密码"></a><strong>验证用户密码</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ldapwhoami -D <span class="string">&quot;cn=root,dc=quhui,dc=com&quot;</span> -W -H ldap://127.0.0.1 -v</span><br><span class="line">ldap_initialize( ldap://127.0.0.1:389/??base )</span><br><span class="line">Enter LDAP Password: </span><br><span class="line">dn:cn=root,dc=quhui,dc=com</span><br><span class="line">Result: Success (0)</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h2><h3 id="server"><a href="#server" class="headerlink" title="server"></a>server</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart always \</span><br><span class="line">-p 389:389 -p 636:636 \</span><br><span class="line">--name ldap-server \</span><br><span class="line">--<span class="built_in">env</span> LDAP_TLS=<span class="literal">false</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_ORGANISATION=<span class="string">&quot;flashwhale&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_DOMAIN=<span class="string">&quot;flashwhale.com&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_ADMIN_PASSWORD=<span class="string">&quot;djadmin&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> LDAP_CONFIG_PASSWORD=<span class="string">&quot;djadmin&quot;</span> \</span><br><span class="line">-v /data/ldap/ldap:/var/lib/ldap \</span><br><span class="line">-v /data/ldap/slapd.d:/etc/ldap/slapd.d \</span><br><span class="line">osixia/openldap:1.4.0</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认配置(不加变量)</span></span><br><span class="line">dn          dc=example,dc=org</span><br><span class="line">admin       admin,dc=example,dc=org</span><br><span class="line">password    admin</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/07/08/LDAP/ldap+manager%E4%BD%BF%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1164,7 +1203,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/13/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/11/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/13/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1176,7 +1215,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1188,14 +1227,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">127</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">272</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -132,7 +132,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/01/14/k8s%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -150,7 +150,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/14/k8s%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99/" class="post-title-link" itemprop="url">k8s告警规则</a>
+          <a href="/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">openresty lua 使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -161,23 +161,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-14 15:27:36" itemprop="dateCreated datePublished" datetime="2022-01-14T15:27:36+08:00">2022-01-14</time>
+      <time title="创建时间：2023-05-18 11:03:56" itemprop="dateCreated datePublished" datetime="2023-05-18T11:03:56+08:00">2023-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-26 15:35:41" itemprop="dateModified" datetime="2022-01-26T15:35:41+08:00">2022-01-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-        </span>
+      <time title="修改时间：2023-11-27 17:26:47" itemprop="dateModified" datetime="2023-11-27T17:26:47+08:00">2023-11-27</time>
     </span>
 
   
@@ -187,14 +178,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>112k</span>
+      <span>3.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1:42</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -205,10 +196,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="聚合规则"><a href="#聚合规则" class="headerlink" title="聚合规则"></a>聚合规则</h1>
+          <p>简单例子</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/14/k8s%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99/#more" rel="contents">
+              <a class="btn" href="/2023/05/18/openresty-lua-%E4%BD%BF%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -239,7 +230,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/01/08/linux%E6%8E%92%E6%9F%A5-cpu/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/18/wrk%E5%8E%8B%E6%B5%8B%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -257,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/08/linux%E6%8E%92%E6%9F%A5-cpu/" class="post-title-link" itemprop="url">linux排查-cpu</a>
+          <a href="/2023/05/18/wrk%E5%8E%8B%E6%B5%8B%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">wrk压测工具使用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -268,23 +259,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-08 11:11:58" itemprop="dateCreated datePublished" datetime="2022-01-08T11:11:58+08:00">2022-01-08</time>
+      <time title="创建时间：2023-05-18 10:58:15" itemprop="dateCreated datePublished" datetime="2023-05-18T10:58:15+08:00">2023-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-20 11:42:48" itemprop="dateModified" datetime="2022-07-20T11:42:48+08:00">2022-07-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">Linux性能优化</span></a>
-        </span>
+      <time title="修改时间：2023-05-25 18:43:11" itemprop="dateModified" datetime="2023-05-25T18:43:11+08:00">2023-05-25</time>
     </span>
 
   
@@ -294,14 +276,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>25k</span>
+      <span>389</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>22 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -312,17 +294,117 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="排查工具汇总"><a href="#排查工具汇总" class="headerlink" title="排查工具汇总"></a>排查工具汇总</h1><ul>
-<li>stress 是一个 Linux 系统压力测试工具，这里我们用作异常进程模拟平均负载升高的场景。</li>
-<li>mpstat 是一个常用的多核 CPU 性能分析工具，用来实时查看每个 CPU 的性能指标，以及所有 CPU 的平均指标。</li>
-<li>pidstat 是一个常用的进程性能分析工具，用来实时查看进程的 CPU、内存、I&#x2F;O 以及上下文切换等性能指标。</li>
-<li>vmstat 是一个常用的系统性能分析工具，主要用来分析系统的内存使用情况，也常用来分析 CPU 上下文切换和中断的次数。</li>
-<li>pidstat 每个进程的详细情况上下文切换和中断的次数。</li>
-<li>sysbench 是一个多线程的基准测试工具，一般用来评估不同系统参数下的数据库负载情况。当然，在这次案例中，我们只把它当成一个异常进程来看，作用是模拟上下文切换过多的问题。</li>
-</ul>
+          <p>wrk 是一种现代 HTTP 基准测试工具，能够在单个多核 CPU 上运行时产生大量负载。它将多线程设计与可扩展的事件通知系统（如 epoll 和 kqueue）相结合。</p>
+<!--moew-->
+
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><p>这运行基准测试 30 秒，使用 12 个线程，并保持 400 个 HTTP 连接打开。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wrk -t12 -c400 -d30s http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8080</span>/index.html</span><br></pre></td></tr></table></figure>
+
+<p>-c, –connections：保持打开状态的 HTTP 连接总数<br>                    每个线程处理 N &#x3D; 连接&#x2F;线程</p>
+<p>-d, –duration: 测试持续时间，例如 2 秒、2 米、2 小时</p>
+<p>-t, –threads：要使用的线程总数</p>
+<p>-s, –script: LuaJIT 脚本，见 SCRIPTING</p>
+<p>-H, –header: 添加到请求的 HTTP 标头，例如 “用户代理：wrk”</p>
+<p> –latency：打印详细的延迟统计信息</p>
+<p> –timeout：如果在时间内没有收到响应，则记录超时<br>                这段时间。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/05/10/PaddlePaddle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/05/10/PaddlePaddle/" class="post-title-link" itemprop="url">基于PaddleServing的 PaddlePaddle+PaddleOCR服务化部署(k8s)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-10 18:14:26" itemprop="dateCreated datePublished" datetime="2023-05-10T18:14:26+08:00">2023-05-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-12 16:27:14" itemprop="dateModified" datetime="2023-05-12T16:27:14+08:00">2023-05-12</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>官方文档</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/deploy/pdserving/README_CN.md">https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/deploy/pdserving/README_CN.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PaddlePaddle/Serving/blob/v0.8.3/doc/Latest_Packages_CN.md">https://github.com/PaddlePaddle/Serving/blob/v0.8.3/doc/Latest_Packages_CN.md</a></p>
+<p>PaddlePaddle是一个深度学习框架，提供了丰富的深度学习模型和工具，可以让用户快速构建、训练和部署深度学习模型。PaddlePaddle 支持多种编程语言，包括 Python、C++等，同时还提供了丰富的数据集和工具集，例如预训练模型、模型优化工具等。PaddlePaddle 可以用于各种深度学习应用，包括计算机视觉、自然语言处理、推荐系统等。</p>
+<p>PaddleServing 则是一个用于部署深度学习模型的开源服务器，它可以将训练好的深度学习模型转换为可以被部署到生产环境中的格式，例如 HTTP API、Docker 容器等。PaddleServing 支持多种深度学习框架，包括 TensorFlow、PyTorch 等，同时还提供了丰富的功能，例如模型优化、量化、调参等。PaddleServing 可以帮助用户快速构建深度学习应用程序，并方便地进行部署和扩展。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/08/linux%E6%8E%92%E6%9F%A5-cpu/#more" rel="contents">
+              <a class="btn" href="/2023/05/10/PaddlePaddle/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -353,7 +435,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/12/16/docker%E6%90%AD%E5%BB%BAopenvpn/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/03/26/gitlab%E8%BF%81%E7%A7%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -371,7 +453,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/16/docker%E6%90%AD%E5%BB%BAopenvpn/" class="post-title-link" itemprop="url">docker搭建openvpn</a>
+          <a href="/2023/03/26/gitlab%E8%BF%81%E7%A7%BB/" class="post-title-link" itemprop="url">gitlab迁移</a>
         </h2>
 
         <div class="post-meta-container">
@@ -382,23 +464,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-12-16 10:38:25" itemprop="dateCreated datePublished" datetime="2021-12-16T10:38:25+08:00">2021-12-16</time>
+      <time title="创建时间：2023-03-26 20:17:37" itemprop="dateCreated datePublished" datetime="2023-03-26T20:17:37+08:00">2023-03-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-09-16 18:58:11" itemprop="dateModified" datetime="2022-09-16T18:58:11+08:00">2022-09-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/openvpn/" itemprop="url" rel="index"><span itemprop="name">openvpn</span></a>
-        </span>
+      <time title="修改时间：2023-04-11 14:10:08" itemprop="dateModified" datetime="2023-04-11T14:10:08+08:00">2023-04-11</time>
     </span>
 
   
@@ -408,14 +481,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.2k</span>
+      <span>795</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -426,13 +499,112 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="搭建"><a href="#搭建" class="headerlink" title="搭建"></a>搭建</h1><p><a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/how-to-run-openvpn-in-a-docker-container-on-ubuntu-14-04">https://www.digitalocean.com/community/tutorials/how-to-run-openvpn-in-a-docker-container-on-ubuntu-14-04</a></p>
-<p>配置OpenVPN<br>配置数据卷，生成配置文件。预计网段人数不多，使用192.168.0.0&#x2F;24网段，但需要注意的是在配置固定IP时，掩码必须为&#x2F;30，因此固定IP需要注意正确配置。#配置数据卷</p>
-<p>创建挂载目录</p>
-<h2 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="regexp">/home/</span>openvpn</span><br><span class="line"><span class="comment"># -d 取消默认配置 -c 打开client-to-client模式 -u 指定当前域名或IP</span></span><br><span class="line">docker run \</span><br><span class="line">--name openvpn --privileged=true --rm \</span><br><span class="line">-v <span class="regexp">/home/</span>openvpn:<span class="regexp">/etc/</span>openvpn \</span><br><span class="line">kylemanna/openvpn:latest \</span><br><span class="line">ovpn_genconfig \</span><br><span class="line">-d -c -C <span class="string">&quot;AES-256-CBC&quot;</span> \</span><br><span class="line">-u tcp:<span class="regexp">//</span>&lt;公网IP or IP&gt; -s <span class="number">192.168</span>.<span class="number">100.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure>
+          <p>注意:</p>
+<p>迁移时需要将服务器<code>/etc/ssh</code>中的秘钥文件迁移走</p>
+<p>镜像的秘钥路径在<code>/etc/gitlab/</code>中</p>
+<p>项目无法删除报500</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37837432/article/details/121642542">https://blog.csdn.net/qq_37837432/article/details/121642542</a></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">su - gitlab-psql</span><br><span class="line">psql -h <span class="regexp">/var/</span>opt<span class="regexp">/gitlab/</span>postgresql -d gitlabhq_production</span><br><span class="line">UPDATE projects SET runners_token = <span class="keyword">null</span>, runners_token_encrypted = <span class="keyword">null</span> where name=<span class="string">&#x27;xxxxx&#x27;</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果是ldap用户的<strong>个人项目</strong>无法删除，就将他的账户标识删除后登录再删除项目</p>
+<p>迁移后异常500问题修复</p>
+<p>OpenSSL::Cipher::CipherError ():</p>
+<p>lib&#x2F;gitlab&#x2F;database&#x2F;load_balancing&#x2F;connection_proxy.rb:126:in &#96;block in write_using_load_balancer’</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-rails runner <span class="string">&quot;Project.where.not(import_url: nil).each &#123; |p| p.import_data.destroy if p.import_data &#125;&quot;</span></span><br><span class="line">sudo gitlab-rails c</span><br><span class="line">settings = <span class="module-access"><span class="module"><span class="identifier">ApplicationSetting</span>.</span></span>last</span><br><span class="line">settings.update<span class="constructor">_column(:<span class="params">runners_registration_token_encrypted</span>, <span class="params">nil</span>)</span></span><br><span class="line">settings.update<span class="constructor">_column(:<span class="params">encrypted_ci_jwt_signing_key</span>, <span class="params">nil</span>)</span></span><br><span class="line">settings.save!</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/02/03/%E5%BF%AB%E9%80%9F%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/02/03/%E5%BF%AB%E9%80%9F%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">快速初始化k8s集群-sealos</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-03 13:04:08" itemprop="dateCreated datePublished" datetime="2023-02-03T13:04:08+08:00">2023-02-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-15 10:36:59" itemprop="dateModified" datetime="2024-04-15T10:36:59+08:00">2024-04-15</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="https://www.sealos.io/zh-Hans/docs/getting-started/offline-install">https://www.sealos.io/zh-Hans/docs/getting-started/offline-install</a></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/12/16/docker%E6%90%AD%E5%BB%BAopenvpn/#more" rel="contents">
+              <a class="btn" href="/2023/02/03/%E5%BF%AB%E9%80%9F%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -463,7 +635,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/12/04/k8s%E5%9B%BE%E8%B0%B1/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/11/24/Linux-python-selenium-%E8%87%AA%E5%8A%A8%E6%88%AA%E5%9B%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -481,7 +653,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/04/k8s%E5%9B%BE%E8%B0%B1/" class="post-title-link" itemprop="url">k8s图谱</a>
+          <a href="/2022/11/24/Linux-python-selenium-%E8%87%AA%E5%8A%A8%E6%88%AA%E5%9B%BE/" class="post-title-link" itemprop="url">Linux+python+selenium+自动截图</a>
         </h2>
 
         <div class="post-meta-container">
@@ -493,7 +665,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-12-04 23:09:40 / 修改时间：23:09:57" itemprop="dateCreated datePublished" datetime="2021-12-04T23:09:40+08:00">2021-12-04</time>
+      <time title="创建时间：2022-11-24 19:39:06 / 修改时间：20:04:45" itemprop="dateCreated datePublished" datetime="2022-11-24T19:39:06+08:00">2022-11-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -501,8 +673,107 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+          <a href="/categories/selenium/" itemprop="url" rel="index"><span itemprop="name">selenium</span></a>
         </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>某些原因需要自动截图。。</p>
+<p>参考文档:</p>
+<p>操作cookie：<a target="_blank" rel="noopener" href="https://blog.csdn.net/ytraister/article/details/106033630">https://blog.csdn.net/ytraister/article/details/106033630</a></p>
+<p>参数： <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43968923/article/details/87899762">https://blog.csdn.net/weixin_43968923/article/details/87899762</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_50944918/article/details/113185800">https://blog.csdn.net/m0_50944918/article/details/113185800</a></p>
+<p>鼠标点击： <a target="_blank" rel="noopener" href="http://www.360doc.com/content/22/1112/08/65839882_1055570473.shtml">http://www.360doc.com/content/22/1112/08/65839882_1055570473.shtml</a></p>
+<p>模拟手机：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiao_yi_xiao/article/details/122220828">https://blog.csdn.net/xiao_yi_xiao/article/details/122220828</a></p>
+<p>安装环境: <a target="_blank" rel="noopener" href="https://blog.csdn.net/zxp3817100/article/details/125089490">https://blog.csdn.net/zxp3817100/article/details/125089490</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/24/Linux-python-selenium-%E8%87%AA%E5%8A%A8%E6%88%AA%E5%9B%BE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/11/16/prometheus%E9%BB%91%E7%9B%92%E7%9B%91%E6%8E%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/11/16/prometheus%E9%BB%91%E7%9B%92%E7%9B%91%E6%8E%A7/" class="post-title-link" itemprop="url">prometheus黑盒监控</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-16 18:28:49 / 修改时间：20:19:31" itemprop="dateCreated datePublished" datetime="2022-11-16T18:28:49+08:00">2022-11-16</time>
     </span>
 
   
@@ -556,7 +827,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -574,114 +845,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/" class="post-title-link" itemprop="url">xxl-job接入ldap</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-11-09 20:45:08" itemprop="dateCreated datePublished" datetime="2021-11-09T20:45:08+08:00">2021-11-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-14 16:58:49" itemprop="dateModified" datetime="2021-12-14T16:58:49+08:00">2021-12-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/xxl-job/" itemprop="url" rel="index"><span itemprop="name">xxl-job</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="修改代码"><a href="#修改代码" class="headerlink" title="修改代码"></a>修改代码</h1><h2 id="xxl-job-admin-x2F-pom-xml"><a href="#xxl-job-admin-x2F-pom-xml" class="headerlink" title="xxl-job-admin&#x2F;pom.xml"></a>xxl-job-admin&#x2F;pom.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.ldap<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-ldap-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.4.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/11/09/xxl-job%E6%8E%A5%E5%85%A5ldap/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/" class="post-title-link" itemprop="url">ingress重定向例子</a>
+          <a href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">chfs实践</a>
         </h2>
 
         <div class="post-meta-container">
@@ -693,7 +857,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-11-09 11:11:31 / 修改时间：15:15:05" itemprop="dateCreated datePublished" datetime="2021-11-09T11:11:31+08:00">2021-11-09</time>
+      <time title="创建时间：2022-11-08 16:39:24 / 修改时间：16:45:59" itemprop="dateCreated datePublished" datetime="2022-11-08T16:39:24+08:00">2022-11-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -701,7 +865,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ingress/" itemprop="url" rel="index"><span itemprop="name">ingress</span></a>
+          <a href="/categories/chfs/" itemprop="url" rel="index"><span itemprop="name">chfs</span></a>
         </span>
     </span>
 
@@ -712,111 +876,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="子路径重定向"><a href="#子路径重定向" class="headerlink" title="子路径重定向"></a>子路径重定向</h2><h3 id="所有子路径匹配转发"><a href="#所有子路径匹配转发" class="headerlink" title="所有子路径匹配转发"></a>所有子路径匹配转发</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/$2</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">k8s-ingress-nbugs.nbugs.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">whoami</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/(.*)</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">ImplementationSpecific</span></span><br></pre></td></tr></table></figure>
-
-<p>或</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/$1</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">whoami</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">k8s-ingress-nbugs.nbugs.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">whoami</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">pathType:</span> <span class="string">ImplementationSpecific</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/11/09/ingress/ingress%E9%87%8D%E5%AE%9A%E5%90%91%E4%BE%8B%E5%AD%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">helm添加插件</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-11-04 13:44:16 / 修改时间：13:54:57" itemprop="dateCreated datePublished" datetime="2021-11-04T13:44:16+08:00">2021-11-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/helm/" itemprop="url" rel="index"><span itemprop="name">helm</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>367</span>
+      <span>1.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -834,122 +894,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>helm3添加push插件</p>
-<p>下载安装包helm-push</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="regexp">//</span>hub.fastgit.org<span class="regexp">/chartmuseum/</span>helm-push.git</span><br></pre></td></tr></table></figure>
-
-<p>查看helm的plugin路径</p>
-<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm env</span><br><span class="line">HELM_PLUGINS<span class="operator">=</span><span class="string">&quot;C:\Users\vvv\AppData\Roaming\helm\plugins&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>在该路径下创建helm-push文件夹，并将安装包拷贝到该文件夹下解压即可</p>
-<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="name">C</span>:\Users\vvv\AppData\Roaming\helm\plugins\helm-push</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ helm cm-push</span><br><span class="line">Error: This <span class="built_in">command</span> needs 2 arguments: name of chart, name of chart repository (or repo URL)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2021/11/04/helm%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/image-20211104135424961.png" alt="image-20211104135424961"></p>
-<p>可将配置文件中name改为插件名</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" class="post-title-link" itemprop="url">jenkins流水线-环境变量</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-10-21 18:40:58 / 修改时间：19:16:15" itemprop="dateCreated datePublished" datetime="2021-10-21T18:40:58+08:00">2021-10-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/" itemprop="url" rel="index"><span itemprop="name">jenkins</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jenkins/pipeline/" itemprop="url" rel="index"><span itemprop="name">pipeline</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="列出环境变量"><a href="#列出环境变量" class="headerlink" title="列出环境变量"></a><strong>列出环境变量</strong></h2><p>使用printenv | sort命令组合来获取环境变量的排序列表</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&quot;Env Variables&quot;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&quot;printenv | sort&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <p>官网:<a target="_blank" rel="noopener" href="http://iscute.cn/chfs">http://iscute.cn/chfs</a></p>
+<p>CuteHttpFileServer&#x2F;chfs是一个免费的、HTTP协议的文件共享服务器，使用浏览器可以快速访问。它具有以下特点：</p>
+<ul>
+<li>单个文件，核心功能无需其他文件</li>
+<li>跨平台运行，支持主流平台：Windows，Linux和Mac</li>
+<li>界面简洁，简单易用</li>
+<li>支持扫码下载和手机端访问，手机与电脑之间共享文件非常方便</li>
+<li>支持账户权限控制和地址过滤</li>
+<li>支持快速分享文字片段</li>
+<li>支持webdav协议</li>
+</ul>
+<p>与其他常用文件共享方式（如FTP，飞秋，网盘，自己建站）相比，具有使用简单，适用场景更多的优点，在个人使用以及共享给他人的场景中非常方便快捷。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/10/21/jenkins%E6%B5%81%E6%B0%B4%E7%BA%BF-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/#more" rel="contents">
+              <a class="btn" href="/2022/11/08/chfs%E5%AE%9E%E8%B7%B5/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -980,7 +939,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -998,7 +957,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/" class="post-title-link" itemprop="url">k8s service的四种体位</a>
+          <a href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">openvpn-server配置文件详解</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1010,7 +969,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-09-17 23:45:09 / 修改时间：23:56:05" itemprop="dateCreated datePublished" datetime="2021-09-17T23:45:09+08:00">2021-09-17</time>
+      <time title="创建时间：2022-09-16 16:38:08 / 修改时间：18:18:59" itemprop="dateCreated datePublished" datetime="2022-09-16T16:38:08+08:00">2022-09-16</time>
     </span>
 
   
@@ -1020,14 +979,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.6k</span>
+      <span>5.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -1038,16 +997,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="Headless-Service"><a href="#Headless-Service" class="headerlink" title="Headless Service"></a><strong>Headless Service</strong></h2><p>有时不需要或不想要负载均衡，以及单独的 Service IP 。遇到这种情况，可以通过指定 Cluster</p>
-<p>IP(spec.clusterIP) 的值为 “None” 来创建 Headless Service 。这类 Service 并不会分配 Cluster IP， kube-proxy 不会处理它们，而且平台也不会为它们进行负载均衡和路由</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span>	</span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="string">clusterIP:&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<p>svc一旦创建成功后，会被写入到 coredns 中</p>
-<p>他的写入的格式体是：svc名称 + 当前命名空间 + 当前集群的域名(集群域名我没没改过,默认就是svc.cluser.local. ) 通过我们当前的coredns的地址进行解析出一个域名</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dig -t A myapp-headservice<span class="selector-class">.default</span><span class="selector-class">.svc</span><span class="selector-class">.cluster</span><span class="selector-class">.local</span>. @<span class="number">10.244</span>.<span class="number">0.34</span></span><br><span class="line">dig命令需要安装</span><br><span class="line">yum -y install bind-utils</span><br></pre></td></tr></table></figure>
+          <p>openvpn.conf</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/09/17/k8s-service%E7%9A%84%E5%9B%9B%E7%A7%8D%E4%BD%93%E4%BD%8D/#more" rel="contents">
+              <a class="btn" href="/2022/09/16/openvpn-server%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1078,7 +1031,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2022/09/15/acme/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1096,7 +1049,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">容器内核优化..</a>
+          <a href="/2022/09/15/acme/" class="post-title-link" itemprop="url">acme</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1108,16 +1061,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-08-20 13:57:31 / 修改时间：17:41:01" itemprop="dateCreated datePublished" datetime="2021-08-20T13:57:31+08:00">2021-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-        </span>
+      <time title="创建时间：2022-09-15 15:04:38 / 修改时间：16:14:02" itemprop="dateCreated datePublished" datetime="2022-09-15T15:04:38+08:00">2022-09-15</time>
     </span>
 
   
@@ -1127,14 +1071,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.1k</span>
+      <span>1.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -1145,15 +1089,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>首先我们抛出3个问题：</p>
-<ol>
-<li>docker容器的内核与宿主机内核是怎样的关系？</li>
-<li>容器在运行时如何调用系统资源？</li>
-<li>docker的性能参数有没有作用范围？</li>
-</ol>
+          <h1 id="官网"><a href="#官网" class="headerlink" title="官网"></a>官网</h1><p><a target="_blank" rel="noopener" href="https://letsencrypt.org/zh-cn/getting-started/">https://letsencrypt.org/zh-cn/getting-started/</a></p>
+<h2 id="certbot实现"><a href="#certbot实现" class="headerlink" title="certbot实现"></a>certbot实现</h2>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/08/20/%E5%AE%B9%E5%99%A8%E5%86%85%E6%A0%B8%E4%BC%98%E5%8C%96/#more" rel="contents">
+              <a class="btn" href="/2022/09/15/acme/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1177,7 +1117,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1189,7 +1129,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1201,14 +1141,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.6m</span>
+    <span title="站点总字数">1.7m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:21</span>
+    <span title="站点阅读时长">25:03</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">289</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">295</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -224,6 +224,740 @@
 
   <i class="fa fa-thumb-tack"></i>
   <font >置顶</font>
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2025/02/26/fluentbit%E6%94%B6%E9%9B%86k8s-java%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/26/fluentbit%E6%94%B6%E9%9B%86k8s-java%E6%97%A5%E5%BF%97/" class="post-title-link" itemprop="url">fluentbit收集k8s java日志</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-02-26 10:29:18 / 修改时间：16:40:24" itemprop="dateCreated datePublished" datetime="2025-02-26T10:29:18+08:00">2025-02-26</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>111</p>
+<p>配置文件</p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">config:</span></span><br><span class="line"><span class="language-xml">  service: |</span></span><br><span class="line"><span class="language-xml">    [SERVICE]</span></span><br><span class="line"><span class="language-xml">        Daemon Off</span></span><br><span class="line"><span class="language-xml">        Flush </span><span class="template-variable">&#123;&#123; <span class="name">.Values.flush</span> &#125;&#125;</span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">        Log_Level </span><span class="template-variable">&#123;&#123; <span class="name">.Values.logLevel</span> &#125;&#125;</span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">        Parsers_File /fluent-bit/etc/parsers.conf</span></span><br><span class="line"><span class="language-xml">        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf</span></span><br><span class="line"><span class="language-xml">        HTTP_Server On</span></span><br><span class="line"><span class="language-xml">        HTTP_Listen 0.0.0.0</span></span><br><span class="line"><span class="language-xml">        HTTP_Port </span><span class="template-variable">&#123;&#123; <span class="name">.Values.metricsPort</span> &#125;&#125;</span><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">        Health_Check On</span></span><br><span class="line"><span class="language-xml"></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">inputs: |</span><br><span class="line">  [Input]</span><br><span class="line">      Name    tail</span><br><span class="line">      Path    <span class="regexp">/var/</span>log<span class="regexp">/containers/</span>*.log</span><br><span class="line">      Exclude_Path    <span class="regexp">/var/</span>log<span class="regexp">/containers/</span>*kubesphere*.log,<span class="regexp">/var/</span>log<span class="regexp">/containers/</span>kube-*.log,<span class="regexp">/var/</span>log<span class="regexp">/containers/</span>*cattle*.log,<span class="regexp">/var/</span>log<span class="regexp">/containers/</span>*calico*.log</span><br><span class="line">      Docker_Mode On</span><br><span class="line">      Docker_Mode_Flush   <span class="number">5</span> </span><br><span class="line">      <span class="comment"># 这里写的解析只管解析多行模式，不提取正则中的key</span></span><br><span class="line">      Docker_Mode_Parser java_multi_line </span><br><span class="line">      Parser docker</span><br><span class="line">      Tag kube.*</span><br><span class="line">      Mem_Buf_Limit <span class="number">5</span>MB</span><br><span class="line">      Skip_Long_Lines Off</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">filters: |</span><br><span class="line">  [Filter]</span><br><span class="line">      <span class="keyword">Name</span> kubernetes</span><br><span class="line">      Match kube.*</span><br><span class="line">      <span class="comment"># 开启收集注解</span></span><br><span class="line">      Annotations <span class="literal">On</span></span><br><span class="line">      Labels <span class="literal">Off</span></span><br><span class="line">      Merge_Log <span class="literal">On</span></span><br><span class="line">      Keep_Log <span class="literal">Off</span></span><br><span class="line">      K8S-Logging.Parser <span class="literal">On</span>   </span><br><span class="line">      K8S-Logging.Exclude <span class="literal">On</span></span><br><span class="line">  <span class="comment"># 注解过滤（只保留有logging=java的Pod）</span></span><br><span class="line">  [FILTER]</span><br><span class="line">      <span class="keyword">Name</span>                grep</span><br><span class="line">      Match               kube.*</span><br><span class="line">      Regex               <span class="variable">$kubernetes</span>[<span class="string">&#x27;annotations&#x27;</span>][<span class="string">&#x27;logging&#x27;</span>] ^java$</span><br><span class="line">  [Filter]</span><br><span class="line">      <span class="keyword">Name</span>    nest</span><br><span class="line">      Match    kube.*</span><br><span class="line">      Operation    lift</span><br><span class="line">      Nested_under    kubernetes</span><br><span class="line">      Add_prefix    kubernetes_</span><br><span class="line">  [FILTER]</span><br><span class="line">      <span class="comment">#将kubernetes_annotations 提取至根</span></span><br><span class="line">      <span class="keyword">Name</span> nest</span><br><span class="line">      Match kube.*</span><br><span class="line">      Operation lift</span><br><span class="line">      Nested_under  kubernetes_annotations</span><br><span class="line">      Add_prefix k8s_ann_</span><br><span class="line">  [Filter]</span><br><span class="line">      <span class="keyword">Name</span>    modify</span><br><span class="line">      Match    kube.*</span><br><span class="line">      Remove    stream</span><br><span class="line">      Remove    kubernetes_pod_id</span><br><span class="line">      Remove    kubernetes_docker_id</span><br><span class="line">      Remove    kubernetes_host</span><br><span class="line">      Remove    kubernetes_container_hash</span><br><span class="line">      <span class="keyword">Rename</span>    kubernetes_namespace_name namespace_name</span><br><span class="line">      <span class="keyword">Rename</span>    kubernetes_pod_name pod_name</span><br><span class="line">      <span class="keyword">Rename</span>    kubernetes_container_name container_name</span><br><span class="line">      <span class="keyword">Rename</span>    kubernetes_container_image container_image</span><br><span class="line">      <span class="keyword">Rename</span>    k8s_ann_app app</span><br><span class="line">      Remove_regex ^k8s_ann</span><br><span class="line"></span><br><span class="line">  [FILTER]</span><br><span class="line">      <span class="comment"># 使用 过滤解析将level和time字段提取出来，并保留原始内容</span></span><br><span class="line">      <span class="keyword">Name</span> parser</span><br><span class="line">      Match kube.*</span><br><span class="line">      Key_Name log</span><br><span class="line">      <span class="comment"># 这里可以识别()里的字段</span></span><br><span class="line">      Parser java_multi_line</span><br><span class="line">      <span class="comment"># 保留解析后的字段内容</span></span><br><span class="line">      Preserve_Key <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 保留日志其他key</span></span><br><span class="line">      Reserve_Data <span class="literal">true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">outputs: |</span><br><span class="line">  [OUTPUT]</span><br><span class="line">      <span class="type">Name</span> http</span><br><span class="line">      Match *</span><br><span class="line">      URI /api/<span class="keyword">default</span>/ds-<span class="keyword">log</span>/_json</span><br><span class="line">      Host openobserve.openobserve.svc</span><br><span class="line">      Port <span class="number">5080</span></span><br><span class="line">      tls <span class="keyword">Off</span></span><br><span class="line">      <span class="keyword">Format json</span></span><br><span class="line">      Json_date_key    _timestamp</span><br><span class="line">      Json_date_format iso8601</span><br><span class="line">      HTTP_User <span class="keyword">admin</span>@xxxx.com</span><br><span class="line">      HTTP_Passwd XQHN6gqjQxDAn0HH</span><br><span class="line">      compress gzip</span><br><span class="line">  [OUTPUT]</span><br><span class="line">      <span class="type">Name</span>   stdout</span><br><span class="line">      Match  *</span><br><span class="line">      <span class="keyword">Format json</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">customParsers: |</span></span><br><span class="line"><span class="language-xml">  [PARSER]</span></span><br><span class="line"><span class="language-xml">      Name java_multi_line    </span></span><br><span class="line"><span class="language-xml">      Key_name log   </span></span><br><span class="line"><span class="language-xml">      Format regex </span></span><br><span class="line"><span class="language-xml">      Regex    /(?<span class="tag">&lt;<span class="name">time</span>&gt;</span>\d</span><span class="template-variable">&#123;4&#125;</span><span class="language-xml">-\d</span><span class="template-variable">&#123;1,2&#125;</span><span class="language-xml">-\d</span><span class="template-variable">&#123;1,2&#125;</span><span class="language-xml"> \d</span><span class="template-variable">&#123;1,2&#125;</span><span class="language-xml">:\d</span><span class="template-variable">&#123;1,2&#125;</span><span class="language-xml">:\d</span><span class="template-variable">&#123;1,2&#125;</span><span class="language-xml">.\d</span><span class="template-variable">&#123;3&#125;</span><span class="language-xml">)\s</span><span class="template-variable">&#123;1,3&#125;</span><span class="language-xml">(?<span class="tag">&lt;<span class="name">level</span>&gt;</span>\w</span><span class="template-variable">&#123;3,6&#125;</span><span class="language-xml">)/</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2025/02/12/proxysql%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/12/proxysql%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">proxysql使用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-02-12 11:17:35 / 修改时间：15:46:01" itemprop="dateCreated datePublished" datetime="2025-02-12T11:17:35+08:00">2025-02-12</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>安装</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y wget default-mysql-client inotify-tools procps</span><br><span class="line">dpkg -<span class="selector-tag">i</span> proxysql_2.<span class="number">7.1</span>-ubuntu24_amd64<span class="selector-class">.deb</span> </span><br><span class="line">proxysql <span class="attr">--reload</span> -f /etc/proxysql<span class="selector-class">.cnf</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当 ProxySQL 启动后，将会监听两个端口：<br><strong>Admin 管理接口：</strong>默认为 <strong>6032</strong> 该端口用于管理配置 ProxySQL。<br><strong>接收业务 SQL 接口：</strong>默认为 <strong>6033</strong> 用于服务业务端口，类似于 MySQL 的 3306 端口。</p>
+<p><img src="/2025/02/12/proxysql%E4%BD%BF%E7%94%A8/2bfb814ab0309545b35f21a48b2c6676.png" alt="请添加图片描述"></p>
+<p>直接使用 MySQL 客户端连接这个管理接口</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">mysql</span> -u admin -padmin -h <span class="number">127.0.0.1</span> -P6032 --prompt=<span class="string">&#x27;Admin&gt; &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>查询 Admin 用户的密码</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">Admin&gt; select @@admin-admin_credentials;</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="section">| @@admin-admin_credentials |</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="section">| admin:admin               |</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<p>修改 Admin 接口密码：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">admin</span>-admin_credentials=<span class="string">&#x27;admin:YouPassword&#x27;</span>;</span><br><span class="line"></span><br><span class="line">新增管理员账户：myuser:myuser</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">admin</span>-admin_credentials=<span class="string">&#x27;admin:admin;myuser:myuser&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">load</span> <span class="keyword">admin</span> variables <span class="keyword">to</span> runtime; <span class="comment">-- 立即生效</span></span><br><span class="line">save <span class="keyword">admin</span> variables <span class="keyword">to</span> disk; <span class="comment">-- 持久化磁盘</span></span><br></pre></td></tr></table></figure>
+
+<p>查询后端实例</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> mysql_servers;</span><br></pre></td></tr></table></figure>
+
+<p>查询</p>
+<p><em>设置监控后端使用的账号信息</em></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> mysql-monitor_username <span class="comment">=</span> <span class="comment">&#x27;root_snowpaw&#x27;</span>;</span><br><span class="line"><span class="keyword">set</span> mysql-monitor_password <span class="comment">=</span> <span class="comment">&#x27;cS5!Z3&amp;Qy9Nz!NRI&#x27;</span>;</span><br><span class="line"></span><br><span class="line">-- 配置生效</span><br><span class="line">load mysql <span class="keyword">variables</span> to <span class="comment">runtime</span>;</span><br><span class="line">save mysql <span class="keyword">variables</span> to <span class="comment">disk</span>;</span><br></pre></td></tr></table></figure>
+
+<p>配置后端节点，写入后端节点的 ip、端口、主机组。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> mysql_servers (hostgroup_id, hostname, port) <span class="keyword">values</span> (<span class="number">1</span>, <span class="string">&#x27;rm-bp10q6od28cazp461mo.mysql.rds.aliyuncs.com&#x27;</span>, <span class="number">3306</span>);</span><br><span class="line"><span class="keyword">LOAD</span> MYSQL SERVERS <span class="keyword">TO</span> RUNTIME;</span><br><span class="line">SAVE MYSQL SERVERS <span class="keyword">TO</span> DISK;</span><br></pre></td></tr></table></figure>
+
+<p>配置访问用户，这里的用户分为两种含义：</p>
+<ul>
+<li><strong>前端用户</strong>：客户端用来访问 ProxySQL 的用户。</li>
+<li><strong>后端用户</strong>：ProxySQL 用来访问后端 MySQL 节点的用户。</li>
+</ul>
+<p>将后端mysql账号信息录入到 ProxySQL 中：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 写入用户信息</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> mysql_users(username, <span class="keyword">password</span>, default_hostgroup, <span class="keyword">comment</span>) <span class="keyword">values</span> (<span class="string">&#x27;root_snowpaw&#x27;</span>, <span class="string">&#x27;cS5!Z3&amp;Qy9Nz!NRI&#x27;</span>, <span class="number">1</span>, <span class="string">&#x27;root用户&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 加载 &amp; 持久化</span></span><br><span class="line"># 将配置加载到RUNTIME，使其可以立马生效，并保存到disk。</span><br><span class="line"><span class="keyword">load</span> mysql users <span class="keyword">to</span> runtime;</span><br><span class="line">save mysql users <span class="keyword">to</span> disk;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>连接代理节点，访问数据库：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root_snowpaw -p<span class="string">&#x27;cS5!Z3&amp;Qy9Nz!NRI&#x27;</span> -h <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -P6033 -<span class="string">e&#x27;select @@hostname;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/12/19/ubuntu-2304%E5%8D%87%E7%BA%A72404/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/12/19/ubuntu-2304%E5%8D%87%E7%BA%A72404/" class="post-title-link" itemprop="url">ubuntu 2304升级2404</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-12-19 15:53:42 / 修改时间：19:09:29" itemprop="dateCreated datePublished" datetime="2024-12-19T15:53:42+08:00">2024-12-19</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>现在2304已经不维护了，apt更新是全是404</p>
+<p>需要先切换到官方提供的old源</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-security main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-updates main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-proposed main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-backports main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-security main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-updates main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-proposed main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> lunar-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+
+<p>更新所有包</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-<span class="built_in">get</span> update</span><br><span class="line">apt-<span class="built_in">get</span><span class="built_in"> upgrade </span>-y</span><br></pre></td></tr></table></figure>
+
+<p>再将apt源更改为2310</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-security main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-updates main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-proposed main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-backports main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-security main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-updates main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//</span>old-releases.ubuntu.com<span class="regexp">/ubuntu/</span> mantic-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apt-<span class="built_in">get</span> update</span><br><span class="line">apt-<span class="built_in">get</span><span class="built_in"> upgrade </span>-y</span><br><span class="line">apt-<span class="built_in">get</span> dist-upgrade</span><br><span class="line">这里需要根据提示需要自动卸载一些包(apt autoremove)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">执行更新系统</span><br><span class="line">do-release-upgrade</span><br><span class="line"></span><br><span class="line">一路按y</span><br><span class="line">最后重启</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">root</span>@v:~# lsb_release -a</span><br><span class="line"><span class="attribute">No</span> LSB modules are available.</span><br><span class="line"><span class="attribute">Distributor</span> ID:	Ubuntu</span><br><span class="line"><span class="attribute">Description</span>:	Ubuntu <span class="number">24</span>.<span class="number">04</span>.<span class="number">1</span> LTS</span><br><span class="line"><span class="attribute">Release</span>:	<span class="number">24</span>.<span class="number">04</span></span><br><span class="line"><span class="attribute">Codename</span>:	noble</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意:</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Checking <span class="keyword">for</span> a <span class="built_in">new</span> Ubuntu <span class="keyword">release</span></span><br><span class="line">Please install <span class="keyword">all</span> available updates <span class="keyword">for</span> your <span class="keyword">release</span> <span class="keyword">before</span> upgrading.</span><br><span class="line"></span><br><span class="line">需要apt-<span class="keyword">get</span> dist-upgrade</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/10/18/typora/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/18/typora/" class="post-title-link" itemprop="url">typora</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-10-18 20:59:41 / 修改时间：21:00:47" itemprop="dateCreated datePublished" datetime="2024-10-18T20:59:41+08:00">2024-10-18</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>43</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:<span class="string">\Program</span> Files<span class="string">\Typora\resources\page-dist</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/10/18/caddy%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/18/caddy%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">caddy自定义插件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-18 16:02:54" itemprop="dateCreated datePublished" datetime="2024-10-18T16:02:54+08:00">2024-10-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-10-21 16:32:27" itemprop="dateModified" datetime="2024-10-21T16:32:27+08:00">2024-10-21</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>安装caddy和xcaddy</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下载caddy_2.<span class="number">8.4</span>_linux_amd64<span class="selector-class">.deb</span> xcaddy_0.<span class="number">4.2</span>_linux_amd64<span class="selector-class">.deb</span> </span><br><span class="line">dpkg -<span class="selector-tag">i</span> 安装</span><br></pre></td></tr></table></figure>
+
+<p>初始化go项目</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> <span class="keyword">mod</span> init mymodule</span><br><span class="line">root@v:~/mymodule# tree</span><br><span class="line">.</span><br><span class="line">├── caddy</span><br><span class="line">├── Caddyfile</span><br><span class="line">├── <span class="keyword">go</span>.<span class="keyword">mod</span></span><br><span class="line">├── <span class="keyword">go</span>.sum</span><br><span class="line">└── mymodule.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+<p>mymodule.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> mymodule</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;errors&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/caddyserver/caddy/v2&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/caddyserver/caddy/v2/caddyconfig/caddyfile&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/caddyserver/caddy/v2/modules/caddyhttp&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	caddy.RegisterModule(&amp;HelloWorld&#123;&#125;)</span><br><span class="line">	httpcaddyfile.RegisterHandlerDirective(<span class="string">&quot;hello_world&quot;</span>, parseCaddyfile)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> HelloWorld <span class="keyword">struct</span> &#123;</span><br><span class="line">	Text <span class="type">string</span> <span class="string">`json:&quot;text,omitempty&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HelloWorld)</span></span> UnmarshalCaddyfile(d *caddyfile.Dispenser) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> d.Next() &#123;</span><br><span class="line">		<span class="keyword">if</span> !d.Args(&amp;h.Text) &#123;</span><br><span class="line">			<span class="comment">// not enough args</span></span><br><span class="line">			<span class="keyword">return</span> d.ArgErr()</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> d.NextArg() &#123;</span><br><span class="line">			<span class="comment">// too many args</span></span><br><span class="line">			<span class="keyword">return</span> d.ArgErr()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseCaddyfile</span><span class="params">(h httpcaddyfile.Helper)</span></span> (caddyhttp.MiddlewareHandler, <span class="type">error</span>) &#123;</span><br><span class="line">	hw := <span class="built_in">new</span>(HelloWorld)</span><br><span class="line">	err := hw.UnmarshalCaddyfile(h.Dispenser)</span><br><span class="line">	<span class="keyword">return</span> hw, err</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HelloWorld)</span></span> ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) <span class="type">error</span> &#123;</span><br><span class="line">	err := next.ServeHTTP(w, r)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	w.Write([]<span class="type">byte</span>(h.Text))</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HelloWorld)</span></span> Validate() <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> h.Text == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">&quot;the text is must!!!&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HelloWorld)</span></span> Provision(ctx caddy.Context) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="comment">//h.Text = &quot;Hello 世界&quot;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// CaddyModule returns the Caddy module information.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HelloWorld)</span></span> CaddyModule() caddy.ModuleInfo &#123;</span><br><span class="line">	<span class="keyword">return</span> caddy.ModuleInfo&#123;</span><br><span class="line">		ID:  <span class="string">&quot;http.handlers.hello_world&quot;</span>,</span><br><span class="line">		New: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> caddy.Module &#123; <span class="keyword">return</span> <span class="built_in">new</span>(HelloWorld) &#125;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	_ caddy.Provisioner           = (*HelloWorld)(<span class="literal">nil</span>)</span><br><span class="line">	_ caddy.Validator             = (*HelloWorld)(<span class="literal">nil</span>)</span><br><span class="line">	_ caddyhttp.MiddlewareHandler = (*HelloWorld)(<span class="literal">nil</span>)</span><br><span class="line">	_ caddyfile.Unmarshaler       = (*HelloWorld)(<span class="literal">nil</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>Caddyfile</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attribute">order</span> hello_world <span class="literal">last</span></span><br><span class="line">  <span class="literal">debug</span></span><br><span class="line">&#125;</span><br><span class="line">:<span class="number">80</span> &#123;</span><br><span class="line">  <span class="attribute">hello_world</span> 打印内容</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attribute">order</span> hello_world <span class="literal">last</span></span><br><span class="line">&#125;</span><br><span class="line">:<span class="number">80</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">reverse_proxy</span> <span class="string">&quot;127.0.0.1:8080&quot;</span> &#123;</span><br><span class="line">       <span class="section">handle_response</span> &#123;</span><br><span class="line">           <span class="attribute">hello_world</span> <span class="string">&quot;test&quot;</span></span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看插件</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">xcaddy list-modules</span></span><br></pre></td></tr></table></figure>
+
+<p>直接跑</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcaddy <span class="built_in">run</span> <span class="comment">--config Caddyfile</span></span><br></pre></td></tr></table></figure>
+
+<p>打包</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">GOOS</span>=linux <span class="attribute">GOARCH</span>=amd64 <span class="attribute">CGO_ENABLED</span>=0 xcaddy build --with <span class="attribute">mymodule</span>=.   # .表示当前目录</span><br><span class="line">./caddy <span class="built_in">run</span> --config Caddyfile</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/07/18/rocketmq%E8%8A%82%E7%82%B9%E4%BC%98%E9%9B%85%E5%81%9C%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/07/18/rocketmq%E8%8A%82%E7%82%B9%E4%BC%98%E9%9B%85%E5%81%9C%E6%9C%BA/" class="post-title-link" itemprop="url">rocketmq节点优雅停机</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-07-18 16:09:03 / 修改时间：16:34:11" itemprop="dateCreated datePublished" datetime="2024-07-18T16:09:03+08:00">2024-07-18</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>851</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>1，现状描述</p>
+<p>由于某些原因，导致rocketmq集群中某个master节点不能正常服务，需要为master节点做流量迁移动作，已确保消息不丢失配置策略为：</p>
+<ul>
+<li><ul>
+<li>异步刷盘</li>
+<li>主从异步复制</li>
+</ul>
+</li>
+</ul>
+<p>如果直接下线该master，由于主从异步复制，可能导致部分消息来不及复制到slave造成消息丢失。所以该方案不可行。<br>另一种方案选择：关闭该broker的写入权限，待该broker不再有写入和消费时，再下线该节点。</p>
+<h4 id="2-关闭broker写权限"><a href="#2-关闭broker写权限" class="headerlink" title="2.关闭broker写权限"></a>2.关闭broker写权限</h4><p>2表示只写权限，4表示只读权限，6表示读写权限</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mqadmin updateBrokerConfig -<span class="keyword">b</span> broker:port -n nameserver:prot -k brokerPermission -v <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-观察节点流量"><a href="#3-观察节点流量" class="headerlink" title="3.观察节点流量"></a>3.观察节点流量</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mqadmin clusterList -n nameserver:prot</span><br></pre></td></tr></table></figure>
+
+<p>观察InTPS和OutTPS，理想情况都为零时，并不再变化时，则该节点可下线了。<br>然而，在实际过程中并没有出现为零的情况，InTPS和OutTPS总是有值，有时个位数字有时是两位数字，大部分时间在20多的值。此刻要分析下broker目前的消费状态。</p>
+<h4 id="4-观察broker消费状态"><a href="#4-观察broker消费状态" class="headerlink" title="4.观察broker消费状态"></a>4.观察broker消费状态</h4><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mqadmin brokerConsumeStats -<span class="keyword">b</span> broker:prot -n nameserver:prot &gt;&gt; brokerConsumeStats.tmp</span><br></pre></td></tr></table></figure>
+
+<p>查看brokerConsumeStats.tmp，主要查看#LastTime和#Diff。发现%RETRY%重试类队列#Diff有很微小（1或者3）的数据，而其他topic均为0. LastTime时间最新也是发生在%RETRY%队列中。此时可以让该节点下线操作。</p>
+<h4 id="5-borker读写权限恢复"><a href="#5-borker读写权限恢复" class="headerlink" title="5.borker读写权限恢复"></a>5.borker读写权限恢复</h4><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mqadmin updateBrokerConfig -<span class="keyword">b</span> broker:port -n nameserver:prot -k brokerPermission -v <span class="number">6</span></span><br></pre></td></tr></table></figure>
+
+<p>观察各节点流量是否正常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mqadmin clusterList -n nameserver:prot</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/06/04/ubuntu-kubeadm-%E5%AE%89%E8%A3%851-28%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/06/04/ubuntu-kubeadm-%E5%AE%89%E8%A3%851-28%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">ubuntu kubeadm 安装1.28集群</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-06-04 16:35:45" itemprop="dateCreated datePublished" datetime="2024-06-04T16:35:45+08:00">2024-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-06-05 17:10:02" itemprop="dateModified" datetime="2024-06-05T17:10:02+08:00">2024-06-05</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="初始化坏境"><a href="#初始化坏境" class="headerlink" title="初始化坏境"></a>初始化坏境</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#依次修改主机名*</span></span><br><span class="line">hostnamectl set-hostname master</span><br><span class="line">hostnamectl set-hostname node01</span><br><span class="line"><span class="comment">#hosts解析</span></span><br><span class="line">cat &gt;&gt; <span class="regexp">/etc/</span>hosts &lt;&lt; EOF</span><br><span class="line"><span class="number">172.12</span>.<span class="number">1.105</span> master</span><br><span class="line"><span class="number">172.12</span>.<span class="number">1.106</span> node01</span><br><span class="line">EOF</span><br><span class="line"><span class="comment">#关闭selinux、防火墙、交换分区</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^ *SELINUX=enforcing/SELINUX=disabled/g&#x27;</span> <span class="regexp">/etc/</span>selinux/config</span><br><span class="line"> </span><br><span class="line">systemctl stop firewalld.service ;  systemctl disable firewalld</span><br><span class="line"> </span><br><span class="line">sed -ri <span class="string">&#x27;s/.*swap.*/#&amp;/&#x27;</span> <span class="regexp">/etc/</span>fstab </span><br><span class="line">swapoff -a</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># apt 源</span></span><br><span class="line">cat &gt;&gt; <span class="regexp">/etc/</span>apt/sources.list &lt;&lt; EOF</span><br><span class="line"><span class="comment"># aliyun</span></span><br><span class="line">deb http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-security main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-security main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-updates main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-updates main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-proposed main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-proposed main restricted universe multiverse</span><br><span class="line">deb http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-backports main restricted universe multiverse</span><br><span class="line">deb-src http:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/ubuntu/</span> noble-backports main restricted universe multiverse</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">#kubernetes源</span></span><br><span class="line">curl https:<span class="regexp">//mi</span>rrors.aliyun.com<span class="regexp">/kubernetes/</span>apt<span class="regexp">/doc/</span>apt-key.gpg | sudo apt-key add</span><br><span class="line">echo <span class="string">&quot;deb https://mirrors.aliyun.com/kubernetes/apt kubernetes-xenial main&quot;</span> &gt;&gt;  <span class="regexp">/etc/</span>apt/sources.list</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y apt-transport-https ca-certificates curl</span><br><span class="line"></span><br><span class="line"><span class="comment">#时间同步</span></span><br><span class="line">timedatectl set-timezone Asia/Shanghai</span><br><span class="line">apt install ntpdate -y</span><br><span class="line">ntpdate ntp1.aliyun.com</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#修改内核参数</span></span><br><span class="line">cat &lt;&lt;EOF &gt; <span class="regexp">/etc/</span>sysctl.d/k8s.conf</span><br><span class="line">net.ipv4.ip_forward = <span class="number">1</span></span><br><span class="line">net.bridge.bridge-nf-call-iptables = <span class="number">1</span></span><br><span class="line">fs.may_detach_mounts = <span class="number">1</span></span><br><span class="line">vm.overcommit_memory=<span class="number">1</span></span><br><span class="line">vm.panic_on_oom=<span class="number">0</span></span><br><span class="line">fs.inotify.max_user_watches=<span class="number">89100</span></span><br><span class="line">fs.file-max=<span class="number">52706963</span></span><br><span class="line">fs.nr_open=<span class="number">52706963</span></span><br><span class="line">net.netfilter.nf_conntrack_max=<span class="number">2310720</span></span><br><span class="line">net.ipv4.tcp_keepalive_time = <span class="number">600</span></span><br><span class="line">net.ipv4.tcp_keepalive_probes = <span class="number">3</span></span><br><span class="line">net.ipv4.tcp_keepalive_intvl =<span class="number">15</span></span><br><span class="line">net.ipv4.tcp_max_tw_buckets = <span class="number">36000</span></span><br><span class="line">net.ipv4.tcp_tw_reuse = <span class="number">1</span></span><br><span class="line">net.ipv4.tcp_max_orphans = <span class="number">327680</span></span><br><span class="line">net.ipv4.tcp_orphan_retries = <span class="number">3</span></span><br><span class="line">net.ipv4.tcp_syncookies = <span class="number">1</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = <span class="number">16384</span></span><br><span class="line">net.ipv4.ip_conntrack_max = <span class="number">65536</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = <span class="number">16384</span></span><br><span class="line">net.ipv4.tcp_timestamps = <span class="number">0</span></span><br><span class="line">net.core.somaxconn = <span class="number">16384</span></span><br><span class="line">net.ipv6.conf.all.disable_ipv6 = <span class="number">0</span></span><br><span class="line">net.ipv6.conf.default.disable_ipv6 = <span class="number">0</span></span><br><span class="line">net.ipv6.conf.lo.disable_ipv6 = <span class="number">0</span></span><br><span class="line">net.ipv6.conf.all.forwarding = <span class="number">1</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">#重新加载文件生效系统配置</span></span><br><span class="line">sysctl -p <span class="regexp">/etc/</span>sysctl.d/k8s.conf</span><br><span class="line"> </span><br><span class="line">sysctl --system</span><br><span class="line"></span><br><span class="line">modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment">#这个命令的作用是应用 k8s.conf 文件中的内核参数设置，并且开启网络桥接的防火墙功能。其中 k8s.conf 文件中的内容包括以下三个参数设置：</span></span><br><span class="line"><span class="comment">#net.bridge.bridge-nf-call-iptables = 1 表示开启防火墙功能。</span></span><br><span class="line"><span class="comment">#net.bridge.bridge-nf-call-ip6tables = 1 表示开启 IPV6 的防火墙功能。</span></span><br><span class="line"><span class="comment">#net.ipv4.ip_forward = 1 表示开启 IP 转发功能。</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#安装ipvsadm</span></span><br><span class="line">apt-get install -y ipvsadm ipset</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装配置containerd或者docker-一个就好"><a href="#安装配置containerd或者docker-一个就好" class="headerlink" title="安装配置containerd或者docker(一个就好)"></a>安装配置containerd或者docker(一个就好)</h4><h5 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apt install -y containerd</span><br><span class="line"><span class="comment">#生成containerd的配置文件</span></span><br><span class="line">mkdir <span class="regexp">/etc/</span>containerd -p </span><br><span class="line"><span class="comment">#生成配置文件</span></span><br><span class="line">containerd config default &gt; <span class="regexp">/etc/</span>containerd/config.toml</span><br><span class="line"><span class="comment">#编辑配置文件</span></span><br><span class="line">vim <span class="regexp">/etc/</span>containerd/config.toml  </span><br><span class="line">sandbox_image = <span class="string">&quot;k8s.gcr.io/pause:3.8&quot;</span>   <span class="regexp">//</span><span class="number">61</span>行</span><br><span class="line">改成</span><br><span class="line">sed -i <span class="string">&#x27;s/registry.k8s.io/registry.aliyuncs.com\/google_containers/&#x27;</span> <span class="regexp">/etc/</span>containerd/config.toml</span><br><span class="line">sed -i <span class="string">&#x27;s/SystemdCgroup = false/SystemdCgroup = true/&#x27;</span> <span class="regexp">/etc/</span>containerd/config.toml</span><br><span class="line"><span class="comment">#配置好文件传到node节点</span></span><br><span class="line"><span class="comment">#重启服务   </span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl enable containerd; systemctl start containerd </span><br></pre></td></tr></table></figure>
+
+<h4 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h4><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">yum install container-selinux -y</span><br><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2 </span><br><span class="line">yum install -y docker-ce  containerd.io</span><br><span class="line">mkdir <span class="regexp">/etc/</span>docker</span><br><span class="line">cat &gt; <span class="regexp">/etc/</span>docker/daemon.json &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://reg-mirror.qiniu.com&quot;</span>],</span><br><span class="line">  <span class="string">&quot;exec-opts&quot;</span>: [<span class="string">&quot;native.cgroupdriver=systemd&quot;</span>],</span><br><span class="line">  <span class="string">&quot;log-driver&quot;</span>: <span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">  <span class="string">&quot;log-opts&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;max-size&quot;</span>: <span class="string">&quot;500m&quot;</span>, <span class="string">&quot;max-file&quot;</span>: <span class="string">&quot;3&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">#使用Systemd管理的Cgroup来进行资源控制与管理，因为相对Cgroupfs而言，Systemd限制CPU、内存等资源更加简单和成熟稳定。</span><br><span class="line">#日志使用json-<span class="keyword">file</span>格式类型存储，大小为<span class="number">100</span>M，保存在<span class="regexp">/var/</span>log/containers目录下，方便ELK等日志系统收集和管理日志。</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker.service</span><br><span class="line">systemctl enable docker.service </span><br><span class="line"> </span><br><span class="line">docker info | <span class="keyword">grep</span> <span class="string">&quot;Cgroup Driver&quot;</span></span><br><span class="line">cd /opt</span><br><span class="line"># 到下面的链接下载最新版cri-docker: https:<span class="comment">//github.com/Mirantis/cri-dockerd/tags</span></span><br><span class="line">rpm -ivh cri-dockerd-<span class="number">0.3</span>.<span class="number">4</span>-<span class="number">3</span>.el7.x86_64.rpm </span><br><span class="line"></span><br><span class="line">vim <span class="regexp">/lib/</span>systemd<span class="regexp">/system/</span>cri-docker.service</span><br><span class="line">#修改ExecStart行如下</span><br><span class="line">ExecStart=<span class="regexp">/usr/</span>bin<span class="regexp">/cri-dockerd --network-plugin=cni --pod-infra-container-image=registry.aliyuncs.com/g</span>oogle_containers/pause:<span class="number">3.8</span></span><br><span class="line"> </span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl enable --now cri-docker</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装kubeadm，kubelet和kubectl"><a href="#安装kubeadm，kubelet和kubectl" class="headerlink" title="安装kubeadm，kubelet和kubectl"></a>安装kubeadm，kubelet和kubectl</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">安装指定版本</span></span><br><span class="line"><span class="string">echo</span> <span class="string">&quot;----------------kubelet版本信息列表------------------------&quot;</span></span><br><span class="line"><span class="string">apt</span> <span class="string">list</span> <span class="string">kubelet</span> <span class="string">-a</span></span><br><span class="line"><span class="string">echo</span> <span class="string">&quot;----------------安装kubeadm、kubelet、kubectl(master节点)--------------&quot;</span></span><br><span class="line"><span class="comment"># 不指定版本就是最新版本</span></span><br><span class="line"><span class="string">k8s_version=1.28.0-00</span></span><br><span class="line"><span class="string">sudo</span> <span class="string">apt</span> <span class="string">install</span> <span class="string">-y</span> <span class="string">kubeadm=$&#123;k8s_version&#125;</span>  <span class="string">kubelet=$&#123;k8s_version&#125;</span>  <span class="string">kubectl=$&#123;k8s_version&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="string">//查看初始化需要的镜像</span></span><br><span class="line"><span class="string">kubeadm</span> <span class="string">config</span> <span class="string">images</span> <span class="string">list</span> <span class="string">--kubernetes-version</span> <span class="number">1.28</span><span class="number">.0</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 生成 kubeadm快速搭建k8s的配置文件</span></span><br><span class="line"><span class="string">kubeadm</span> <span class="string">config</span> <span class="string">print</span> <span class="string">init-defaults</span> <span class="string">&gt;</span> <span class="string">kubeadm-config.yaml</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">bootstrapTokens:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">groups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">system:bootstrappers:kubeadm:default-node-token</span></span><br><span class="line">  <span class="attr">token:</span> <span class="string">abcdef.0123456789abcdef</span></span><br><span class="line">  <span class="attr">ttl:</span> <span class="string">24h0m0s</span></span><br><span class="line">  <span class="attr">usages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">signing</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">authentication</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">InitConfiguration</span></span><br><span class="line"><span class="attr">localAPIEndpoint:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">172.12</span><span class="number">.1</span><span class="number">.105</span></span><br><span class="line">  <span class="attr">bindPort:</span> <span class="number">6443</span></span><br><span class="line"><span class="attr">nodeRegistration:</span></span><br><span class="line">  <span class="attr">criSocket:</span> <span class="string">unix:///var/run/containerd/containerd.sock</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">master</span> <span class="comment">#和节点名称一样</span></span><br><span class="line">  <span class="attr">taints:</span> <span class="literal">null</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiServer:</span></span><br><span class="line">  <span class="attr">timeoutForControlPlane:</span> <span class="string">4m0s</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">certificatesDir:</span> <span class="string">/etc/kubernetes/pki</span></span><br><span class="line"><span class="attr">clusterName:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">controllerManager:</span> &#123;&#125;</span><br><span class="line"><span class="attr">dns:</span> &#123;&#125;</span><br><span class="line"><span class="attr">etcd:</span></span><br><span class="line">  <span class="attr">local:</span></span><br><span class="line">    <span class="attr">dataDir:</span> <span class="string">/var/lib/etcd</span></span><br><span class="line"><span class="attr">imageRepository:</span> <span class="string">registry.aliyuncs.com/google_containers</span> <span class="comment">#需要改为国内的镜像</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterConfiguration</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="number">1.28</span><span class="number">.0</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">dnsDomain:</span> <span class="string">cluster.local</span></span><br><span class="line">  <span class="attr">serviceSubnet:</span> <span class="number">10.96</span><span class="number">.0</span><span class="number">.0</span><span class="string">/12</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="string">&quot;10.244.0.0/16&quot;</span></span><br><span class="line"><span class="attr">scheduler:</span> &#123;&#125;</span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeproxy.config.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KubeProxyConfiguration</span></span><br><span class="line"><span class="attr">mode:</span> <span class="string">ipvs</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#初始化 master</span></span><br><span class="line"><span class="string">kubeadm</span> <span class="string">init</span> <span class="string">--config=kubeadm-config.yaml</span> <span class="string">--upload-certs</span> <span class="string">|</span> <span class="string">tee</span> <span class="string">kubeadm-init.log</span></span><br><span class="line"><span class="string">mkdir</span> <span class="string">-p</span> <span class="string">$HOME/.kube</span></span><br><span class="line"><span class="string">sudo</span> <span class="string">cp</span> <span class="string">-fi</span> <span class="string">/etc/kubernetes/admin.conf</span> <span class="string">$HOME/.kube/config</span></span><br><span class="line"><span class="string">sudo</span> <span class="string">chown</span> <span class="string">$(id</span> <span class="string">-u):$(id</span> <span class="string">-g)</span> <span class="string">$HOME/.kube/config</span></span><br><span class="line"><span class="string">echo</span> <span class="string">&quot;source &lt;(kubectl completion bash)&quot;</span> <span class="string">&gt;&gt;</span> <span class="string">/etc/profile</span></span><br><span class="line"><span class="string">source</span> <span class="string">/etc/profile</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="安装网络插件"><a href="#安装网络插件" class="headerlink" title="安装网络插件"></a>安装网络插件</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/projectcalico/</span>calico<span class="regexp">/v3.28.0/m</span>anifests/tigera-operator.yaml</span><br><span class="line">wget https:<span class="regexp">//</span>raw.githubusercontent.com<span class="regexp">/projectcalico/</span>calico<span class="regexp">/v3.28.0/m</span>anifests/custom-resources.yaml</span><br><span class="line">vi custom-resources.yaml   <span class="regexp">//</span><span class="number">13</span>行  <span class="number">13</span>gg</span><br><span class="line">cidr: <span class="number">192.168</span>.<span class="number">0.0</span><span class="regexp">/16   /</span><span class="regexp">/IP改成  10.244.0.0/</span><span class="number">16</span> 和上面初始化一样</span><br><span class="line">kubectl create -f custom-resources.yaml</span><br></pre></td></tr></table></figure>
+
+<h4 id="加入节点"><a href="#加入节点" class="headerlink" title="加入节点"></a>加入节点</h4><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">初始化，并安装容器运行时，安装kubectl kubeadm kubelet</span><br><span class="line">重启服务   </span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="keyword">restart</span> containerd; systemctl <span class="keyword">restart</span> containerd </span><br><span class="line">kubeadm <span class="keyword">join</span> <span class="number">172.12</span><span class="number">.1</span><span class="number">.105</span>:<span class="number">6443</span> <span class="comment">--token xxx</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="升级"><a href="#升级" class="headerlink" title="升级"></a>升级</h4><p>master</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">安装新版本</span><br><span class="line"><span class="attribute">k8s_version</span>=1.28.1-00</span><br><span class="line">sudo apt install -y <span class="attribute">kubeadm</span>=<span class="variable">$&#123;k8s_version&#125;</span>  <span class="attribute">kubelet</span>=<span class="variable">$&#123;k8s_version&#125;</span>  <span class="attribute">kubectl</span>=<span class="variable">$&#123;k8s_version&#125;</span></span><br><span class="line">先设置节点不可调度</span><br><span class="line">kubectl uncordon master</span><br><span class="line">再排空节点</span><br><span class="line">kubectl drain master --ignore-daemonsets</span><br><span class="line">测试升级计划</span><br><span class="line">kubeadm<span class="built_in"> upgrade </span>plan</span><br><span class="line">kubectl update apply --etcd-upgrade</span><br><span class="line">systemctl restart kubelet</span><br><span class="line">恢复调度</span><br><span class="line">kubectl cordon master</span><br></pre></td></tr></table></figure>
+
+<p>node</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">k8s_version</span>=<span class="number">1</span>.<span class="number">28</span>.<span class="number">1</span>-<span class="number">00</span></span><br><span class="line"><span class="attribute">sudo</span> apt install -y kubelet=<span class="variable">$&#123;k8s_version&#125;</span></span><br><span class="line"><span class="attribute">systemctl</span> restart kubelet.service</span><br><span class="line"><span class="attribute">kubelet</span> --version</span><br></pre></td></tr></table></figure>
+
+<p>ps:</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/stanluoyuxin/article/details/137070061">https://blog.csdn.net/stanluoyuxin/article/details/137070061</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lhq1363511234/article/details/132379069">https://blog.csdn.net/lhq1363511234/article/details/132379069</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -406,866 +1140,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/04/11/mysql%E7%BB%9F%E8%AE%A1%E8%A1%A8%E5%A4%A7%E5%B0%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/11/mysql%E7%BB%9F%E8%AE%A1%E8%A1%A8%E5%A4%A7%E5%B0%8F/" class="post-title-link" itemprop="url">mysql统计表大小</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2024-04-11 16:20:07 / 修改时间：16:31:23" itemprop="dateCreated datePublished" datetime="2024-04-11T16:20:07+08:00">2024-04-11</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>264</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">TABLE_NAME</span>, concat( round( DATA_LENGTH / <span class="number">1024</span> / <span class="number">1024</span>, <span class="number">3</span>),<span class="string">&#x27;MB&#x27;</span>) <span class="keyword">as</span> 数据容量占用, concat( round(  INDEX_LENGTH / <span class="number">1024</span> / <span class="number">1024</span>, <span class="number">3</span>),<span class="string">&#x27;MB&#x27;</span>) <span class="keyword">as</span> 索引容量占用, TABLE_ROWS</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line"> information_schema.<span class="keyword">TABLES</span> </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line"> TABLE_SCHEMA = <span class="string">&#x27;数据库名称&#x27;</span> </span><br><span class="line"> <span class="keyword">and</span>  TABLE_ROWS &gt; <span class="number">1</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span></span><br><span class="line"> TABLE_ROWS <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/04/08/linux%E7%A3%81%E7%9B%98%E6%8C%82%E8%BD%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/08/linux%E7%A3%81%E7%9B%98%E6%8C%82%E8%BD%BD/" class="post-title-link" itemprop="url">linux磁盘挂载</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-04-08 13:51:09" itemprop="dateCreated datePublished" datetime="2024-04-08T13:51:09+08:00">2024-04-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-13 17:43:55" itemprop="dateModified" datetime="2024-05-13T17:43:55+08:00">2024-05-13</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>693</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<p>创建磁盘</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/vdb</span><br><span class="line">Command (m for help): n #新建分区</span><br><span class="line">Partition type:</span><br><span class="line">   p   primary (0 primary, 0 extended, 4 free)</span><br><span class="line">   e   extended</span><br><span class="line">Select (default p): p # 主分区</span><br><span class="line">Partition number (1-4, default 1): </span><br><span class="line">First sector (2048-104857599, default 2048): </span><br><span class="line">Using default value 2048</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125; (2048-104857599, default 104857599): </span><br><span class="line">Using default value 104857599</span><br><span class="line">Partition 1 of type Linux and of size 50 GiB is set</span><br><span class="line"></span><br><span class="line">Command (m for help): w # 保存</span><br><span class="line">The partition table has been altered!</span><br><span class="line"></span><br><span class="line">Calling ioctl() to re-read partition table.</span><br><span class="line">Syncing disks.</span><br><span class="line"></span><br><span class="line">mkfs.ext4 /dev/vdb1 # 文件系统初始化</span><br><span class="line"></span><br><span class="line">blkid</span><br><span class="line">/dev/vda1: UUID=&quot;&quot; TYPE=&quot;ext4&quot; </span><br><span class="line">/dev/vdb1: UUID=&quot;&quot; TYPE=&quot;ext4&quot;</span><br><span class="line"><span class="meta prompt_"> # </span><span class="language-bash">追加至/etc/fstab</span></span><br><span class="line">UUID=&lt;UUID&gt; /home/new_disk ext4 defaults 0 2</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>刷新分区表</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/03/25/%E6%9C%AC%E5%9C%B0maven%E4%BB%93%E5%BA%93%E8%BF%81%E7%A7%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/25/%E6%9C%AC%E5%9C%B0maven%E4%BB%93%E5%BA%93%E8%BF%81%E7%A7%BB/" class="post-title-link" itemprop="url">本地maven仓库迁移</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-25 19:40:45" itemprop="dateCreated datePublished" datetime="2024-03-25T19:40:45+08:00">2024-03-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-13 17:44:25" itemprop="dateModified" datetime="2024-05-13T17:44:25+08:00">2024-05-13</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>421</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="regexp">//</span>agent-install.oss-cn-hangzhou.aliyuncs.com/migrate-local-repo-tool.jar</span><br></pre></td></tr></table></figure>
-
-<p>分开release 和 snapshot 上传</p>
-<p>提前备份好仓库，并复制一份新的,分别生成release 和 snapshot</p>
-<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find</span> release -<span class="built_in">name</span> <span class="string">&quot;*SNAPSHOT*&quot;</span> -<span class="built_in">type</span> d -<span class="built_in">exec</span> rm -rf &#123;&#125; \;  </span><br><span class="line"><span class="built_in">find</span> snapshot -<span class="built_in">name</span> <span class="string">&quot;*RELEASE*&quot;</span> -<span class="built_in">type</span> d -<span class="built_in">exec</span> rm -rf &#123;&#125; \;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java </span><br><span class="line"><span class="deletion">-jar migrate-local-repo-tool.jar </span></span><br><span class="line"><span class="deletion">-cd &quot;/$HOME/.m2/repository/&quot; </span></span><br><span class="line"><span class="deletion">-t &quot;http://10.21.11.11/repository/releases/&quot; </span></span><br><span class="line"><span class="deletion">-u admin </span></span><br><span class="line"><span class="deletion">-p admin123 </span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/03/11/bytebase%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/11/bytebase%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">bytebase使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-11 15:57:09" itemprop="dateCreated datePublished" datetime="2024-03-11T15:57:09+08:00">2024-03-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-13 17:44:56" itemprop="dateModified" datetime="2024-05-13T17:44:56+08:00">2024-05-13</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>394</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<p>开发环境搭建</p>
-<p>必须linux</p>
-<p>go &gt;&#x3D; 1.21.6</p>
-<p>pnpm</p>
-<p>必须安装gcc 包</p>
-<p>本地docker 运行pg</p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">	<span class="comment">--name pg \</span></span><br><span class="line">	<span class="comment">--net=host \</span></span><br><span class="line">	-e POSTGRES_PASSWORD=mysecretpassword \</span><br><span class="line">	-e PGDATA=/var/lib/postgresql/data/pgdata \</span><br><span class="line">	-v /data/pg:/var/lib/postgresql/data \</span><br><span class="line">	postgres:<span class="number">14</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> bbdev <span class="keyword">SUPERUSER</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> bbdev;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">go install github.com/bytebase/air@<span class="number">87187</span>cc</span><br><span class="line">apt install gcc</span><br><span class="line">PG_URL=postgresql://bbdev@localhost/bbdev air -c scripts/.air.toml</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/02/22/%E5%BC%80%E5%90%AFldaps/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/22/%E5%BC%80%E5%90%AFldaps/" class="post-title-link" itemprop="url">开启ldaps</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2024-02-22 16:51:04 / 修改时间：16:53:22" itemprop="dateCreated datePublished" datetime="2024-02-22T16:51:04+08:00">2024-02-22</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>654</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>使用bitnami&#x2F;openldap:2.6.7时设置的ldaps不生效，报错</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">65d6f158.2ab5d366 0x7f848a63b700 <span class="attribute">conn</span>=1000 <span class="attribute">fd</span>=14 ACCEPT <span class="keyword">from</span> <span class="attribute">IP</span>=192.168.14.1:34042 (<span class="attribute">IP</span>=0.0.0.0:1636)</span><br><span class="line">65d6f158.2af14816 0x7f848a63b700 TLS: init_def_ctx: .</span><br><span class="line">65d6f158.2af22131 0x7f848a63b700 <span class="attribute">conn</span>=1000 <span class="attribute">fd</span>=14 closed (TLS negotiation failure)</span><br></pre></td></tr></table></figure>
-
-<p>需使用nginx作为代理开启ldaps</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">stream</span> &#123;</span><br><span class="line">    <span class="section">upstream</span> ldap_backend &#123;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.15.14:1389</span>;  <span class="comment"># Port where Casdoor LDAP server is running</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">1636</span> ssl;  <span class="comment"># LDAPS port</span></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /etc/nginx/conf.d/ldap.crt;  <span class="comment"># SSL certificate</span></span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /etc/nginx/conf.d/ldap.key;  <span class="comment"># SSL private key</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">        <span class="attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">proxy_pass</span> ldap_backend;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2024/02/22/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1etcd%E9%9B%86%E7%BE%A4%E5%B4%A9%E6%BA%83%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/22/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1etcd%E9%9B%86%E7%BE%A4%E5%B4%A9%E6%BA%83%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">记录一次etcd集群崩溃处理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-22 11:08:10" itemprop="dateCreated datePublished" datetime="2024-02-22T11:08:10+08:00">2024-02-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-13 17:44:37" itemprop="dateModified" datetime="2024-05-13T17:44:37+08:00">2024-05-13</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>792</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>节后apisix网关突然504</p>
-<p>查询发现链接etcd异常</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/22/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1etcd%E9%9B%86%E7%BE%A4%E5%B4%A9%E6%BA%83%E5%A4%84%E7%90%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/12/15/cka/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/12/15/cka/" class="post-title-link" itemprop="url">cka</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-12-15 11:05:06" itemprop="dateCreated datePublished" datetime="2023-12-15T11:05:06+08:00">2023-12-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-08 19:07:01" itemprop="dateModified" datetime="2024-01-08T19:07:01+08:00">2024-01-08</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>12k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>11 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.ixigua.com/7080166741921235492?&&id=7155098884581097997">https://www.ixigua.com/7080166741921235492?&amp;&amp;id=7155098884581097997</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014481728/article/details/133421594">https://blog.csdn.net/u014481728/article/details/133421594</a></p>
-<h1 id="1-考核知识：基于角色访问控制"><a href="#1-考核知识：基于角色访问控制" class="headerlink" title="1.考核知识：基于角色访问控制"></a>1.考核知识：基于角色访问控制</h1><p>练习记录</p>
-<p><img src="/2023/12/15/cka/i4r7sfkixdfri_b1eb85cebc6d4ed6a43a4dcc8107ae86.png" alt="img"></p>
-<h2 id="题目内容中文解释"><a href="#题目内容中文解释" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p><strong>Context</strong></p>
-<p>​     为部署流水线创建一个新的 ClusterRole 并将其绑定到范围为特定的 namespace 的特定ServiceAccount。</p>
-<p><strong>Task</strong></p>
-<p>​     创建一个名为 <strong>deployment-clusterrole</strong> 的 clusterrole，该 clusterrole 只允许<strong>Deployment、Daemonset、Statefulset</strong> 具有 <strong>create</strong> 权限，在现有的 namespace app-team1 中创建一个名为 <strong>cicd-token</strong> 的新 <strong>ServiceAccount</strong>。限于 namespace app-team1 中，将新的 ClusterRole deployment-clusterrole 绑定到新的 ServiceAccount cicd-token。</p>
-<p><strong>官方文档搜索关键字：RBAC</strong></p>
-<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/">https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/</a></p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="keyword">create</span> clusterrole deployment-clusterrole --verb=<span class="keyword">create</span> --resource=deployments,daemonsets,statefulsets</span><br><span class="line">kubectl <span class="keyword">create</span> ns app-team1</span><br><span class="line">kubectl <span class="keyword">create</span> serviceaccount cicd-<span class="built_in">token</span> -n app-team1</span><br><span class="line">kubectl <span class="keyword">create</span> clusterrolebinding cicd --clusterrole deployment-clusterrole --serviceaccount app-team1:cicd-<span class="built_in">token</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="2-考核知识：节点维护-指定-node-节点不可用"><a href="#2-考核知识：节点维护-指定-node-节点不可用" class="headerlink" title="2.考核知识：节点维护-指定 node 节点不可用"></a>2.考核知识：节点维护-指定 node 节点不可用</h1><h2 id="题目内容"><a href="#题目内容" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686193330670-a44684db-b38e-44a4-bf91-bdd4bb411e91.png" alt="image"></p>
-<h2 id="题目内容中文解释-1"><a href="#题目内容中文解释-1" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>Task切换 k8s 集群环境：kubectl config use-context ek8s</p>
-<p>将 ek8s-node-1 节点设置为不可用，然后重新调度该节点上的所有 Pod。</p>
-<p><strong>官方文档搜索关键字：drain-node</strong></p>
-<p><img src="/2023/12/15/cka/1686195269335-62cf1222-d9b2-4d02-a936-0fbd4f5f4847.png" alt="img"></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h1 id="3-考核知识：K8s-版本升级"><a href="#3-考核知识：K8s-版本升级" class="headerlink" title="3.考核知识：K8s 版本升级"></a>3.考核知识：K8s 版本升级</h1><h2 id="题目内容-1"><a href="#题目内容-1" class="headerlink" title="题目内容"></a>题目内容</h2><h2 id="题目内容中文解释-2"><a href="#题目内容中文解释-2" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context mk8s</p>
-<p>Task</p>
-<p>​     现有的 Kubernetes 集群正在运行版本 1.23.1。仅将 master 节点上的所有 Kubernetes 控制平面和节点组件升级到版本 1.23.2。（注意，考试时的集群可能为 1.23.0，会让你从 1.23.0 升级为 1.23.1。甚至是 1.22.1 升级为 1.22.2。所以敲命令时，具体要升级的版本，根据题目要求更改。）</p>
-<p>确保在升级之前 drain master 节点，并在升级后 uncordon master 节点。</p>
-<p>可以使用以下命令，通过 ssh 连接到 master 节点：</p>
-<p>ssh master01</p>
-<p>可以使用以下命令，在该 master 节点上获取更高权限：</p>
-<p>sudo -i</p>
-<p>​     另外，在主节点上升级 kubelet 和 kubectl。请不要升级工作节点，etcd，container 管理器，CNI 插件， DNS 服务或任何其他插件。</p>
-<p><strong>官方文档搜索关键字：upgrade</strong></p>
-<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/#determine-which-version-to-upgrade-to">https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/#determine-which-version-to-upgrade-to</a></p>
-<h2 id="做题解答"><a href="#做题解答" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 切换集群</span></span><br><span class="line">kubectl<span class="built_in"> config </span>use-context mk8s</span><br><span class="line"><span class="comment"># 查看节点信息</span></span><br><span class="line">kubectl <span class="built_in">get</span> nodes </span><br><span class="line"><span class="comment"># 将节点标记为不可调度并驱逐所有负载，准备节点的维护：</span></span><br><span class="line">kubectl cordon master01</span><br><span class="line">kubectl drain master01 --delete-emptydir-data --ignore-daemonsets --force </span><br><span class="line"><span class="comment"># 在考试环境中 ssh 到 master 节点，并切换到 root 下</span></span><br><span class="line">ssh master01</span><br><span class="line">sudo -i </span><br><span class="line"><span class="comment">#升级控制平面节点</span></span><br><span class="line"><span class="comment"># 升级 kubeadm</span></span><br><span class="line">apt update</span><br><span class="line"><span class="comment"># 找到题目要求升级到的指定版本 </span></span><br><span class="line">apt-cache madison kubeadm | grep 1.23.2</span><br><span class="line"><span class="comment"># 安装正常的版本</span></span><br><span class="line">apt-<span class="built_in">get</span> install <span class="attribute">kubeadm</span>=1.23.2-00</span><br><span class="line"><span class="comment"># 验证下载操作正常，并且 kubeadm 版本正确</span></span><br><span class="line">kubeadm version</span><br><span class="line"><span class="comment"># 验证升级计划：此命令检查你的集群是否可被升级，并取回你要升级的目标版本。 命令也会显示一个包含组件配置版本状态的表格。</span></span><br><span class="line">kubeadm<span class="built_in"> upgrade </span>plan</span><br><span class="line"><span class="comment"># 排除 etcd，升级其他的</span></span><br><span class="line">kubeadm<span class="built_in"> upgrade </span>apply v1.23.2 <span class="attribute">--etcd-upgrade</span>=<span class="literal">false</span></span><br><span class="line"><span class="comment"># 升级 kubelet 和 kubectl</span></span><br><span class="line">apt-<span class="built_in">get</span> install <span class="attribute">kubelet</span>=1.23.2-00 <span class="attribute">kubectl</span>=1.23.2-00</span><br><span class="line"><span class="comment"># 考试环境中退出 root，退回到 student@master01</span></span><br><span class="line">[root @master 01 ] # exit</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 考试环境中退出 master01，退回到 student@node-1</span></span><br><span class="line">[student @master 01 ] $ exit</span><br><span class="line"><span class="comment"># 不要输入 exit 多了，否则会退出考试环境的。</span></span><br><span class="line"><span class="comment"># 解除节点的保护 </span></span><br><span class="line">root@cka-master1:~# kubectl uncordon cka-master1 </span><br><span class="line"><span class="comment"># 检查 master1 是否为 Ready</span></span><br><span class="line">root@cka-master1:~# kubectl <span class="built_in">get</span> nodes</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="4、考核知识：ETCD-数据备份恢复"><a href="#4、考核知识：ETCD-数据备份恢复" class="headerlink" title="4、考核知识：ETCD 数据备份恢复"></a>4、考核知识：ETCD 数据备份恢复</h1><blockquote>
-<p>注意：真实考试时，第 3 题是“升级集群”那道题。建议真正考试时，前 4 道题按照顺序做，特别是第 4 题，且做完后不要再修改，做完第 3 道题，如果没有 exit 退出到 student@node-1，则无法执行 etcdctl 命令，另外这道题没有切换集群，用的是第 3 道题的集群，所以，这道题做完就不要在回来检查或者操作了。etcd 不建议放到最后做，如果最后做，etcd 备份还原可能把所有 pod 都清空了，这个问题有可能会出现，所以前 4 道题按照顺寻做</p>
-</blockquote>
-<h2 id="题目内容-2"><a href="#题目内容-2" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686194447657-9977f98a-3b09-414d-a58a-2e3182979d79.png" alt="image"></p>
-<h2 id="题目内容中文解释-3"><a href="#题目内容中文解释-3" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>此项目无需更改配置环境，但是，在执行此项目之前，请确保您已返回初始节点。etcd 这道题真实考试为第 4 题，用的集群是真实考试时的上一题的集群，即真题第 3 题 mk8s，所以无需再切换集群了。</p>
-<p>Task</p>
-<p>​     首先，为运行在 <a target="_blank" rel="noopener" href="https://127.0.0.1:2379/">https://127.0.0.1:2379</a> 上的现有 etcd 实例创建快照并将快照保存到 &#x2F;srv&#x2F;data&#x2F;etcd-snapshot.db 文件。</p>
-<p>​     为给定实例创建快照预计能在几秒钟内完成。 如果该操作似乎挂起，则命令可能有问题。用 CTRL + C 来取消操作然后重试。</p>
-<p>然后还原位于 &#x2F;var&#x2F;lib&#x2F;backup&#x2F;etcd-snapshot-previous.db 的现有先前快照。</p>
-<p>提供了以下 TLS 证书和密钥，以通过 etcdctl 连接到服务器：</p>
-<p>   CA证书: &#x2F;opt&#x2F;KUIN00601&#x2F;ca.crt</p>
-<p>   客户端证书: &#x2F;opt&#x2F;KUIN00601&#x2F;etcd-client.crt</p>
-<p>   客户端密钥: &#x2F;opt&#x2F;KUIN00601&#x2F;etcd-client.key</p>
-<h2 id="官方文档搜索关键字：upgrade-etcd"><a href="#官方文档搜索关键字：upgrade-etcd" class="headerlink" title="官方文档搜索关键字：upgrade-etcd"></a>官方文档搜索关键字：upgrade-etcd</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster">https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster</a></p>
-<p><img src="/2023/12/15/cka/1686200676508-79bea891-8e31-4c8d-a365-29a6e0556bfa.png" alt="image"></p>
-<p><img src="/2023/12/15/cka/1686200714258-72ae5abe-9273-41cb-b2d4-cafb389d76c5.png" alt="image"></p>
-<h2 id="做题解答-1"><a href="#做题解答-1" class="headerlink" title="做题解答"></a>做题解答</h2><blockquote>
-<p>考试时确认一下 ssh 终端，是在 [student@node-1] $ 下</p>
-<p> 备份：</p>
-<ul>
-<li>如果不使用 export ETCDCTL_API&#x3D;3，而使用 ETCDCTL_API&#x3D;3，则下面每条 etcdctl 命令前都要加ETCDCTL_API&#x3D;3</li>
-<li>如果执行时，提示 permission denied，则是权限不够，命令最前面加 sudo 即可。</li>
-</ul>
-</blockquote>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=<span class="number">3</span></span><br><span class="line"><span class="comment"># 先检查考试环境有没有题目说的目录 /srv/data/，没有的话则需要自己创建</span></span><br><span class="line">mkdir -pv <span class="regexp">/srv/</span>data/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#备份</span></span><br><span class="line">sudo  etcdctl \</span><br><span class="line">--endpoints=https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--cacert=<span class="regexp">/opt/</span>KUIN00601/ca.crt  \   </span><br><span class="line">--cert=<span class="regexp">/opt/</span>KUIN00601/etcd-client.crt \</span><br><span class="line">--key=<span class="regexp">/opt/</span>KUIN00601/etcd-client.key \</span><br><span class="line">snapshot save <span class="regexp">/srv/</span>data/etcd-snapshot.db</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#备份k8s组件yaml文件，随意新建一个目录存放</span></span><br><span class="line">mkdir <span class="regexp">/opt/</span>backup -p</span><br><span class="line">cd <span class="regexp">/etc/</span>kubernetes<span class="regexp">/manifests &amp;&amp;  mv kube-* /</span>opt/backup</span><br><span class="line"><span class="comment">#还原</span></span><br><span class="line">sudo ETCDCTL_API=<span class="number">3</span> etcdctl \</span><br><span class="line">--endpoints=https:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2379</span> \</span><br><span class="line">--cacert=<span class="regexp">/opt/</span>KUIN00601/ca.crt  \   </span><br><span class="line">--cert=<span class="regexp">/opt/</span>KUIN00601/etcd-client.crt \</span><br><span class="line">--key=<span class="regexp">/opt/</span>KUIN00601/etcd-client.key \</span><br><span class="line">snapshot restore <span class="regexp">/var/</span>lib<span class="regexp">/backup/</span>etcd-snapshot-previous.db \</span><br><span class="line">--data-dir=<span class="regexp">/var/</span>lib/etcd-restore</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ul>
-<li>–data-dir 是etcd还原到这个指定的目录下，因此要修改etcd.yml文件，etcd挂载的路径</li>
-</ul>
-</blockquote>
-<blockquote>
-<p><strong>注意：</strong></p>
-</blockquote>
-<blockquote>
-<ul>
-<li><strong>一定要使用mv命令从</strong><code>/etc/kubernetes/manifests</code>把kube-*的yaml文件移走先，这样控制平面就会删除这些pod</li>
-</ul>
-</blockquote>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">## 将volume配置的path：<span class="regexp">/var/</span>lib<span class="regexp">/etcd改成/</span>var<span class="regexp">/lib/</span>etcd-restore</span><br><span class="line">  volumes:</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: <span class="regexp">/etc/</span>kubernetes<span class="regexp">/pki/</span>etcd</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: etcd-certs</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: <span class="regexp">/var/</span>lib/etcd-restore</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: etcd-data</span><br><span class="line">还原组件</span><br><span class="line">mv <span class="regexp">/opt/</span>backup<span class="comment">/*   /etc/kubernetes/manifests/</span></span><br><span class="line"><span class="comment">systemctl restart kubelet</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="5、考核知识：网络策略-NetworkPolicy"><a href="#5、考核知识：网络策略-NetworkPolicy" class="headerlink" title="5、考核知识：网络策略 NetworkPolicy"></a>5、考核知识：网络策略 NetworkPolicy</h1><h2 id="题目内容-3"><a href="#题目内容-3" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686212630567-01980333-763b-4249-8382-bc803561aef7.png" alt="image"></p>
-<h2 id="题目内容中文解释-4"><a href="#题目内容中文解释-4" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context hk8s</p>
-<p>Task</p>
-<p>​     在现有的 namespace my-app 中创建一个名为 allow-port-from-namespace 的新 NetworkPolicy。</p>
-<p>​     确保新的 NetworkPolicy 允许 namespace  中的 Pods 连接到 namespace my-app 中的Pods 的 9000 端口。</p>
-<p>进一步确保新的NetworkPolicy:</p>
-<ul>
-<li>不允许对没有在监听端口 9000 的 Pods 的访问</li>
-<li>不允许从不在命名空间内部的Pods访问</li>
-</ul>
-<h2 id="官方文档搜索关键字-network-policy"><a href="#官方文档搜索关键字-network-policy" class="headerlink" title="官方文档搜索关键字: network policy"></a>官方文档搜索关键字: network policy</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/#networkpolicy-resource">https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/#networkpolicy-resource</a></p>
-<h2 id="做题解答-2"><a href="#做题解答-2" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context hk8s</span><br><span class="line"><span class="comment"># 编写一个 yaml 文件，注意先输入 &quot;:set paste&quot;，防止复制时 yaml 文件空格错序</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">allow-port-from-namespace</span></span><br><span class="line">  <span class="attribute">namespace</span><span class="punctuation">:</span> <span class="string">my-app</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">podSelector</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">matchLabels</span><span class="punctuation">:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attribute">policyTypes</span><span class="punctuation">:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="attribute">ingress</span><span class="punctuation">:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">from:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">podSelector: &#123;&#125;</span></span><br><span class="line">      <span class="attribute">ports</span><span class="punctuation">:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">protocol: TCP</span></span><br><span class="line">          <span class="attribute">port</span><span class="punctuation">:</span> <span class="string">9000</span></span><br><span class="line"><span class="comment"># 创建网络策略资源</span></span><br><span class="line">kubectl apply -f networkpolicy.yaml</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="6、考核知识：四层代理-service"><a href="#6、考核知识：四层代理-service" class="headerlink" title="6、考核知识：四层代理 service"></a>6、考核知识：四层代理 service</h1><h2 id="题目内容-4"><a href="#题目内容-4" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686214245328-b382c27e-321f-4875-bf46-09251fd856e3.png" alt="image"></p>
-<h2 id="题目内容中文解释-5"><a href="#题目内容中文解释-5" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>​     重新配置一个已经存在的 front-end 的 deployment，在名字为 nginx 的容器里面添加一个端口配置，名字为 http，暴露端口号为 80，然后创建一个 service，名字为 front-end-svc，暴露该deployment 的 http 端，并且 service 的类型为 NodePort。</p>
-<h2 id="官方文档搜索关键字：Server"><a href="#官方文档搜索关键字：Server" class="headerlink" title="官方文档搜索关键字：Server"></a>官方文档搜索关键字：Server</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/#defining-a-service">https://kubernetes.io/zh-cn/docs/concepts/services-networking/service/#defining-a-service</a></p>
-<h2 id="做题解答-3"><a href="#做题解答-3" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 deployment 信息</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">get</span> <span class="string">deployments</span> <span class="string">front-end</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">deployments</span> <span class="string">front-end</span> </span><br><span class="line"><span class="string">······</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line"><span class="string">······</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">front-end-svc</span>    <span class="comment"># 题目指定的名称</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>         <span class="comment"># 题目指定的 service 类型</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span>           <span class="comment"># deployment 中 pod 的标签 </span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span>           <span class="comment"># 题目指定暴露的端口</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="string">http</span>   <span class="comment"># 题目指定暴露的 http 端</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">service.yaml</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="7、考核知识：七层代理-ingress"><a href="#7、考核知识：七层代理-ingress" class="headerlink" title="7、考核知识：七层代理 ingress"></a>7、考核知识：七层代理 ingress</h1><h2 id="题目内容-5"><a href="#题目内容-5" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686272388361-a6a83e0e-8159-413a-bec4-d3951cf76b78.png" alt="image"></p>
-<h2 id="题目内容中文解释-6"><a href="#题目内容中文解释-6" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>如下创建一个新的 nginx lngress资源：</p>
-<p>名称：pong</p>
-<p>Namespace：ing-internal</p>
-<p>使用服务端口 5678 在路径 &#x2F;hi 上公开服务 hi</p>
-<p>可以使用以下命令检查服务 hi 的可用性，该命令应返回 hi, curl -kL<INTERNAL_IP>&#x2F;hi</INTERNAL_IP></p>
-<h2 id="官方文档搜索关键字：ingress"><a href="#官方文档搜索关键字：ingress" class="headerlink" title="官方文档搜索关键字：ingress"></a>官方文档搜索关键字：ingress</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/#the-ingress-resource">https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/#the-ingress-resource</a></p>
-<h2 id="做题解答-4"><a href="#做题解答-4" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 deployment 信息</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">get</span> <span class="string">deployments</span> <span class="string">front-end</span></span><br><span class="line"></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">deployments</span> <span class="string">front-end</span> </span><br><span class="line"><span class="string">······</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line"><span class="string">······</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">front-end-svc</span>    <span class="comment"># 题目指定的名称</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>         <span class="comment"># 题目指定的 service 类型</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span>           <span class="comment"># deployment 中 pod 的标签 </span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span>           <span class="comment"># 题目指定暴露的端口</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="string">http</span>   <span class="comment"># 题目指定暴露的 http 端</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">service.yaml</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="8、考核知识：Deployment-管理-Pod-扩缩容"><a href="#8、考核知识：Deployment-管理-Pod-扩缩容" class="headerlink" title="8、考核知识：Deployment 管理 Pod 扩缩容"></a>8、考核知识：Deployment 管理 Pod 扩缩容</h1><h2 id="题目内容-6"><a href="#题目内容-6" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686273297681-da4e41b0-fa33-4a06-a2a3-5dda896f37fb.png" alt="image"></p>
-<h2 id="题目内容中文解释-7"><a href="#题目内容中文解释-7" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>将 loadbalancer 的 deployment 管理的 Pod 的副本数扩容成 6 个。</p>
-<h2 id="官方文档搜索关键字：deployment"><a href="#官方文档搜索关键字：deployment" class="headerlink" title="官方文档搜索关键字：deployment"></a>官方文档搜索关键字：deployment</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/#scaling-a-deployment">https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/#scaling-a-deployment</a></p>
-<h2 id="做题解答-5"><a href="#做题解答-5" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl<span class="built_in"> config </span>use-context k8s</span><br><span class="line">kubectl scale deployment loadbalancer <span class="attribute">--replicas</span>=6</span><br><span class="line"><span class="comment">#或者</span></span><br><span class="line">kubectl <span class="built_in">edit</span> deployment loadbalancer </span><br><span class="line">修改</span><br><span class="line">replicas:6</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="9、考核知识：Pod-指定节点部署"><a href="#9、考核知识：Pod-指定节点部署" class="headerlink" title="9、考核知识：Pod 指定节点部署"></a>9、考核知识：Pod 指定节点部署</h1><h2 id="题目内容-7"><a href="#题目内容-7" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686273871803-5cb7a585-075b-4890-92cb-904da1b1f294.png" alt="image"></p>
-<h2 id="题目内容中文解释-8"><a href="#题目内容中文解释-8" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>创建一个 Pod，名字为 nginx-kusc00401，镜像地址是 nginx，调度到具有 disk&#x3D;spinning 标签的节点上。</p>
-<h2 id="官方文档搜索关键字：nodeSelector"><a href="#官方文档搜索关键字：nodeSelector" class="headerlink" title="官方文档搜索关键字：nodeSelector"></a>官方文档搜索关键字：nodeSelector</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-pods-nodes/#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%86%E8%A2%AB%E8%B0%83%E5%BA%A6%E5%88%B0%E4%BD%A0%E9%80%89%E6%8B%A9%E7%9A%84%E8%8A%82%E7%82%B9%E7%9A%84-pod">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-pods-nodes/#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%86%E8%A2%AB%E8%B0%83%E5%BA%A6%E5%88%B0%E4%BD%A0%E9%80%89%E6%8B%A9%E7%9A%84%E8%8A%82%E7%82%B9%E7%9A%84-pod</a></p>
-<h2 id="做题解答-6"><a href="#做题解答-6" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">kubectl get nodes --show-labels</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">nginx-kusc00401</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">containers</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: nginx</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attribute">imagePullPolicy</span><span class="punctuation">:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attribute">nodeSelector</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">disktype</span><span class="punctuation">:</span> <span class="string">spinning</span></span><br><span class="line">kubectl apply -f nodeselector.yaml</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="10、考核知识：检查可用节点数量"><a href="#10、考核知识：检查可用节点数量" class="headerlink" title="10、考核知识：检查可用节点数量"></a>10、考核知识：检查可用节点数量</h1><h2 id="题目内容-8"><a href="#题目内容-8" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686274264022-535d36cf-a755-48a9-9c56-62046e5da3ab.png" alt="image"></p>
-<h2 id="题目内容中文解释-9"><a href="#题目内容中文解释-9" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>​     检查集群中有多少节点为 Ready 状态(不包括被打上 Taint: NoSchedule 的节点)，之后将数量写到 &#x2F;opt&#x2F;KUSCO0402&#x2F;kusc00402.txt。</p>
-<h2 id="官方文档搜索关键字："><a href="#官方文档搜索关键字：" class="headerlink" title="官方文档搜索关键字："></a>官方文档搜索关键字：</h2><h2 id="做题解答-7"><a href="#做题解答-7" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context k8s</span><br><span class="line">查看集群中状态为 Ready 的节点</span><br><span class="line">kubectl <span class="built_in">get</span> nodes | <span class="keyword">grep</span> -<span class="keyword">w</span> <span class="string">&quot;Ready&quot;</span></span><br><span class="line">kubectl <span class="built_in">get</span> nodes | <span class="keyword">grep</span> -<span class="keyword">w</span> <span class="string">&quot;Ready&quot;</span> | wc -<span class="keyword">l</span></span><br><span class="line"># 统计具有污点 NoSchedule 的数量</span><br><span class="line">kubectl describe nodes cka-master1 cka-node1 | <span class="keyword">grep</span> <span class="string">&quot;Taint&quot;</span> | <span class="keyword">grep</span> <span class="string">&quot;NoSchedule&quot;</span> | wc -<span class="keyword">l</span></span><br><span class="line">把结果写入题目中指定的文件</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;1&quot;</span> &gt; /<span class="keyword">opt</span>/KUSCO0402/kusc00402.tx</span><br></pre></td></tr></table></figure>
-
-<h1 id="11、考核知识：一个-Pod-封装多个容器"><a href="#11、考核知识：一个-Pod-封装多个容器" class="headerlink" title="11、考核知识：一个 Pod 封装多个容器"></a>11、考核知识：一个 Pod 封装多个容器</h1><h2 id="题目内容-9"><a href="#题目内容-9" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686274602282-d690ef8f-085d-4bfb-b4c6-ec6a7d84b9e8.png" alt="image"></p>
-<h2 id="题目内容中文解释-10"><a href="#题目内容中文解释-10" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>创建一个 Pod，名字为 kucc1，这个 Pod 包含 4 个容器，为 nginx、redis、memcached、consul。</p>
-<h2 id="官方文档搜索关键字：Pod"><a href="#官方文档搜索关键字：Pod" class="headerlink" title="官方文档搜索关键字：Pod"></a>官方文档搜索关键字：Pod</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/#using-pods">https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/#using-pods</a></p>
-<h2 id="做题解答-8"><a href="#做题解答-8" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">kucc1</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">containers</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: nginx</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: redis</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">redis</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: memecached</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">memecached</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">name: consul</span></span><br><span class="line">    <span class="attribute">image</span><span class="punctuation">:</span> <span class="string">consul</span></span><br><span class="line">kubectl config use-context k8s</span><br><span class="line">kubectl apply -f pod.yaml</span><br></pre></td></tr></table></figure>
-
-<h1 id="12、考核知识：持久卷-PersistentVolume"><a href="#12、考核知识：持久卷-PersistentVolume" class="headerlink" title="12、考核知识：持久卷 PersistentVolume"></a>12、考核知识：持久卷 PersistentVolume</h1><h2 id="题目内容-10"><a href="#题目内容-10" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275041410-b5546b45-434c-45bb-816c-e2a7a8388b03.png" alt="image"></p>
-<h2 id="题目内容中文解释-11"><a href="#题目内容中文解释-11" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context hk8s</p>
-<p>Task</p>
-<p>​     创建一个 pv，名字为 app-config，大小为 2Gi， 访问权限为 ReadWriteMany。Volume 的类型为 hostPath，路径为 &#x2F;srv&#x2F;app-config。</p>
-<h2 id="官方文档搜索关键字：PV"><a href="#官方文档搜索关键字：PV" class="headerlink" title="官方文档搜索关键字：PV"></a>官方文档搜索关键字：PV</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pv">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pv</a></p>
-<h2 id="做题解答-9"><a href="#做题解答-9" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">apiVersion:</span> v1</span><br><span class="line"><span class="symbol">kind:</span> PersistentVolume</span><br><span class="line"><span class="symbol">metadata:</span></span><br><span class="line"><span class="symbol">  name:</span>  app-config</span><br><span class="line"><span class="symbol">  labels:</span></span><br><span class="line"><span class="symbol">    type:</span> local</span><br><span class="line"><span class="symbol">spec:</span></span><br><span class="line"><span class="symbol">  capacity:</span></span><br><span class="line"><span class="symbol">    storage:</span> <span class="number">2</span>Gi</span><br><span class="line"><span class="symbol">  accessModes:</span></span><br><span class="line">    - ReadWriteMany</span><br><span class="line"><span class="symbol">  hostPath:</span></span><br><span class="line"><span class="symbol">    path:</span> <span class="string">&quot;/srv/app-config&quot;</span></span><br><span class="line">kubectl config use-context hk8s</span><br><span class="line">kubectl apply -f pv.yaml</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="13、考核知识：PersistentVolumeClaims"><a href="#13、考核知识：PersistentVolumeClaims" class="headerlink" title="13、考核知识：PersistentVolumeClaims"></a>13、考核知识：PersistentVolumeClaims</h1><h2 id="题目内容-11"><a href="#题目内容-11" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275313433-0329accf-2316-4233-a461-1b31bef0cfb0.png" alt="image"></p>
-<h2 id="题目内容中文解释-12"><a href="#题目内容中文解释-12" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context ok8s</p>
-<p>Task</p>
-<p>​     创建一个名字为 pv-volume 的 pvc，指定 storageClass 为 csi-hostpath-sc，大小为 10Mi。然后创建一个 Pod，名字为 web-server，镜像为 nginx，并且挂载该 PVC 至 &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html，挂载的权限为 RedWriteOnce。之后通过 kubectl edit 或者 kubectl path 将 pvc 改成 70Mi，并且记录修改记录。</p>
-<h2 id="官方文档搜索关键字：pvc"><a href="#官方文档搜索关键字：pvc" class="headerlink" title="官方文档搜索关键字：pvc"></a>官方文档搜索关键字：pvc</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pvc">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-pvc</a></p>
-<h2 id="做题解答-10"><a href="#做题解答-10" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pv-volume</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">csi-hostpath-sc</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Mi</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web-server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">html-volume</span></span><br><span class="line">      <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">        <span class="attr">claimName:</span> <span class="string">pv-volume</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web-server</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">&quot;/usr/share/nginx/html&quot;</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">html-volume</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">config</span> <span class="string">use-context</span> <span class="string">ok8s</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">pvc-pod.yaml</span></span><br><span class="line"><span class="string">kubectl</span> <span class="string">edit</span> <span class="string">pvc</span> <span class="string">pv-volume</span></span><br><span class="line"><span class="string">--------</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">70Mi</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">csi-hostpath-sc</span></span><br><span class="line"><span class="string">---------</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="14、考核知识：查看-Pod-日志"><a href="#14、考核知识：查看-Pod-日志" class="headerlink" title="14、考核知识：查看 Pod 日志"></a>14、考核知识：查看 Pod 日志</h1><h2 id="题目内容-12"><a href="#题目内容-12" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686275929251-62dce83d-3b2d-42ee-93e5-bed475e66a78.png" alt="image"></p>
-<h2 id="题目内容中文解释-13"><a href="#题目内容中文解释-13" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>​     监控名为 foobar 的 Pod 的日志，并过滤出具有 unable-access-website 信息的行，然后将写入到 &#x2F;opt&#x2F;KUTR00101&#x2F;foobar。</p>
-<h2 id="官方文档搜索关键字：kubectl-logs"><a href="#官方文档搜索关键字：kubectl-logs" class="headerlink" title="官方文档搜索关键字：kubectl logs"></a>官方文档搜索关键字：kubectl logs</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E7%A4%BA%E4%BE%8B-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C">https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E7%A4%BA%E4%BE%8B-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C</a></p>
-<h2 id="做题解答-11"><a href="#做题解答-11" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context k8s</span><br><span class="line">kubectl logs foobar | <span class="keyword">grep</span> unable-access-website &gt; <span class="regexp">/opt/</span>KUTR00101/foobar</span><br></pre></td></tr></table></figure>
-
-<h1 id="15、考核知识：Sidecar-代理"><a href="#15、考核知识：Sidecar-代理" class="headerlink" title="15、考核知识：Sidecar 代理"></a>15、考核知识：Sidecar 代理</h1><h2 id="题目内容-13"><a href="#题目内容-13" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686276106205-d411bf57-1620-4caa-ac1e-9e36a91e24f1.png" alt="image"></p>
-<h2 id="题目内容中文解释-14"><a href="#题目内容中文解释-14" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>Context</p>
-<p>​     将一个现有的 Pod 集成到 Kubernetes 的内置日志记录体系结构中 (例如 kubectl logs)。添加 streaming sidecar 容器是实现此要求的一种好方法。</p>
-<p>Task</p>
-<p>​     使用 busybox lmage 来将名为 sidecar 的 sidecar 容器添加到现有的 Pod legacy-app 上，新的 sidecar 容器必须运行以下命令:</p>
-<p>&#x2F;bin&#x2F;sh -c tail -n+1 -f &#x2F;var&#x2F;log&#x2F;legacy-app.log</p>
-<p>使用 volume 挂载 &#x2F;var&#x2F;log&#x2F; 目录，确保 sidecar 能访问 &#x2F;var&#x2F;log&#x2F;legacy-app.log 文件。</p>
-<h2 id="官方文档搜索关键字：logging"><a href="#官方文档搜索关键字：logging" class="headerlink" title="官方文档搜索关键字：logging"></a>官方文档搜索关键字：logging</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/logging/#%E5%85%B7%E6%9C%89%E6%97%A5%E5%BF%97%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD%E7%9A%84%E8%BE%B9%E8%BD%A6%E5%AE%B9%E5%99%A8">https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/logging/#%E5%85%B7%E6%9C%89%E6%97%A5%E5%BF%97%E4%BB%A3%E7%90%86%E5%8A%9F%E8%83%BD%E7%9A%84%E8%BE%B9%E8%BD%A6%E5%AE%B9%E5%99%A8</a></p>
-<h2 id="做题解答-12"><a href="#做题解答-12" class="headerlink" title="做题解答"></a>做题解答</h2><h1 id="16、考核知识：查看-Pod-的-cpu"><a href="#16、考核知识：查看-Pod-的-cpu" class="headerlink" title="16、考核知识：查看 Pod 的 cpu"></a>16、考核知识：查看 Pod 的 cpu</h1><h2 id="题目内容-14"><a href="#题目内容-14" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686276362865-7cc2c094-c4a8-4d28-b811-83c44fb3e7a5.png" alt="image"></p>
-<h2 id="题目内容中文解释-15"><a href="#题目内容中文解释-15" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context k8s</p>
-<p>Task</p>
-<p>​     找出标签是 name&#x3D;cpu-user 的 Pod，并过滤出使用 CPU 最高的 Pod，然后把它的名字写在已经存在的 &#x2F;opt&#x2F;KUTR00401&#x2F;KUTR00401.txt 文件里(注意他没有说指定 namespace，所以需要使用 -A 指定所有 namespace)。</p>
-<h2 id="官方文档搜索关键字：kubectl-top-pod"><a href="#官方文档搜索关键字：kubectl-top-pod" class="headerlink" title="官方文档搜索关键字：kubectl top pod"></a>官方文档搜索关键字：kubectl top pod</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/#specify-a-memory-request-and-a-memory-limit">https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/#specify-a-memory-request-and-a-memory-limit</a></p>
-<h2 id="做题解答-13"><a href="#做题解答-13" class="headerlink" title="做题解答"></a>做题解答</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl<span class="built_in"> config </span>use-context k8s</span><br><span class="line"><span class="comment">#分步执行</span></span><br><span class="line">kubectl top pod -A -l <span class="attribute">name</span>=cpu-user <span class="attribute">--sort-by</span>=cpu -A</span><br><span class="line">将查到的 pod 名字写入 /opt/KUTR00401/KUTR00401.txt 文件中</span><br><span class="line">echo <span class="string">&quot;podname&quot;</span> &gt;  /opt/KUTR00401/KUTR00401.txt</span><br><span class="line"><span class="comment">#一步执行</span></span><br><span class="line">kubectl top pods -A  -l <span class="attribute">name</span>=cpu-user  \</span><br><span class="line"><span class="attribute">--sort-by</span>=cpu | tail -n +2 | head -1 | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> \</span><br><span class="line">&gt;  /opt/KUTR00401/KUTR00401.txt</span><br></pre></td></tr></table></figure>
-
-<h1 id="17、考核知识：集群故障排查-kubelet-故障"><a href="#17、考核知识：集群故障排查-kubelet-故障" class="headerlink" title="17、考核知识：集群故障排查 - kubelet 故障"></a>17、考核知识：集群故障排查 - kubelet 故障</h1><h2 id="题目内容-15"><a href="#题目内容-15" class="headerlink" title="题目内容"></a>题目内容</h2><p><img src="/2023/12/15/cka/1686277786620-4a6183f6-225e-4e7e-9f75-5e7e1f08f759.png" alt="image"></p>
-<h2 id="题目内容中文解释-16"><a href="#题目内容中文解释-16" class="headerlink" title="题目内容中文解释"></a>题目内容中文解释</h2><p>切换 k8s 集群环境：kubectl config use-context wk8s</p>
-<p>Task</p>
-<p>​     一个名为 wk8s-node-0 的节点状态为 NotReady，让其他恢复至正常状态，并确认所有的更改开机自动完成。</p>
-<p>可以使用以下命令，通过 ssh 连接到 wk8s-node-0 节点：ssh wk8s-node-0</p>
-<p>可以使用以下命令，在该节点上获取更高权限：sudo -i</p>
-<h2 id="做题解答-14"><a href="#做题解答-14" class="headerlink" title="做题解答"></a>做题解答</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1277,7 +1153,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1296,7 +1172,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:03</span>
+    <span title="站点阅读时长">25:09</span>
   </span>
 </div>
 <div class="busuanzi-count">

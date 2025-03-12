@@ -86,7 +86,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">295</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">128</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">46</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">296</span></a></li><li class="menu-item menu-item-ceph"><a href="/ceph/" rel="section"><i class="address-book fa-fw"></i>ceph</a></li><li class="menu-item menu-item-k8s"><a href="/categories/k8s/" rel="section"><i class="archive fa-fw"></i>k8s</a></li><li class="menu-item menu-item-network"><a href="/network/" rel="section"><i class="archive fa-fw"></i>network</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -123,6 +123,105 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/10/25/k8s%E8%B5%84%E6%BA%90%E5%A4%87%E4%BB%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="屈辉">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q's blog">
+      <meta itemprop="description" content="开心就好">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Q's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/10/25/k8s%E8%B5%84%E6%BA%90%E5%A4%87%E4%BB%BD/" class="post-title-link" itemprop="url">k8s资源备份</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-10-25 17:36:25 / 修改时间：19:33:11" itemprop="dateCreated datePublished" datetime="2023-10-25T17:36:25+08:00">2023-10-25</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35583325/article/details/132410819">https://blog.csdn.net/qq_35583325/article/details/132410819</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/kaliarch/4919159">https://blog.51cto.com/kaliarch/4919159</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sanhewuyang/article/details/128959394">https://blog.csdn.net/sanhewuyang/article/details/128959394</a></p>
+<h1 id="minio"><a href="#minio" class="headerlink" title="minio"></a>minio</h1><h2 id="创建velero凭证"><a href="#创建velero凭证" class="headerlink" title="创建velero凭证"></a>创建velero凭证</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; credentials-velero &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[default]</span></span><br><span class="line"><span class="string">aws_access_key_id = admin</span></span><br><span class="line"><span class="string">aws_secret_access_key = admin123456</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-velero"><a href="#安装-velero" class="headerlink" title="安装 velero"></a>安装 velero</h2><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#bucket要填写在minio控制台创建的名字：data</span></span><br><span class="line"><span class="comment">#secret-file要指向前面创建的秘钥文件：/root/credentials-velero</span></span><br><span class="line"><span class="comment">#安装时velero需加上--use-restic参数表示使用restic备份pv数据</span></span><br><span class="line">velero install \</span><br><span class="line">    <span class="params">--provider</span> aws \</span><br><span class="line">    <span class="params">--kubeconfig</span> ~<span class="string">/.kube/config</span> \</span><br><span class="line">    <span class="params">--namespace</span> velero-system \</span><br><span class="line">    <span class="params">--plugins</span> velero/velero-plugin-for-aws<span class="function">:v1.4.1</span> \</span><br><span class="line">    <span class="params">--bucket</span> data \</span><br><span class="line">    <span class="params">--secret-file</span> <span class="string">/root/credentials-velero</span> \</span><br><span class="line">    <span class="params">--use-volume-snapshots=false</span> \</span><br><span class="line">    <span class="params">--backup-location-config</span> region=minio,s3ForcePathStyle=<span class="string">&quot;true&quot;</span>,s3Url=http:<span class="string">//192.168.100.225</span><span class="function">:9000</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="阿里云"><a href="#阿里云" class="headerlink" title="阿里云"></a>阿里云</h1><h2 id="创建velero凭证-1"><a href="#创建velero凭证-1" class="headerlink" title="创建velero凭证"></a>创建velero凭证</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; credentials-velero &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[default]</span></span><br><span class="line"><span class="string">ALIBABA_CLOUD_ACCESS_KEY_ID=xxxx</span></span><br><span class="line"><span class="string">ALIBABA_CLOUD_ACCESS_KEY_SECRET=xxxxx</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Policy策略"><a href="#Policy策略" class="headerlink" title="Policy策略"></a>Policy策略</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Statement&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="string">&quot;oss:ListBuckets&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acs:oss:*:*:*&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;oss:ListObjects&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;oss:GetBucketAcl&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;acs:oss:*:*:k8s-file-backup&quot;</span></span><br><span class="line">            <span class="punctuation">]</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;Effect&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Allow&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;oss:GetObject&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;oss:GetObjectAcl&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;oss:PutObject&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;oss:DeleteObject&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;Resource&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;acs:oss:*:*:k8s-file-backup/*&quot;</span></span><br><span class="line">            <span class="punctuation">]</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装-velero-1"><a href="#安装-velero-1" class="headerlink" title="安装 velero"></a>安装 velero</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">BUCKET=k8s-file-backup</span><br><span class="line">REGION=cn-hangzhou</span><br><span class="line">velero install \</span><br><span class="line">  <span class="attr">--provider</span> alibabacloud \</span><br><span class="line">  <span class="attr">--image</span> registry.<span class="variable">$REGION</span><span class="selector-class">.aliyuncs</span>.com/acs/velero:<span class="number">1.4</span>.<span class="number">2</span>-<span class="number">2</span>b9dce65-aliyun \</span><br><span class="line">  <span class="attr">--bucket</span> <span class="variable">$BUCKET</span> \</span><br><span class="line">  <span class="attr">--secret-file</span> ./credentials-velero \</span><br><span class="line">  <span class="attr">--use-volume-snapshots</span>=false \</span><br><span class="line">  <span class="attr">--backup-location-config</span> region=<span class="variable">$REGION</span>,network=internal \</span><br><span class="line">  <span class="attr">--use-restic</span> \</span><br><span class="line">  <span class="attr">--plugins</span> registry.<span class="variable">$REGION</span><span class="selector-class">.aliyuncs</span>.com/acs/velero-plugin-alibabacloud:v1.<span class="number">0.0</span>-<span class="number">2</span>d33b89 \</span><br><span class="line">  <span class="attr">--wait</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1106,98 +1205,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/09/01/Headscale%E4%B8%8ETailscale%E6%8E%A5%E5%85%A5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://horus-k.github.io/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="屈辉">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Q's blog">
-      <meta itemprop="description" content="开心就好">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Q's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/" class="post-title-link" itemprop="url">dependency-track漏洞管理平台</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-08-28 15:41:57 / 修改时间：15:51:51" itemprop="dateCreated datePublished" datetime="2023-08-28T15:41:57+08:00">2023-08-28</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/image-20230828155142647.png" alt="image-20230828155142647"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/28/dependency-track%E6%BC%8F%E6%B4%9E%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
